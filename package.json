@@ -54,7 +54,8 @@
     "homepage": "https://github.com/dceejay/electron-node-red#readme",
     "devDependencies": {
         "electron": "~7.2.1",
-        "electron-builder": "^22.5.1"
+        "electron-builder": "^22.5.1",
+        "typescript": "^3.9.5"
     },
     "build": {
         "appId": "com.electron.node-red",

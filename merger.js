@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// This is not part of the Electron app, it's only a tool for converting/wrapping an existing node-red project
+
 const fs = require("fs");
 const path = require('path');
 const pkg = require("./package-template.json");
