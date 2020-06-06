@@ -35,7 +35,8 @@
         "node-red-node-base64": "*",
         "node-red-node-geofence": "*",
         "node-red-node-random": "*",
-        "node-red-node-smooth": "*"
+        "node-red-node-smooth": "*",
+        "node-red-node-serialport": "^0.10.2"
     },
     "keywords": [
         "electron",
