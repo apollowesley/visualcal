@@ -2,7 +2,7 @@
     "name": "electron_node_red",
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
-    "main": "main.js",
+    "main": "dist/src/main.js",
     "NRelectron": {
         "productName": "Node-RED Electron",
         "editable": true,
@@ -10,7 +10,7 @@
         "showMap": false,
         "kioskMode": false,
         "addNodes": true,
-        "flowFile": "electronflow.json",
+        "flowFile": "../electronflow.json",
         "start": "dashboard"
     },
     "scripts": {
@@ -18,7 +18,7 @@
         "dist": "electron-builder",
         "release": "electron-builder build -p always",
         "postinstall": "electron-builder install-app-deps",
-        "start": "electron main.js",
+        "start": "electron dist/src/main.js",
         "test": "echo \" Warning: no test specified \""
     },
     "repository": {
@@ -26,6 +26,7 @@
         "url": "git+https://github.com/dceejay/electron-node-red.git"
     },
     "dependencies": {
+        "@types/node-red": "^0.20.1",
         "electron-is-dev": "^1.2.0",
         "express": "^4.17.1",
         "node-red": "1.0.6",
@@ -35,8 +36,8 @@
         "node-red-node-base64": "*",
         "node-red-node-geofence": "*",
         "node-red-node-random": "*",
-        "node-red-node-smooth": "*",
-        "node-red-node-serialport": "^0.10.2"
+        "node-red-node-serialport": "^0.10.2",
+        "node-red-node-smooth": "*"
     },
     "keywords": [
         "electron",
@@ -53,6 +54,8 @@
     },
     "homepage": "https://github.com/dceejay/electron-node-red#readme",
     "devDependencies": {
+        "@types/electron": "^1.6.10",
+        "@types/express": "^4.17.6",
         "electron": "~7.2.1",
         "electron-builder": "^22.5.1",
         "typescript": "^3.9.5"
