@@ -3,8 +3,17 @@ import { openFlow, saveFlow, createConsole } from './menu-actions';
 
 const isDev = require('electron-is-dev');
 
+let conWindow: BrowserWindow | undefined = undefined;
+
 export interface Options {
-  mainWindow: BrowserWindow;
+  start?: any;
+  flowFile?: string;
+  addNodes?: boolean;
+  kioskMode?: boolean;
+  mainWindow?: BrowserWindow;
+  conWindow?: BrowserWindow;
+  onConWindowOpened?(conWindow?: BrowserWindow): void;
+  onConWindowClosed?(): void;
   logBuffer: string[];
   showMap?: boolean;
   allowLoadSave?: boolean;
@@ -34,40 +43,54 @@ export interface SubMenuItem {
 export type Menu = SubMenuItem[];
 
 // Create the Application's main menu
-export default (opts: Options = { mainWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '/console.htm' }) => {
+export default (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
   const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [{
     label: "View",
     submenu: [
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { openFlow(); }
+        click() { if (opts.mainWindow) openFlow(opts.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { saveFlow(opts.nrIcon); }
+        click() { if (opts.mainWindow && opts.nrIcon) saveFlow(opts.mainWindow, opts.nrIcon); }
       },
       { type: 'separator' },
       {
         label: 'Console',
         accelerator: "Shift+CmdOrCtrl+C",
-        click() { createConsole(opts.mainWindow, opts.nrIcon, opts.urlConsole, opts.logBuffer); }
+        click() {
+          if (opts.nrIcon && opts.urlConsole && opts.logBuffer) {
+            console.info('Create console window');
+            conWindow = createConsole(conWindow, opts.nrIcon, opts.urlConsole, opts.logBuffer);
+            if (opts.onConWindowOpened) opts.onConWindowOpened(conWindow);
+            if (conWindow) conWindow.on('closed', () => {
+              conWindow = undefined
+              if (opts.onConWindowClosed) opts.onConWindowClosed();
+            });
+          } else {
+            console.info('Can\'t create console window');
+          };
+        }
       },
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
+        click() { if (opts.mainWindow && opts.listenPort && opts.urlDash) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
-        click() { opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit); }
+        click() {
+          if (opts.mainWindow && opts.listenPort && opts.urlEdit) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
+        }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
+        click() { if (opts.mainWindow && opts.listenPort && opts.urlMap) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
       },
       { type: 'separator' },
       { type: 'separator' },

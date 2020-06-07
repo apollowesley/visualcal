@@ -1,36 +1,47 @@
 
-'use strict';
-
-import { BrowserWindow, session } from 'electron';
-import menuTemplate from './menu/menu';
+import { BrowserWindow, session, MenuItemConstructorOptions, MenuItem } from 'electron';
+import menuTemplate, { Options } from './menu/menu';
 
 import pkg from '../package.json';
-let options;
-if (pkg.hasOwnProperty("NRelectron")) { options = pkg["NRelectron"] as any }
+const pkgJsonOptions = pkg.NRelectron;
+let options: Options = {
+  logBuffer: [],
+  mainWindow: undefined
+};
 
 // Some settings you can edit if you don't set them in package.json
 //console.log(options)
-const allowLoadSave = options.allowLoadSave || false; // set to true to allow import and export of flow file
-const showMap = options.showMap || false;       // set to true to add Worldmap to the menu
-const kioskMode = options.kioskMode || false;   // set to true to start in kiosk mode
-const addNodes = options.addNodes || true;      // set to false to block installing extra nodes
-const template = menuTemplate();
+const allowLoadSave = pkgJsonOptions.allowLoadSave || false; // set to true to allow import and export of flow file
+const showMap = pkgJsonOptions.showMap || false;       // set to true to add Worldmap to the menu
+const kioskMode = pkgJsonOptions.kioskMode || false;   // set to true to start in kiosk mode
+const addNodes = pkgJsonOptions.addNodes || true;      // set to false to block installing extra nodes
+let template: Array<(MenuItemConstructorOptions) | (MenuItem)>;
 
-let flowfile = options.flowFile || 'electronflow.json'; // default Flows file name - loaded at start
+let flowfile = pkgJsonOptions.flowFile || 'electronflow.json'; // default Flows file name - loaded at start
 
 const urldash = "/ui/#/0";          // url for the dashboard page
 const urledit = "/red";             // url for the editor page
-const urlconsole = "/console.htm";  // url for the console page
+const urlconsole = '../../../console.html';  // url for the console page
 const urlmap = "/worldmap";         // url for the worldmap
 const nrIcon = "../../../nodered.png"        // Icon for the app in root dir (usually 256x256)
 let urlStart: string;                       // Start on this page
-if (options.start.toLowerCase() === "editor") { urlStart = urledit; }
-else if (options.start.toLowerCase() === "map") { urlStart = urlmap; }
+if (pkgJsonOptions.start && pkgJsonOptions.start.toLowerCase() === "editor") { urlStart = urledit; }
+else if (pkgJsonOptions.start && pkgJsonOptions.start.toLowerCase() === "map") { urlStart = urlmap; }
 else { urlStart = urldash; }
 
 // TCP port to use
 const listenPort = 18880; // fix it if you like
 // const listenPort = Math.random()*16383+49152  // or random ephemeral port
+options.listenPort = listenPort;
+options.urlDash = urldash;
+options.urlEdit = urledit;
+options.urlConsole = urlconsole;
+options.urlMap = urlmap;
+options.allowLoadSave = allowLoadSave;
+options.showMap = showMap;
+options.kioskMode = kioskMode;
+options.addNodes = addNodes;
+options.nrIcon = nrIcon;
 
 import os from 'os';
 import fs from 'fs';
@@ -101,12 +112,16 @@ else { // We set the user directory to be in the users home directory...
 
 // Keep a global reference of the window objects, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: BrowserWindow;
-let conWindow: BrowserWindow;
+let mainWindow: BrowserWindow | null;
+let conWindow: BrowserWindow | undefined;
 let tray;
 let logBuffer: string[] = [];
 let logLength = 250;    // No. of lines of console log to keep.
 const levels = ["", "fatal", "error", "warn", "info", "debug", "trace"];
+options.conWindow = conWindow;
+options.onConWindowOpened = (cw) => conWindow = cw;
+options.onConWindowClosed = () => conWindow = undefined;
+options.logBuffer = logBuffer;
 
 ipc.on('clearLogBuffer', function () { logBuffer = []; });
 
@@ -136,7 +151,7 @@ var settings = {
             line = ts + " : [" + levels[msg.level / 10] + "] " + msg.msg;
           }
           logBuffer.push(line);
-          if (conWindow) { conWindow.webContents.send('debugMsg', line); }
+          if (conWindow && !conWindow.isDestroyed) { conWindow.webContents.send('debugMsg', line); }
           if (logBuffer.length > logLength) { logBuffer.shift(); }
         }
       }
@@ -156,7 +171,7 @@ red_app.use(settings.httpNodeRoot, nodeRed.httpNode);
 // Create the main browser window
 function createWindow() {
   mainWindow = new BrowserWindow({
-    title: "Node-RED",
+    title: "VisualCal",
     width: 1024,
     height: 768,
     icon: path.join(__dirname, nrIcon),
@@ -167,7 +182,8 @@ function createWindow() {
       nodeIntegration: false
     }
   });
-
+  options.mainWindow = mainWindow;
+  template = menuTemplate(options);
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
@@ -182,7 +198,7 @@ function createWindow() {
   }
   session.defaultSession.webRequest.onCompleted(filter, (details) => {
     if ((details.statusCode == 404) && (details.url === ("http://localhost:" + listenPort + urlStart))) {
-      setTimeout(mainWindow.webContents.reload, 250);
+      if (mainWindow) setTimeout(mainWindow.webContents.reload, 2000);
     }
   });
 
@@ -194,6 +210,7 @@ function createWindow() {
     // if a child window opens... modify any other options such as width/height, etc
     // in this case make the child overlap the parent exactly...
     //console.log("NEW WINDOW",url);
+    if (!mainWindow) return;
     var w = mainWindow.getBounds();
     option.x = w.x;
     option.y = w.y;
@@ -202,7 +219,9 @@ function createWindow() {
   })
 
   mainWindow.on('close', function (e) {
-    const choice = dialog.showMessageBoxSync(this, {
+    if (!options.mainWindow) return;
+    if (conWindow) conWindow.destroy(); conWindow = undefined;
+    const choice = dialog.showMessageBoxSync(options.mainWindow, {
       type: 'question',
       icon: nrIcon,
       buttons: ['Yes', 'No'],
@@ -232,6 +251,7 @@ function createTray() {
     {
       label: 'Show',
       click: function () {
+        if (!mainWindow) return;
         mainWindow.show();
       }
     },
@@ -242,7 +262,7 @@ function createTray() {
       }
     }
   ]);
-  tray.setToolTip('Node-RED Electron application.')
+  tray.setToolTip('VisualCal Electron application.')
   tray.setContextMenu(contextMenu);
 }
 
@@ -265,9 +285,9 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  if (!mainWindow) {
     createWindow();
-    mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
+    if (mainWindow) mainWindow!.loadURL("http://localhost:" + listenPort + urlStart);
   }
 });
 
@@ -276,7 +296,7 @@ if (process.platform === 'darwin') {
     applicationVersion: pkg.version,
     version: pkg.dependencies["node-red"],
     copyright: "Copyright © 2019, " + pkg.author.name,
-    credits: "Node-RED and other components are copyright the JS Foundation and other contributors."
+    credits: "VisualCal and other components are copyright the IndySoft Corporation and other contributors."
   });
   // Don't show in the dock bar if you like
   //app.dock.hide();
@@ -284,7 +304,9 @@ if (process.platform === 'darwin') {
 
 // Start the Node-RED runtime, then load the inital dashboard page
 nodeRed.start().then(function () {
+  console.info('Node-Red started');
   server.listen(listenPort, 'localhost', function () {
-    mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
+    console.debug('Server started');
+    if (mainWindow) mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
   });
 });

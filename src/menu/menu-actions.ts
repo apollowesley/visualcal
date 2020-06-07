@@ -6,8 +6,8 @@ import RED from 'node-red';
 const nodeRed = RED as RED.Red;
 
 let fileName = "";
-export const saveFlow = async (nrIcon: string) => {
-  const result = await dialog.showSaveDialog(null, {
+export const saveFlow = async (mainWindow: BrowserWindow, nrIcon: string) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
     filters: [{ name: 'JSON', extensions: ['json'] }],
     defaultPath: fileName
   });
@@ -26,8 +26,8 @@ export const saveFlow = async (nrIcon: string) => {
   }
 }
 
-export const openFlow = async () => {
-  const result = await dialog.showOpenDialog(null, { filters: [{ name: 'JSON', extensions: ['json'] }] });
+export const openFlow = async (mainWindow: BrowserWindow) => {
+  const result = await dialog.showOpenDialog(mainWindow, { filters: [{ name: 'JSON', extensions: ['json'] }] });
   result.filePaths.forEach(filePath => {
     fs.readFile(filePath, 'utf-8', function (err, data) {
       try {
@@ -46,11 +46,16 @@ export const openFlow = async () => {
 }
 
 // Create the console log window
-export const createConsole = (conWindow: BrowserWindow, nrIcon: string, urlConsole: string, logBuffer: string[]) => {
-  if (conWindow) { conWindow.show(); return; }
+export const createConsole = (conWindow: BrowserWindow | undefined, nrIcon: string, urlConsole: string, logBuffer: string[]) => {
+  if (conWindow) {
+    console.info('Console window already exists');
+    conWindow.show();
+    return;
+  }
+  console.info('Creating console');
   // Create the hidden console window
   conWindow = new BrowserWindow({
-    title: "Node-RED Console",
+    title: "VisualCal Console",
     width: 800,
     height: 600,
     icon: path.join(__dirname, nrIcon),
@@ -61,12 +66,13 @@ export const createConsole = (conWindow: BrowserWindow, nrIcon: string, urlConso
   });
   conWindow.loadURL(`file://${path.join(__dirname, urlConsole)}`);
   conWindow.webContents.on('did-finish-load', () => {
-    conWindow.webContents.send('logBuff', logBuffer);
+    if (conWindow) conWindow.webContents.send('logBuff', logBuffer);
   });
   conWindow.on('closed', () => {
-    conWindow = null;
+    conWindow = undefined;
   });
   //conWindow.webContents.openDevTools();
+  return conWindow;
 }
 
 export default {
