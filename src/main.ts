@@ -1,8 +1,17 @@
 
-import { BrowserWindow, session, MenuItemConstructorOptions, MenuItem } from 'electron';
+import { BrowserWindow, session, MenuItemConstructorOptions, MenuItem, screen } from 'electron';
 import menuTemplate, { Options } from './menu/menu';
-
+import os from 'os';
+import fs from 'fs';
+import url from 'url';
+import path from 'path';
+import http from 'http';
+import express from 'express';
+import electron from 'electron'; 
+import RED from "node-red";
 import pkg from '../package.json';
+import { create as createLoadingScreen } from './windows/loading/main';
+
 const pkgJsonOptions = pkg.NRelectron;
 let options: Options = {
   logBuffer: [],
@@ -43,22 +52,17 @@ options.kioskMode = kioskMode;
 options.addNodes = addNodes;
 options.nrIcon = nrIcon;
 
-import os from 'os';
-import fs from 'fs';
-import url from 'url';
-import path from 'path';
-import http from 'http';
-import express from 'express';
-import electron from 'electron'; 
-
 const { app, Menu } = electron;
 const ipc = electron.ipcMain;
 const dialog = electron.dialog;
 const Tray = electron.Tray;
 
-import RED from "node-red";
 const nodeRed = RED as RED.Red;
 var red_app = express();
+
+const assetsDir = (path.join(__dirname, '..', '..', 'assets'));
+console.info(assetsDir);
+red_app.use('/assets', express.static(assetsDir));
 
 // Add a simple route for static content served from 'public'
 red_app.use("/", express.static("web"));
@@ -70,7 +74,7 @@ var server = http.createServer(red_app);
 // Setup user directory and flowfile (if editable)
 var userdir = path.join(__dirname, '..');
   // if running as raw electron use the current directory (mainly for dev)
-if (process.argv[1] && (process.argv[1] === "main.js")) {
+if (process.argv[1] && (process.argv[1] === "dist/src/main.js")) {
   userdir = path.join(__dirname, '..');
   if ((process.argv.length > 2) && (process.argv[process.argv.length - 1].indexOf(".json") > -1)) {
     if (path.isAbsolute(process.argv[process.argv.length - 1])) {
@@ -170,6 +174,9 @@ red_app.use(settings.httpNodeRoot, nodeRed.httpNode);
 
 // Create the main browser window
 function createWindow() {
+  // Create the browser window.
+  const cursorScreenPoint = screen.getCursorScreenPoint();
+  const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
   mainWindow = new BrowserWindow({
     title: "VisualCal",
     width: 1024,
@@ -182,13 +189,14 @@ function createWindow() {
       nodeIntegration: false
     }
   });
+  mainWindow.setBounds(nearestScreenToCursor.workArea);
   options.mainWindow = mainWindow;
   template = menuTemplate(options);
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
   if (process.platform !== 'darwin') { mainWindow.setAutoHideMenuBar(true); }
-  mainWindow.loadURL(`file://${path.join(__dirname, '..', '..', 'load.html')}`);
+  mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
 
   // did-get-response-details
   const filter = {
@@ -266,14 +274,20 @@ function createTray() {
   tray.setContextMenu(contextMenu);
 }
 
+const showLoadingScreen = () => createLoadingScreen(() => createWindow(), 5000);
 
 // Called when Electron has finished initialization and is ready to create browser windows.
-app.on('ready', () => {
-  createTray()
-  createWindow()
+app.on('ready', async () => {
+  // Start the Node-RED runtime, then load the inital dashboard page
+  server.listen(listenPort, 'localhost', async () => {
+    console.debug('Server started');
+    await nodeRed.start()
+    console.info('Node-Red started');
+    if (mainWindow) mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
+    createTray();
+    await showLoadingScreen();
+  });
 })
-
-
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -301,12 +315,3 @@ if (process.platform === 'darwin') {
   // Don't show in the dock bar if you like
   //app.dock.hide();
 }
-
-// Start the Node-RED runtime, then load the inital dashboard page
-nodeRed.start().then(function () {
-  console.info('Node-Red started');
-  server.listen(listenPort, 'localhost', function () {
-    console.debug('Server started');
-    if (mainWindow) mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
-  });
-});

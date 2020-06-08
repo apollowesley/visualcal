@@ -11,7 +11,7 @@
         "showMap": false,
         "kioskMode": false,
         "addNodes": true,
-        "flowFile": "../electronflow.json",
+        "flowFile": "/Users/scottpage/Documents/testing/electron-node-red/electron-node-red/electronflow.json",
         "start": "dashboard"
     },
     "scripts": {
