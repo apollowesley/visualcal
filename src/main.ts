@@ -7,13 +7,14 @@ import * as RED from "node-red";
 import * as os from 'os';
 import * as path from 'path';
 import * as pkg from '../package.json';
-import { menu as menuTemplate, Options } from './menu';
-import { create as createLoadingScreen } from './windows/loading/main';
+import { create as createMenu, Options } from './menu';
 import NodeRedSettings from './node-red-settings';
 
+const isDev = require('electron-is-dev');
+const userDirPath = path.join(os.homedir(), '.visualcal');
 const mainIconPath = '../../../nodered.png';
 const listenPort = 18880;
-const urlStart = '/red';
+const urlStart = 'red';
 const pkgJsonOptions = pkg.NRelectron;
 let options: Options = {
   logBuffer: [],
@@ -28,6 +29,7 @@ class Main {
   private nodeRed = RED as RED.Red;
 
   public init() {
+    this.createHomeDirectory();
     app.on('ready', async () => await this.createLoadingWindow());
     app.on('window-all-closed', this.onWindowAllClosed);
     app.on('activate', this.onActive);
@@ -46,6 +48,10 @@ class Main {
     if (!this.mainWindow) {
       this.createMainWindow();
     }
+  }
+
+  private createHomeDirectory() {
+    if (!fs.existsSync(userDirPath)) fs.mkdirSync(userDirPath);
   }
 
   private async createLoadingWindow(duration: number = 5000) {
@@ -92,14 +98,23 @@ class Main {
       }
     });
     this.mainWindow.setBounds(nearestScreenToCursor.workArea);
-    const menu = Menu.buildFromTemplate(menuTemplate(options));
+    const menu = Menu.buildFromTemplate(createMenu(options));
     Menu.setApplicationMenu(menu);
   
     if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
     this.mainWindow.webContents.on('did-finish-load', () => {
-      if (this.mainWindow) this.mainWindow.show();
+      if (!this.mainWindow) return
+      this.mainWindow.show();
     });
-    await this.mainWindow.loadURL("http://localhost:" + listenPort + urlStart);
+    this.mainWindow.on('close', (e) => {
+      // Required for node-red if it's in a modified state and changes haven't been deployed
+      e.preventDefault();
+      if (this.mainWindow) this.mainWindow.destroy();
+      this.mainWindow = null;
+      app.quit();
+    });
+    if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
+    await this.mainWindow.loadURL(`http://localhost:${listenPort}/${urlStart}`);
   }
 
 }

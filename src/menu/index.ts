@@ -26,25 +26,9 @@ export interface Options {
   urlConsole?: string;
 }
 
-export interface SubMenuItemClickEvent {
-  (item?: any, focusedWindow?: BrowserWindow): void;
-}
-
-export interface SubMenuItem {
-  label?: string;
-  accelerator?: string;
-  click?: SubMenuItemClickEvent;
-  type?: string;
-  role?: string;
-  selector?: string;
-  submenu?: SubMenuItem[];
-}
-
-export type Menu = SubMenuItem[];
-
 // Create the Application's main menu
-export const menu = (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
-  const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [{
+export const create: (options: Options) => Array<MenuItemConstructorOptions> = (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
+  const template: Array<MenuItemConstructorOptions> = [{
     label: "View",
     submenu: [
       {

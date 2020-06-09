@@ -7,10 +7,8 @@ const getIndySoftImage = () => {
 }
 
 const indySoftLogo = d3.select('#indysoft-logo');
-  indySoftLogo.data([90])
-	.transition()
+indySoftLogo.data([90])
+  .transition()
   .style('transform', d => `rotate(${d}deg)`)
-	.delay(500)
-	.duration(2500); // Set Duration of 5000ms (5 seconds)
-
-  // .style('transform', d => `rotate(${d}deg)`);
+  .delay(500)
+  .duration(2500);
