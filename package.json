@@ -2,8 +2,6 @@
     "name": "electron_node_red",
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
-    "main": "dist/src/main.js",
-    "type": "module",
     "NRelectron": {
         "productName": "VisualCal",
         "editable": true,
@@ -19,17 +17,19 @@
         "dist": "electron-builder",
         "release": "electron-builder build -p always",
         "postinstall": "electron-builder install-app-deps",
-        "build": "rm -rf dist && tsc",
-        "start": "electron dist/src/main.js",
-        "test": "echo \" Warning: no test specified \""
+        "build": "tsc",
+        "watch": "tsc -w",
+        "start": "npm run build && electron --disable-gpu dist/src/main.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/dceejay/electron-node-red.git"
+        "url": "git+https://github.com/scottpage/electron-node-red.git"
     },
     "dependencies": {
         "@schemastore/package": "0.0.5",
         "@types/node-red": "^0.20.1",
+        "d3": "^5.16.0",
         "electron-is-dev": "^1.2.0",
         "express": "^4.17.1",
         "node-red": "1.0.6",
@@ -43,6 +43,7 @@
         "node-red-node-smooth": "*"
     },
     "devDependencies": {
+        "@types/d3": "^5.7.2",
         "@types/electron": "^1.6.10",
         "@types/express": "^4.17.6",
         "electron": "~7.2.1",
@@ -66,7 +67,7 @@
     "build": {
         "appId": "com.electron.node-red",
         "productName": "Node-RED Electron",
-        "copyright": "Copyright © 2018,2020 D.Conway-Jones",
+        "copyright": "Copyright © 2018,2020 Scott Page",
         "mac": {
             "category": "public.app-category.developer-tools",
             "target": "dmg"

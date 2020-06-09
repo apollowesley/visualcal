@@ -1,7 +1,7 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import { BrowserWindow, dialog, NativeImage } from 'electron';
-import path from 'path';
-import RED from 'node-red';
+import * as path from 'path';
+import * as RED from 'node-red';
 
 const nodeRed = RED as RED.Red;
 

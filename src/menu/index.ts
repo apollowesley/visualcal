@@ -43,7 +43,7 @@ export interface SubMenuItem {
 export type Menu = SubMenuItem[];
 
 // Create the Application's main menu
-export default (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
+export const menu = (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
   const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [{
     label: "View",
     submenu: [

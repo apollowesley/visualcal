@@ -1,15 +1,13 @@
 
-import { BrowserWindow, session, MenuItemConstructorOptions, MenuItem, screen } from 'electron';
-import menuTemplate, { Options } from './menu/menu';
-import os from 'os';
-import fs from 'fs';
-import url from 'url';
-import path from 'path';
-import http from 'http';
-import express from 'express';
-import electron from 'electron'; 
-import RED from "node-red";
-import pkg from '../package.json';
+import { app, Menu, ipcMain, dialog, Tray, BrowserWindow, MenuItem, MenuItemConstructorOptions, screen, session } from 'electron';
+import * as express from 'express';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as RED from "node-red";
+import * as os from 'os';
+import * as path from 'path';
+import * as pkg from '../package.json';
+import { menu as menuTemplate, Options } from './menu';
 import { create as createLoadingScreen } from './windows/loading/main';
 
 const pkgJsonOptions = pkg.NRelectron;
@@ -52,11 +50,6 @@ options.kioskMode = kioskMode;
 options.addNodes = addNodes;
 options.nrIcon = nrIcon;
 
-const { app, Menu } = electron;
-const ipc = electron.ipcMain;
-const dialog = electron.dialog;
-const Tray = electron.Tray;
-
 const nodeRed = RED as RED.Red;
 var red_app = express();
 
@@ -73,8 +66,8 @@ var server = http.createServer(red_app);
 
 // Setup user directory and flowfile (if editable)
 var userdir = path.join(__dirname, '..');
-  // if running as raw electron use the current directory (mainly for dev)
-if (process.argv[1] && (process.argv[1] === "dist/src/main.js")) {
+// if running as raw electron use the current directory (mainly for dev)
+if (process.argv[process.argv.length - 1] && (process.argv[process.argv.length - 1].endsWith("main.js"))) {
   userdir = path.join(__dirname, '..');
   if ((process.argv.length > 2) && (process.argv[process.argv.length - 1].indexOf(".json") > -1)) {
     if (path.isAbsolute(process.argv[process.argv.length - 1])) {
@@ -127,7 +120,7 @@ options.onConWindowOpened = (cw) => conWindow = cw;
 options.onConWindowClosed = () => conWindow = undefined;
 options.logBuffer = logBuffer;
 
-ipc.on('clearLogBuffer', function () { logBuffer = []; });
+ipcMain.on('clearLogBuffer', function () { logBuffer = []; });
 
 // Create the settings object - see default settings.js file for other options
 var settings = {
@@ -274,7 +267,7 @@ function createTray() {
   tray.setContextMenu(contextMenu);
 }
 
-const showLoadingScreen = () => createLoadingScreen(() => createWindow(), 5000);
+const showLoadingScreen = () => createLoadingScreen(() => createWindow(), 20000);
 
 // Called when Electron has finished initialization and is ready to create browser windows.
 app.on('ready', async () => {

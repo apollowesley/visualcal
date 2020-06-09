@@ -22,11 +22,13 @@
   <body>
     <div class="container">
       <div>
-        <img src="http://localhost:18880/assets/indysoft-logo_wht.svg" /><br />
+        <img id="indysoft-logo" src="http://localhost:18880/assets/indysoft-logo_wht.svg" /><br />
         <h1>Loading VisualCal</h1>
         Press Alt to see Menu bar.
       </div>
     </div>
-    <!-- <scipt type="module" src="renderer.js"></scipt> -->
+    <script>
+      require('./dist/src/windows/loading/renderer.js');
+    </script>
   </body>
 </html>
