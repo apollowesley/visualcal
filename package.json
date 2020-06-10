@@ -4,6 +4,12 @@
     "description": "Electron Node-RED application starter kit for development",
     "private": true,
     "main": "electron.js",
+    "_moduleAliases": {
+        "@": "dist/src",
+        "@root": ".",
+        "@menu": "dist/src/menu",
+        "@shared": "dist/src/shared"
+    },
     "NRelectron": {
         "productName": "VisualCal",
         "editable": true,
@@ -34,6 +40,7 @@
         "d3": "^5.16.0",
         "electron-is-dev": "^1.2.0",
         "express": "^4.17.1",
+        "module-alias": "^2.2.2",
         "node-red": "1.0.6",
         "node-red-contrib-play-audio": "^2.5.0",
         "node-red-contrib-web-worldmap": "^2.3.13",

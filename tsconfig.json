@@ -7,7 +7,13 @@
     "strict": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [ "src/*" ],
+      "@root/*": [ "./*" ],
+      "@menu/*": [ "src/menu/*" ],
+      "@shared/*": [ "src/shared/*" ]
+    }
   },
   "include": [
     "src/**/*"

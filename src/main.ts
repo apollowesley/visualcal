@@ -1,34 +1,61 @@
-
-import { app, Menu, ipcMain, dialog, Tray, BrowserWindow, MenuItem, MenuItemConstructorOptions, screen, session } from 'electron';
+import 'module-alias/register'; // *** MUST BE AT TOP OF MAIN!!! ***
+import { IpcChannel } from "@/IPC/IpcChannel";
+import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
+import { create as createMenu, Options } from '@/menu';
+import NodeRedSettings from '@/node-red-settings';
+import * as pkg from '@root/package.json';
+import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
+import * as isDev from 'electron-is-dev';
 import * as express from 'express';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as RED from "node-red";
 import * as os from 'os';
 import * as path from 'path';
-import * as pkg from '../package.json';
-import { create as createMenu, Options } from './menu';
-import NodeRedSettings from './node-red-settings';
 
-const isDev = require('electron-is-dev');
-const userDirPath = path.join(os.homedir(), '.visualcal');
-const mainIconPath = '../../../nodered.png';
-const listenPort = 18880;
 const urlStart = 'red';
 const pkgJsonOptions = pkg.NRelectron;
+
+global.visualCal = {
+  logs: {
+    main: []
+  },
+  isDev: isDev.valueOf(),
+  config: {
+    appIcon: path.join(__dirname, '..', '..', 'assets', 'app-icon.png'),
+    httpServer: {
+      port: 18880
+    }
+  },
+  dirs: {
+    base: path.join(__dirname, '..', '..'), // <base>/dist/src
+    html: path.join(__dirname, '..', '..', 'html'),
+    procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
+    visualCalUser: path.join(os.homedir(), '.visualcal')
+  },
+  assets: {
+    basePath: path.join(__dirname, '..', '..', 'assets'),
+    get: (name: string) => fs.readFileSync(path.join(__dirname, '..', '..', 'assets', name))
+  }
+};
+
 let options: Options = {
   logBuffer: [],
-  mainWindow: undefined
+  nrIcon: global.visualCal.config.appIcon
 };
 
 class Main {
 
   private mainWindow: BrowserWindow | null = null;
+  private conWindow: BrowserWindow | null = null;
   private nodeRedApp = express();
   private httpServer = http.createServer(this.nodeRedApp);
   private nodeRed = RED as RED.Red;
+  private log: string[] = [];
 
-  public init() {
+  public init(ipcChannels: IpcChannel[]) {
+    this.configureApp();
+    this.registerIpcChannels(ipcChannels);
     this.createHomeDirectory();
     app.on('ready', async () => await this.createLoadingWindow());
     app.on('window-all-closed', this.onWindowAllClosed);
@@ -50,8 +77,28 @@ class Main {
     }
   }
 
+  private registerIpcChannels(ipcChannels: IpcChannel[]) {
+    ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
+  }
+
+  private configureApp() {
+    const isFirstInstance = app.requestSingleInstanceLock();
+    if (!isFirstInstance) app.quit();
+    if (app.dock) app.dock.setIcon(global.visualCal.config.appIcon);
+    if (app.setUserTasks) app.setUserTasks([
+      {
+        program: process.execPath,
+        arguments: '',
+        iconPath: global.visualCal.config.appIcon,
+        iconIndex: 0,
+        title: 'VisualCal',
+        description: 'IndySoft VisualCal'
+      }
+    ]);
+  }
+
   private createHomeDirectory() {
-    if (!fs.existsSync(userDirPath)) fs.mkdirSync(userDirPath);
+    if (!fs.existsSync(global.visualCal.dirs.visualCalUser)) fs.mkdirSync(global.visualCal.dirs.visualCalUser);
   }
 
   private async createLoadingWindow(duration: number = 5000) {
@@ -62,6 +109,7 @@ class Main {
       width: 400,
       x: nearestScreenToCursor.workArea.x - 200 + nearestScreenToCursor.bounds.width / 2,
       y: nearestScreenToCursor.workArea.y - 200 + nearestScreenToCursor.bounds.height / 2,
+      icon: global.visualCal.config.appIcon,
       frame: false,
       transparent: false,
       resizable: false,
@@ -74,13 +122,13 @@ class Main {
       if (loadingScreen) loadingScreen.show();
       setTimeout(() => {
         if (loadingScreen) loadingScreen.close();
-        this.httpServer.listen(listenPort, 'localhost', async () => {
+        this.httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
           await this.nodeRed.start();
           await this.createMainWindow();
         });
       }, duration);
     });
-    await loadingScreen.loadFile(path.join(__dirname, '..', '..', 'loading.html'));
+    await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
   }
 
   private async createMainWindow() {
@@ -90,17 +138,18 @@ class Main {
       title: "VisualCal",
       width: 1024,
       height: 768,
-      icon: path.join(__dirname, mainIconPath),
+      icon: global.visualCal.config.appIcon,
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false
       }
     });
+    global.visualCal.mainWindow = this.mainWindow;
     this.mainWindow.setBounds(nearestScreenToCursor.workArea);
     const menu = Menu.buildFromTemplate(createMenu(options));
     Menu.setApplicationMenu(menu);
-  
+
     if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
     this.mainWindow.webContents.on('did-finish-load', () => {
       if (!this.mainWindow) return
@@ -110,16 +159,23 @@ class Main {
       // Required for node-red if it's in a modified state and changes haven't been deployed
       e.preventDefault();
       if (this.mainWindow) this.mainWindow.destroy();
+      global.visualCal.mainWindow = undefined;
       this.mainWindow = null;
       app.quit();
     });
     if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
-    await this.mainWindow.loadURL(`http://localhost:${listenPort}/${urlStart}`);
+    await this.mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
+  }
+
+  private createConsoleWindow() {
+
   }
 
 }
 
-(new Main()).init();
+(new Main()).init([
+  new SystemInfoChannel()
+]);
 
 // // Some settings you can edit if you don't set them in package.json
 // //console.log(options)

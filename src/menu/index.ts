@@ -1,5 +1,6 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, MenuItem } from 'electron';
-import { openFlow, saveFlow, createConsole } from './menu-actions';
+import { openFlow, saveFlow, createConsole } from '@menu/menu-actions';
+import * as path from 'path';
 
 const isDev = require('electron-is-dev');
 
@@ -10,8 +11,6 @@ export interface Options {
   flowFile?: string;
   addNodes?: boolean;
   kioskMode?: boolean;
-  mainWindow?: BrowserWindow;
-  conWindow?: BrowserWindow;
   onConWindowOpened?(conWindow?: BrowserWindow): void;
   onConWindowClosed?(): void;
   logBuffer: string[];
@@ -27,19 +26,19 @@ export interface Options {
 }
 
 // Create the Application's main menu
-export const create: (options: Options) => Array<MenuItemConstructorOptions> = (opts: Options = { mainWindow: undefined, conWindow: undefined, logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
+export const create: (options: Options) => Array<MenuItemConstructorOptions> = (opts: Options = { logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
   const template: Array<MenuItemConstructorOptions> = [{
     label: "View",
     submenu: [
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { if (opts.mainWindow) openFlow(opts.mainWindow); }
+        click() { if (global.visualCal.mainWindow) openFlow(global.visualCal.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (opts.mainWindow && opts.nrIcon) saveFlow(opts.mainWindow, opts.nrIcon); }
+        click() { if (global.visualCal.mainWindow && opts.nrIcon) saveFlow(global.visualCal.mainWindow, opts.nrIcon); }
       },
       { type: 'separator' },
       {
@@ -62,19 +61,19 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (opts.mainWindow && opts.listenPort && opts.urlDash) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
+        click() { if (global.visualCal.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
         click() {
-          if (opts.mainWindow && opts.listenPort && opts.urlEdit) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
+          if (global.visualCal.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (opts.mainWindow && opts.listenPort && opts.urlMap) opts.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
+        click() { if (global.visualCal.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
       },
       { type: 'separator' },
       { type: 'separator' },
@@ -94,11 +93,26 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       { role: 'togglefullscreen' },
       { role: 'quit' }
     ]
+  },
+  {
+    label: 'System',
+    submenu: [
+      {
+        label: 'Info',
+        async click() {
+          const systemInfoWindow = new BrowserWindow({
+            title: 'System Info',
+            center: true,
+            webPreferences: {
+              nodeIntegration: true
+            }
+          });
+          systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
+          await systemInfoWindow.loadFile(path.join(__dirname, '..', '..', '..', 'SystemInfo.html'));
+        }
+      }
+    ]
   }];
-
-  if (!opts.showMap) { (template[0].submenu as MenuItemConstructorOptions[]).splice(6, 1); }
-
-  if (!opts.allowLoadSave) { (template[0].submenu as MenuItemConstructorOptions[]).splice(0, 2); }
 
   // Top and tail menu on Mac
   if (process.platform === 'darwin') {
