@@ -1,6 +1,6 @@
 
-dist/*
-lib/*
+dist
+lib
 node_modules
 logs
 .config.json

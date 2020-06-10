@@ -3,7 +3,7 @@
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
     "private": true,
-    "main": "electron.js",
+    "main": "dist/src/main.js",
     "_moduleAliases": {
         "@": "dist/src",
         "@root": ".",
