@@ -21,9 +21,11 @@
         "start": "dashboard"
     },
     "scripts": {
+        "dev": "electron-webpack dev",
+        "compile": "electron-webpack",
         "pack": "electron-builder --dir",
         "dist": "electron-builder",
-        "release": "electron-builder build -p always",
+        "release": "npm run build &&  electron-builder build -p always",
         "postinstall": "electron-builder install-app-deps",
         "build": "tsc",
         "watch": "tsc -w",
@@ -58,6 +60,8 @@
         "@types/node-red": "^0.20.1",
         "electron": "~7.2.1",
         "electron-builder": "^22.5.1",
+        "electron-webpack": "^2.8.2",
+        "ts-loader": "^7.0.5",
         "typescript": "^3.9.5"
     },
     "keywords": [
@@ -75,9 +79,18 @@
     },
     "homepage": "https://github.com/scottpage/electron-node-red#readme",
     "build": {
-        "appId": "com.electron.node-red",
-        "productName": "Node-RED Electron",
-        "copyright": "Copyright © 2018,2020 Scott Page",
+        "appId": "com.indysoft.visualcal",
+        "productName": "VisualCal Electron",
+        "copyright": "Copyright © 2020 IndySoft",
+        "extends": null,
+        "files": [
+            "dist/**/*",
+            "assets/**/*",
+            "html/**/*"
+        ],
+        "extraMetadata": {
+            "main": "dist/src/main.js"
+        },
         "mac": {
             "category": "public.app-category.developer-tools",
             "target": "dmg"
