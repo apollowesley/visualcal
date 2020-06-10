@@ -24,8 +24,8 @@
         "dev": "electron-webpack dev",
         "compile": "electron-webpack",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder",
-        "release": "npm run build &&  electron-builder build -p always",
+        "dist": "npm run build && electron-builder",
+        "release": "npm run build && electron-builder build -p always",
         "postinstall": "electron-builder install-app-deps",
         "build": "tsc",
         "watch": "tsc -w",
@@ -51,7 +51,8 @@
         "node-red-node-geofence": "^0.1.2",
         "node-red-node-random": "^0.1.4",
         "node-red-node-serialport": "^0.10.2",
-        "node-red-node-smooth": "^0.1.2"
+        "node-red-node-smooth": "^0.1.2",
+        "source-map-support": "^0.5.19"
     },
     "devDependencies": {
         "@types/d3": "^5.7.2",
@@ -62,7 +63,8 @@
         "electron-builder": "^22.5.1",
         "electron-webpack": "^2.8.2",
         "ts-loader": "^7.0.5",
-        "typescript": "^3.9.5"
+        "typescript": "^3.9.5",
+        "webpack": "^4.43.0"
     },
     "keywords": [
         "electron",
