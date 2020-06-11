@@ -1,25 +1,9 @@
 {
-    "name": "electron_node_red",
+    "name": "indysoft-visualcal",
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
     "private": true,
     "main": "dist/main/main.js",
-    "_moduleAliases": {
-        "@": "dist/src",
-        "@root": ".",
-        "@menu": "dist/src/menu",
-        "@shared": "dist/src/shared"
-    },
-    "NRelectron": {
-        "productName": "VisualCal",
-        "editable": true,
-        "allowLoadSave": false,
-        "showMap": false,
-        "kioskMode": false,
-        "addNodes": true,
-        "flowFile": "/Users/scottpage/Documents/testing/electron-node-red/electron-node-red/electronflow.json",
-        "start": "dashboard"
-    },
     "scripts": {
         "dev": "electron-webpack dev",
         "compile": "electron-webpack",
@@ -42,7 +26,6 @@
         "d3": "^5.16.0",
         "electron-is-dev": "^1.2.0",
         "express": "^4.17.1",
-        "module-alias": "^2.2.2",
         "node-red": "1.0.6",
         "node-red-contrib-play-audio": "^2.5.0",
         "node-red-contrib-web-worldmap": "^2.3.13",
@@ -90,15 +73,11 @@
         "appId": "com.indysoft.visualcal",
         "productName": "VisualCal Electron",
         "copyright": "Copyright © 2020 IndySoft",
-        "extends": null,
         "files": [
             "dist/**/*",
             "assets/**/*",
             "html/**/*"
         ],
-        "extraMetadata": {
-            "main": "dist/main/main.js"
-        },
         "mac": {
             "category": "public.app-category.developer-tools",
             "target": "dmg"

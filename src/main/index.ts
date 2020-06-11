@@ -1,43 +1,20 @@
-// import 'module-alias/register'; // *** MUST BE AT TOP OF MAIN!!! ***
 import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { create as createMenu, Options } from '@/menu';
 import NodeRedSettings from '@/node-red-settings';
 // import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
-import * as isDev from 'electron-is-dev';
-import * as express from 'express';
-import * as fs from 'fs';
-import * as http from 'http';
-import * as RED from "node-red";
-import * as os from 'os';
-import * as path from 'path';
+import express from 'express';
+import fs from 'fs';
+import http from 'http';
+import RED from "node-red";
+import path from 'path';
+import './GlobalInit'; // Initialize global.visualcal
 
 const urlStart = 'red';
 // const pkgJsonOptions = pkg.NRelectron;
 
-global.visualCal = {
-  logs: {
-    main: []
-  },
-  isDev: isDev.valueOf(),
-  config: {
-    appIcon: path.join(__dirname, '..', '..', 'assets', 'app-icon.png'),
-    httpServer: {
-      port: 18880
-    }
-  },
-  dirs: {
-    base: path.join(__dirname, '..', '..'), // <base>/dist
-    html: path.join(__dirname, '..', '..', 'html'),
-    procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
-    visualCalUser: path.join(os.homedir(), '.visualcal')
-  },
-  assets: {
-    basePath: path.join(__dirname, '..', '..', 'assets'),
-    get: (name: string) => fs.readFileSync(path.join(__dirname, '..', '..', 'assets', name))
-  }
-};
+
 
 let options: Options = {
   logBuffer: [],
@@ -108,6 +85,7 @@ let options: Options = {
       x: nearestScreenToCursor.workArea.x - 200 + nearestScreenToCursor.bounds.width / 2,
       y: nearestScreenToCursor.workArea.y - 200 + nearestScreenToCursor.bounds.height / 2,
       icon: global.visualCal.config.appIcon,
+      title: 'VisualCal',
       frame: false,
       transparent: false,
       resizable: false,

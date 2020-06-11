@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions, app } from 'electron';
 import { openFlow, saveFlow, createConsole } from '@menu/menu-actions';
 import * as path from 'path';
 
@@ -25,7 +25,24 @@ export interface Options {
 
 // Create the Application's main menu
 export const create: (options: Options) => Array<MenuItemConstructorOptions> = (opts: Options = { logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
-  const template: Array<MenuItemConstructorOptions> = [{
+  const template: Array<MenuItemConstructorOptions> = [];
+
+  if (global.visualCal.isMac) template.push({
+    label: app.name,
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideOthers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit', label: app.name }
+    ]
+  }),
+
+  template.push({
     label: "View",
     submenu: [
       {
@@ -89,7 +106,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       },
       { type: 'separator' },
       { role: 'togglefullscreen' },
-      { role: 'quit' }
+      { role: 'quit', label: app.name }
     ]
   },
   {
@@ -110,7 +127,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
         }
       }
     ]
-  }];
+  });
 
   // Top and tail menu on Mac
   if (process.platform === 'darwin') {

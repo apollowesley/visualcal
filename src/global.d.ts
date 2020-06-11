@@ -21,6 +21,7 @@ declare module NodeJS {
 
     visualCal: {
       isDev: boolean,
+      isMac: boolean,
       config: VisualCalConfig;
       logs: {
         main: LogEntry[]
