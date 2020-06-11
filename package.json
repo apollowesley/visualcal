@@ -26,6 +26,7 @@
         "d3": "^5.16.0",
         "electron-is-dev": "^1.2.0",
         "express": "^4.17.1",
+        "grapesjs": "^0.16.12",
         "node-red": "1.0.6",
         "node-red-contrib-play-audio": "^2.5.0",
         "node-red-contrib-web-worldmap": "^2.3.13",

@@ -5,8 +5,8 @@ import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
 import { create as createMenu, Options } from '@/main/menu';
 import NodeRedSettings from '@/node-red-settings';
 // import * as pkg from '@root/package.json';
-import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
-import * as express from 'express';
+import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
+import express from 'express';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as RED from "node-red";
@@ -40,25 +40,17 @@ let options: Options = {
   }
 
   async function onAppReady() {
-    global.visualCal.windowManager.create({
-      id: 'test-window',
+    const gjsEditorWindow = global.visualCal.windowManager.create({
+      id: 'grapesjs-editor',
       config: {
-        title: 'Testing'
+        title: 'GrapesJS Editor',
+        webPreferences: {
+          nodeIntegration: true
+        }
       },
       autoRemove: true
     });
-    try {
-      global.visualCal.windowManager.create({
-        id: 'test-window',
-        config: {
-          title: 'Testing'
-        },
-        autoRemove: true
-      });
-    } catch (error) {
-      global.visualCal.logger.error(error.message, { appLocation: 'main' });
-      dialog.showErrorBox('Opps!', error.message);
-    }
+    await gjsEditorWindow.loadFile(path.join(global.visualCal.dirs.html, 'GrapesJS.html'));
     await createLoadingWindow();
   }
 
