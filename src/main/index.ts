@@ -1,9 +1,9 @@
-import 'module-alias/register'; // *** MUST BE AT TOP OF MAIN!!! ***
+// import 'module-alias/register'; // *** MUST BE AT TOP OF MAIN!!! ***
 import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { create as createMenu, Options } from '@/menu';
 import NodeRedSettings from '@/node-red-settings';
-import * as pkg from '@root/package.json';
+// import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
 import * as isDev from 'electron-is-dev';
 import * as express from 'express';
@@ -14,7 +14,7 @@ import * as os from 'os';
 import * as path from 'path';
 
 const urlStart = 'red';
-const pkgJsonOptions = pkg.NRelectron;
+// const pkgJsonOptions = pkg.NRelectron;
 
 global.visualCal = {
   logs: {
@@ -28,7 +28,7 @@ global.visualCal = {
     }
   },
   dirs: {
-    base: path.join(__dirname, '..', '..'), // <base>/dist/src
+    base: path.join(__dirname, '..', '..'), // <base>/dist
     html: path.join(__dirname, '..', '..', 'html'),
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
@@ -44,44 +44,42 @@ let options: Options = {
   nrIcon: global.visualCal.config.appIcon
 };
 
-class Main {
+  let mainWindow: BrowserWindow | null = null;
+  // private conWindow: BrowserWindow | null = null;
+  const nodeRedApp = express();
+  const httpServer = http.createServer(nodeRedApp);
+  const nodeRed = RED as RED.Red;
+  // private log: string[] = [];
 
-  private mainWindow: BrowserWindow | null = null;
-  private conWindow: BrowserWindow | null = null;
-  private nodeRedApp = express();
-  private httpServer = http.createServer(this.nodeRedApp);
-  private nodeRed = RED as RED.Red;
-  private log: string[] = [];
-
-  public init(ipcChannels: IpcChannel[]) {
-    this.configureApp();
-    this.registerIpcChannels(ipcChannels);
-    this.createHomeDirectory();
-    app.on('ready', async () => await this.createLoadingWindow());
-    app.on('window-all-closed', this.onWindowAllClosed);
-    app.on('activate', this.onActive);
-    this.nodeRed.init(this.httpServer, NodeRedSettings);
-    this.nodeRedApp.use(NodeRedSettings.httpAdminRoot, this.nodeRed.httpAdmin);
-    this.nodeRedApp.use(NodeRedSettings.httpNodeRoot, this.nodeRed.httpNode);
+  function init(ipcChannels: IpcChannel[]) {
+    configureApp();
+    registerIpcChannels(ipcChannels);
+    createHomeDirectory();
+    app.on('ready', async () => await createLoadingWindow());
+    app.on('window-all-closed', onWindowAllClosed);
+    app.on('activate', onActive);
+    nodeRed.init(httpServer, NodeRedSettings);
+    nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
+    nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
   }
 
-  private onWindowAllClosed() {
+  function onWindowAllClosed() {
     if (process.platform !== 'darwin') {
       app.quit();
     }
   }
 
-  private onActive() {
-    if (!this.mainWindow) {
-      this.createMainWindow();
+  async function onActive() {
+    if (!mainWindow) {
+      await createMainWindow();
     }
   }
 
-  private registerIpcChannels(ipcChannels: IpcChannel[]) {
+  function registerIpcChannels(ipcChannels: IpcChannel[]) {
     ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
   }
 
-  private configureApp() {
+  function configureApp() {
     const isFirstInstance = app.requestSingleInstanceLock();
     if (!isFirstInstance) app.quit();
     if (app.dock) app.dock.setIcon(global.visualCal.config.appIcon);
@@ -97,11 +95,11 @@ class Main {
     ]);
   }
 
-  private createHomeDirectory() {
+  function createHomeDirectory() {
     if (!fs.existsSync(global.visualCal.dirs.visualCalUser)) fs.mkdirSync(global.visualCal.dirs.visualCalUser);
   }
 
-  private async createLoadingWindow(duration: number = 5000) {
+  async function createLoadingWindow(duration: number = 5000) {
     const cursorScreenPoint = screen.getCursorScreenPoint();
     const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
     let loadingScreen: BrowserWindow | null = new BrowserWindow({
@@ -122,19 +120,19 @@ class Main {
       if (loadingScreen) loadingScreen.show();
       setTimeout(() => {
         if (loadingScreen) loadingScreen.close();
-        this.httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
-          await this.nodeRed.start();
-          await this.createMainWindow();
+        httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
+          await nodeRed.start();
+          await createMainWindow();
         });
       }, duration);
     });
     await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
   }
 
-  private async createMainWindow() {
+  async function createMainWindow() {
     const cursorScreenPoint = screen.getCursorScreenPoint();
     const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
-    this.mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
       title: "VisualCal",
       width: 1024,
       height: 768,
@@ -145,37 +143,35 @@ class Main {
         nodeIntegration: false
       }
     });
-    global.visualCal.mainWindow = this.mainWindow;
-    this.mainWindow.setBounds(nearestScreenToCursor.workArea);
+    global.visualCal.mainWindow = mainWindow;
+    mainWindow.setBounds(nearestScreenToCursor.workArea);
     const menu = Menu.buildFromTemplate(createMenu(options));
     Menu.setApplicationMenu(menu);
 
-    if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
-    this.mainWindow.webContents.on('did-finish-load', () => {
-      if (!this.mainWindow) return
-      this.mainWindow.show();
+    if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
+    mainWindow.webContents.on('did-finish-load', () => {
+      if (!mainWindow) return
+      mainWindow.show();
     });
-    this.mainWindow.on('close', (e) => {
+    mainWindow.on('close', (e) => {
       // Required for node-red if it's in a modified state and changes haven't been deployed
       e.preventDefault();
-      if (this.mainWindow) this.mainWindow.destroy();
+      if (mainWindow) mainWindow.destroy();
       global.visualCal.mainWindow = undefined;
-      this.mainWindow = null;
+      mainWindow = null;
       app.quit();
     });
-    if (process.platform !== 'darwin') { this.mainWindow.setAutoHideMenuBar(true); }
-    await this.mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
+    await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
   }
 
-  private createConsoleWindow() {
+  // private createConsoleWindow() {
 
-  }
+  // }
 
-}
-
-(new Main()).init([
+init([
   new SystemInfoChannel()
 ]);
+
 
 // // Some settings you can edit if you don't set them in package.json
 // //console.log(options)

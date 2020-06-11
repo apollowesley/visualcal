@@ -1,15 +1,6 @@
 import * as d3 from 'd3';
-import { ipcRenderer } from 'electron';
-
-const getIndySoftImage = () => {
-  const image = ipcRenderer.send('get-indysoft-image');
-  return image;
-}
 
 const animate = () => {
-
-  const height = Number(window.innerHeight);
-  const width = Number(window.innerWidth);
 
   function indySoftLogoTransformTween() {
     const i = d3.interpolate(1, 360);

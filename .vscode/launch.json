@@ -8,13 +8,13 @@
             "name": "Debug Main Process",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}/dist/src",
+            "cwd": "${workspaceFolder}/dist",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "windows": {
               "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
-            "args" : ["./main.js"],
+            "args" : ["./main/main.js"],
             "outputCapture": "std"
           }
     ]

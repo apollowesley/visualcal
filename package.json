@@ -3,7 +3,7 @@
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
     "private": true,
-    "main": "dist/src/main.js",
+    "main": "dist/main/main.js",
     "_moduleAliases": {
         "@": "dist/src",
         "@root": ".",
@@ -24,12 +24,12 @@
         "dev": "electron-webpack dev",
         "compile": "electron-webpack",
         "pack": "electron-builder --dir",
-        "dist": "npm run build && electron-builder",
+        "dist": "npm run compile && electron-builder",
         "release": "npm run build && electron-builder build -p always",
         "postinstall": "electron-builder install-app-deps",
         "build": "tsc",
         "watch": "tsc -w",
-        "start": "npm run build && electron --disable-gpu dist/src/main.js",
+        "start": "npm run build && electron --disable-gpu dist/main/main.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -62,6 +62,7 @@
         "electron": "~7.2.1",
         "electron-builder": "^22.5.1",
         "electron-webpack": "^2.8.2",
+        "electron-webpack-ts": "^4.0.1",
         "ts-loader": "^7.0.5",
         "typescript": "^3.9.5",
         "webpack": "^4.43.0"
@@ -80,6 +81,11 @@
         "url": "https://github.com/scottpage/electron-node-red/issues"
     },
     "homepage": "https://github.com/scottpage/electron-node-red#readme",
+    "electronWebpack": {
+        "main": {
+            "webpackConfig": "webpack.config.js"
+        }
+    },
     "build": {
         "appId": "com.indysoft.visualcal",
         "productName": "VisualCal Electron",
@@ -91,7 +97,7 @@
             "html/**/*"
         ],
         "extraMetadata": {
-            "main": "dist/src/main.js"
+            "main": "dist/main/main.js"
         },
         "mac": {
             "category": "public.app-category.developer-tools",

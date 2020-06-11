@@ -1,8 +1,6 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, MenuItem } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions } from 'electron';
 import { openFlow, saveFlow, createConsole } from '@menu/menu-actions';
 import * as path from 'path';
-
-const isDev = require('electron-is-dev');
 
 let conWindow: BrowserWindow | undefined = undefined;
 
@@ -124,7 +122,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
   }
 
   // Add Dev menu if in dev mode
-  if (isDev) {
+  if (true) {
     template.push({
       label: 'Development',
       submenu: [
