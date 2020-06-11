@@ -1,11 +1,69 @@
+declare module 'grapesjs-custom-code';
+declare module 'grapesjs-lory-slider';
+declare module 'grapesjs-parser-postcss';
+declare module 'grapesjs-preset-webpage';
+declare module 'grapesjs-style-bg';
+declare module 'grapesjs-tabs';
+declare module 'grapesjs-tooltip';
+declare module 'grapesjs-touch';
+declare module 'grapesjs-tui-image-editor';
+declare module 'grapesjs-typed';
+
 declare module 'grapesjs' {
 
+  export const version: string;
+
+  export function $(selector?: string): JQuery;
+
   export function init(config: EditorConfig): Editor;
+
+  export interface CommandFunctionOptions {
+    (): void;
+  }
+
+  export interface CommandHandlerOptions {
+    run: (editor: Editor) => void;
+    stop: (editor: Editor) => void;
+  }
+
+  export interface ButtonOptions {
+    id: string;
+    label?: string;
+    className: string;
+    command: string | Function;
+    attributes?: {};
+    active?: boolean;
+    context?: string;
+  }
 
   export interface Editor {
     BlockManager: {
       add(id: string, options: {}): void;
-    }
+    };
+    getHtml(): string;
+    getCss(): string;
+    I18n: {
+      addMessages(lang: {}): void;
+    };
+    Panels: {
+      addButton(id: string, options: ButtonOptions): void;
+      getButton(panelId: string, buttonId: string): any;
+    };
+    Modal: {
+      setTitle(title: string): void;
+      setContent(content?: HTMLElement | null): void;
+      open(): void;
+      getModel(): import('events').EventEmitter;
+    };
+    Commands: {
+      add(id: string, options: CommandFunctionOptions | CommandHandlerOptions): void;
+    };
+    DomComponents: {
+      clear(): any[];
+    };
+    setDevice(device: string): void;
+    runCommand(commandId: string): void;
+    on(eventName: string, callback: (event?: Event) => void): void;
   }
 
   export interface EditorConfig {
