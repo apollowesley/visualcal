@@ -1,20 +1,18 @@
+import './GlobalInit'; // Initialize global.visualcal - *** LEAVE THIS AT THE TOP OF THE MAIN APP FILE!!! ***
 import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { create as createMenu, Options } from '@/menu';
 import NodeRedSettings from '@/node-red-settings';
 // import * as pkg from '@root/package.json';
-import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
-import express from 'express';
-import fs from 'fs';
-import http from 'http';
-import RED from "node-red";
-import path from 'path';
-import './GlobalInit'; // Initialize global.visualcal
+import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
+import * as express from 'express';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as RED from "node-red";
+import * as path from 'path';
 
 const urlStart = 'red';
 // const pkgJsonOptions = pkg.NRelectron;
-
-
 
 let options: Options = {
   logBuffer: [],
@@ -28,16 +26,39 @@ let options: Options = {
   const nodeRed = RED as RED.Red;
   // private log: string[] = [];
 
-  function init(ipcChannels: IpcChannel[]) {
+  function init(ipcChannels: IpcChannel<string>[]) {
     configureApp();
     registerIpcChannels(ipcChannels);
     createHomeDirectory();
-    app.on('ready', async () => await createLoadingWindow());
+    app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
     app.on('activate', onActive);
     nodeRed.init(httpServer, NodeRedSettings);
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
+  }
+
+  async function onAppReady() {
+    global.visualCal.windowManager.create({
+      id: 'test-window',
+      config: {
+        title: 'Testing'
+      },
+      autoRemove: true
+    });
+    try {
+      global.visualCal.windowManager.create({
+        id: 'test-window',
+        config: {
+          title: 'Testing'
+        },
+        autoRemove: true
+      });
+    } catch (error) {
+      global.visualCal.logger.error(error.message, { appLocation: 'main' });
+      dialog.showErrorBox('Opps!', error.message);
+    }
+    await createLoadingWindow();
   }
 
   function onWindowAllClosed() {
@@ -52,7 +73,7 @@ let options: Options = {
     }
   }
 
-  function registerIpcChannels(ipcChannels: IpcChannel[]) {
+  function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
     ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
   }
 
@@ -121,7 +142,11 @@ let options: Options = {
         nodeIntegration: false
       }
     });
-    global.visualCal.mainWindow = mainWindow;
+    global.visualCal.windowManager.add({
+      id: 'main',
+      window: mainWindow,
+      isMain: true
+    });
     mainWindow.setBounds(nearestScreenToCursor.workArea);
     const menu = Menu.buildFromTemplate(createMenu(options));
     Menu.setApplicationMenu(menu);
@@ -134,9 +159,12 @@ let options: Options = {
     mainWindow.on('close', (e) => {
       // Required for node-red if it's in a modified state and changes haven't been deployed
       e.preventDefault();
-      if (mainWindow) mainWindow.destroy();
-      global.visualCal.mainWindow = undefined;
+      if (mainWindow) {
+        global.visualCal.windowManager.remove('main');
+        mainWindow.destroy();
+      }
       mainWindow = null;
+      global.visualCal.windowManager.closeAll();
       app.quit();
     });
     await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);

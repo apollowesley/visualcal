@@ -1,14 +1,14 @@
 import isDev from 'electron-is-dev';
-import path from 'path';
-import os from 'os';
-import fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
+import { WindowManager } from './managers/WindowManager';
+import { create } from './CreateLogger';
 
 global.visualCal = {
-  logs: {
-    main: []
-  },
+  logger: create(),
   isMac: process.platform === 'darwin',
-  isDev: isDev.valueOf(),
+  isDev: isDev,
   config: {
     appIcon: path.join(__dirname, '..', '..', 'assets', 'app-icon.png'),
     httpServer: {
@@ -24,5 +24,6 @@ global.visualCal = {
   assets: {
     basePath: path.join(__dirname, '..', '..', 'assets'),
     get: (name: string) => fs.readFileSync(path.join(__dirname, '..', '..', 'assets', name))
-  }
+  },
+  windowManager: new WindowManager()
 };

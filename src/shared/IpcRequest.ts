@@ -1,4 +1,4 @@
-export interface IpcRequest {
+export interface IpcRequest<TParms> {
   responseChannel?: string;
-  params?: string[];
+  params?: TParms[];
 }

@@ -23,9 +23,7 @@ declare module NodeJS {
       isDev: boolean,
       isMac: boolean,
       config: VisualCalConfig;
-      logs: {
-        main: LogEntry[]
-      },
+      logger: import('winston').Logger,
       assets: {
         basePath: string;
         get: (name: string) => Buffer;
@@ -36,8 +34,7 @@ declare module NodeJS {
         procedures: string;
         visualCalUser: string;
       },
-      mainWindow?: import('electron').BrowserWindow;
-      consoleWindow?: import('electron').BrowserWindow;
+      windowManager: import('./main/managers/WindowManager').WindowManager,
       user?: User;
     }
 

@@ -38,7 +38,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       { role: 'hideOthers' },
       { role: 'unhide' },
       { type: 'separator' },
-      { role: 'quit', label: app.name }
+      { role: 'quit' }
     ]
   }),
 
@@ -48,12 +48,12 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { if (global.visualCal.mainWindow) openFlow(global.visualCal.mainWindow); }
+        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.mainWindow && opts.nrIcon) saveFlow(global.visualCal.mainWindow, opts.nrIcon); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.nrIcon) saveFlow(global.visualCal.windowManager.mainWindow, opts.nrIcon); }
       },
       { type: 'separator' },
       {
@@ -76,19 +76,19 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (global.visualCal.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
         click() {
-          if (global.visualCal.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
+          if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (global.visualCal.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
       },
       { type: 'separator' },
       { type: 'separator' },
@@ -106,7 +106,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       },
       { type: 'separator' },
       { role: 'togglefullscreen' },
-      { role: 'quit', label: app.name }
+      { role: 'quit' }
     ]
   },
   {
@@ -123,7 +123,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
             }
           });
           systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
-          await systemInfoWindow.loadFile(path.join(__dirname, '..', '..', '..', 'SystemInfo.html'));
+          await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html, 'SystemInfo.html'));
         }
       }
     ]

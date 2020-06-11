@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/dist",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "compile",
             "windows": {
               "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },

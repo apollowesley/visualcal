@@ -4,12 +4,12 @@ import { IpcMainEvent } from 'electron';
 import { IpcRequest } from "@shared/IpcRequest";
 import { IpcChannel } from "./IpcChannel";
 
-export class SystemInfoChannel implements IpcChannel {
+export class SystemInfoChannel implements IpcChannel<string> {
   getName(): string {
     return 'system-info';
   }
 
-  handle(event: IpcMainEvent, request: IpcRequest): void {
+  handle(event: IpcMainEvent, request: IpcRequest<string>): void {
     if (!request.responseChannel) {
       request.responseChannel = `${this.getName()}_response`;
     }
