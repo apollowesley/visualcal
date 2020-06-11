@@ -15,6 +15,16 @@ interface User {
   email: string;
 }
 
+interface Result {
+  timestamp: Date;
+  source: string;
+}
+
+interface LogicResult extends Result {
+  unitId: string;
+  value: number;
+}
+
 declare module NodeJS {
 
   interface Global {
@@ -40,4 +50,12 @@ declare module NodeJS {
 
   }
 
+}
+
+interface Window {
+  visualCal: {
+    log: {
+      result(result: LogicResult): void;
+    }
+  }
 }

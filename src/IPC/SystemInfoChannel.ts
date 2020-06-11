@@ -1,4 +1,3 @@
-
 import { execSync } from "child_process";
 import { IpcMainEvent } from 'electron';
 import { IpcRequest } from "@shared/IpcRequest";

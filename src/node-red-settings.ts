@@ -17,7 +17,9 @@ const settings = {
     }
   },
   nodesDir: path.join(__dirname, '..', '..', 'nodes'),
-  functionGlobalContext: {},    // enables global context - add extras ehre if you need them
+  functionGlobalContext: {
+    visualCal: global.visualCal
+  },    // enables global context - add extras ehre if you need them
   logging: {
     console: {
       level: 'info',

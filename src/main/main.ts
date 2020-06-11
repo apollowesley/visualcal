@@ -1,7 +1,8 @@
 import './GlobalInit'; // Initialize global.visualcal - *** LEAVE THIS AT THE TOP OF THE MAIN APP FILE!!! ***
 import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
-import { create as createMenu, Options } from '@/menu';
+import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
+import { create as createMenu, Options } from '@/main/menu';
 import NodeRedSettings from '@/node-red-settings';
 // import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
@@ -139,7 +140,8 @@ let options: Options = {
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
-        nodeIntegration: false
+        nodeIntegration: false,
+        preload: path.join(__dirname, '..', 'apps', 'NodeRed.js')
       }
     });
     global.visualCal.windowManager.add({
@@ -175,7 +177,8 @@ let options: Options = {
   // }
 
 init([
-  new SystemInfoChannel()
+  new SystemInfoChannel(),
+  new NodeRedResultChannel()
 ]);
 
 

@@ -97,8 +97,11 @@ export class WindowManager {
     else window.window.hide();
   }
 
+  // TODO: Only close windows that aren't main.  Figure out if this is correct way.
   closeAll() {
-    this.fWindows.forEach(w => w.window.close());
+    this.fWindows.forEach(w => {
+      if (!w.isMain) w.window.close()
+    });
     this.fWindows = [];
   }
 

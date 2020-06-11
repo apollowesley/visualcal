@@ -12,7 +12,6 @@
     "paths": {
       "@/*": [ "src/*" ],
       "@root/*": [ "./*" ],
-      "@menu/*": [ "src/menu/*" ],
       "@shared/*": [ "src/shared/*" ]
     }
   },
