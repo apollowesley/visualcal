@@ -72,7 +72,7 @@ export const createConsole = async () => {
   });
   await conWindow.loadFile(path.join(global.visualCal.dirs.html, 'console.html'));
   conWindow.webContents.on('did-finish-load', () => {
-    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.window.webContents.send('logBuff', global.visualCal.logger.query());
+    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.window.webContents.send('results', global.visualCal.logger.query());
   });
   return conWindow;
 }

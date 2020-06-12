@@ -1,34 +1,38 @@
 import { ipcRenderer } from 'electron';
+import Tabulator from 'tabulator-tables';
+import moment from 'moment';
 
-const logLength = 250;
-let list: LogEntry[] = [];
+window.moment = moment;
 
-const scrollDown = () => {
-  setTimeout(function () {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, 50);
-}
+let entries: LogicResult[] = [];
+
+const table = new Tabulator('#results-table', {
+  data: entries,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Timestamp', field: 'timestamp', width: 150, formatter: 'datetime', formatterParams: { humanize: true }, sorter: 'datetime' },
+    { title: 'Timestamp (string)', field: 'timestamp' },
+    { title: 'Level', field: 'level', hozAlign: 'left' },
+    { title: 'Source', field: 'source' },
+    { title: 'Unit Id', field: 'unitId' },
+    { title: 'Value', field: 'value' },
+  ]
+});
+
 const clearList = () => {
-  list = [];
-  const debugElement = document.getElementById("debug");
-  if (debugElement) debugElement.innerHTML = '';
-  ipcRenderer.send('clearLogBuffer', "clear");
+  entries = [];
+  table.replaceData(entries);
 }
-ipcRenderer.on('logBuff', (event, data) => {
-  const debugElement = document.getElementById("debug");
-  list = data;
-  if (debugElement) debugElement.innerHTML = list.join("<br/>");
+ipcRenderer.on('results', (_, data: LogicResult[]) => {
+  entries = data;
+  table.replaceData(entries);
 });
-ipcRenderer.on('debugMsg', (event, data) => {
-  const debugElement = document.getElementById("debug");
-  list.push(data);
-  if (list.length > logLength) { list.shift(); }
-  if (debugElement) debugElement.innerHTML = list.join("<br/>");
-  window.scrollTo(0, document.body.scrollHeight);
+ipcRenderer.on('result', (_, data: LogicResult) => {
+  entries.push(data);
+  table.addData([data]);
 });
 
-document.body.onload = () => {
-  scrollDown();
+window.onload = () => {
   const clearListBtn = document.getElementById('clear-list-btn');
   if (clearListBtn) clearListBtn.onclick = () => clearList();
 }

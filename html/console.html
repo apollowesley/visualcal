@@ -7,14 +7,28 @@
     <title>Node-RED Console</title>
     <meta name="viewport"
         content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
+    <link href="../node_modules/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        header {
+            overflow: hidden;
+            max-height: 10vh;
+        }
+
+        #results-table {
+            max-height: 90vh;
+        }
+    </style>
 </head>
 
-<body style="margin:0;">
-    <font style="font-family:'Helvetica Neue', Arial, Helvetica, sans-serif; font-size:9pt;">
-        <div id="header" style="background-color:#910000; position:fixed; height:16px; width:100%; padding:8px;">
-            <input id="clear-list-btn" type="button" value="Clear Log" /></div>
-        <div id="debug" style="padding:4px; padding-left:8px; padding-top:34px;"></div>
-    </font>
+<body>
+    <header>
+        <h1>Console Log</h1>
+    </header>
+    <div id="results-table" class="data-table"></div>
     <script>
         require('../dist/apps/console.js');
     </script>

@@ -10,7 +10,7 @@ export class ConsoleWindowTransport extends Transport {
     try {
       this.emit('logged', info);
       const consoleWindow = global.visualCal.windowManager.consoleWindow;
-      if (consoleWindow) consoleWindow.window.webContents.send('debugMsg', info);
+      if (consoleWindow) consoleWindow.window.webContents.send('result', info);
     } catch (error) {
       console.error(error);
     }
