@@ -1,5 +1,5 @@
 {
-    "name": "indysoft-visualcal",
+    "name": "visualcal-electron",
     "version": "1.0.6",
     "description": "Electron Node-RED application starter kit for development",
     "private": true,
