@@ -46,32 +46,34 @@ export const openFlow = async (mainWindow: BrowserWindow) => {
 }
 
 // Create the console log window
-export const createConsole = (conWindow: BrowserWindow | undefined, nrIcon: string, urlConsole: string, logBuffer: string[]) => {
-  if (conWindow) {
+export const createConsole = async () => {
+  if (global.visualCal.windowManager.consoleWindow) {
     console.info('Console window already exists');
-    conWindow.show();
+    global.visualCal.windowManager.consoleWindow.window.show();
     return;
   }
   console.info('Creating console');
   // Create the hidden console window
-  conWindow = new BrowserWindow({
+  const conWindow = new BrowserWindow({
     title: "VisualCal Console",
     width: 800,
     height: 600,
-    icon: path.join(__dirname, nrIcon),
+    icon: global.visualCal.config.appIcon,
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true
     }
   });
-  conWindow.loadURL(`file://${path.join(__dirname, urlConsole)}`);
+  global.visualCal.windowManager.add({
+    id: 'console',
+    window: conWindow,
+    autoRemove: true,
+    isConsole: true
+  });
+  await conWindow.loadFile(path.join(global.visualCal.dirs.html, 'console.html'));
   conWindow.webContents.on('did-finish-load', () => {
-    if (conWindow) conWindow.webContents.send('logBuff', logBuffer);
+    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.window.webContents.send('logBuff', global.visualCal.logger.query());
   });
-  conWindow.on('closed', () => {
-    conWindow = undefined;
-  });
-  //conWindow.webContents.openDevTools();
   return conWindow;
 }
 

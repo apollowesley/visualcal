@@ -8,14 +8,19 @@
             "name": "Debug Main Process",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}/dist",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "preLaunchTask": "compile",
             "windows": {
               "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
             },
-            "args" : ["./main/main.js"],
-            "outputCapture": "std"
+            "runtimeArgs": [
+              ".",
+              // this args for attaching render process
+              "--remote-debugging-port=9222"
+            ],
+            "program" : "./main/main.js",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+            "sourceMaps": true
           }
     ]
 }

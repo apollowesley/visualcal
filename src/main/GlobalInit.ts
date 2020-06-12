@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { WindowManager } from './managers/WindowManager';
-import { create } from './CreateLogger';
+import { create } from './logging/CreateLogger';
 
 global.visualCal = {
   logger: create(),

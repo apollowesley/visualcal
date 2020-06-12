@@ -18,8 +18,8 @@ export interface CreateWindowOptions extends BaseOptions {
 export class WindowManager {
 
   private fWindows: Window[];
-  private fMainWindow?: BrowserWindow;
-  private fConsoleWindow?: BrowserWindow;
+  private fMainWindow: Window | undefined;
+  private fConsoleWindow: Window | undefined;
 
   constructor() {
     this.fWindows = [];
@@ -30,16 +30,16 @@ export class WindowManager {
   }
 
   get mainWindow() {
-    return this.fMainWindow;
+    return this.fMainWindow && !this.fMainWindow.window.isDestroyed() ? this.fMainWindow : undefined;
   }
 
   get consoleWindow() {
-    return this.fConsoleWindow;
+    return this.fConsoleWindow && !this.fConsoleWindow.window.isDestroyed() ? this.fConsoleWindow : undefined;
   }
 
   private checkWindowExists(options: { id: string, isMain?: boolean, isConsole?: boolean }) {
-    if (options.isMain && this.fMainWindow) throw new Error('Main window already exists');
-    if (options.isConsole && this.fConsoleWindow) throw new Error('Console window already exists');
+    if (options.isMain && this.mainWindow !== undefined) throw new Error('Main window already exists');
+    if (options.isConsole && this.consoleWindow !== undefined) throw new Error('Console window already exists');
     const existing = this.get(options.id);
     if (existing) throw new Error(`Duplicate window Id, ${options.id}`);
   }
@@ -47,8 +47,10 @@ export class WindowManager {
   add(window: Window) {
     global.visualCal.logger.info('Adding window', { windowId: window.id });
     this.checkWindowExists({ id: window.id, isMain: window.isMain, isConsole: window.isConsole });
+    if (window.isMain) this.fMainWindow = window;
+    if (window.isConsole) this.fConsoleWindow = window;
     this.fWindows.push(window);
-    if (window.autoRemove) window.window.once('closed', () => {
+    if (window.autoRemove) window.window.on('closed', () => {
       global.visualCal.logger.info('Window closed', { windowId: window.id });
       this.remove(window.id);
     });
@@ -59,6 +61,8 @@ export class WindowManager {
     const existing = this.get(id);
     if (!existing) throw new Error(`Window not found, ${id}`);
     const windowIndex = this.fWindows.indexOf(existing);
+    if (existing.isMain) this.fMainWindow = undefined;
+    if (existing.isConsole) this.fConsoleWindow = undefined;
     this.fWindows.splice(windowIndex, 1);
     return existing;
   }

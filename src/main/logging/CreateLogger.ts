@@ -1,6 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 import isDev from 'electron-is-dev';
-const { combine, timestamp, label } = format;
+import { ConsoleWindowTransport } from './ConsoleWindowTransport';
+const { combine, timestamp, label, colorize } = format;
 
 export const create = () => {
   return createLogger({
@@ -9,10 +10,12 @@ export const create = () => {
         level: isDev ? 'debug' : 'info',
         format: combine(
         timestamp(),
-        label({ label: 'Main' })
+        label({ label: 'Main' }),
+        colorize()
         ),
         handleExceptions: true
-      })
+      }),
+      new ConsoleWindowTransport()
     ]
   });
 }

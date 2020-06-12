@@ -2,8 +2,6 @@ import { BrowserWindow, shell, MenuItemConstructorOptions, app } from 'electron'
 import { openFlow, saveFlow, createConsole } from '@/main/menu/menu-actions';
 import * as path from 'path';
 
-let conWindow: BrowserWindow | undefined = undefined;
-
 export interface Options {
   start?: any;
   flowFile?: string;
@@ -48,47 +46,42 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow); }
+        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow.window); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.nrIcon) saveFlow(global.visualCal.windowManager.mainWindow, opts.nrIcon); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.nrIcon) saveFlow(global.visualCal.windowManager.mainWindow.window, opts.nrIcon); }
       },
       { type: 'separator' },
       {
         label: 'Console',
         accelerator: "Shift+CmdOrCtrl+C",
-        click() {
-          if (opts.nrIcon && opts.urlConsole && opts.logBuffer) {
-            console.info('Create console window');
-            conWindow = createConsole(conWindow, opts.nrIcon, opts.urlConsole, opts.logBuffer);
-            if (opts.onConWindowOpened) opts.onConWindowOpened(conWindow);
-            if (conWindow) conWindow.on('closed', () => {
-              conWindow = undefined
-              if (opts.onConWindowClosed) opts.onConWindowClosed();
-            });
-          } else {
-            console.info('Can\'t create console window');
-          };
+        click: async () => {
+          console.info('Create console window');
+          try {
+            await createConsole();
+          } catch (error) {
+            global.visualCal.logger.error(error);
+          }
         }
       },
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
         click() {
-          if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
+          if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
+        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
       },
       { type: 'separator' },
       { type: 'separator' },
