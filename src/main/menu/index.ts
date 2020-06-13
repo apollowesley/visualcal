@@ -22,7 +22,7 @@ export interface Options {
 }
 
 // Create the Application's main menu
-export const create: (options: Options) => Array<MenuItemConstructorOptions> = (opts: Options = { logBuffer: [], showMap: true, allowLoadSave: true, productName: 'VisualCal', nrIcon: '../../../nodered.png', listenPort: 3927, urlDash: '/ui/#/0', urlEdit: '/red', urlMap: '/worldmap', urlConsole: '../../../console.html' }) => {
+export const create: () => Array<MenuItemConstructorOptions> = () => {
   const template: Array<MenuItemConstructorOptions> = [];
 
   if (global.visualCal.isMac) template.push({
@@ -51,7 +51,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.nrIcon) saveFlow(global.visualCal.windowManager.mainWindow.window, opts.nrIcon); }
+        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow.window, global.visualCal.config.appIcon); }
       },
       { type: 'separator' },
       {
@@ -69,19 +69,19 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlDash) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlDash); }
+        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/ui'); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
         click() {
-          if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlEdit) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlEdit);
+          if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/red');
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (global.visualCal.windowManager.mainWindow && opts.listenPort && opts.urlMap) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + opts.listenPort + opts.urlMap); }
+        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
       },
       { type: 'separator' },
       { type: 'separator' },
@@ -126,7 +126,7 @@ export const create: (options: Options) => Array<MenuItemConstructorOptions> = (
   if (process.platform === 'darwin') {
     const subMenu = template[0].submenu as MenuItemConstructorOptions[];
     subMenu.unshift({ type: 'separator' });
-    subMenu.unshift({ label: "About " + opts.productName || "VisualCal" });
+    subMenu.unshift({ label: "About VisualCal" });
     subMenu.unshift({ type: 'separator' });
     subMenu.unshift({ type: 'separator' });
   }

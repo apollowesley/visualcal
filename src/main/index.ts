@@ -1,8 +1,7 @@
-import './GlobalInit'; // Initialize global.visualcal - *** LEAVE THIS AT THE TOP OF THE MAIN APP FILE!!! ***
 import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
-import { create as createMenu, Options } from '@/main/menu';
+import { create as createMenu } from '@/main/menu';
 import NodeRedSettings from '@/node-red-settings';
 // import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen, dialog, nativeImage } from 'electron';
@@ -11,16 +10,38 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as RED from "node-red";
 import * as path from 'path';
-try {
-  
+import { WindowManager } from './managers/WindowManager';
+import isDev from 'electron-is-dev';
+import { create as createLogger } from './logging/CreateLogger';
+import * as os from 'os';
 
-const urlStart = 'red';
-// const pkgJsonOptions = pkg.NRelectron;
-
-let options: Options = {
-  logBuffer: [],
-  nrIcon: global.visualCal.config.appIcon
+global.visualCal = {
+  logger: createLogger(),
+  isMac: process.platform === 'darwin',
+  isDev: isDev,
+  config: {
+    appIcon: path.resolve(__static, 'app-icon.png'),
+    httpServer: {
+      port: 18880
+    }
+  },
+  dirs: {
+    base: path.join(__dirname, '..', '..'), // <base>/dist
+    html: path.resolve(__static),
+    procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
+    visualCalUser: path.join(os.homedir(), '.visualcal')
+  },
+  assets: {
+    basePath: path.resolve(__static),
+    get: (name: string) => fs.readFileSync(path.resolve(__static, name))
+  },
+  windowManager: new WindowManager()
 };
+
+try {
+
+  const urlStart = 'red';
+  // const pkgJsonOptions = pkg.NRelectron;
 
   let mainWindow: BrowserWindow | null = null;
   // private conWindow: BrowserWindow | null = null;
@@ -144,7 +165,7 @@ let options: Options = {
       isMain: true
     });
     mainWindow.setBounds(nearestScreenToCursor.workArea);
-    const menu = Menu.buildFromTemplate(createMenu(options));
+    const menu = Menu.buildFromTemplate(createMenu());
     Menu.setApplicationMenu(menu);
 
     if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
@@ -170,10 +191,10 @@ let options: Options = {
 
   // }
 
-init([
-  new SystemInfoChannel(),
-  new NodeRedResultChannel()
-]);
+  init([
+    new SystemInfoChannel(),
+    new NodeRedResultChannel()
+  ]);
 
 } catch (error) {
   dialog.showErrorBox('Oops!', error.message);
