@@ -5,7 +5,7 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@root': path.resolve(__dirname),
-      '@shared': path.resolve(__dirname, 'src', 'shared')
+      '@common': path.resolve(__dirname, 'src', 'common')
     }
   }
 }

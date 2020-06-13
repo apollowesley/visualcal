@@ -13,7 +13,7 @@
     "paths": {
       "@/*": [ "src/*" ],
       "@root/*": [ "./*" ],
-      "@shared/*": [ "src/shared/*" ]
+      "@common/*": [ "src/common/*" ]
     },
     "typeRoots": [
       "node_modules/@types",

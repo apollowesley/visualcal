@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { IpcMainEvent } from 'electron';
-import { IpcRequest } from "@shared/IpcRequest";
+import { IpcRequest } from "@/common/IpcRequest";
 import { IpcChannel } from "./IpcChannel";
 
 export class SystemInfoChannel implements IpcChannel<string> {

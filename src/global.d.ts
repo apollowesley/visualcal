@@ -30,6 +30,8 @@ interface LogicResult extends Result {
   value: number;
 }
 
+declare const __static: string;
+
 declare module NodeJS {
 
   interface Global {

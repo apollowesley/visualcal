@@ -1,5 +1,5 @@
 import { IpcMainEvent } from 'electron';
-import { IpcRequest } from "@shared/IpcRequest";
+import { IpcRequest } from "@/common/IpcRequest";
 
 export interface IpcChannel<TReqParams> {
   getName(): string;
