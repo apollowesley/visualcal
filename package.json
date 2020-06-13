@@ -14,7 +14,11 @@
         "build": "electron-webpack",
         "watch": "tsc -w",
         "start": "npm run compile && electron --disable-gpu dist/main/main.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "clean-dist": "rm -rf dist",
+        "upgrade": "npm-update-all",
+        "rebuild": "npm run clean-dist && electron-rebuild --force && npm install",
+        "upgrade-rebuild": "npm run upgrade && npm run rebuild"
     },
     "repository": {
         "type": "git",
@@ -38,7 +42,7 @@
         "grapesjs-tui-image-editor": "^0.1.3",
         "grapesjs-typed": "^1.0.5",
         "moment": "^2.26.0",
-        "node-red": "1.0.6",
+        "node-red": "^1.0.6",
         "node-red-contrib-play-audio": "^2.5.0",
         "node-red-contrib-web-worldmap": "^2.3.13",
         "node-red-dashboard": "^2.22.1",
@@ -61,8 +65,8 @@
         "@types/tabulator-tables": "^4.6.7",
         "@types/toastr": "^2.1.38",
         "@types/winston": "^2.4.4",
-        "electron": "~7.2.1",
-        "electron-builder": "^22.5.1",
+        "electron": "^9.0.4",
+        "electron-builder": "^22.7.0",
         "electron-webpack": "^2.8.2",
         "electron-webpack-ts": "^4.0.1",
         "ts-loader": "^7.0.5",

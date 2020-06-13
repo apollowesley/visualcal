@@ -8,6 +8,8 @@
 
 /// <reference types="node" />
 
+declare module 'node-red' {
+
 import * as http from 'http';
 import { EventEmitter } from 'events';
 
@@ -239,4 +241,6 @@ export interface NodeConfiguration {
 export interface Flow {
     rev: string;
     flows: NodeConfiguration[];
+}
+
 }
