@@ -28,23 +28,23 @@ const settings = {
     },
     websock: {
       level: 'info',
-      metrics: false,
-      handler: function () {
-        return function (msg: any) {
-          var ts = (new Date(msg.timestamp)).toISOString();
-          ts = ts.replace('Z', ' ').replace('T', ' ');
-          // var line = '';
-          // if (msg.type && msg.id) {
-          //   line = ts + ' : [' + levels[msg.level / 10] + '] [' + msg.type + ':' + msg.id + '] ' + msg.msg;
-          // }
-          // else {
-          //   line = ts + ' : [' + levels[msg.level / 10] + '] ' + msg.msg;
-          // }
-          // logBuffer.push(line);
-          // if (conWindow && !conWindow.isDestroyed) { conWindow.webContents.send('debugMsg', line); }
-          // if (logBuffer.length > logLength) { logBuffer.shift(); }
-        }
-      }
+      metrics: false
+      // handler: function () {
+      //   return function (msg: any) {
+      //     var ts = (new Date(msg.timestamp)).toISOString();
+      //     ts = ts.replace('Z', ' ').replace('T', ' ');
+      //     // var line = '';
+      //     // if (msg.type && msg.id) {
+      //     //   line = ts + ' : [' + levels[msg.level / 10] + '] [' + msg.type + ':' + msg.id + '] ' + msg.msg;
+      //     // }
+      //     // else {
+      //     //   line = ts + ' : [' + levels[msg.level / 10] + '] ' + msg.msg;
+      //     // }
+      //     // logBuffer.push(line);
+      //     // if (conWindow && !conWindow.isDestroyed) { conWindow.webContents.send('debugMsg', line); }
+      //     // if (logBuffer.length > logLength) { logBuffer.shift(); }
+      //   }
+      // }
     }
   }
 };

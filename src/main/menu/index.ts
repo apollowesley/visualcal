@@ -7,8 +7,8 @@ export interface Options {
   flowFile?: string;
   addNodes?: boolean;
   kioskMode?: boolean;
-  onConWindowOpened?(conWindow?: BrowserWindow): void;
-  onConWindowClosed?(): void;
+  onConWindowOpened?: (conWindow?: BrowserWindow) => void;
+  onConWindowClosed?: () => void;
   logBuffer: string[];
   showMap?: boolean;
   allowLoadSave?: boolean;
