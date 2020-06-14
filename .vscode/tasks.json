@@ -15,6 +15,14 @@
 			"type": "shell",
 			"command": "npm run compile",
 			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "compile:renderers",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: compile:renderers",
+			"detail": "tsc -p src/renderers"
 		}
 	]
 }

@@ -16,7 +16,8 @@
       "internalConsoleOptions": "openOnFirstSessionStart",
       "console": "integratedTerminal",
       "outFiles": ["${workspaceRoot}/dist"],
-      "sourceMaps": true
+      "sourceMaps": true,
+      "preLaunchTask": "npm: compile:renderers"
     }
   ]
 }

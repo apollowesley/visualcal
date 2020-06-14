@@ -2,7 +2,7 @@ import { IpcChannel } from "@/IPC/IpcChannel";
 import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
 import { create as createMenu } from '@/main/menu';
-import NodeRedSettings from '@/node-red-settings';
+import NodeRedSettings from '@/main/node-red-settings';
 // import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen, dialog, nativeImage } from 'electron';
 import express from 'express';
@@ -37,6 +37,8 @@ global.visualCal = {
   },
   windowManager: new WindowManager()
 };
+
+NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
 
 try {
 
@@ -156,7 +158,7 @@ try {
       autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false,
-        preload: path.join(__dirname, '..', 'apps', 'NodeRed.js')
+        preload: path.resolve('dist', 'renderers', 'renderers', 'NodeRed.js')
       }
     });
     global.visualCal.windowManager.add({

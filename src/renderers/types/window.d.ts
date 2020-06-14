@@ -2,15 +2,22 @@ interface LoggerMessage {
   level: string;
 }
 
-interface Result extends LoggerMessage {
+interface Result {
   timestamp: Date;
   source: string;
-  message: string;
 }
 
 interface LogicResult extends Result {
   unitId: string;
   value: number;
+}
+
+interface LogicResultMessage extends LoggerMessage {
+  message: LogicResult
+}
+
+interface LogicResultTableItem extends LogicResult {
+  level: string;
 }
 
 interface Window {

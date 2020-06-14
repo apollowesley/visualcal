@@ -4,7 +4,7 @@ import moment from 'moment';
 
 window.moment = moment;
 
-let entries: LogicResult[] = [];
+let entries: LogicResultTableItem[] = [];
 
 const table = new Tabulator('#results-table', {
   data: entries,
@@ -23,13 +23,16 @@ const clearList = () => {
   entries = [];
   table.replaceData(entries);
 }
-ipcRenderer.on('results', (_, data: LogicResult[]) => {
-  entries = data;
+ipcRenderer.on('results', (_, data: LogicResultMessage[]) => {
+  entries = data.map(d => { return { level: d.level, ...d.message } });
+  console.info(data);
   table.replaceData(entries);
 });
-ipcRenderer.on('result', (_, data: LogicResult) => {
-  entries.push(data);
-  table.addData([data]);
+ipcRenderer.on('result', (_, data: LogicResultMessage) => {
+  const entry = { level: data.level, ...data.message };
+  entries.push(entry);
+  console.info(entry);
+  table.addData([entry]);
 });
 
 window.onload = () => {

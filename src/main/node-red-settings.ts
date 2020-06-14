@@ -13,10 +13,10 @@ const settings = {
     projects: { enabled: false },
     palette: { editable: true },
     page: {
-      css: path.join(__dirname, '..', '..', 'node_modules/@node-red-contrib-themes/midnight-red/theme.css')
+      css: path.resolve(__dirname, '..', '..', 'node_modules/@node-red-contrib-themes/midnight-red/theme.css')
     }
   },
-  nodesDir: path.join(__dirname, '..', '..', 'nodes'),
+  nodesDir: path.resolve(__dirname, '..', '..', 'nodes'),
   functionGlobalContext: {
     visualCal: global.visualCal
   },    // enables global context - add extras ehre if you need them
