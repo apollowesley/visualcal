@@ -18,10 +18,7 @@ steps:
     versionSpec: '14.x'
 
 - script: |
-    npm install -g electron-builder
-    npm install -g electron-rebuild
-    npm install -g electron-webpack
-    npm install
+    npm run rebuild
 #    npm test
 
 # - task: PublishTestResults@2
