@@ -2,12 +2,12 @@
 # https://docs.microsoft.com/azure/devops/pipelines/ecosystems/javascript?view=azure-devops
 strategy:
   matrix:
-    linux:
-      imageName: 'ubuntu-latest'
+    # linux:
+    #   imageName: 'ubuntu-latest'
     mac:
       imageName: 'macos-latest'
-    windows:
-      imageName: 'windows-latest'
+    # windows:
+    #   imageName: 'windows-latest'
 
 pool:
   vmImage: $(imageName)
@@ -17,7 +17,7 @@ steps:
   inputs:
     versionSpec: '14.x'
 
-- script: |
+- bash: |
     npm run rebuild
     npm run release
 #    npm test
@@ -32,6 +32,14 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+- bash: |
+    mkdir release
+    cp dist/*.exe $(System.DefaultWorkingDirectory)/release
+    cp dist/*.snap $(System.DefaultWorkingDirectory)/release
+    cp dist/*.AppImage $(System.DefaultWorkingDirectory)/release
+    cp dist/*.dmg $(System.DefaultWorkingDirectory)/release
+    cp dist/*.dmg.blockmap $(System.DefaultWorkingDirectory)/release
 
 - task: ArchiveFiles@2
   inputs:
