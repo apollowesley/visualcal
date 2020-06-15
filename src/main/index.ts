@@ -4,7 +4,7 @@ import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
 import { create as createMenu } from '@/main/menu';
 import NodeRedSettings from '@/main/node-red-settings';
 // import * as pkg from '@root/package.json';
-import { app, BrowserWindow, ipcMain, Menu, screen, dialog, nativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
 import express from 'express';
 import * as fs from 'fs';
 import * as http from 'http';
@@ -20,14 +20,14 @@ global.visualCal = {
   isMac: process.platform === 'darwin',
   isDev: isDev,
   config: {
-    appIcon: path.resolve(__static, 'app-icon.png'),
     httpServer: {
       port: 18880
     }
   },
   dirs: {
-    base: path.join(__dirname, '..', '..'), // <base>/dist
-    html: path.resolve(__static),
+    base: isDev ? path.resolve(__dirname, '..', '..') : path.resolve(__dirname), // <base>/dist
+    html: isDev ? path.resolve(__dirname, '..', '..', 'html') : path.resolve(__dirname, 'html'),
+    renderers: isDev ? path.resolve(__dirname, '..', '..', 'html', 'renderers') : path.resolve(__dirname, 'html', 'renderers'),
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
   },
@@ -39,6 +39,9 @@ global.visualCal = {
 };
 
 NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
+
+// dialog.showErrorBox('html directory', global.visualCal.dirs.html);
+// dialog.showErrorBox('renderers directory', global.visualCal.dirs.renderers);
 
 try {
 
@@ -98,17 +101,6 @@ try {
   function configureApp() {
     const isFirstInstance = app.requestSingleInstanceLock();
     if (!isFirstInstance) app.quit();
-    if (app.dock) app.dock.setIcon(nativeImage.createFromPath(global.visualCal.config.appIcon));
-    if (app.setUserTasks) app.setUserTasks([
-      {
-        program: process.execPath,
-        arguments: '',
-        iconPath: global.visualCal.config.appIcon,
-        iconIndex: 0,
-        title: 'VisualCal',
-        description: 'IndySoft VisualCal'
-      }
-    ]);
   }
 
   function createHomeDirectory() {
@@ -123,7 +115,6 @@ try {
       width: 400,
       x: nearestScreenToCursor.workArea.x - 200 + nearestScreenToCursor.bounds.width / 2,
       y: nearestScreenToCursor.workArea.y - 200 + nearestScreenToCursor.bounds.height / 2,
-      icon: nativeImage.createFromPath(global.visualCal.config.appIcon),
       title: 'VisualCal',
       frame: false,
       transparent: false,
@@ -153,12 +144,11 @@ try {
       title: "VisualCal",
       width: 1024,
       height: 768,
-      icon: nativeImage.createFromPath(global.visualCal.config.appIcon),
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false,
-        preload: path.resolve('dist', 'renderers', 'renderers', 'NodeRed.js')
+        preload: path.join(global.visualCal.dirs.renderers, 'NodeRed.js')
       }
     });
     global.visualCal.windowManager.add({
@@ -173,6 +163,7 @@ try {
     if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
     mainWindow.webContents.on('did-finish-load', () => {
       if (!mainWindow) return
+      mainWindow.webContents.openDevTools();
       mainWindow.show();
     });
     mainWindow.on('close', (e) => {

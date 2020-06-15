@@ -1,12 +1,12 @@
 import * as fs from 'fs';
-import { BrowserWindow, dialog, NativeImage } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import * as path from 'path';
 import * as RED from 'node-red';
 
 const nodeRed = RED as RED.Red;
 
 let fileName = "";
-export const saveFlow = async (mainWindow: BrowserWindow, nrIcon: string) => {
+export const saveFlow = async (mainWindow: BrowserWindow) => {
   const result = await dialog.showSaveDialog(mainWindow, {
     filters: [{ name: 'JSON', extensions: ['json'] }],
     defaultPath: fileName
@@ -17,7 +17,6 @@ export const saveFlow = async (mainWindow: BrowserWindow, nrIcon: string) => {
       if (err) { dialog.showErrorBox('Error', JSON.stringify(err)); }
       else {
         dialog.showMessageBox({
-          icon: NativeImage.createFromPath(nrIcon),
           message: "Flow file saved as\n\n" + result.filePath,
           buttons: ["OK"]
         });
@@ -58,10 +57,11 @@ export const createConsole = async () => {
     title: "VisualCal Console",
     width: 800,
     height: 600,
-    icon: global.visualCal.config.appIcon,
     autoHideMenuBar: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      webSecurity: false,
+      allowRunningInsecureContent: true
     }
   });
   global.visualCal.windowManager.add({

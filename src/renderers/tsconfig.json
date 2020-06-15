@@ -4,7 +4,8 @@
     "sourceMap": true,
     "allowJs": false,
     "experimentalDecorators": true,
-    "outDir": "../../dist/renderers",
+    "moduleResolution": "Node",
+    "outDir": "../../html",
     "baseUrl": ".",
     "esModuleInterop": true,
     "typeRoots": [

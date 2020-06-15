@@ -1,5 +1,4 @@
 interface VisualCalConfig {
-  appIcon: string;
   httpServer: {
     port: number;
   };
@@ -48,10 +47,11 @@ declare module NodeJS {
       dirs: {
         base: string;
         html: string;
+        renderers: string;
         procedures: string;
         visualCalUser: string;
       },
-      windowManager: import('./main/managers/WindowManager').WindowManager,
+      windowManager: import('../main/managers/WindowManager').WindowManager,
       user?: User;
     }
 

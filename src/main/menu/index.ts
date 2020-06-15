@@ -51,7 +51,7 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow.window, global.visualCal.config.appIcon); }
+        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow.window); }
       },
       { type: 'separator' },
       {

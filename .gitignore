@@ -15,3 +15,5 @@ logs
 *error*
 .DS_Store
 lib
+static/common
+static/renderers

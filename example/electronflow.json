@@ -1,648 +1,648 @@
 [
-  {
-      "id": "41f61d2.fbe09e4",
-      "type": "tab",
-      "label": "Flow 1"
-  },
-  {
-      "id": "52a903f3.ad56fc",
-      "type": "ui_tab",
-      "z": "41f61d2.fbe09e4",
-      "name": "Home",
-      "icon": "dashboard"
-  },
-  {
-      "id": "30e652f.d9de3ae",
-      "type": "ui_group",
-      "z": "41f61d2.fbe09e4",
-      "name": "Panel 2",
-      "tab": "52a903f3.ad56fc",
-      "order": 5,
-      "disp": true,
-      "width": "6"
-  },
-  {
-      "id": "a8ecb9.c60f4348",
-      "type": "ui_group",
-      "z": "41f61d2.fbe09e4",
-      "name": "Introduction",
-      "tab": "52a903f3.ad56fc",
-      "order": 1,
-      "disp": false,
-      "width": "4",
-      "collapse": false
-  },
-  {
-      "id": "bbdf3e02.e8fee",
-      "type": "ui_group",
-      "z": "41f61d2.fbe09e4",
-      "name": "Panel 1",
-      "tab": "52a903f3.ad56fc",
-      "order": 2,
-      "disp": true,
-      "width": "6"
-  },
-  {
-      "id": "d9ba26fa.6d2b18",
-      "type": "ui_base",
-      "theme": {
-          "name": "theme-dark",
-          "lightTheme": {
-              "default": "#0094CE",
-              "baseColor": "#8e0d17",
-              "baseFont": "Gill Sans,Geneva,sans-serif",
-              "edited": true,
-              "reset": false
-          },
-          "darkTheme": {
-              "default": "#097479",
-              "baseColor": "#097479",
-              "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-              "edited": true,
-              "reset": false
-          },
-          "customTheme": {
-              "name": "Untitled Theme 1",
-              "default": "#4B7930",
-              "baseColor": "#4B7930",
-              "baseFont": "Helvetica Neue"
-          },
-          "themeState": {
-              "base-color": {
-                  "default": "#097479",
-                  "value": "#097479",
-                  "edited": true
-              },
-              "page-titlebar-backgroundColor": {
-                  "value": "#097479",
-                  "edited": false
-              },
-              "page-backgroundColor": {
-                  "value": "#111111",
-                  "edited": false
-              },
-              "page-sidebar-backgroundColor": {
-                  "value": "#000000",
-                  "edited": false
-              },
-              "group-textColor": {
-                  "value": "#0eb8c0",
-                  "edited": false
-              },
-              "group-borderColor": {
-                  "value": "#555555",
-                  "edited": false
-              },
-              "group-backgroundColor": {
-                  "value": "#333333",
-                  "edited": false
-              },
-              "widget-textColor": {
-                  "value": "#eeeeee",
-                  "edited": false
-              },
-              "widget-backgroundColor": {
-                  "value": "#097479",
-                  "edited": false
-              },
-              "widget-borderColor": {
-                  "value": "#333333",
-                  "edited": false
-              },
-              "base-font": {
-                  "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-              }
-          },
-          "angularTheme": {
-              "primary": "indigo",
-              "accents": "blue",
-              "warn": "red",
-              "background": "grey"
-          }
-      },
-      "site": {
-          "name": "VisualCal",
-          "hideToolbar": "false",
-          "allowSwipe": "false",
-          "dateFormat": "DD/MM/YYYY",
-          "sizes": {
-              "sx": 48,
-              "sy": 48,
-              "gx": 6,
-              "gy": 6,
-              "cx": 6,
-              "cy": 6,
-              "px": 0,
-              "py": 0
-          },
-          "lockMenu": "true"
-      }
-  },
-  {
-      "id": "87356b62.92e3d8",
-      "type": "ui_group",
-      "z": "",
-      "name": "Text to Speech",
-      "tab": "52a903f3.ad56fc",
-      "order": 3,
-      "disp": true,
-      "width": "6"
-  },
-  {
-      "id": "c75ad4f0.0cede8",
-      "type": "ui_group",
-      "z": "",
-      "name": "Map",
-      "tab": "52a903f3.ad56fc",
-      "order": 4,
-      "disp": true,
-      "width": "6"
-  },
-  {
-      "id": "755ee04f.c8a66",
-      "type": "serial-port",
-      "z": "",
-      "serialport": "/dev/tty.usbserial-PX3PHGPQ",
-      "serialbaud": "9600",
-      "databits": "8",
-      "parity": "none",
-      "stopbits": "1",
-      "waitfor": "",
-      "dtr": "none",
-      "rts": "none",
-      "cts": "none",
-      "dsr": "none",
-      "newline": "\\n",
-      "bin": "false",
-      "out": "char",
-      "addchar": "\\n",
-      "responsetimeout": "2000"
-  },
-  {
-      "id": "a6447be.1f5f888",
-      "type": "ui_group",
-      "z": "",
-      "name": "Fluke 45",
-      "tab": "52a903f3.ad56fc",
-      "order": 6,
-      "disp": true,
-      "width": "6",
-      "collapse": false
-  },
-  {
-      "id": "189cf871.681118",
-      "type": "ui_template",
-      "z": "41f61d2.fbe09e4",
-      "group": "a8ecb9.c60f4348",
-      "name": "Welcome",
-      "order": 1,
-      "width": "4",
-      "height": "9",
-      "format": "<h3>Welcome to the <font color=\"#CE2020\">VisualCal</font></h3>\n<p>On the right you will see a graph and a gauge logging data from the sliders underneath.</p>\n<p>There is also an example of embedding a small map.</p>\n<p>Also, you can take measurements from a physical Fluke 45 DMM by clicking on the \"Take a measurement\" button</p>",
-      "storeOutMessages": false,
-      "fwdInMessages": false,
-      "resendOnRefresh": false,
-      "templateScope": "local",
-      "x": 100,
-      "y": 60,
-      "wires": [
-          []
-      ]
-  },
-  {
-      "id": "9f19ee5c.beaef",
-      "type": "ui_chart",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "bbdf3e02.e8fee",
-      "order": 1,
-      "width": "0",
-      "height": "0",
-      "label": "",
-      "chartType": "line",
-      "xformat": "HH:mm:ss",
-      "interpolate": "basis",
-      "nodata": "No Data",
-      "dot": false,
-      "ymin": "0",
-      "ymax": "100",
-      "removeOlder": 1,
-      "removeOlderPoints": "",
-      "removeOlderUnit": "60",
-      "cutout": "",
-      "colors": [
-          "#1f77b4",
-          "#aec7e8",
-          "#ff7f0e",
-          "#2ca02c",
-          "#98df8a",
-          "#d62728",
-          "#ff9896",
-          "#9467bd",
-          "#c5b0d5"
-      ],
-      "outputs": 2,
-      "x": 270,
-      "y": 200,
-      "wires": [
-          [],
-          []
-      ]
-  },
-  {
-      "id": "799d9318.fd385c",
-      "type": "ui_gauge",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "30e652f.d9de3ae",
-      "order": 2,
-      "width": "",
-      "height": "",
-      "gtype": "gage",
-      "title": "Title",
-      "label": "gauge",
-      "format": "{{value}}",
-      "min": 0,
-      "max": "100",
-      "colors": [
-          "#00b500",
-          "#e6e600",
-          "#ca3838"
-      ],
-      "x": 270,
-      "y": 140,
-      "wires": []
-  },
-  {
-      "id": "6f18b200.666a4",
-      "type": "ui_button",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "87356b62.92e3d8",
-      "order": 2,
-      "width": 0,
-      "height": 0,
-      "passthru": false,
-      "label": "press to talk",
-      "tooltip": "",
-      "color": "",
-      "bgcolor": "",
-      "icon": "fa-volume-up",
-      "payload": "Hello IndySoft",
-      "payloadType": "str",
-      "topic": "",
-      "x": 110,
-      "y": 320,
-      "wires": [
-          [
-              "f897d7c2.467a58"
-          ]
-      ]
-  },
-  {
-      "id": "f897d7c2.467a58",
-      "type": "ui_audio",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "30e652f.d9de3ae",
-      "voice": "0",
-      "always": true,
-      "x": 300,
-      "y": 320,
-      "wires": []
-  },
-  {
-      "id": "da0f7e67.0d38a",
-      "type": "ui_slider",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "label": "slider",
-      "group": "30e652f.d9de3ae",
-      "order": 4,
-      "width": 0,
-      "height": 0,
-      "passthru": true,
-      "topic": "",
-      "min": 0,
-      "max": "100",
-      "step": 1,
-      "x": 90,
-      "y": 140,
-      "wires": [
-          [
-              "799d9318.fd385c",
-              "219da65f.e0b0da"
-          ]
-      ]
-  },
-  {
-      "id": "eabf2bd7.f4e0c8",
-      "type": "ui_slider",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "label": "slider",
-      "group": "bbdf3e02.e8fee",
-      "order": 4,
-      "width": 0,
-      "height": 0,
-      "passthru": true,
-      "topic": "",
-      "min": 0,
-      "max": "100",
-      "step": 1,
-      "x": 130,
-      "y": 200,
-      "wires": [
-          [
-              "9f19ee5c.beaef",
-              "ccee40e3.c1618"
-          ]
-      ]
-  },
-  {
-      "id": "45508d88.744a54",
-      "type": "function",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "func": "const lat = 32.866718;\nconst lon = -79.914110;\nmsg.payload={lat:lat, lon:lon, name:\"IndySoft\", icon:\"male\", url:\"<a href=\\\"https://www.indysoft.com\\\">IndySoft</a>\"};\nreturn msg;\n",
-      "outputs": 1,
-      "noerr": 0,
-      "x": 690,
-      "y": 400,
-      "wires": [
-          [
-              "f76b15b1.dd27a8"
-          ]
-      ]
-  },
-  {
-      "id": "6ca8cfc2.e0bce",
-      "type": "ui_button",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "c75ad4f0.0cede8",
-      "order": 1,
-      "width": 0,
-      "height": 0,
-      "passthru": false,
-      "label": "Click me to show IndySoft",
-      "tooltip": "",
-      "color": "",
-      "bgcolor": "#910000",
-      "icon": "fa-male",
-      "payload": "",
-      "payloadType": "str",
-      "topic": "",
-      "x": 480,
-      "y": 400,
-      "wires": [
-          [
-              "45508d88.744a54"
-          ]
-      ]
-  },
-  {
-      "id": "219da65f.e0b0da",
-      "type": "debug",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "active": true,
-      "tosidebar": true,
-      "console": true,
-      "tostatus": false,
-      "complete": "payload",
-      "x": 300,
-      "y": 100,
-      "wires": []
-  },
-  {
-      "id": "ccee40e3.c1618",
-      "type": "debug",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "active": true,
-      "tosidebar": true,
-      "console": true,
-      "tostatus": false,
-      "complete": "payload",
-      "targetType": "msg",
-      "x": 300,
-      "y": 260,
-      "wires": []
-  },
-  {
-      "id": "1c597308.3cfc0d",
-      "type": "worldmap in",
-      "z": "41f61d2.fbe09e4",
-      "name": "worldmap in",
-      "path": "",
-      "events": "",
-      "x": 110,
-      "y": 480,
-      "wires": [
-          [
-              "7d6cb82c.3f3ea8"
-          ]
-      ]
-  },
-  {
-      "id": "7d6cb82c.3f3ea8",
-      "type": "debug",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "active": true,
-      "tosidebar": false,
-      "console": true,
-      "tostatus": false,
-      "complete": "payload",
-      "targetType": "msg",
-      "x": 350,
-      "y": 480,
-      "wires": []
-  },
-  {
-      "id": "762cecef.af00d4",
-      "type": "inject",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "topic": "",
-      "payload": "26",
-      "payloadType": "num",
-      "repeat": "",
-      "crontab": "",
-      "once": true,
-      "onceDelay": "2",
-      "x": 90,
-      "y": 260,
-      "wires": [
-          [
-              "eabf2bd7.f4e0c8"
-          ]
-      ]
-  },
-  {
-      "id": "f76b15b1.dd27a8",
-      "type": "ui_worldmap",
-      "z": "41f61d2.fbe09e4",
-      "group": "c75ad4f0.0cede8",
-      "order": 1,
-      "width": "6",
-      "height": "7",
-      "name": "",
-      "lat": "32.866763",
-      "lon": "-79.914143",
-      "zoom": "16",
-      "layer": "OSM grey",
-      "cluster": "",
-      "maxage": "",
-      "usermenu": "hide",
-      "layers": "hide",
-      "panit": "false",
-      "panlock": "false",
-      "zoomlock": "false",
-      "hiderightclick": "true",
-      "coords": "none",
-      "showgrid": "false",
-      "path": "/worldmap",
-      "x": 900,
-      "y": 400,
-      "wires": []
-  },
-  {
-      "id": "abd700e1.99676",
-      "type": "debug",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "active": true,
-      "tosidebar": true,
-      "console": true,
-      "tostatus": false,
-      "complete": "payload",
-      "targetType": "msg",
-      "x": 1040,
-      "y": 600,
-      "wires": []
-  },
-  {
-      "id": "b0a64390.3688a",
-      "type": "inject",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "topic": "",
-      "payload": "",
-      "payloadType": "date",
-      "repeat": "",
-      "crontab": "",
-      "once": true,
-      "onceDelay": 0.1,
-      "x": 230,
-      "y": 400,
-      "wires": [
-          [
-              "6ca8cfc2.e0bce"
-          ]
-      ]
-  },
-  {
-      "id": "f1b02200.07da1",
-      "type": "ui_button",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "a6447be.1f5f888",
-      "order": 1,
-      "width": 0,
-      "height": 0,
-      "passthru": true,
-      "label": "Take a measurement",
-      "tooltip": "",
-      "color": "",
-      "bgcolor": "",
-      "icon": "fa-volume-up",
-      "payload": "MEAS?",
-      "payloadType": "str",
-      "topic": "",
-      "x": 460,
-      "y": 560,
-      "wires": [
-          [
-              "1735ec01.3d78d4"
-          ]
-      ]
-  },
-  {
-      "id": "50bce404.32420c",
-      "type": "ui_chart",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "group": "a6447be.1f5f888",
-      "order": 2,
-      "width": "0",
-      "height": "0",
-      "label": "Fluke 45 Measurements",
-      "chartType": "line",
-      "xformat": "HH:mm:ss",
-      "interpolate": "basis",
-      "nodata": "No Data",
-      "dot": false,
-      "ymin": "-5",
-      "ymax": "5",
-      "removeOlder": 1,
-      "removeOlderPoints": "",
-      "removeOlderUnit": "60",
-      "cutout": "",
-      "useOneColor": false,
-      "useUTC": false,
-      "colors": [
-          "#1f77b4",
-          "#aec7e8",
-          "#ff7f0e",
-          "#2ca02c",
-          "#98df8a",
-          "#d62728",
-          "#ff9896",
-          "#9467bd",
-          "#c5b0d5"
-      ],
-      "outputs": 1,
-      "x": 1070,
-      "y": 560,
-      "wires": [
-          []
-      ]
-  },
-  {
-      "id": "a12eee6c.c54e1",
-      "type": "inject",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "topic": "",
-      "payload": "MEAS?",
-      "payloadType": "str",
-      "repeat": "",
-      "crontab": "",
-      "once": false,
-      "onceDelay": 0.1,
-      "x": 230,
-      "y": 560,
-      "wires": [
-          [
-              "f1b02200.07da1"
-          ]
-      ]
-  },
-  {
-      "id": "1735ec01.3d78d4",
-      "type": "serial request",
-      "z": "41f61d2.fbe09e4",
-      "name": "",
-      "serial": "755ee04f.c8a66",
-      "x": 780,
-      "y": 560,
-      "wires": [
-          [
-              "50bce404.32420c",
-              "abd700e1.99676"
-          ]
-      ]
-  }
+    {
+        "id": "41f61d2.fbe09e4",
+        "type": "tab",
+        "label": "Flow 1"
+    },
+    {
+        "id": "52a903f3.ad56fc",
+        "type": "ui_tab",
+        "z": "41f61d2.fbe09e4",
+        "name": "Home",
+        "icon": "dashboard"
+    },
+    {
+        "id": "30e652f.d9de3ae",
+        "type": "ui_group",
+        "z": "41f61d2.fbe09e4",
+        "name": "Panel 2",
+        "tab": "52a903f3.ad56fc",
+        "order": 5,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "a8ecb9.c60f4348",
+        "type": "ui_group",
+        "z": "41f61d2.fbe09e4",
+        "name": "Introduction",
+        "tab": "52a903f3.ad56fc",
+        "order": 1,
+        "disp": false,
+        "width": "4",
+        "collapse": false
+    },
+    {
+        "id": "bbdf3e02.e8fee",
+        "type": "ui_group",
+        "z": "41f61d2.fbe09e4",
+        "name": "Panel 1",
+        "tab": "52a903f3.ad56fc",
+        "order": 2,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "d9ba26fa.6d2b18",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#8e0d17",
+                "baseFont": "Gill Sans,Geneva,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "Helvetica Neue"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#097479",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#000000",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey"
+            }
+        },
+        "site": {
+            "name": "VisualCal",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            },
+            "lockMenu": "true"
+        }
+    },
+    {
+        "id": "87356b62.92e3d8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Text to Speech",
+        "tab": "52a903f3.ad56fc",
+        "order": 3,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "c75ad4f0.0cede8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Map",
+        "tab": "52a903f3.ad56fc",
+        "order": 4,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "755ee04f.c8a66",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/tty.usbserial-PX3PHGPQ",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "\\n",
+        "responsetimeout": "2000"
+    },
+    {
+        "id": "a6447be.1f5f888",
+        "type": "ui_group",
+        "z": "",
+        "name": "Fluke 45",
+        "tab": "52a903f3.ad56fc",
+        "order": 6,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "189cf871.681118",
+        "type": "ui_template",
+        "z": "41f61d2.fbe09e4",
+        "group": "a8ecb9.c60f4348",
+        "name": "Welcome",
+        "order": 1,
+        "width": "4",
+        "height": "9",
+        "format": "<h3>Welcome to the <font color=\"#CE2020\">VisualCal</font></h3>\n<p>On the right you will see a graph and a gauge logging data from the sliders underneath.</p>\n<p>There is also an example of embedding a small map.</p>\n<p>Also, you can take measurements from a physical Fluke 45 DMM by clicking on the \"Take a measurement\" button</p>",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "x": 440,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9f19ee5c.beaef",
+        "type": "ui_chart",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "bbdf3e02.e8fee",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "label": "",
+        "chartType": "line",
+        "xformat": "HH:mm:ss",
+        "interpolate": "basis",
+        "nodata": "No Data",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": "",
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 2,
+        "x": 1270,
+        "y": 260,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "799d9318.fd385c",
+        "type": "ui_gauge",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "30e652f.d9de3ae",
+        "order": 2,
+        "width": "",
+        "height": "",
+        "gtype": "gage",
+        "title": "Title",
+        "label": "gauge",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "x": 1270,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "6f18b200.666a4",
+        "type": "ui_button",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "87356b62.92e3d8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "press to talk",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "fa-volume-up",
+        "payload": "Hello IndySoft",
+        "payloadType": "str",
+        "topic": "",
+        "x": 450,
+        "y": 360,
+        "wires": [
+            [
+                "f897d7c2.467a58"
+            ]
+        ]
+    },
+    {
+        "id": "f897d7c2.467a58",
+        "type": "ui_audio",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "30e652f.d9de3ae",
+        "voice": "0",
+        "always": true,
+        "x": 660,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "da0f7e67.0d38a",
+        "type": "ui_slider",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "label": "slider",
+        "group": "30e652f.d9de3ae",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "topic": "",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 430,
+        "y": 200,
+        "wires": [
+            [
+                "799d9318.fd385c",
+                "219da65f.e0b0da"
+            ]
+        ]
+    },
+    {
+        "id": "eabf2bd7.f4e0c8",
+        "type": "ui_slider",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "label": "slider",
+        "group": "bbdf3e02.e8fee",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "topic": "",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "x": 630,
+        "y": 300,
+        "wires": [
+            [
+                "9f19ee5c.beaef",
+                "ccee40e3.c1618"
+            ]
+        ]
+    },
+    {
+        "id": "45508d88.744a54",
+        "type": "function",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "func": "const lat = 32.866718;\nconst lon = -79.914110;\nmsg.payload={lat:lat, lon:lon, name:\"IndySoft\", icon:\"male\", url:\"<a href=\\\"https://www.indysoft.com\\\">IndySoft</a>\"};\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 930,
+        "y": 420,
+        "wires": [
+            [
+                "f76b15b1.dd27a8"
+            ]
+        ]
+    },
+    {
+        "id": "6ca8cfc2.e0bce",
+        "type": "ui_button",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "c75ad4f0.0cede8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Click me to show IndySoft",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "#910000",
+        "icon": "fa-male",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 720,
+        "y": 420,
+        "wires": [
+            [
+                "45508d88.744a54"
+            ]
+        ]
+    },
+    {
+        "id": "219da65f.e0b0da",
+        "type": "debug",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 1300,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "ccee40e3.c1618",
+        "type": "debug",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1300,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "1c597308.3cfc0d",
+        "type": "worldmap in",
+        "z": "41f61d2.fbe09e4",
+        "name": "worldmap in",
+        "path": "",
+        "events": "",
+        "x": 1290,
+        "y": 420,
+        "wires": [
+            [
+                "7d6cb82c.3f3ea8"
+            ]
+        ]
+    },
+    {
+        "id": "7d6cb82c.3f3ea8",
+        "type": "debug",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "active": true,
+        "tosidebar": false,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1530,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "762cecef.af00d4",
+        "type": "inject",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "topic": "",
+        "payload": "26",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "x": 450,
+        "y": 300,
+        "wires": [
+            [
+                "eabf2bd7.f4e0c8"
+            ]
+        ]
+    },
+    {
+        "id": "f76b15b1.dd27a8",
+        "type": "ui_worldmap",
+        "z": "41f61d2.fbe09e4",
+        "group": "c75ad4f0.0cede8",
+        "order": 1,
+        "width": "6",
+        "height": "7",
+        "name": "",
+        "lat": "32.866763",
+        "lon": "-79.914143",
+        "zoom": "16",
+        "layer": "OSM grey",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "true",
+        "coords": "none",
+        "showgrid": "false",
+        "path": "/worldmap",
+        "x": 1100,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "abd700e1.99676",
+        "type": "debug",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1300,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "b0a64390.3688a",
+        "type": "inject",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 470,
+        "y": 420,
+        "wires": [
+            [
+                "6ca8cfc2.e0bce"
+            ]
+        ]
+    },
+    {
+        "id": "f1b02200.07da1",
+        "type": "ui_button",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "a6447be.1f5f888",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "Take a measurement",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "fa-volume-up",
+        "payload": "MEAS?",
+        "payloadType": "str",
+        "topic": "",
+        "x": 700,
+        "y": 500,
+        "wires": [
+            [
+                "1735ec01.3d78d4"
+            ]
+        ]
+    },
+    {
+        "id": "50bce404.32420c",
+        "type": "ui_chart",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "group": "a6447be.1f5f888",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "label": "Fluke 45 Measurements",
+        "chartType": "line",
+        "xformat": "HH:mm:ss",
+        "interpolate": "basis",
+        "nodata": "No Data",
+        "dot": false,
+        "ymin": "-5",
+        "ymax": "5",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": "",
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1330,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a12eee6c.c54e1",
+        "type": "inject",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "topic": "",
+        "payload": "MEAS?",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 450,
+        "y": 500,
+        "wires": [
+            [
+                "f1b02200.07da1"
+            ]
+        ]
+    },
+    {
+        "id": "1735ec01.3d78d4",
+        "type": "serial request",
+        "z": "41f61d2.fbe09e4",
+        "name": "",
+        "serial": "755ee04f.c8a66",
+        "x": 1010,
+        "y": 500,
+        "wires": [
+            [
+                "50bce404.32420c",
+                "abd700e1.99676"
+            ]
+        ]
+    }
 ]

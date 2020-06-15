@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
-import Tabulator from 'tabulator-tables';
 import moment from 'moment';
+import Tabulator from 'tabulator-tables';
 
 window.moment = moment;
 
@@ -24,14 +24,12 @@ const clearList = () => {
   table.replaceData(entries);
 }
 ipcRenderer.on('results', (_, data: LogicResultMessage[]) => {
-  entries = data.map(d => { return { level: d.level, ...d.message } });
-  console.info(data);
+  entries = data.map(d => { return { level: d.level, source: d.message.source, timestamp: d.message.timestamp, unitId: d.message.unitId, value: d.message.value } });
   table.replaceData(entries);
 });
 ipcRenderer.on('result', (_, data: LogicResultMessage) => {
-  const entry = { level: data.level, ...data.message };
+  const entry = { level: data.level, source: data.message.source, timestamp: data.message.timestamp, unitId: data.message.unitId, value: data.message.value };
   entries.push(entry);
-  console.info(entry);
   table.addData([entry]);
 });
 
