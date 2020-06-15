@@ -1,5 +1,8 @@
 # Build NodeJS Express app using Azure Pipelines
 # https://docs.microsoft.com/azure/devops/pipelines/ecosystems/javascript?view=azure-devops
+trigger:
+  - master
+
 strategy:
   matrix:
     # linux:
