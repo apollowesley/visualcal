@@ -35,15 +35,15 @@ steps:
 
 - bash: |
     mkdir release
-    cp dist/*.exe $(System.DefaultWorkingDirectory)/release
-    cp dist/*.snap $(System.DefaultWorkingDirectory)/release
-    cp dist/*.AppImage $(System.DefaultWorkingDirectory)/release
-    cp dist/*.dmg $(System.DefaultWorkingDirectory)/release
-    cp dist/*.dmg.blockmap $(System.DefaultWorkingDirectory)/release
+    cp $(System.DefaultWorkingDirectory)/dist/*.exe $(System.DefaultWorkingDirectory)/release
+    cp $(System.DefaultWorkingDirectory)/dist/*.snap $(System.DefaultWorkingDirectory)/release
+    cp $(System.DefaultWorkingDirectory)/dist/*.AppImage $(System.DefaultWorkingDirectory)/release
+    cp $(System.DefaultWorkingDirectory)/dist/*.dmg $(System.DefaultWorkingDirectory)/release
+    cp $(System.DefaultWorkingDirectory)/dist/*.dmg.blockmap $(System.DefaultWorkingDirectory)/release
 
-- task: ArchiveFiles@2
+- task: PublishBuildArtifacts@1
   inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/release'
     includeRootFolder: false
 
 - task: PublishBuildArtifacts@1
