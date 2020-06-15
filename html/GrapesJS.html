@@ -5,30 +5,30 @@
   <meta charset="utf-8">
   <title>GrapesJS Demo - Free Open Source Website Page Builder</title>
   <meta content="Best Free Open Source Responsive Websites Builder" name="description">
-  <link rel="stylesheet" href="stylesheets/toastr.min.css">
-  <link rel="stylesheet" href="stylesheets/grapes.min.css?v0.16.12">
-  <link rel="stylesheet" href="stylesheets/grapesjs-preset-webpage.min.css">
-  <link rel="stylesheet" href="stylesheets/tooltip.css">
-  <link rel="stylesheet" href="stylesheets/grapesjs-plugin-filestack.css">
-  <link rel="stylesheet" href="stylesheets/demos.css?v3">
-  <link href="https://unpkg.com/grapick/dist/grapick.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../node_modules/toastr/build/toastr.min.css">
+  <link rel="stylesheet" href="../node_modules/grapesjs/dist/css/grapes.min.css?v0.16.12">
+  <link rel="stylesheet" href="../node_modules/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.css">
+  <link rel="stylesheet" href="css/tooltip.css">
+  <link rel="stylesheet" href="../node_modules/grapesjs-plugin-filestack/dist/grapesjs-plugin-filestack.css">
+  <link rel="stylesheet" href="css/demos.css?v3">
+  <link rel="stylesheet" href="css/grapick.min.css">
 
   <!-- <script src="//static.filestackapi.com/v3/filestack.js"></script> -->
   <!-- <script src="js/aviary.js"></script> old //feather.aviary.com/imaging/v3/editor.js -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="js/toastr.min.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/toastr/build/toastr.min.js"></script>
 
-  <script src="js/grapes.min.js?v0.16.12"></script>
-  <script src="js/grapesjs-preset-webpage.min.js?v0.1.11"></script>
-  <script src="js/grapesjs-lory-slider.min.js?0.1.5"></script>
-  <script src="js/grapesjs-tabs.min.js?0.1.1"></script>
-  <script src="js/grapesjs-custom-code.min.js?0.1.2"></script>
-  <script src="js/grapesjs-touch.min.js?0.1.1"></script>
-  <script src="js/grapesjs-parser-postcss.min.js?0.1.1"></script>
-  <script src="js/grapesjs-tooltip.min.js?0.1.1"></script>
-  <script src="js/grapesjs-tui-image-editor.min.js?0.1.2"></script>
-  <script src="js/grapesjs-typed.min.js?1.0.5"></script>
-  <script src="js/grapesjs-style-bg.min.js?1.0.1"></script>
+  <script src="../node_modules/grapesjs/dist/grapes.min.js?v0.16.12"></script>
+  <script src="../node_modules/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min.js?v0.1.11"></script>
+  <script src="../node_modules/grapesjs-lory-slider/dist/grapesjs-lory-slider.min.js?0.1.5"></script>
+  <script src="../node_modules/grapesjs-tabs/dist/grapesjs-tabs.min.js?0.1.1"></script>
+  <script src="../node_modules/grapesjs-custom-code/dist/grapesjs-custom-code.min.js?0.1.2"></script>
+  <script src="../node_modules/grapesjs-touch/dist/grapesjs-touch.min.js?0.1.1"></script>
+  <script src="../node_modules/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min.js?0.1.1"></script>
+  <script src="../node_modules/grapesjs-tooltip/dist/grapesjs-tooltip.min.js?0.1.1"></script>
+  <script src="../node_modules/grapesjs-tui-image-editor/dist/grapesjs-tui-image-editor.min.js?0.1.2"></script>
+  <script src="../node_modules/grapesjs-typed/dist/grapesjs-typed.min.js?1.0.5"></script>
+  <script src="../node_modules/grapesjs-style-bg/dist/grapesjs-style-bg.min.js?1.0.1"></script>
 
   <style type="text/css">
     .icon-add-comp::before,
@@ -174,18 +174,6 @@
 </head>
 
 <body>
-  <div style="display: none">
-    <div class="gjs-logo-cont">
-      <a href="//grapesjs.com"><img class="gjs-logo" src="img/grapesjs-logo-cl.png"></a>
-      <div class="gjs-logo-version"></div>
-    </div>
-  </div>
-  <div class="ad-cont">
-    <!-- <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?zoneid=1673&serve=C6AILKT&placement=grapesjscom" id="_carbonads_js"></script> -->
-    <div id="native-carbon"></div>
-    <script async type="text/javascript" src="./js/carbon.js?v2"></script>
-  </div>
-
   <div id="gjs" style="height:0px; overflow:hidden">
     <header class="header-banner">
       <div class="container-width">
@@ -439,7 +427,7 @@
         color: #ffffff;
         font-family: Helvetica, serif;
         font-weight: 100;
-        background-image: url("//grapesjs.com/img/bg-gr-v.png"), url("//grapesjs.com/img/work-desk.jpg");
+        background-image: url("https://grapesjs.com/img/bg-gr-v.png"), url("https://grapesjs.com/img/work-desk.jpg");
         background-attachment: scroll, scroll;
         background-position: left top, center center;
         background-repeat: repeat-y, no-repeat;
@@ -572,29 +560,29 @@
 
       .card-header {
         height: 155px;
-        background-image: url("//placehold.it/350x250/78c5d6/fff/image1.jpg");
+        background-image: url("https://placehold.it/350x250/78c5d6/fff/image1.jpg");
         background-size: cover;
         background-position: center center;
       }
 
       .card-header.ch2 {
-        background-image: url("//placehold.it/350x250/459ba8/fff/image2.jpg");
+        background-image: url("https://placehold.it/350x250/459ba8/fff/image2.jpg");
       }
 
       .card-header.ch3 {
-        background-image: url("//placehold.it/350x250/79c267/fff/image3.jpg");
+        background-image: url("https://placehold.it/350x250/79c267/fff/image3.jpg");
       }
 
       .card-header.ch4 {
-        background-image: url("//placehold.it/350x250/c5d647/fff/image4.jpg");
+        background-image: url("https://placehold.it/350x250/c5d647/fff/image4.jpg");
       }
 
       .card-header.ch5 {
-        background-image: url("//placehold.it/350x250/f28c33/fff/image5.jpg");
+        background-image: url("https://placehold.it/350x250/f28c33/fff/image5.jpg");
       }
 
       .card-header.ch6 {
-        background-image: url("//placehold.it/350x250/e868a2/fff/image6.jpg");
+        background-image: url("https://placehold.it/350x250/e868a2/fff/image6.jpg");
       }
 
       .card-body {
@@ -1000,7 +988,7 @@
 
       .badge-header {
         height: 115px;
-        background-image: url("//grapesjs.com/img/bg-gr-v.png"), url("//grapesjs.com/img/work-desk.jpg");
+        background-image: url("https://grapesjs.com/img/bg-gr-v.png"), url("https://grapesjs.com/img/work-desk.jpg");
         background-position: left top, center center;
         background-attachment: scroll, fixed;
         overflow: hidden;

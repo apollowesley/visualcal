@@ -1,4 +1,5 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import createLoginWindow from './LoginWindow';
 
 export interface BaseOptions {
   id: string;
@@ -107,6 +108,16 @@ export class WindowManager {
       if (!w.isMain) w.window.close()
     });
     this.fWindows = [];
+  }
+
+  static async ShowLogin() {
+    const mainWindow = global.visualCal.windowManager.mainWindow ? global.visualCal.windowManager.mainWindow.window : undefined;
+    const loginWindow = await createLoginWindow({ parent: mainWindow });
+    global.visualCal.windowManager.add({
+      id: 'login',
+      window: loginWindow,
+      autoRemove: true
+    });
   }
 
 }

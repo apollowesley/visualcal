@@ -154,10 +154,10 @@ try {
     Menu.setApplicationMenu(menu);
 
     if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
-    mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.on('did-finish-load', async () => {
       if (!mainWindow) return
-      mainWindow.webContents.openDevTools();
       mainWindow.show();
+      await WindowManager.ShowLogin();
     });
     mainWindow.on('close', (e) => {
       // Required for node-red if it's in a modified state and changes haven't been deployed
