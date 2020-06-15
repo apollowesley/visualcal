@@ -3,7 +3,6 @@ import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
 import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
 import { create as createMenu } from '@/main/menu';
 import NodeRedSettings from '@/main/node-red-settings';
-// import * as pkg from '@root/package.json';
 import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
 import express from 'express';
 import * as fs from 'fs';
@@ -40,20 +39,14 @@ global.visualCal = {
 
 NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
 
-// dialog.showErrorBox('html directory', global.visualCal.dirs.html);
-// dialog.showErrorBox('renderers directory', global.visualCal.dirs.renderers);
-
 try {
 
   const urlStart = 'red';
-  // const pkgJsonOptions = pkg.NRelectron;
 
   let mainWindow: BrowserWindow | null = null;
-  // private conWindow: BrowserWindow | null = null;
   const nodeRedApp = express();
   const httpServer = http.createServer(nodeRedApp);
   const nodeRed = RED as RED.Red;
-  // private log: string[] = [];
 
   function init(ipcChannels: IpcChannel<string>[]) {
     configureApp();
@@ -179,10 +172,6 @@ try {
     });
     await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
   }
-
-  // private createConsoleWindow() {
-
-  // }
 
   init([
     new SystemInfoChannel(),
