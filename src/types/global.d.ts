@@ -4,29 +4,8 @@ interface VisualCalConfig {
   };
 }
 
-interface LogEntry {
-  timestamp: Date;
-  origin: string;
-  msg: string;
-}
-
 interface User {
   email: string;
-}
-
-interface LoggerMessage {
-  level: string;
-}
-
-interface Result extends LoggerMessage {
-  timestamp: Date;
-  source: string;
-  message: string;
-}
-
-interface LogicResult extends Result {
-  unitId: string;
-  value: number;
 }
 
 declare const __static: string;

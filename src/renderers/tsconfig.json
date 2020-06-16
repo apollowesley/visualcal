@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES5",
     "noImplicitAny": true,
     "sourceMap": true,
     "allowJs": false,
@@ -10,10 +11,11 @@
     "esModuleInterop": true,
     "typeRoots": [
       "../../node_modules/@types",
-      "./types",
+      "../types"
     ]
   },
   "include": [
-    "./**/*.ts"
+    "./**/*.ts",
+    "../types/**/*"
   ]
 }

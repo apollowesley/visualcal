@@ -23,12 +23,3 @@ interface LogicResultTableItem {
   timestamp: Date;
   source: string;
 }
-
-interface Window {
-  moment: typeof import('moment'),
-  visualCal: {
-    log: {
-      result(result: LogicResult): void;
-    }
-  }
-}

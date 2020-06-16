@@ -13,6 +13,7 @@ import { WindowManager } from './managers/WindowManager';
 import isDev from 'electron-is-dev';
 import { create as createLogger } from './logging/CreateLogger';
 import * as os from 'os';
+import { LoginChannel } from '@/IPC/LoginChannel';
 
 global.visualCal = {
   logger: createLogger(),
@@ -48,7 +49,7 @@ try {
   const httpServer = http.createServer(nodeRedApp);
   const nodeRed = RED as RED.Red;
 
-  function init(ipcChannels: IpcChannel<string>[]) {
+  function init(ipcChannels: IpcChannel<any>[]) {
     configureApp();
     registerIpcChannels(ipcChannels);
     createHomeDirectory();
@@ -175,7 +176,8 @@ try {
 
   init([
     new SystemInfoChannel(),
-    new NodeRedResultChannel()
+    new NodeRedResultChannel(),
+    new LoginChannel()
   ]);
 
 } catch (error) {
