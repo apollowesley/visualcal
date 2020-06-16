@@ -21,8 +21,7 @@
 			"script": "compile:renderers",
 			"group": "build",
 			"problemMatcher": [],
-			"label": "npm: compile:renderers",
-			"detail": "tsc -p src/renderers"
+			"label": "npm: compile:renderers"
 		}
 	]
 }

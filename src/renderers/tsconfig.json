@@ -11,11 +11,15 @@
     "esModuleInterop": true,
     "typeRoots": [
       "../../node_modules/@types",
-      "../types"
+      "../types",
+      "./types"
     ]
   },
   "include": [
     "./**/*.ts",
     "../types/**/*"
+  ],
+  "exclude": [
+    "../main/**/*"
   ]
 }

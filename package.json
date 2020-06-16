@@ -6,8 +6,9 @@
     "main": "dist/main/main.js",
     "scripts": {
         "dev": "npm run compile:renderers && electron-webpack dev",
+        "dev:nocompile": "electron-webpack dev",
         "compile": "electron-webpack",
-        "compile:renderers": "tsc -p src/renderers",
+        "compile:renderers": "tsc -p src/renderers  && rm -rf html/main",
         "dist": "npm run compile && electron-builder",
         "pack": "electron-builder --dir",
         "release": "rm -rf dist && npm run compile:renderers && npm run compile && electron-builder build -p never",
@@ -63,6 +64,7 @@
         "@types/d3": "^5.7.2",
         "@types/electron": "^1.6.10",
         "@types/express": "^4.17.6",
+        "@types/materialize-css": "^1.0.8",
         "@types/moment": "^2.13.0",
         "@types/node-red": "^0.20.1",
         "@types/tabulator-tables": "^4.6.7",

@@ -7,7 +7,7 @@ const usernameInput = document.getElementById('input-username') as HTMLInputElem
 const passwordInput = document.getElementById('input-password') as HTMLInputElement;
 const lblError = document.getElementById('lbl');
 
-if (!form || ! btnLogin || !usernameInput || !passwordInput) throw new Error('Missing required HTML elements');
+if (!form || ! btnLogin || !usernameInput || !passwordInput || !lblError) throw new Error('Missing required HTML elements');
 
 const onBtnLoginClicked = async (e: MouseEvent) => {
   const result = await ipcService.login({

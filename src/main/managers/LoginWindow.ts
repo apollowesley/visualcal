@@ -8,6 +8,7 @@ export interface Options {
 export const create = async (opts: Options) => {
   const window = new BrowserWindow({
     parent: opts.parent,
+    center: true,
     webPreferences: {
       nodeIntegration: true
     }

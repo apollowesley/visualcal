@@ -17,3 +17,5 @@ logs
 lib
 html/common
 html/renderers
+# This shouldn't exist
+html/main
