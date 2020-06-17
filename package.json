@@ -5,22 +5,16 @@
     "private": true,
     "main": "dist/main/index.js",
     "scripts": {
-        "dev": "npm run compile:renderers && electron-webpack dev",
-        "dev:nocompile": "electron-webpack dev",
-        "compile": "electron-webpack",
-        "compile:renderers": "tsc -p src/renderers  && rm -rf html/main",
-        "dist": "npm run compile && electron-builder",
+        "dist": "electron-builder",
         "pack": "electron-builder --dir",
         "release": "rm -rf dist && npm run compile:renderers && npm run compile && electron-builder build -p never",
         "postinstall": "electron-builder install-app-deps",
-        "build": "tsc && electron-webpack",
+        "build": "tsc",
         "watch": "tsc -w",
-        "start": "npm run compile && electron --disable-gpu dist/main/main.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "clean-dist": "rm -rf dist",
-        "upgrade": "npm-update-all",
-        "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force && npm install",
-        "upgrade-rebuild": "npm run upgrade && npm run rebuild"
+        "clean:dist": "rm -rf dist",
+        "start": "npm run clean:dist && npm run build && electron --disable-gpu dist/main/index.js",
+        "update:all": "npm-update-all",
+        "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force && npm install"
     },
     "repository": {
         "type": "git",

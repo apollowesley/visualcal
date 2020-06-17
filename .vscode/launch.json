@@ -5,26 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "electron",
-      "request": "launch",
-      "name": "Launch Electron",
-      "appDir": "${workspaceRoot}/dist/main/index.js",
-      "sourceMaps": true
-    },
-    {
       "type": "node",
       "request": "launch",
-      "name": "Launch and Debug",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-webpack",
-      "runtimeArgs": [
-        "dev"
-      ],
-      "autoAttachChildProcesses": true,
-      "internalConsoleOptions": "openOnFirstSessionStart",
-      "console": "integratedTerminal",
-      "outFiles": ["${workspaceRoot}/dist"],
+      "name": "Launch Program",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "program": "${workspaceFolder}/src/main/index.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
       "sourceMaps": true,
-      "preLaunchTask": "npm: compile:renderers"
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }
