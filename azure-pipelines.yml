@@ -5,12 +5,12 @@ trigger:
 
 strategy:
   matrix:
-    # linux:
-    #   imageName: 'ubuntu-latest'
+    linux:
+      imageName: 'ubuntu-latest'
     mac:
       imageName: 'macos-latest'
-    # windows:
-    #   imageName: 'windows-latest'
+    windows:
+      imageName: 'windows-latest'
 
 pool:
   vmImage: $(imageName)
@@ -23,12 +23,6 @@ steps:
 - bash: |
     npm run rebuild
     npm run release
-#    npm test
-
-# - task: PublishTestResults@2
-#   inputs:
-#     testResultsFiles: '**/TEST-RESULTS.xml'
-#     testRunTitle: 'Test results for JavaScript'
 
 - task: PublishCodeCoverageResults@1
   inputs: 
@@ -36,17 +30,25 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
-- bash: |
-    mkdir release
-    cp $(System.DefaultWorkingDirectory)/dist/*.exe $(System.DefaultWorkingDirectory)/release
-    cp $(System.DefaultWorkingDirectory)/dist/*.snap $(System.DefaultWorkingDirectory)/release
-    cp $(System.DefaultWorkingDirectory)/dist/*.AppImage $(System.DefaultWorkingDirectory)/release
-    cp $(System.DefaultWorkingDirectory)/dist/*.dmg $(System.DefaultWorkingDirectory)/release
-    cp $(System.DefaultWorkingDirectory)/dist/*.dmg.blockmap $(System.DefaultWorkingDirectory)/release
-
-- task: PublishBuildArtifacts@1
+- task: CopyFiles@2
+  displayName: 'Copy Windows files to: $(Build.ArtifactStagingDirectory)'
   inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/release'
-    includeRootFolder: false
+    Contents: |
+      dist/*.exe
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- task: PublishBuildArtifacts@1
+- task: CopyFiles@2
+  displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    Contents: |
+      dist/*.snap
+      dist/*.AppImage
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: CopyFiles@2
+  displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    Contents: |
+      dist/*.dmg
+      dist/*.dmg.blockmap
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
