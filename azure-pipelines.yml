@@ -46,9 +46,15 @@ steps:
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: CopyFiles@2
-  displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
+  displayName: 'Copy Mac files to: $(Build.ArtifactStagingDirectory)'
   inputs:
     Contents: |
       dist/*.dmg
       dist/*.dmg.blockmap
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Linux Build Artifacts'
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: 'release'
