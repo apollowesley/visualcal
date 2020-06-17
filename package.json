@@ -7,7 +7,7 @@
     "scripts": {
         "dist": "electron-builder",
         "pack": "electron-builder --dir",
-        "release": "rm -rf dist && npm run compile:renderers && npm run compile && electron-builder build -p never",
+        "release": "rm -rf dist && npm run build && electron-builder build -p never",
         "postinstall": "electron-builder install-app-deps",
         "build": "tsc",
         "watch": "tsc -w",
@@ -91,7 +91,7 @@
         "copyright": "Copyright © 2020 IndySoft",
         "files": [
             "dist/**/*",
-            "html/**/*",
+            "public/**/*",
             "nodes/**/*",
             "package.json"
         ],
