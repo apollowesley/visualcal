@@ -1,14 +1,14 @@
 {
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
+    "target": "ES2015",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "paths": {
-      "@/*": [ "src/*" ],
-      "@root/*": [ "./*" ],
-      "@common/*": [ "src/common/*" ]
-    },
     "typeRoots": [
       "node_modules/@types",
       "src/types",

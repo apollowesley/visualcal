@@ -1,5 +1,5 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, app } from 'electron';
-import { openFlow, saveFlow, createConsole } from '@/main/menu/menu-actions';
+import { openFlow, saveFlow, createConsole } from '../menu/menu-actions';
 import * as path from 'path';
 
 export interface Options {

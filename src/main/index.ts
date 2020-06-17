@@ -1,8 +1,9 @@
-import { IpcChannel } from "@/IPC/IpcChannel";
-import { SystemInfoChannel } from "@/IPC/SystemInfoChannel";
-import { NodeRedResultChannel } from "@/IPC/NodeRedResultChannel";
-import { create as createMenu } from '@/main/menu';
-import NodeRedSettings from '@/main/node-red-settings';
+import 'module-alias/register';
+import { IpcChannel } from "./IPC/IpcChannel";
+import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
+import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
+import { create as createMenu } from './menu';
+import NodeRedSettings from './node-red-settings';
 import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
 import express from 'express';
 import * as fs from 'fs';
@@ -13,7 +14,7 @@ import { WindowManager } from './managers/WindowManager';
 import isDev from 'electron-is-dev';
 import { create as createLogger } from './logging/CreateLogger';
 import * as os from 'os';
-import { LoginChannel } from '@/IPC/LoginChannel';
+import { LoginChannel } from './IPC/LoginChannel';
 
 global.visualCal = {
   logger: createLogger(),
@@ -25,15 +26,15 @@ global.visualCal = {
     }
   },
   dirs: {
-    base: isDev ? path.resolve(__dirname, '..', '..') : path.resolve(__dirname), // <base>/dist
-    html: isDev ? path.resolve(__dirname, '..', '..', 'html') : path.resolve(__dirname, 'html'),
-    renderers: isDev ? path.resolve(__dirname, '..', '..', 'html', 'renderers') : path.resolve(__dirname, 'html', 'renderers'),
+    base: path.resolve(__dirname, '..', '..'), // <base>/dist
+    html: path.resolve(__dirname, '..', '..', 'public'),
+    renderers: path.resolve(__dirname, '..', 'renderers'),
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
   },
   assets: {
-    basePath: path.resolve(__static),
-    get: (name: string) => fs.readFileSync(path.resolve(__static, name))
+    basePath: path.resolve(__dirname, '..', '..', 'public'),
+    get: (name: string) => fs.readFileSync(path.resolve(__dirname, '..', '..', 'public', name))
   },
   windowManager: new WindowManager()
 };
@@ -117,7 +118,7 @@ try {
         nodeIntegration: true
       }
     });
-    loadingScreen.on('closed', () => loadingScreen = null);
+    loadingScreen.on('closed', () => { loadingScreen = null; });
     loadingScreen.webContents.on('did-finish-load', () => {
       if (loadingScreen) loadingScreen.show();
       setTimeout(() => {

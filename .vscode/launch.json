@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "electron",
+      "request": "launch",
+      "name": "Launch Electron",
+      "appDir": "${workspaceRoot}/dist/main/index.js",
+      "sourceMaps": true
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Launch and Debug",

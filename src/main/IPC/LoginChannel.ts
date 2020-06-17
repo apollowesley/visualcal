@@ -1,7 +1,7 @@
 import { IpcMainEvent } from 'electron';
-import { IpcRequest } from "@/common/IpcRequest";
+import { IpcRequest } from "../../common/IpcRequest";
 import { IpcChannel } from "./IpcChannel";
-import { login } from '@/main/security/index';
+import { login } from '../security/index';
 
 export class LoginChannel implements IpcChannel<LoginCredentials> {
   getName(): string {

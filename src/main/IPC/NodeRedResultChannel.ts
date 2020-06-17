@@ -1,5 +1,5 @@
 import { IpcMainEvent } from 'electron';
-import { IpcRequest } from "@/common/IpcRequest";
+import { IpcRequest } from "../../common/IpcRequest";
 import { IpcChannel } from "./IpcChannel";
 
 export class NodeRedResultChannel implements IpcChannel<string> {

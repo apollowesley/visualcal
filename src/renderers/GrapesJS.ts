@@ -1,4 +1,3 @@
-import grapesjs from 'grapesjs';
 import toastr from 'toastr';
 import gjsCustomCode from 'grapesjs-custom-code';
 import gjsLorySlider from 'grapesjs-lory-slider';
@@ -10,6 +9,7 @@ import gjsTooltip from 'grapesjs-tooltip';
 import gjsTouch from 'grapesjs-touch';
 import gjsTuiImageEditor from 'grapesjs-tui-image-editor';
 import gjsTyped from 'grapesjs-typed';
+import grapesjs from 'grapesjs';
 
 // console.info(grapesjs);
 
@@ -416,7 +416,7 @@ cmdm.add('set-device-tablet', {
   stop: function() {},
 });
 cmdm.add('set-device-mobile', {
-  run: function(ed) { ed.setDevice('Mobile portrait') },
+  run: function(ed: grapesjs.Editor) { ed.setDevice('Mobile portrait') },
   stop: function() {},
 });
 
