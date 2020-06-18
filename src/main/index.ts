@@ -13,7 +13,7 @@ import { create as createMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as utils from './utils';
 import './InitGlobal';
-import { login } from './security';
+import { login, isLoggedIn } from './security';
 
 const urlStart = 'red';
 
@@ -55,9 +55,15 @@ function onWindowAllClosed() {
 }
 
 async function onActive() {
-  if (!mainWindow) {
-    await createMainWindow();
+  if (mainWindow) {
+    mainWindow.show();
+    return;
   }
+  if (!isLoggedIn()) {
+    await createLoginWindow();
+    return;
+  }
+  await createMainWindow();
 }
 
 async function createLoadingWindow(duration: number = 5000) {
@@ -83,6 +89,9 @@ async function createLoginWindow() {
       ipcMain.removeHandler('login');
       loginWindow.close();
       loginWindow = null;
+      global.visualCal.user = {
+        email: credentials.username
+      }
       await createMainWindow();
     } else {
       event.reply('login-error', 'Incorrect login credentials');
@@ -106,10 +115,10 @@ async function createMainWindow() {
   });
   mainWindow.webContents.once('did-finish-load', async () => {
     if (!mainWindow) return
-    mainWindow.title = 'VisualCal - Logic Editor';
+    mainWindow.title = 'VisualCal';
     mainWindow.show();
   });
-  await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
+  await mainWindow.loadFile(path.join(global.visualCal.dirs.html, 'dashboard.html'));
 }
 
 init([
