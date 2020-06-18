@@ -1,4 +1,4 @@
-import { IpcMainEvent } from 'electron';
+import { IpcMainEvent, ipcMain } from 'electron';
 import { IpcRequest } from "../../common/IpcRequest";
 import { IpcChannel } from "./IpcChannel";
 import { login } from '../security/index';

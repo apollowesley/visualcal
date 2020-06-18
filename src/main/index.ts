@@ -1,18 +1,19 @@
 import 'module-alias/register';
-import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, ipcRenderer } from 'electron';
 import express from 'express';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as RED from "node-red";
 import * as path from 'path';
 import { IpcChannel } from "./IPC/IpcChannel";
-import { LoginChannel } from './IPC/LoginChannel';
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
 import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
 import { LoadingWindowConfig, MainWindowConfig } from './managers/WindowConfigs';
 import { create as createMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
+import * as utils from './utils';
 import './InitGlobal';
+import { login } from './security';
 
 const urlStart = 'red';
 
@@ -23,7 +24,7 @@ const nodeRed = RED as RED.Red;
 
 function init(ipcChannels: IpcChannel<any>[]) {
   registerIpcChannels(ipcChannels);
-  createHomeDirectory();
+  ensureUserHomeDir();
   app.on('ready', async () => await onAppReady());
   app.on('window-all-closed', onWindowAllClosed);
   app.on('activate', onActive);
@@ -32,7 +33,7 @@ function init(ipcChannels: IpcChannel<any>[]) {
   nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
 }
 
-function createHomeDirectory() {
+function ensureUserHomeDir() {
   if (!fs.existsSync(global.visualCal.dirs.visualCalUser)) fs.mkdirSync(global.visualCal.dirs.visualCalUser);
 }
 
@@ -66,24 +67,38 @@ async function createLoadingWindow(duration: number = 5000) {
     if (loadingScreen) loadingScreen.show();
     setTimeout(async () => {
       if (loadingScreen) loadingScreen.close();
-      await createMainWindow();
+      await createLoginWindow();
     }, duration);
   });
   await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
 }
 
+async function createLoginWindow() {
+  let loginWindow = await global.visualCal.windowManager.ShowLogin();
+  ipcMain.on('login', async (event, args: LoginCredentials) => {
+    if (!args) return event.sender.send('login-error', 'Missing credentials');
+    const credentials = args;
+    const result = login(credentials);
+    if (result) {
+      ipcMain.removeHandler('login');
+      loginWindow.close();
+      loginWindow = null;
+      await createMainWindow();
+    } else {
+      event.sender.send('login-error', 'Incorrect login credentials');
+    }
+  });
+}
+
 async function createMainWindow() {
-  const cursorScreenPoint = screen.getCursorScreenPoint();
-  const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
   mainWindow = global.visualCal.windowManager.create(MainWindowConfig());
-  mainWindow.setBounds(nearestScreenToCursor.workArea);
+  utils.centerWindowOnNearestCurorScreen(mainWindow);
   const menu = Menu.buildFromTemplate(createMenu());
   Menu.setApplicationMenu(menu);
 
   if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
   mainWindow.once('close', (e) => {
-    // Required for node-red if it's in a modified state and changes haven't been deployed
-    e.preventDefault();
+    e.preventDefault(); // Required for node-red if it's in a modified state and changes haven't been deployed
     global.visualCal.windowManager.closeAll();
     mainWindow = null;
     app.quit();
@@ -93,13 +108,11 @@ async function createMainWindow() {
     if (!mainWindow) return
     mainWindow.title = 'VisualCal - Logic Editor';
     mainWindow.show();
-    await global.visualCal.windowManager.ShowLogin();
   });
   await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
 }
 
 init([
   new SystemInfoChannel(),
-  new NodeRedResultChannel(),
-  new LoginChannel()
+  new NodeRedResultChannel()
 ]);

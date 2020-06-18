@@ -1,5 +1,6 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import { BrowserWindow } from 'electron';
 import path from 'path';
+import * as utils from '../utils';
 
 export class WindowManager {
 
@@ -120,7 +121,9 @@ export class WindowManager {
         }
       }
     });
+    utils.centerWindowOnNearestCurorScreen(loginWindow, false);
     await loginWindow.loadFile(path.join(global.visualCal.dirs.html, 'login.html'));
+    return loginWindow;
   }
 
 }
