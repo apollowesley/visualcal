@@ -85,7 +85,7 @@ async function createLoginWindow() {
       loginWindow = null;
       await createMainWindow();
     } else {
-      event.sender.send('login-error', 'Incorrect login credentials');
+      event.reply('login-error', 'Incorrect login credentials');
     }
   });
 }
