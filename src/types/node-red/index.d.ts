@@ -33,9 +33,35 @@ export interface Red {
     version(): string;
     init(server: http.Server, settings: any): void;
     start(): Promise<void>;
-    runtime: {
-        comms: any;
-    }
+    runtime: Runtime;
+}
+
+export interface CommsConnection {
+  session: string;
+  user: any;
+  send: (payload: any) => void;
+}
+
+export interface CommsSubscriptionOptions {
+  user: any;
+  client: CommsConnection;
+  topic: string;
+}
+
+export interface CommsRegistrationOptions {
+  user: any;
+  client: CommsConnection;
+}
+
+export interface Comms {
+  addConnection(opts: CommsRegistrationOptions): Promise<any>;
+  removeConnection(opts: CommsRegistrationOptions): Promise<any>;
+  subscribe(opts: CommsSubscriptionOptions): Promise<any>;
+  unsubscribe(opts: CommsSubscriptionOptions): Promise<any>;
+}
+
+export interface Runtime {
+  comms: Comms;
 }
 
 /**

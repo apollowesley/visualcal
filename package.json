@@ -1,7 +1,8 @@
 {
     "name": "visualcal-electron",
-    "version": "1.0.6",
-    "description": "Electron Node-RED application starter kit for development",
+    "productName": "IndySoft VisualCal",
+    "version": "0.1.0",
+    "description": "IndySoft VisualCal",
     "private": true,
     "main": "dist/main/index.js",
     "scripts": {
@@ -14,7 +15,7 @@
         "clean:dist": "rm -rf dist",
         "start": "npm run clean:dist && npm run build && electron --disable-gpu dist/main/index.js",
         "update:all": "npm-update-all",
-        "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force && npm install"
+        "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force"
     },
     "repository": {
         "type": "git",
@@ -73,8 +74,8 @@
     },
     "keywords": [
         "electron",
-        "quick start",
-        "node-red"
+        "indysoft",
+        "visualcal"
     ],
     "author": {
         "name": "Scott Page",

@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { BrowserWindow, dialog } from 'electron';
 import * as path from 'path';
 import * as RED from 'node-red';
+import { ConsoleWindowConfig } from '../managers/WindowConfigs';
 
 const nodeRed = RED as RED.Red;
 
@@ -48,31 +49,15 @@ export const openFlow = async (mainWindow: BrowserWindow) => {
 export const createConsole = async () => {
   if (global.visualCal.windowManager.consoleWindow) {
     console.info('Console window already exists');
-    global.visualCal.windowManager.consoleWindow.window.show();
+    global.visualCal.windowManager.consoleWindow.show();
     return;
   }
   console.info('Creating console');
   // Create the hidden console window
-  const conWindow = new BrowserWindow({
-    title: "VisualCal Console",
-    width: 800,
-    height: 600,
-    autoHideMenuBar: true,
-    webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false,
-      allowRunningInsecureContent: true
-    }
-  });
-  global.visualCal.windowManager.add({
-    id: 'console',
-    window: conWindow,
-    autoRemove: true,
-    isConsole: true
-  });
+  const conWindow = global.visualCal.windowManager.create(ConsoleWindowConfig());
   await conWindow.loadFile(path.join(global.visualCal.dirs.html, 'console.html'));
   conWindow.webContents.on('did-finish-load', () => {
-    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.window.webContents.send('results', global.visualCal.logger.query());
+    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.webContents.send('results', global.visualCal.logger.query());
   });
   return conWindow;
 }

@@ -46,12 +46,12 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow.window); }
+        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow.window); }
+        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow); }
       },
       { type: 'separator' },
       {
@@ -69,19 +69,19 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/ui'); }
+        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/ui'); }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
         click() {
-          if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/red');
+          if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/red');
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.window.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
+        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
       },
       { type: 'separator' },
       { type: 'separator' },

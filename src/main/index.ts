@@ -1,186 +1,105 @@
 import 'module-alias/register';
-import { IpcChannel } from "./IPC/IpcChannel";
-import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
-import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
-import { create as createMenu } from './menu';
-import NodeRedSettings from './node-red-settings';
-import { app, BrowserWindow, ipcMain, Menu, screen, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, screen } from 'electron';
 import express from 'express';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as RED from "node-red";
 import * as path from 'path';
-import { WindowManager } from './managers/WindowManager';
-import isDev from 'electron-is-dev';
-import { create as createLogger } from './logging/CreateLogger';
-import * as os from 'os';
+import { IpcChannel } from "./IPC/IpcChannel";
 import { LoginChannel } from './IPC/LoginChannel';
+import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
+import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
+import { LoadingWindowConfig, MainWindowConfig } from './managers/WindowConfigs';
+import { create as createMenu } from './menu';
+import NodeRedSettings from './node-red-settings';
+import './InitGlobal';
 
-global.visualCal = {
-  logger: createLogger(),
-  isMac: process.platform === 'darwin',
-  isDev: isDev,
-  config: {
-    httpServer: {
-      port: 18880
-    }
-  },
-  dirs: {
-    base: path.resolve(__dirname, '..', '..'), // <base>/dist
-    html: path.resolve(__dirname, '..', '..', 'public'),
-    renderers: path.resolve(__dirname, '..', 'renderers'),
-    procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
-    visualCalUser: path.join(os.homedir(), '.visualcal')
-  },
-  assets: {
-    basePath: path.resolve(__dirname, '..', '..', 'public'),
-    get: (name: string) => fs.readFileSync(path.resolve(__dirname, '..', '..', 'public', name))
-  },
-  windowManager: new WindowManager()
-};
+const urlStart = 'red';
 
-NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
+let mainWindow: BrowserWindow | null = null;
+const nodeRedApp = express();
+const httpServer = http.createServer(nodeRedApp);
+const nodeRed = RED as RED.Red;
 
-try {
-
-  const urlStart = 'red';
-
-  let mainWindow: BrowserWindow | null = null;
-  const nodeRedApp = express();
-  const httpServer = http.createServer(nodeRedApp);
-  const nodeRed = RED as RED.Red;
-
-  function init(ipcChannels: IpcChannel<any>[]) {
-    configureApp();
-    registerIpcChannels(ipcChannels);
-    createHomeDirectory();
-    app.on('ready', async () => await onAppReady());
-    app.on('window-all-closed', onWindowAllClosed);
-    app.on('activate', onActive);
-    nodeRed.init(httpServer, NodeRedSettings);
-    nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
-    nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
-  }
-
-  async function onAppReady() {
-    const gjsEditorWindow = global.visualCal.windowManager.create({
-      id: 'grapesjs-editor',
-      config: {
-        title: 'GrapesJS Editor',
-        webPreferences: {
-          nodeIntegration: true
-        }
-      },
-      autoRemove: true
-    });
-    await gjsEditorWindow.loadFile(path.join(global.visualCal.dirs.html, 'GrapesJS.html'));
-    await createLoadingWindow();
-  }
-
-  function onWindowAllClosed() {
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-  }
-
-  async function onActive() {
-    if (!mainWindow) {
-      await createMainWindow();
-    }
-  }
-
-  function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
-    ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
-  }
-
-  function configureApp() {
-    const isFirstInstance = app.requestSingleInstanceLock();
-    if (!isFirstInstance) app.quit();
-  }
-
-  function createHomeDirectory() {
-    if (!fs.existsSync(global.visualCal.dirs.visualCalUser)) fs.mkdirSync(global.visualCal.dirs.visualCalUser);
-  }
-
-  async function createLoadingWindow(duration: number = 5000) {
-    const cursorScreenPoint = screen.getCursorScreenPoint();
-    const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
-    let loadingScreen: BrowserWindow | null = new BrowserWindow({
-      height: 200,
-      width: 400,
-      x: nearestScreenToCursor.workArea.x - 200 + nearestScreenToCursor.bounds.width / 2,
-      y: nearestScreenToCursor.workArea.y - 200 + nearestScreenToCursor.bounds.height / 2,
-      title: 'VisualCal',
-      frame: false,
-      transparent: false,
-      resizable: false,
-      webPreferences: {
-        nodeIntegration: true
-      }
-    });
-    loadingScreen.on('closed', () => { loadingScreen = null; });
-    loadingScreen.webContents.on('did-finish-load', () => {
-      if (loadingScreen) loadingScreen.show();
-      setTimeout(() => {
-        if (loadingScreen) loadingScreen.close();
-        httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
-          await nodeRed.start();
-          await createMainWindow();
-        });
-      }, duration);
-    });
-    await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
-  }
-
-  async function createMainWindow() {
-    const cursorScreenPoint = screen.getCursorScreenPoint();
-    const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
-    mainWindow = new BrowserWindow({
-      title: "VisualCal",
-      width: 1024,
-      height: 768,
-      fullscreenable: true,
-      autoHideMenuBar: false,
-      webPreferences: {
-        nodeIntegration: false,
-        preload: path.join(global.visualCal.dirs.renderers, 'NodeRed.js')
-      }
-    });
-    global.visualCal.windowManager.add({
-      id: 'main',
-      window: mainWindow,
-      isMain: true
-    });
-    mainWindow.setBounds(nearestScreenToCursor.workArea);
-    const menu = Menu.buildFromTemplate(createMenu());
-    Menu.setApplicationMenu(menu);
-
-    if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
-    mainWindow.webContents.on('did-finish-load', async () => {
-      if (!mainWindow) return
-      mainWindow.show();
-      await WindowManager.ShowLogin();
-    });
-    mainWindow.on('close', (e) => {
-      // Required for node-red if it's in a modified state and changes haven't been deployed
-      e.preventDefault();
-      if (mainWindow) {
-        global.visualCal.windowManager.remove('main');
-        mainWindow.destroy();
-      }
-      mainWindow = null;
-      global.visualCal.windowManager.closeAll();
-      app.quit();
-    });
-    await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
-  }
-
-  init([
-    new SystemInfoChannel(),
-    new NodeRedResultChannel(),
-    new LoginChannel()
-  ]);
-
-} catch (error) {
-  dialog.showErrorBox('Oops!', error.message);
+function init(ipcChannels: IpcChannel<any>[]) {
+  registerIpcChannels(ipcChannels);
+  createHomeDirectory();
+  app.on('ready', async () => await onAppReady());
+  app.on('window-all-closed', onWindowAllClosed);
+  app.on('activate', onActive);
+  nodeRed.init(httpServer, NodeRedSettings);
+  nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
+  nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
 }
+
+function createHomeDirectory() {
+  if (!fs.existsSync(global.visualCal.dirs.visualCalUser)) fs.mkdirSync(global.visualCal.dirs.visualCalUser);
+}
+
+function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
+  ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
+}
+
+async function onAppReady() {
+  httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
+    await nodeRed.start();
+  });
+  await createLoadingWindow();
+}
+
+function onWindowAllClosed() {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+}
+
+async function onActive() {
+  if (!mainWindow) {
+    await createMainWindow();
+  }
+}
+
+async function createLoadingWindow(duration: number = 5000) {
+  let loadingScreen = global.visualCal.windowManager.create(LoadingWindowConfig());
+  loadingScreen.once('closed', () => { loadingScreen = null; });
+  loadingScreen.webContents.once('did-finish-load', () => {
+    if (loadingScreen) loadingScreen.show();
+    setTimeout(async () => {
+      if (loadingScreen) loadingScreen.close();
+      await createMainWindow();
+    }, duration);
+  });
+  await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
+}
+
+async function createMainWindow() {
+  const cursorScreenPoint = screen.getCursorScreenPoint();
+  const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
+  mainWindow = global.visualCal.windowManager.create(MainWindowConfig());
+  mainWindow.setBounds(nearestScreenToCursor.workArea);
+  const menu = Menu.buildFromTemplate(createMenu());
+  Menu.setApplicationMenu(menu);
+
+  if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
+  mainWindow.once('close', (e) => {
+    // Required for node-red if it's in a modified state and changes haven't been deployed
+    e.preventDefault();
+    global.visualCal.windowManager.closeAll();
+    mainWindow = null;
+    app.quit();
+    app.exit();
+  });
+  mainWindow.webContents.once('did-finish-load', async () => {
+    if (!mainWindow) return
+    mainWindow.title = 'VisualCal - Logic Editor';
+    mainWindow.show();
+    await global.visualCal.windowManager.ShowLogin();
+  });
+  await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
+}
+
+init([
+  new SystemInfoChannel(),
+  new NodeRedResultChannel(),
+  new LoginChannel()
+]);
