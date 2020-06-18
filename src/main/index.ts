@@ -17,7 +17,7 @@ import { login, isLoggedIn } from './security';
 
 try {
 
-const urlStart = 'red';
+const urlStart = 'ui';
 
 let mainWindow: BrowserWindow | null = null;
 const nodeRedApp = express();
@@ -128,7 +128,7 @@ async function createMainWindow() {
     mainWindow.title = 'VisualCal';
     mainWindow.show();
   });
-  await mainWindow.loadFile(path.join(global.visualCal.dirs.html, 'dashboard.html'));
+  await mainWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/${urlStart}`);
 }
 
 init([
