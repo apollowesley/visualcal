@@ -15,6 +15,8 @@ import * as utils from './utils';
 import './InitGlobal';
 import { login, isLoggedIn } from './security';
 
+try {
+
 const urlStart = 'red';
 
 let mainWindow: BrowserWindow | null = null;
@@ -43,7 +45,11 @@ function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
 
 async function onAppReady() {
   httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
-    await nodeRed.start();
+    try {
+      await nodeRed.start();
+    } catch (error) {
+      console.error(error);
+    }
   });
   await createLoadingWindow();
 }
@@ -72,8 +78,12 @@ async function createLoadingWindow(duration: number = 5000) {
   loadingScreen.webContents.once('did-finish-load', () => {
     if (loadingScreen) loadingScreen.show();
     setTimeout(async () => {
-      if (loadingScreen) loadingScreen.close();
-      await createLoginWindow();
+      try {
+        await createLoginWindow();
+        if (loadingScreen) loadingScreen.close();
+      } catch (error) {
+        console.error(error);
+      }
     }, duration);
   });
   await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
@@ -87,12 +97,12 @@ async function createLoginWindow() {
     const result = login(credentials);
     if (result) {
       ipcMain.removeHandler('login');
+      await createMainWindow();
       loginWindow.close();
       loginWindow = null;
       global.visualCal.user = {
         email: credentials.username
       }
-      await createMainWindow();
     } else {
       event.reply('login-error', 'Incorrect login credentials');
     }
@@ -125,3 +135,7 @@ init([
   new SystemInfoChannel(),
   new NodeRedResultChannel()
 ]);
+
+} catch (err) {
+  console.error(err);
+}

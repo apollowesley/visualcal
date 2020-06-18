@@ -9,6 +9,9 @@
       "request": "launch",
       "name": "Build & Debug Main Process",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
+      },
       "program": "${workspaceFolder}/src/main/index.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "sourceMaps": true,
