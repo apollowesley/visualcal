@@ -17,5 +17,6 @@
   "devDependencies": {
     "node-red": "^1.0.6",
     "node-red-node-test-helper": "^0.2.5"
-  }
+  },
+  "dependencies": {}
 }

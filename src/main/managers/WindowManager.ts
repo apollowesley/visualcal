@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 import path from 'path';
-import * as utils from '../utils';
+import * as WindowUtils from '../utils/Window';
 
 export class WindowManager {
 
@@ -48,7 +48,7 @@ export class WindowManager {
     global.visualCal.logger.info('Removing window', { windowId: id });
     const existing = this.get(id);
     if (!this.fClosingAll && !existing) throw new Error(`Window not found, ${id}`);
-    if (!this.fClosingAll) {
+    if (!this.fClosingAll && existing) {
       if (existing.visualCal.isMain) this.fMainWindow = undefined;
       if (existing.visualCal.isConsole) this.fConsoleWindow = undefined;
     }
@@ -95,8 +95,8 @@ export class WindowManager {
     this.fWindows.forEach(w => {
       w.close()
     });
-    this.fMainWindow = null;
-    this.fConsoleWindow = null;
+    this.fMainWindow = undefined;
+    this.fConsoleWindow = undefined;
     this.fWindows.clear();
   }
 
@@ -121,7 +121,8 @@ export class WindowManager {
         }
       }
     });
-    utils.centerWindowOnNearestCurorScreen(loginWindow, false);
+    if (!loginWindow) throw new Error('loginWindow cannot be null after creation');
+    WindowUtils.centerWindowOnNearestCurorScreen(loginWindow, false);
     await loginWindow.loadFile(path.join(global.visualCal.dirs.html, 'login.html'));
     return loginWindow;
   }

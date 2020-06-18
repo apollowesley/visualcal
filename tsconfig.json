@@ -5,13 +5,14 @@
     "moduleResolution": "Node",
     "noImplicitAny": true,
     "sourceMap": true,
+    "strict": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "outDir": "dist",
     "baseUrl": ".",
     "typeRoots": [
       "node_modules/@types",
-      "src/types",
+      "src/types"
     ]
   },
   "include": [
