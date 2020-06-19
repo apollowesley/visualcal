@@ -54,6 +54,7 @@
         "source-map-support": "^0.5.19",
         "tabulator-tables": "^4.6.3",
         "toastr": "^2.1.4",
+        "vue": "^2.6.11",
         "winston": "^3.2.1"
     },
     "devDependencies": {
