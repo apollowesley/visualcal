@@ -25,7 +25,7 @@ export interface Red {
     util: any;
     httpAdmin: any;
     auth: any;
-    comms: any;
+    comms: Comms;
     library: any;
     httpNode: any;
     server: any;

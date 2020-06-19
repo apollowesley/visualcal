@@ -8,9 +8,8 @@ import { IpcChannel } from "./IPC/IpcChannel";
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
 import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
 import { LoadingWindowConfig, MainWindowConfig } from './managers/WindowConfigs';
-import { create as createMenu } from './menu';
+import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
-import * as WindowUtils from './utils/Window';
 import * as UserHomeUtils from './utils/HomeDir';
 import { login, isLoggedIn } from './security';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
@@ -58,7 +57,7 @@ try {
   }
 
   async function onActive() {
-    if (mainWindow) {
+    if (isLoggedIn() && mainWindow) {
       mainWindow.show();
       return;
     }
@@ -66,38 +65,26 @@ try {
       await createLoginWindow();
       return;
     }
-    await createMainWindow();
+    await global.visualCal.windowManager.ShowMain();
   }
 
-  async function createLoadingWindow(duration: number = 5000) {
-    let loadingScreen: BrowserWindow | undefined = global.visualCal.windowManager.create(LoadingWindowConfig());
-    loadingScreen.once('closed', () => { loadingScreen = undefined; });
-    loadingScreen.webContents.once('did-finish-load', () => {
-      if (loadingScreen) loadingScreen.show();
-      setTimeout(async () => {
-        try {
-          await createLoginWindow();
-          if (loadingScreen) loadingScreen.close();
-        } catch (error) {
-          console.error(error);
-        }
-      }, duration);
-    });
-    await loadingScreen.loadFile(path.join(global.visualCal.dirs.html.windows, 'loading.html'));
+  async function createLoadingWindow() {
+    const onLoadingWindowClosed = async () => await createLoginWindow();
+    await global.visualCal.windowManager.ShowLoading(onLoadingWindowClosed, 5000);
   }
 
   async function createLoginWindow() {
-    let loginWindow = await global.visualCal.windowManager.ShowLogin();
+    const loginWindow: BrowserWindow = await global.visualCal.windowManager.ShowLogin();
     ipcMain.on('login', async (event, args: LoginCredentials) => {
       if (!args) return event.sender.send('login-error', 'Missing credentials');
       const credentials = args;
       const result = login(credentials);
       if (result) {
         ipcMain.removeHandler('login');
-        await createMainWindow();
+        initMainMenu();
+        await global.visualCal.windowManager.ShowMain();
         if (loginWindow) {
           loginWindow.close();
-          loginWindow = undefined;
         }
         global.visualCal.user = {
           email: credentials.username
@@ -106,29 +93,6 @@ try {
         event.reply('login-error', 'Incorrect login credentials');
       }
     });
-  }
-
-  async function createMainWindow() {
-    mainWindow = global.visualCal.windowManager.create(MainWindowConfig());
-    if (!mainWindow) throw new Error('Main window cannot be null after creation');
-    WindowUtils.centerWindowOnNearestCurorScreen(mainWindow);
-    const menu = Menu.buildFromTemplate(createMenu());
-    Menu.setApplicationMenu(menu);
-
-    if (process.platform !== 'darwin') mainWindow.setAutoHideMenuBar(true);
-    mainWindow.once('close', (e) => {
-      e.preventDefault(); // Required for node-red if it's in a modified state and changes haven't been deployed
-      global.visualCal.windowManager.closeAll();
-      mainWindow = null;
-      app.quit();
-      app.exit();
-    });
-    mainWindow.webContents.once('did-finish-load', async () => {
-      if (!mainWindow) return
-      mainWindow.title = 'VisualCal';
-      mainWindow.show();
-    });
-    await mainWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'dashboard.html'));
   }
 
   init([

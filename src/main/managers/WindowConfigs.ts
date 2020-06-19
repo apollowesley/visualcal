@@ -58,9 +58,7 @@ export const ConsoleWindowConfig = (): CreateWindowOptions => {
       height: 600,
       autoHideMenuBar: true,
       webPreferences: {
-        nodeIntegration: true,
-        webSecurity: false,
-        allowRunningInsecureContent: true
+        nodeIntegration: true
       }
     }
   }

@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, app } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions, app, Menu } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import * as path from 'path';
 
@@ -46,12 +46,12 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Import Flow',
         accelerator: "Shift+CmdOrCtrl+O",
-        click() { if (global.visualCal.windowManager.mainWindow) openFlow(global.visualCal.windowManager.mainWindow); }
+        click: async () => { if (global.visualCal.windowManager.mainWindow) await openFlow(global.visualCal.windowManager.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "Shift+CmdOrCtrl+S",
-        click() { if (global.visualCal.windowManager.mainWindow) saveFlow(global.visualCal.windowManager.mainWindow); }
+        click: async () => { if (global.visualCal.windowManager.mainWindow) await saveFlow(global.visualCal.windowManager.mainWindow); }
       },
       { type: 'separator' },
       {
@@ -59,43 +59,41 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
         accelerator: "Shift+CmdOrCtrl+C",
         click: async () => {
           console.info('Create console window');
-          try {
-            await global.visualCal.windowManager.ShowConsole();
-          } catch (error) {
-            global.visualCal.logger.error(error);
-          }
+          await global.visualCal.windowManager.ShowConsole();
         }
       },
       {
         label: 'Dashboard',
         accelerator: "Shift+CmdOrCtrl+D",
-        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/ui'); }
+        click: async () => {
+          await global.visualCal.windowManager.ShowMain();
+        }
       },
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
-        async click() {
+        click: async () => {
           await global.visualCal.windowManager.ShowNodeRedEditor();
         }
       },
       {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
-        click() { if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
+        click: async () => { if (global.visualCal.windowManager.mainWindow) await global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
       },
       { type: 'separator' },
       { type: 'separator' },
       {
         label: 'Documentation',
-        click() { shell.openExternal('https://nodered.org/docs') }
+        click: async () => { await shell.openExternal('https://nodered.org/docs') }
       },
       {
         label: 'Flows and Nodes',
-        click() { shell.openExternal('https://flows.nodered.org') }
+        click: async () => { await shell.openExternal('https://flows.nodered.org') }
       },
       {
         label: 'Discourse Forum',
-        click() { shell.openExternal('https://discourse.nodered.org/') }
+        click: async () => { await shell.openExternal('https://discourse.nodered.org/') }
       },
       { type: 'separator' },
       { role: 'togglefullscreen' },
@@ -153,4 +151,9 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
     })
   }
   return template;
+}
+
+export const init = () => {
+  const menu = Menu.buildFromTemplate(create());
+  Menu.setApplicationMenu(menu);
 }

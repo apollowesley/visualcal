@@ -1,15 +1,12 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, dialog, app } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig } from './WindowConfigs';
 import { VisualCalWindow } from 'src/types/electron/enums';
 
 export class WindowManager {
 
   private fWindows: Set<BrowserWindow>;
-  private fMainWindow: BrowserWindow | undefined;
-  private fConsoleWindow: BrowserWindow | undefined;
-  private fNodeRedEditorWindow: BrowserWindow | undefined;
   private fClosingAll: boolean = false;
 
   constructor() {
@@ -20,30 +17,45 @@ export class WindowManager {
     return Array.from(this.fWindows).find(w => w.visualCal.id === id);
   }
 
+  get loadingWindow() {
+    const window = this.get(VisualCalWindow.Loading);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get loginWindow() {
+    const window = this.get(VisualCalWindow.Login);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
   get mainWindow() {
-    return this.fMainWindow && !this.fMainWindow.isDestroyed() ? this.fMainWindow : undefined;
+    const window = this.get(VisualCalWindow.Main);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
   }
 
   get consoleWindow() {
-    return this.fConsoleWindow && !this.fConsoleWindow.isDestroyed() ? this.fConsoleWindow : undefined;
+    const window = this.get(VisualCalWindow.Console);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
   }
 
   get nodeRedEditorWindow() {
-    return this.fNodeRedEditorWindow && !this.fNodeRedEditorWindow.isDestroyed() ? this.fNodeRedEditorWindow : undefined;
+    const window = this.get(VisualCalWindow.NodeRedEditor);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
   }
 
   private checkWindowExists(options: { id: VisualCalWindow }) {
-    if (options.id === VisualCalWindow.Main && this.mainWindow !== undefined) throw new Error('Main window already exists');
-    if (options.id === VisualCalWindow.Console && this.consoleWindow !== undefined) throw new Error('Console window already exists');
-    const existing = this.get(options.id);
-    if (existing) throw new Error(`Duplicate window Id, ${options.id}`);
+    const window = Array.from(this.fWindows).find(w => w.visualCal.id === options.id) !== undefined;
+    if (window) throw new Error(`Duplicate window Id, ${options.id}`);
   }
 
   add(window: BrowserWindow) {
     global.visualCal.logger.info('Adding window', { windowId: window.id });
+    if (!window.visualCal) throw new Error(`Window with id (non-VisualCal id) ${window.id} is missing the visualCal property!`);
     this.checkWindowExists({ id: window.visualCal.id });
-    if (window.visualCal.id === VisualCalWindow.Main) this.fMainWindow = window;
-    if (window.visualCal.id === VisualCalWindow.Console) this.fConsoleWindow = window;
     this.fWindows.add(window);
     window.once('closed', () => {
       global.visualCal.logger.info('Window closed', { windowId: window.visualCal.id });
@@ -55,10 +67,6 @@ export class WindowManager {
     global.visualCal.logger.info('Removing window', { windowId: id });
     const existing = this.get(id);
     if (!this.fClosingAll && !existing) throw new Error(`Window not found, ${id}`);
-    if (!this.fClosingAll && existing) {
-      if (existing.visualCal.id === VisualCalWindow.Main) this.fMainWindow = undefined;
-      if (existing.visualCal.id === VisualCalWindow.Console) this.fConsoleWindow = undefined;
-    }
     if (existing) this.fWindows.delete(existing);
     return existing;
   }
@@ -99,8 +107,6 @@ export class WindowManager {
     this.fWindows.forEach(w => {
       w.close()
     });
-    this.fMainWindow = undefined;
-    this.fConsoleWindow = undefined;
     this.fWindows.clear();
   }
 
@@ -108,45 +114,99 @@ export class WindowManager {
   // ************** CREATE/SHOW WINDOWS **************
   // *************************************************
 
-  async ShowLogin() {
-    let loginWindow = BrowserWindow.getAllWindows().find(w => w.visualCal.id === VisualCalWindow.Login && !w.isDestroyed && w.isClosable);
-    if (loginWindow) {
-      loginWindow.show();
-      return;
+  // Loading window
+  async ShowLoading(closedCallback: () => void, duration: number = 5000) {
+    let window = this.loadingWindow;
+    if (window) {
+      window.show();
+      return window;
     }
-    loginWindow = this.create(LoginWindowConfig());
-    if (!loginWindow) throw new Error('loginWindow cannot be null after creation');
-    WindowUtils.centerWindowOnNearestCurorScreen(loginWindow, false);
-    await loginWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'login.html'));
-    return loginWindow;
-  }
-
-  // Create the console log window
-  async ShowConsole() {
-    if (global.visualCal.windowManager.consoleWindow) {
-      console.info('Console window already exists');
-      global.visualCal.windowManager.consoleWindow.show();
-      return;
-    }
-    console.info('Creating console');
-    // Create the hidden console window
-    const conWindow = global.visualCal.windowManager.create(ConsoleWindowConfig());
-    conWindow.webContents.on('did-finish-load', () => {
-      if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.webContents.send('results', global.visualCal.logger.query());
+    window = global.visualCal.windowManager.create(LoadingWindowConfig());
+    window.webContents.once('did-finish-load', () => {
+      if (window) window.show();
+      setTimeout(() => {
+        try {
+          closedCallback();
+          if (window) window.close();
+        } catch (error) {
+          console.error(error);
+        }
+      }, duration);
     });
-    await conWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'console.html'));
-    return conWindow;
+    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'loading.html'));
+    return window;
   }
 
-  async ShowNodeRedEditor() {
-    if (this.nodeRedEditorWindow) {
-      this.nodeRedEditorWindow.show();
-      return;
+    // Login window
+    async ShowLogin() {
+      let window = this.loginWindow;
+      if (window) {
+        window.show();
+        return window;
+      }
+      window = this.create(LoginWindowConfig());
+      WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+      await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'login.html'));
+      return window;
     }
-    this.fNodeRedEditorWindow = this.create(NodeRedEditorWindowConfig());
-    WindowUtils.centerWindowOnNearestCurorScreen(this.fNodeRedEditorWindow, false);
-    await this.fNodeRedEditorWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/red`);
-    return this.fNodeRedEditorWindow;
+
+  // Main window
+  async ShowMain() {
+    let window = this.mainWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = global.visualCal.windowManager.create(MainWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window);
+    if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
+    window.once('close', (e) => {
+      e.preventDefault(); // Required for node-red if it's in a modified state and changes haven't been deployed
+      global.visualCal.windowManager.closeAll();
+    });
+    window.webContents.once('did-finish-load', async () => {
+      if (!window) return
+      window.title = 'VisualCal';
+      window.show();
+    });
+    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'dashboard.html'));
+    return window;
+  }
+  
+  // Console log window
+  async ShowConsole() {
+    let window = this.consoleWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = global.visualCal.windowManager.create(ConsoleWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    window.webContents.on('did-finish-load', () => {
+      try {
+        global.visualCal.logger.query({ fields: ['message'] }, (err, results) => {
+          if (this.consoleWindow && !err && results && Array.isArray(results)) this.consoleWindow.webContents.send('results', [results]);
+          else if (err) throw err;
+        });
+      } catch (error) {
+        dialog.showErrorBox('Error querying log', error.message);
+      }
+    });
+    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'console.html'));
+    return window;
+  }
+
+  // Node-red editor window
+  async ShowNodeRedEditor() {
+    let window = this.nodeRedEditorWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(NodeRedEditorWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window);
+    await window.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/red`);
+    return window;
   }
 
 }
