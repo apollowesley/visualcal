@@ -24,7 +24,10 @@ global.visualCal = {
       views: path.resolve(__dirname, '..', '..', 'public', 'views'),
       windows: path.resolve(__dirname, '..', '..', 'public', 'windows')
     },
-    renderers: path.resolve(__dirname, '..', 'renderers'),
+    renderers: {
+      views: path.resolve(__dirname, '..', 'renderers', 'views'),
+      windows: path.resolve(__dirname, '..', 'renderers', 'windows')
+    },
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
   },

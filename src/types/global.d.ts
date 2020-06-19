@@ -30,7 +30,10 @@ declare module NodeJS {
           js: string;
           fonts: string;
         },
-        renderers: string;
+        renderers: {
+          windows: string;
+          views: string;
+        }
         procedures: string;
         visualCalUser: string;
       },
