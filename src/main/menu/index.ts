@@ -1,5 +1,5 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, app } from 'electron';
-import { openFlow, saveFlow, createConsole } from '../menu/menu-actions';
+import { openFlow, saveFlow } from '../menu/menu-actions';
 import * as path from 'path';
 
 export interface Options {
@@ -60,7 +60,7 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
         click: async () => {
           console.info('Create console window');
           try {
-            await createConsole();
+            await global.visualCal.windowManager.ShowConsole();
           } catch (error) {
             global.visualCal.logger.error(error);
           }
@@ -74,8 +74,8 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Editor',
         accelerator: "Shift+CmdOrCtrl+E",
-        click() {
-          if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/red');
+        async click() {
+          await global.visualCal.windowManager.ShowNodeRedEditor();
         }
       },
       {

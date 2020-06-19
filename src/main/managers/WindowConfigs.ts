@@ -1,10 +1,10 @@
-import { screen } from 'electron';
+import { screen, BrowserWindow } from 'electron';
 import path from 'path';
+import { VisualCalWindow } from 'src/types/electron/enums';
 
 export const MainWindowConfig = (): CreateWindowOptions => {
   return {
-    id: 'main',
-    isMain: true,
+    id: VisualCalWindow.Main,
     config: {
       title: 'VisualCal - Logic Editor',
       fullscreenable: true,
@@ -20,7 +20,7 @@ export const LoadingWindowConfig = (): CreateWindowOptions => {
   const cursorScreenPoint = screen.getCursorScreenPoint();
   const nearestScreenToCursor = screen.getDisplayNearestPoint(cursorScreenPoint);
   return {
-    id: 'loading',
+    id: VisualCalWindow.Loading,
     config: {
       height: 200,
       width: 400,
@@ -37,10 +37,21 @@ export const LoadingWindowConfig = (): CreateWindowOptions => {
   };
 }
 
+export const LoginWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.Login,
+    config: {
+      center: true,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}
+
 export const ConsoleWindowConfig = (): CreateWindowOptions => {
   return {
-    id: 'console',
-    isConsole: true,
+    id: VisualCalWindow.Console,
     config: {
       title: "VisualCal Console",
       width: 800,
@@ -50,6 +61,21 @@ export const ConsoleWindowConfig = (): CreateWindowOptions => {
         nodeIntegration: true,
         webSecurity: false,
         allowRunningInsecureContent: true
+      }
+    }
+  }
+}
+
+export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.NodeRedEditor,
+    config: {
+      title: 'VisualCal - Logic Editor',
+      fullscreenable: true,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: false,
+        preload: path.join(global.visualCal.dirs.renderers.windows, 'nodered.js')
       }
     }
   }

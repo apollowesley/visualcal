@@ -45,25 +45,7 @@ export const openFlow = async (mainWindow: BrowserWindow) => {
   });
 }
 
-// Create the console log window
-export const createConsole = async () => {
-  if (global.visualCal.windowManager.consoleWindow) {
-    console.info('Console window already exists');
-    global.visualCal.windowManager.consoleWindow.show();
-    return;
-  }
-  console.info('Creating console');
-  // Create the hidden console window
-  const conWindow = global.visualCal.windowManager.create(ConsoleWindowConfig());
-  await conWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'console.html'));
-  conWindow.webContents.on('did-finish-load', () => {
-    if (global.visualCal.windowManager.consoleWindow) global.visualCal.windowManager.consoleWindow.webContents.send('results', global.visualCal.logger.query());
-  });
-  return conWindow;
-}
-
 export default {
   saveFlow,
-  openFlow,
-  createConsole
+  openFlow
 }
