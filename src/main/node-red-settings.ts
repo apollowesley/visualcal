@@ -13,7 +13,7 @@ const settings = {
     projects: { enabled: false },
     palette: { editable: true },
     page: {
-      css: path.resolve(__dirname, '..', '..', 'node_modules/@node-red-contrib-themes/midnight-red/theme.css')
+      css: path.resolve(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'midnight-red', 'theme.css')
     }
   },
   nodesDir: path.resolve(__dirname, '..', '..', 'nodes'),

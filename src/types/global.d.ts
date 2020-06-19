@@ -23,7 +23,13 @@ declare module NodeJS {
       }
       dirs: {
         base: string;
-        html: string;
+        html: {
+          windows: string;
+          views: string;
+          css: string;
+          js: string;
+          fonts: string;
+        },
         renderers: string;
         procedures: string;
         visualCalUser: string;

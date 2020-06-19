@@ -123,7 +123,7 @@ export class WindowManager {
     });
     if (!loginWindow) throw new Error('loginWindow cannot be null after creation');
     WindowUtils.centerWindowOnNearestCurorScreen(loginWindow, false);
-    await loginWindow.loadFile(path.join(global.visualCal.dirs.html, 'login.html'));
+    await loginWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'login.html'));
     return loginWindow;
   }
 

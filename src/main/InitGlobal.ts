@@ -17,7 +17,13 @@ global.visualCal = {
   },
   dirs: {
     base: path.resolve(__dirname, '..', '..'), // <base>/dist
-    html: path.resolve(__dirname, '..', '..', 'public'),
+    html: {
+      css: path.resolve(__dirname, '..', '..', 'public', 'css'),
+      fonts: path.resolve(__dirname, '..', '..', 'public', 'fonts'),
+      js: path.resolve(__dirname, '..', '..', 'public', 'js'),
+      views: path.resolve(__dirname, '..', '..', 'public', 'views'),
+      windows: path.resolve(__dirname, '..', '..', 'public', 'windows')
+    },
     renderers: path.resolve(__dirname, '..', 'renderers'),
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')

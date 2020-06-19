@@ -83,7 +83,7 @@ try {
         }
       }, duration);
     });
-    await loadingScreen.loadFile(path.join(global.visualCal.dirs.html, 'loading.html'));
+    await loadingScreen.loadFile(path.join(global.visualCal.dirs.html.windows, 'loading.html'));
   }
 
   async function createLoginWindow() {
@@ -128,7 +128,7 @@ try {
       mainWindow.title = 'VisualCal';
       mainWindow.show();
     });
-    await mainWindow.loadFile(path.join(global.visualCal.dirs.html, 'dashboard.html'));
+    await mainWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'dashboard.html'));
   }
 
   init([

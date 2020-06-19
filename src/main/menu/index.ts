@@ -116,7 +116,7 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
             }
           });
           systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
-          await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html, 'SystemInfo.html'));
+          await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'SystemInfo.html'));
         }
       }
     ]
