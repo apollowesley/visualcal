@@ -1,7 +1,3 @@
-interface LoggerMessage {
-  level: string;
-}
-
 interface Result {
   timestamp: Date;
   source: string;
@@ -9,7 +5,10 @@ interface Result {
 
 interface LogicResult extends Result {
   unitId: string;
+  min: number;
+  max: number;
   value: number;
+  pass: boolean;
 }
 
 interface LogicResultMessage extends LoggerMessage {

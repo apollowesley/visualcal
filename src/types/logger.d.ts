@@ -1,0 +1,3 @@
+interface LoggerMessage {
+  level: string;
+}
