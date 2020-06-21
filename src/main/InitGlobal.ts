@@ -5,6 +5,7 @@ import path from 'path';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
+import { VisualCalWindow, WindowPathType } from 'src/types/enums';
 
 global.visualCal = {
   logger: createLogger(),
@@ -18,6 +19,31 @@ global.visualCal = {
   dirs: {
     base: path.resolve(__dirname, '..', '..'), // <base>/dist
     html: {
+      getWindowInfo: (id: VisualCalWindow) => {
+        let windowPath = '';
+        switch (id) {
+          case VisualCalWindow.Console:
+            windowPath = 'http://localhost:8080?window=console';
+            break;
+          case VisualCalWindow.Loading:
+            windowPath = 'http://localhost:8080?window=loading';
+            break;
+          case VisualCalWindow.Login:
+            windowPath = 'http://localhost:8080?window=login';
+            break;
+          case VisualCalWindow.Main:
+            windowPath = 'http://localhost:8080?window=main';
+            break;
+          case VisualCalWindow.NodeRedEditor:
+            windowPath = 'http://localhost:8080?window=node-red-editor';
+            break;
+        }
+        return {
+          id: id,
+          path: windowPath,
+          type: WindowPathType.Url
+        };
+      },
       css: path.resolve(__dirname, '..', '..', 'public', 'css'),
       fonts: path.resolve(__dirname, '..', '..', 'public', 'fonts'),
       js: path.resolve(__dirname, '..', '..', 'public', 'js'),

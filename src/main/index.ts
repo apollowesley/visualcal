@@ -7,7 +7,6 @@ import * as path from 'path';
 import { IpcChannel } from "./IPC/IpcChannel";
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
 import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
-import { LoadingWindowConfig, MainWindowConfig } from './managers/WindowConfigs';
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';

@@ -5,3 +5,8 @@ export const enum VisualCalWindow {
   Console,
   NodeRedEditor
 }
+
+export const enum WindowPathType {
+  File,
+  Url
+}

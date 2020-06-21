@@ -8,6 +8,12 @@ interface User {
   email: string;
 }
 
+interface WindowInfo {
+  id: import('./enums').VisualCalWindow;
+  type: import('./enums').WindowPathType;
+  path: string;
+}
+
 declare module NodeJS {
 
   interface Global {
@@ -19,11 +25,12 @@ declare module NodeJS {
       logger: import('winston').Logger,
       assets: {
         basePath: string;
-        get: (name: string) => Buffer;
+        get: (id: string) => Buffer;
       }
       dirs: {
         base: string;
         html: {
+          getWindowInfo: (id: import('./enums').VisualCalWindow) => WindowInfo;
           windows: string;
           views: string;
           css: string;

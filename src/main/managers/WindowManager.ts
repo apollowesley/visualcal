@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, app } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig } from './WindowConfigs';
-import { VisualCalWindow } from 'src/types/electron/enums';
+import { VisualCalWindow } from 'src/types/enums';
 
 export class WindowManager {
 
@@ -169,7 +169,7 @@ export class WindowManager {
       window.title = 'VisualCal';
       window.show();
     });
-    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'dashboard.html'));
+    await window.loadURL(global.visualCal.dirs.html.getWindowInfo(VisualCalWindow.Main).path);
     return window;
   }
   

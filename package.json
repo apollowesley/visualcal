@@ -93,6 +93,7 @@
             "dist/**/*",
             "public/**/*",
             "nodes/**/*",
+            "renderers/vuedist/**/*",
             "package.json"
         ],
         "mac": {
