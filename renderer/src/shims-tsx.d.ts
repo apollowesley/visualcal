@@ -1,4 +1,5 @@
 import Vue, { VNode } from 'vue'
+import { IpcRenderer } from 'electron';
 
 declare global {
   namespace JSX {
@@ -12,7 +13,9 @@ declare global {
   }
   
   interface Window {
-    ipcRenderer: import('electron').IpcRenderer
+    electron: {
+      ipcRenderer: IpcRenderer;
+    }
   }
 
 }

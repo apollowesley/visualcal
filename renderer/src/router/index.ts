@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -8,12 +7,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/windows/main',
     name: 'main',
-    component: Home
-  },
-  {
-    path: '/windows/about',
-    name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue')
   }
 ]
 

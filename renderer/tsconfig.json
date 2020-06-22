@@ -11,12 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "typeRoots": [
-      "node_modules/@types",
-      "src/types"
-    ],
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "vuetify"
     ],
     "paths": {
       "@/*": [
