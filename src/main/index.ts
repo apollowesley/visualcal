@@ -1,5 +1,5 @@
 import 'module-alias/register';
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import * as RED from "node-red";
@@ -11,6 +11,7 @@ import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';
 import { login, isLoggedIn } from './security';
 import history from 'connect-history-api-fallback';
+import { init as initIpcManager } from './managers/IPCManager';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -20,6 +21,7 @@ try {
   const nodeRed = RED as RED.Red;
 
   function init(ipcChannels: IpcChannel<any>[]) {
+    initIpcManager();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
@@ -42,6 +44,7 @@ try {
   }
 
   async function onAppReady() {
+    if (global.visualCal.isDev) (await import('vue-devtools')).install();
     await UserHomeUtils.ensureExists();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
