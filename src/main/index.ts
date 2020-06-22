@@ -3,7 +3,6 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import * as RED from "node-red";
-import * as path from 'path';
 import { IpcChannel } from "./IPC/IpcChannel";
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
 import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
@@ -11,6 +10,7 @@ import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';
 import { login, isLoggedIn } from './security';
+import history from 'connect-history-api-fallback';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -31,7 +31,14 @@ try {
     nodeRed.init(httpServer, NodeRedSettings);
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
-    if (global.visualCal.isDev) nodeRedApp.use('/', express.static(global.visualCal.dirs.html.vue));
+
+    if (!global.visualCal.isDev) {
+      // Enable history for Vue router
+      nodeRedApp.use(history({
+        index: 'index.html'
+      }));
+      nodeRedApp.use('/', express.static(global.visualCal.dirs.html.vue));
+    };
   }
 
   function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
