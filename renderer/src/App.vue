@@ -11,16 +11,8 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
-const ipcRenderer = (window as any).ipcRenderer;
-
 @Component
-export default class App extends Vue {
-
-  mounted() {
-    ipcRenderer.send('vue-test', { test: 'From vue!' });
-  }
-
-}
+export default class App extends Vue {}
 </script>
 
 <style lang="scss">

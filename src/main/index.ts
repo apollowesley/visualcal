@@ -15,15 +15,11 @@ import './InitGlobal'; // TODO: Does it matter where this is located in the orde
 
 try {
 
-  let mainWindow: BrowserWindow | null = null;
   const nodeRedApp = express();
   const httpServer = http.createServer(nodeRedApp);
   const nodeRed = RED as RED.Red;
 
   function init(ipcChannels: IpcChannel<any>[]) {
-    ipcMain.on('vue-test', (_, args) => {
-      console.info('From node-red node', args);
-    });
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
@@ -64,17 +60,14 @@ try {
   }
 
   async function onActive() {
-    if (isLoggedIn() && mainWindow) {
-      mainWindow.show();
+    if (isLoggedIn() && global.visualCal.windowManager.mainWindow) {
+      global.visualCal.windowManager.mainWindow.show();
       return;
     }
     if (!isLoggedIn()) {
       await createLoginWindow();
       return;
     }
-    ipcMain.on('vue-test', (event) => {
-      event.reply({ test: 'Hi there!' });
-    });
     await global.visualCal.windowManager.ShowMain();
   }
 
