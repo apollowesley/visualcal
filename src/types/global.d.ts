@@ -31,6 +31,7 @@ declare module NodeJS {
         base: string;
         html: {
           getWindowInfo: (id: import('./enums').VisualCalWindow) => WindowInfo;
+          vue: string;
           windows: string;
           views: string;
           css: string;

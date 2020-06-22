@@ -21,7 +21,7 @@ try {
   const nodeRed = RED as RED.Red;
 
   function init(ipcChannels: IpcChannel<any>[]) {
-    ipcMain.on('test', (_, args) => {
+    ipcMain.on('vue-test', (_, args) => {
       console.info('From node-red node', args);
     });
     registerIpcChannels(ipcChannels);
@@ -31,6 +31,7 @@ try {
     nodeRed.init(httpServer, NodeRedSettings);
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
+    if (global.visualCal.isDev) nodeRedApp.use('/', express.static(global.visualCal.dirs.html.vue));
   }
 
   function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {
@@ -64,6 +65,9 @@ try {
       await createLoginWindow();
       return;
     }
+    ipcMain.on('vue-test', (event) => {
+      event.reply({ test: 'Hi there!' });
+    });
     await global.visualCal.windowManager.ShowMain();
   }
 

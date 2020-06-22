@@ -7,13 +7,16 @@ import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
 import { VisualCalWindow, WindowPathType } from 'src/types/enums';
 
+const serverListenPort = 18880;
+const vueListenPort = isDev ? 8080 : serverListenPort;
+
 global.visualCal = {
   logger: createLogger(),
   isMac: process.platform === 'darwin',
   isDev: isDev,
   config: {
     httpServer: {
-      port: 18880
+      port: serverListenPort
     }
   },
   dirs: {
@@ -23,19 +26,19 @@ global.visualCal = {
         let windowPath = '';
         switch (id) {
           case VisualCalWindow.Console:
-            windowPath = 'http://localhost:8080?window=console';
+            windowPath = `http://localhost:${vueListenPort}/windows/console`;
             break;
           case VisualCalWindow.Loading:
-            windowPath = 'http://localhost:8080?window=loading';
+            windowPath = `http://localhost:${vueListenPort}/windows/loading`;
             break;
           case VisualCalWindow.Login:
-            windowPath = 'http://localhost:8080?window=login';
+            windowPath = `http://localhost:${vueListenPort}/windows/login`;
             break;
           case VisualCalWindow.Main:
-            windowPath = 'http://localhost:8080?window=main';
+            windowPath = `http://localhost:${vueListenPort}/windows/main`;
             break;
           case VisualCalWindow.NodeRedEditor:
-            windowPath = 'http://localhost:8080?window=node-red-editor';
+            windowPath = 'http://localhost:18880/red'
             break;
         }
         return {
@@ -44,6 +47,7 @@ global.visualCal = {
           type: WindowPathType.Url
         };
       },
+      vue: path.resolve(__dirname, '..', 'renderer'),
       css: path.resolve(__dirname, '..', '..', 'public', 'css'),
       fonts: path.resolve(__dirname, '..', '..', 'public', 'fonts'),
       js: path.resolve(__dirname, '..', '..', 'public', 'js'),

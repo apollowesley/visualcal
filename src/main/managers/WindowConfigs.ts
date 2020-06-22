@@ -1,4 +1,4 @@
-import { screen, BrowserWindow } from 'electron';
+import { screen } from 'electron';
 import path from 'path';
 import { VisualCalWindow } from 'src/types/enums';
 
@@ -10,6 +10,7 @@ export const MainWindowConfig = (): CreateWindowOptions => {
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
+        preload: path.join(global.visualCal.dirs.renderers.windows, '..', 'vue-preload.js'),
         nodeIntegration: true
       }
     }

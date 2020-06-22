@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link :to="{ name: 'main' }">Home</router-link> |
+      <router-link :to="{ name: 'about' }">About</router-link>
     </div>
     <router-view/>
   </div>
@@ -11,8 +11,16 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
+const ipcRenderer = (window as any).ipcRenderer;
+
 @Component
-export default class App extends Vue {}
+export default class App extends Vue {
+
+  mounted() {
+    ipcRenderer.send('vue-test', { test: 'From vue!' });
+  }
+
+}
 </script>
 
 <style lang="scss">
