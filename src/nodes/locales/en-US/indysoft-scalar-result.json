@@ -1,0 +1,19 @@
+{
+  "indySoft": {
+    "scalar": {
+      "result": {
+        "label": {
+          "actionName": "Action Name",
+          "readTag": "Read Tag",
+          "min": "Minimum",
+          "max": "Maximum",
+          "inputLevel": "Input Level",
+          "baseQuantity": "Base",
+          "derivedQuantity": "Unit",
+          "derivedQuantityPrefix": "Prefix",
+          "toleranceType": "Tolerance Type"
+        }
+      }
+    }
+  }
+}

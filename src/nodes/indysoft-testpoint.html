@@ -1,0 +1,33 @@
+<script type="text/x-red" data-template-name="indysoft-testpoint">
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+      <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-testpoint">
+  <p>Defines a point in a procedure where you want to start from</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-testpoint', {
+    color: '#d3d936',
+    category: 'Results',
+    defaults: {
+      name: { value: '', required: true },
+      description: { value: '' }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-dot-circle-o',
+    label: function() {
+      return `Test Point: ${this.name}`;
+    },
+    labelStyle: function() {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'Test Point'
+  });
+  
+</script>

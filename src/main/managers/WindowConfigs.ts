@@ -1,6 +1,5 @@
 import { screen } from 'electron';
 import path from 'path';
-import { VisualCalWindow } from 'src/types/enums';
 
 export const MainWindowConfig = (): CreateWindowOptions => {
   return {

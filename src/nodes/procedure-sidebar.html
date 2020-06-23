@@ -1,0 +1,125 @@
+<script type="text/x-red" data-template-name="procedure-sidebar">
+  <div class="form-row">
+    Contains procedure configuration
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="procedure-sidebar">
+</script>
+
+<script src="/browser-utils/visualcal.js"></script>
+
+<script type="text/javascript">
+  (function ($) {
+    var uip = 'ui';
+
+    RED.nodes.registerType('procedure-sidebar', {
+      color: '#d3d936',
+      category: 'config',
+      defaults: {
+        name: { value: '', required: true },
+        shortName: { value: '', required: true }
+      },
+      hasUsers: false,
+      label: function() {
+        return this.name || 'Procedure';
+      },
+      labelStyle: function() {
+        return this.name ? 'node_label_italic' : '';
+      },
+      paletteLabel: 'VisualCal',
+      onpaletteadd: function() {
+        let globalProcedureNode = { name: '', shortName: '' };
+        const titleInputId = 'vc-field-title';
+        let titleInput = $(`#${titleInputId}`);
+        const shortNameInputId = 'vc-field-shortname';
+        let shortNameInput = $(`#${shortNameInputId}`);
+        const tab = $('<div>').css({
+          'position': 'relative',
+          'height': '100%',
+          'margin': '1rem'
+        });
+        const refDocInputId = 'vc-field-refdoc';
+        let refDocInput = $(`#${refDocInputId}`);
+        const imageInputOpts = {
+          parent: tab,
+          inputId: refDocInputId,
+          formId: 'vc-image-input-form',
+          labelText: 'Reference Document',
+          action: `/api/v1/procedure/assets?procedure=${globalProcedureNode.shortName}&filename=procedure.pdf`,
+          labelClass: 'fa fa-tag'
+        };
+
+        function ensureProcedureNode() {
+          // if (globalProcedureNode) return;
+          globalProcedureNode = visualcal.getProcedureConfigNode();
+          if (!globalProcedureNode) {
+            globalProcedureNode = {
+              name: '',
+              shortName: ''
+            }
+          }
+        }
+
+        // *** TITLE ***
+        if (!titleInput.length) {
+          const titleInputDiv = $('<div>');
+          const titleInputLabel = $('<label>').attr('for', titleInputId).attr('style', 'margin: 1rem;').text('Title');
+          titleInput = $('<input>').attr('id', titleInputId).attr('type', 'text').attr('autocomplete', 'off').attr('style', 'margin: 1rem;');
+          tab.append(titleInputDiv);
+          titleInputDiv.append(titleInputLabel);
+          titleInputLabel.append(titleInput);
+
+          titleInput.on('change', function() {
+            if (globalProcedureNode.name === $(this).val()) return;
+            globalProcedureNode.name = $(this).val();
+            RED.nodes.dirty(true);
+          });
+        }
+
+        // *** SHORT NAME ***
+        if (!shortNameInput.length) {
+          const shortNameInputDiv = $('<div>');
+          const shortNameInputLabel = $('<label>').attr('for', shortNameInputId).attr('style', 'margin: 1rem;').text('Short name');
+          shortNameInput = $('<input>').attr('id', shortNameInputId).attr('type', 'text').attr('autocomplete', 'off').attr('style', 'margin: 1rem;');
+          tab.append(shortNameInputDiv);
+          shortNameInputDiv.append(shortNameInputLabel);
+          shortNameInputLabel.append(shortNameInput);
+
+          shortNameInput.on('change', function() {
+            if (globalProcedureNode.shortName === $(this).val()) return;
+            globalProcedureNode.shortName = $(this).val();
+            RED.nodes.dirty(true);
+          });
+        }
+
+        if (!refDocInput.length) {
+          const refDocInputFormParts = visualcal.fileUpload.createAssetUploadForm(imageInputOpts);
+          refDocInput = refDocInputFormParts.input;
+        }
+
+        function refresh() {
+          ensureProcedureNode();
+          titleInput.val(globalProcedureNode.name);
+          shortNameInput.val(globalProcedureNode.shortName);
+        }
+
+        RED.sidebar.addTab({
+          id: 'procedure',
+          label: 'Procedure',
+          name: 'Procedure',
+          content: tab,
+          closeable: true,
+          pinned: true,
+          iconClass: 'fa fa-bar-chart',
+          disableOnEdit: true,
+          onchange: function() { refresh(); }
+        });
+      },
+      onpaletteremove: function () {
+        RED.sidebar.removeTab('procedure');
+      }
+    });
+
+  })(jQuery);
+</script>

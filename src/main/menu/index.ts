@@ -136,14 +136,14 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       submenu: [
         {
           label: 'Reload', accelerator: 'CmdOrCtrl+R',
-          click(item, focusedWindow: BrowserWindow) {
+          click(_, focusedWindow) {
             if (focusedWindow) focusedWindow.reload()
           }
         },
         {
           label: 'Toggle Developer Tools',
           accelerator: process.platform === 'darwin' ? 'F12' : 'F12',
-          click(item: any, focusedWindow: BrowserWindow) {
+          click(_, focusedWindow) {
             if (focusedWindow) focusedWindow.webContents.toggleDevTools()
           }
         }

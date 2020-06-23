@@ -1,0 +1,188 @@
+<script type="text/x-red" data-template-name="indysoft-device-multi-product-calibrator">
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+      <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-deviceConfigId"><i class="fa fa-tag"></i> Device Config</span></label>
+    <input type="text" id="node-input-deviceConfigId" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-mode"><i class="fa fa-tag"></i> Mode</span></label>
+    <select id="node-input-mode" style="width:125px !important">
+      <option value="aac">Current AC</option>
+      <option value="adc">Current DC</option>
+      <option value="vac" selected>Voltage AC</option>
+      <option value="vdc">Voltage DC</option>
+      <option value="ohms">Resistance</option>
+      <option value="freq">Frequency</option>
+    </select>
+  </div>
+  <div class="form-row" id="amps-row">
+    <label for="node-input-amps"><i class="fa fa-tag"></i> Amps</label>
+    <input type="text" id="node-input-amps" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="volts-row">
+    <label for="node-input-volts"><i class="fa fa-tag"></i> Volts</label>
+    <input type="text" id="node-input-volts" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="ohms-row">
+    <label for="node-input-ohms"><i class="fa fa-tag"></i> Ohms</label>
+    <input type="text" id="node-input-ohms" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="frequency-row">
+    <label for="node-input-frequency"><i class="fa fa-tag"></i> Frequency</label>
+    <input type="text" id="node-input-frequency" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-outputOn"><i class="fa fa-tag"></i> Output On?</label>
+    <input type="checkbox" id="node-input-outputOn" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+
+  <!-- Delay Before -->
+  <div class="form-row">
+    <label for="node-input-useDelayBefore"><i class="fa fa-tag"></i> Use pre-delay?</label>
+    <input type="checkbox" id="node-input-useDelayBefore" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="delayBefore-row">
+    <label for="node-input-delayBefore"><i class="fa fa-tag"></i> Pre-delay</label>
+    <input type="text" id="node-input-delayBefore" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-device-multi-product-calibrator">
+  <p>Provides a UI for configuring a Multi-Product Calibrator.</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-device-multi-product-calibrator', {
+    color: '#d47f7f',
+    category: 'Multi Product Calibrator',
+    defaults: {
+      name: { value: '' },
+      deviceConfigId: { type: 'indysoft-device-configuration', required: true },
+      mode: { value: 'vac' },
+      amps: { value: 0, required: true, validate: RED.validators.number() },
+      ampsType: { value: 'num', required: true },
+      volts: { value: 0, required: true, validate: RED.validators.number() },
+      voltsType: { value: 'num', required: true },
+      ohms: { value: 0, required: true, validate: RED.validators.number() },
+      ohmsType: { value: 'num', required: true },
+      frequency: { value: 0, required: true, validate: RED.validators.number() },
+      frequencyType: { value: 'num', required: true },
+      outputOn: { value: true, required: true },
+      useDelayBefore: { value: false, required: false },
+      delayBefore: { value: 1000, required: false, validate: RED.validators.number() }
+    },
+    inputs: 1,
+    outputs: 2,
+    icon: 'serial.svg',
+    label: function () {
+      let retVal = this.name || 'Multi-Product Calibrator';
+      if (!!this.useDelayBefore) retVal = retVal + ` (${this.delayBefore}mS)`;
+      return retVal;
+    },
+    outputLabels: function(index) {
+      if (index === 0) return 'Error';
+      return 'Done';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'Multi-Product Calibrator',
+    oneditprepare: function() {
+      const showOrHideRow = function(checkBox, rowId) { checkBox.prop('checked') ? $(rowId).show() : $(rowId).hide(); }
+      var modeSelect = $('#node-input-mode');
+      modeSelect.on('change', function() {
+        var mode = modeSelect.val();
+        var ampsRow = $('#amps-row');
+        var voltsRow = $('#volts-row');
+        var ohmsRow = $('#ohms-row');
+        var frequencyRow = $('#frequency-row');
+        switch (mode) {
+          case 'aac':
+            ampsRow.show();
+            voltsRow.hide();
+            ohmsRow.hide();
+            frequencyRow.show();
+            break;
+          case 'adc':
+            ampsRow.show();
+            voltsRow.hide();
+            ohmsRow.hide();
+            frequencyRow.hide();
+            break;
+          case 'vac':
+            ampsRow.hide();
+            voltsRow.show();
+            ohmsRow.hide();
+            frequencyRow.show();
+            break;
+          case 'vdc':
+            ampsRow.hide();
+            voltsRow.show();
+            ohmsRow.hide();
+            frequencyRow.hide();
+            break;
+          case 'ohms':
+            ampsRow.hide();
+            voltsRow.hide();
+            ohmsRow.show();
+            frequencyRow.hide();
+            break;
+          case 'freq':
+            ampsRow.hide();
+            voltsRow.show();
+            ohmsRow.hide();
+            frequencyRow.show();
+            break;
+        }
+      });
+
+      // *** AMPS ***
+      $('#node-input-amps').typedInput({
+        default: 'num',
+        types: ['msg','flow','global','str','num','json','jsonata','env']
+      });
+
+      // *** VOLTS ***
+      $('#node-input-volts').typedInput({
+        default: 'num',
+        types: ['msg','flow','global','str','num','json','jsonata','env']
+      });
+
+      // *** OHMS ***
+      $('#node-input-ohms').typedInput({
+        default: 'num',
+        types: ['msg','flow','global','str','num','json','jsonata','env']
+      });
+
+      // *** FREQUENCY ***
+      $('#node-input-frequency').typedInput({
+        default: 'num',
+        types: ['msg','flow','global','str','num','json','jsonata','env']
+      });
+
+      // *** useDelayBefore ***
+      $('#node-input-useDelayBefore').on('change', function() { showOrHideRow($(this), '#delayBefore-row'); });
+
+      modeSelect.change();
+    },
+    oneditsave: function() {
+      var node = this;
+      node.isDevice = true;
+      node.ampsType = $('#node-input-amps').typedInput('type');
+      node.amps = $('#node-input-amps').typedInput('value');
+      node.voltsType = $('#node-input-volts').typedInput('type');
+      node.volts = $('#node-input-volts').typedInput('value');
+      node.ohmsType = $('#node-input-ohms').typedInput('type');
+      node.ohms = $('#node-input-ohms').typedInput('value');
+      node.frequencyType = $('#node-input-frequency').typedInput('type');
+      node.frequency = $('#node-input-frequency').typedInput('value');
+      node.useDelayBefore = !!$('#node-input-useDelayBefore').val();
+      node.delayBefore = node.useDelayBefore ? parseInt($('#node-input-delayBefore').val()) : undefined;
+    }
+  });
+  
+</script>

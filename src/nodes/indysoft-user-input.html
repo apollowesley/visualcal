@@ -1,0 +1,81 @@
+<script type="text/x-red" data-template-name="indysoft-user-input">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-title"><i class="fa fa-tag"></i> Title</label>
+    <input type="text" id="node-input-title">
+  </div>
+  <div class="form-row">
+    <label for="node-input-text"><i class="fa fa-tag"></i> Text</label>
+    <input type="text" id="node-input-text">
+  </div>
+  <div class="form-row">
+    <label for="node-input-append"><i class="fa fa-tag"></i> Append</label>
+    <input type="text" id="node-input-append">
+  </div>
+  <div class="form-row">
+    <label for="node-input-dataType"><i class="fa fa-tag"></i> Data Type</label>
+    <select id="node-input-dataType" style="width:125px !important">
+      <option value="string" selected>String</option>
+      <option value="float">Floating Point</option>
+      <option value="integer">Integer</option>
+      <option value="boolean">Boolean</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-showImage"><i class="fa fa-tag"></i> Image?</label>
+    <input type="checkbox" id="node-input-showImage" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="image-source-row">
+    <label for="node-input-imageSourceType"><i class="fa fa-tag"></i> Image Source</label>
+    <select id="node-input-imageSourceType" style="width:125px !important">
+      <option value="asset" selected>Local File</option>
+      <option value="url">URL</option>
+    </select>
+  </div>
+  <div class="form-row" id="url-row">
+    <label for="node-input-url"><i class="fa fa-tag"></i> Image URL</label>
+    <input type="text" id="node-input-url">
+  </div>
+  <div class="form-row" id="asset-row" />
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-user-input">
+  <p>Shows an input to the user on the frontend.</p>
+</script>
+
+<script src="/browser-utils/visualcal.js"></script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-user-input', {
+    color: '#d3d936',
+    category: 'User',
+    defaults: {
+      name: { value: '' },
+      description: { value: '' },
+      title: { value: '', required: true },
+      text: { value: '', required: true },
+      append: { value: '', required: false },
+      dataType: { value: 'string', required: true },
+      showImage: { value: false, required: true },
+      imageSourceType: { value: 'asset', required: false },
+      url: { value: '', required: false },
+      assetFilename: { value: '', required: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-question-circle',
+    label: function() {
+      return this.name || `Input: ${this.dataType}`;
+    },
+    labelStyle: function() {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'User Input',
+    oneditprepare: visualcal.nodeRedUploadAssetOnEditPrepare
+  });
+  
+</script>

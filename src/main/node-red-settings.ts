@@ -1,10 +1,32 @@
 import * as path from 'path';
 import * as os from 'os';
+import type { Settings } from '../types/logic-server';
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
-const settings = {
-  uiHost: 'localhost',    // only allow local connections, remove if you want to allow external access
+const settings: Settings = {
+  procedureBaseDirPath: '',
+  disableAllCommunicationInterfaces: () => {},
+  driversRoot: '',
+  enableAllCommunicationInterfaces: () => {},
+  findNodeById: () => undefined,
+  findNodesByType: () => [],
+  getActionNodesForSection: () => [],
+  getAllNodes: () => [],
+  getCommunicationInterface: () => undefined,
+  getCommunicationInterfaceForDevice: () => undefined,
+  getDriverForDevice: async () => null,
+  getNodeConfig: () => undefined,
+  getProcedureStatus: () => null,
+  getSectionNodes: () => [],
+  onActionResult: () => {},
+  onActionStateChange: () => {},
+  onComment: () => {},
+  onGetUserInput: () => undefined,
+  onShowInstruction: () => undefined,
+  resetAllConnectedInstructionNodes: () => undefined,
+  resetAllConnectedNodes: () => undefined,
+
   httpAdminRoot: '/red',  // set to false to disable editor and deploy
   httpNodeRoot: '/',
   userDir: path.join(os.homedir(), '.visualcal', 'logic'),
@@ -13,11 +35,13 @@ const settings = {
     projects: { enabled: false },
     palette: { editable: true },
     page: {
+      title: 'VisualCal Logic Editor',
       css: path.resolve(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'midnight-red', 'theme.css')
     }
   },
-  nodesDir: path.resolve(__dirname, '..', '..', 'nodes'),
+  nodesDir: path.resolve(__dirname, '..', 'nodes'),
   functionGlobalContext: {
+    indySoftLogicServerVersion: '0.1.0',
     visualCal: global.visualCal
   },    // enables global context - add extras ehre if you need them
   logging: {

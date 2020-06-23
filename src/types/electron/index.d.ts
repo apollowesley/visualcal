@@ -1,5 +1,5 @@
 interface VisualCalWindowOptions {
-  id: import('../enums').VisualCalWindow;
+  id: VisualCalWindow;
 }
 
 declare module Electron {

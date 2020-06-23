@@ -1,0 +1,13 @@
+{
+  "indySoft": {
+    "prologix": {
+      "label": {
+        "host": "Host",
+        "port": "Port"
+      },
+      "placeholder": {
+        "host": "192.168.0.2"
+      }
+    }
+  }
+}

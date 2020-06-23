@@ -2,7 +2,6 @@ import { BrowserWindow, dialog, app } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig } from './WindowConfigs';
-import { VisualCalWindow } from 'src/types/enums';
 
 export class WindowManager {
 
@@ -122,6 +121,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(LoadingWindowConfig());
+    if (!window) throw new Error('Window must be undefined');
     window.webContents.once('did-finish-load', () => {
       if (window) window.show();
       setTimeout(() => {
@@ -158,6 +158,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(MainWindowConfig());
+    if (!window) throw new Error('Window must be undefined');
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
     window.once('close', (e) => {
@@ -181,6 +182,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(ConsoleWindowConfig());
+    if (!window) throw new Error('Window must be undefined');
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     window.webContents.on('did-finish-load', () => {
       try {

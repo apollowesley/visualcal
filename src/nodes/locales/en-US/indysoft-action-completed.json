@@ -1,0 +1,11 @@
+{
+  "indySoft": {
+    "action": {
+      "completed": {
+        "label": {
+          "actionName": "Action Name"
+        }
+      }
+    }
+  }
+}

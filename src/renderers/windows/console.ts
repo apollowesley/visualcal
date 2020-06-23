@@ -24,11 +24,11 @@ const clearList = () => {
   table.replaceData(entries);
 }
 ipcRenderer.on('results', (_, data: LogicResultMessage[]) => {
-  entries = data.map(d => { return { level: d.level, source: d.message.source, timestamp: d.message.timestamp, unitId: d.message.unitId, value: d.message.value } });
+  entries = data.map(d => { return { level: d.level, source: d.message.section, timestamp: d.message.timestamp, unitId: d.message.runId, value: d.message.measuredValue } });
   table.replaceData(entries);
 });
 ipcRenderer.on('result', (_, data: LogicResultMessage) => {
-  const entry = { level: data.level, source: data.message.source, timestamp: data.message.timestamp, unitId: data.message.unitId, value: data.message.value };
+  const entry = { level: data.level, source: data.message.section, timestamp: data.message.timestamp, unitId: data.message.runId, value: data.message.measuredValue };
   entries.push(entry);
   table.addData([entry]);
 });

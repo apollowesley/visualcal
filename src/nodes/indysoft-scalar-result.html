@@ -1,0 +1,138 @@
+<script type="text/x-red" data-template-name="indysoft-scalar-result">
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+      <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-baseQuantity"><i class="fa fa-tag"></i> Base Quantity</label>
+    <select id="node-input-baseQuantity" style="width:150px !important" />
+  </div>
+  <div class="form-row" id="derivedQuantity-row">
+    <label for="node-input-derivedQuantityPrefix"><i class="fa fa-tag"></i> Derived Quantity</label>
+    <select id="node-input-derivedQuantityPrefix" style="width:75px !important">
+      <option value="yotta">yotta</option>
+      <option value="zetta">zetta</option>
+      <option value="exa">exa</option>
+      <option value="peta">peta</option>
+      <option value="tera">tera</option>
+      <option value="giga">giga</option>
+      <option value="mega">mega</option>
+      <option value="kilo">kilo</option>
+      <option value="hecto">hecto</option>
+      <option value="deca">deca</option>
+      <option value="none" selected>N&#47;A</option>
+      <option value="deci">deci</option>
+      <option value="centi">centi</option>
+      <option value="milli">milli</option>
+      <option value="micro">micro</option>
+      <option value="nano">nano</option>
+      <option value="pico">pico</option>
+      <option value="femto">femto</option>
+      <option value="atto">atto</option>
+      <option value="zepto">zepto</option>
+      <option value="yocto">yocto</option>
+    </select>
+    <select id="node-input-derivedQuantity" style="width:150px !important" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-toleranceType"><i class="fa fa-tag"></i> Tolerance Type</label>
+    <select id="node-input-toleranceType" style="width:150px !important">
+      <option value="limit" selected>Limit</option>
+      <option value="plusMinus">&#8208;&#47;&#43;</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-min"><i class="fa fa-tag"></i> Minimum</label>
+    <input type="text" id="node-input-min">
+  </div>
+  <div class="form-row">
+    <label for="node-input-max"><i class="fa fa-tag"></i> Maximum</label>
+    <input type="text" id="node-input-max">
+  </div>
+  <div class="form-row">
+    <label for="node-input-inputLevel"><i class="fa fa-tag"></i> Input Level</label>
+    <input type="text" id="node-input-inputLevel">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-scalar-result">
+  <p>Handles results read from a device</p>
+</script>
+
+<script type="text/javascript" src="quantities.js"></script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-scalar-result', {
+    color: '#d3d936',
+    category: 'Results',
+    defaults: {
+      name: { value: '' },
+      description: { value: '' },
+      baseQuantity: { value: 'acceleration', required: true },
+      derivedQuantity: { value: 'gee', required: false },
+      derivedQuantityPrefix: { value: 'none', required: false },
+      toleranceType: { value: 'limit', required: true },
+      min: { value: 0, required: true },
+      max: { value: 100, required: true },
+      inputLevel: { value: '', required: true }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'measure.svg',
+    label: function() {
+      return this.name || `Scalar Result: ${this.description}`;
+    },
+    labelStyle: function() {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'Scalar Result',
+    oneditprepare: function() {
+      const baseQuantitySelectInput = $('#node-input-baseQuantity');
+      const derivedQuantitySelectInput = $('#node-input-derivedQuantity');
+      const derivedQuantityRow = $('#derivedQuantity-row');
+      const quantityKinds = Qty.getKinds().sort();
+
+      baseQuantitySelectInput.empty();
+      quantityKinds.forEach(kind => baseQuantitySelectInput.append(`<option value="${kind}">${kind}</option>`));
+      baseQuantitySelectInput.val($('#node-input-baseQuantity option:first').val());
+
+      baseQuantitySelectInput.on('change', () => {
+        const baseQuantityValue = baseQuantitySelectInput.val();
+        const derivedQuantities = Qty.getUnits(baseQuantityValue).sort();
+        derivedQuantitySelectInput.empty();
+        if (baseQuantityValue !== 'unitless') {
+          derivedQuantities.forEach(derived => derivedQuantitySelectInput.append(`<option value="${derived}">${derived}</option>`));
+          derivedQuantitySelectInput.val($('#node-input-derivedQuantity option:first').val());
+          derivedQuantityRow.show();
+        } else {
+          derivedQuantityRow.hide();
+        }
+      });
+
+
+
+      baseQuantitySelectInput.change();
+      baseQuantitySelectInput.val(this.baseQuantity).val();
+      derivedQuantitySelectInput.val(this.derivedQuantity).val();
+    },
+    oneditsave: function() {
+      const toleranceTypeValue = $('#node-input-toleranceType').val();
+      const baseQuantityValue = $('#node-input-baseQuantity').val();
+      const derivedQuantityPrefixValue = $('#node-input-derivedQuantityPrefix').val();
+      const derivedQuantityPrefixText = $('#node-input-derivedQuantityPrefix option:selected').text();
+      const derivedQuantityValue = $('#node-input-derivedQuantity').val();
+      const inputLevelValue = $('#node-input-inputLevel').val();
+
+      this.description = `${inputLevelValue}`;
+      if (baseQuantityValue !== 'unitless') this.description = `${this.description} ${derivedQuantityPrefixText === 'N/A' ? '' : derivedQuantityPrefixText} ${derivedQuantityValue}`;
+
+      this.baseQuantity = baseQuantityValue;
+      this.derivedQuantity = derivedQuantityValue;
+      this.derivedQuantityPrefix = derivedQuantityPrefixValue;
+      this.toleranceType = toleranceTypeValue;
+      console.info(this);
+    }
+  });
+  
+</script>

@@ -9,8 +9,8 @@ interface User {
 }
 
 interface WindowInfo {
-  id: import('./enums').VisualCalWindow;
-  type: import('./enums').WindowPathType;
+  id: VisualCalWindow;
+  type: WindowPathType;
   path: string;
 }
 
@@ -30,7 +30,7 @@ declare module NodeJS {
       dirs: {
         base: string;
         html: {
-          getWindowInfo: (id: import('./enums').VisualCalWindow) => WindowInfo;
+          getWindowInfo: (id: VisualCalWindow) => WindowInfo;
           vue: string;
           windows: string;
           views: string;

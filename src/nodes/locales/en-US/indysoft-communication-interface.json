@@ -1,0 +1,14 @@
+{
+  "indySoft": {
+    "communicationInterface": {
+      "label": {
+        "configType": "Interface Type",
+        "serialConfig": "Serial Port",
+        "prologixGpibUsbConfig": "Prologix GPIB USB",
+        "prologixGpibTcpConfig": "Prologix GPIB TCP",
+        "icsConfig": "Control server",
+        "gpibAddress": "GPIB Address"
+      }
+    }
+  }
+}

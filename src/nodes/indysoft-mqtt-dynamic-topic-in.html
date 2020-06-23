@@ -1,0 +1,88 @@
+<script type="text/x-red" data-template-name="indysoft-mqtt-dynamic-topic-in">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-broker"><i class="fa fa-globe"></i> <span data-i18n="indySoft.mqtt.label.broker"></span></label>
+    <input type="text" id="node-input-broker" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="node-red:common.label.topic"></span></label>
+    <input type="text" id="node-input-topic" data-i18n="[placeholder]node-red:common.label.topic" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-qos"><i class="fa fa-empire"></i> <span data-i18n="indySoft.mqtt.label.qos"></span></label>
+    <select id="node-input-qos" style="width:125px !important">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-dataType"><i class="fa fa-sign-out"></i> <span data-i18n="indySoft.mqtt.label.output"></span></label>
+    <select id="node-input-dataType" style="width:70%;">
+      <option value="auto" data-i18n="indySoft.mqtt.output.auto"></option>
+      <option value="buffer" data-i18n="indySoft.mqtt.output.buffer"></option>
+      <option value="utf8" data-i18n="indySoft.mqtt.output.string"></option>
+      <option value="json" data-i18n="indySoft.mqtt.output.json"></option>
+      <option value="base64" data-i18n="indySoft.mqtt.output.base64"></option>
+    </select>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-mqtt-dynamic-topic-in">
+  <p>Connects to a MQTT broker and subscribes to messages from the specified topic or a topic supplied on it's input.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd>the MQTT topic, uses / as a hierarchy separator.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+      <dt>payload <span class="property-type">string | buffer</span></dt>
+      <dd>a string unless detected as a binary buffer.</dd>
+      <dt>topic <span class="property-type">string</span></dt>
+      <dd>the MQTT topic, uses / as a hierarchy separator.</dd>
+      <dt>qos <span class="property-type">number</span> </dt>
+      <dd>0, fire and forget - 1, at least once - 2, once and once only.</dd>
+      <dt>retain <span class="property-type">boolean</span></dt>
+      <dd>true indicates the message was retained and may be old.</dd>
+    </dl>
+    <h3>Details</h3>
+    The subscription topic can include MQTT wildcards, + for one level, # for multiple levels.</p>
+    <p>This node requires a connection to a MQTT broker to be configured. This is configured by clicking
+    the pencil icon.</p>
+    <p>Several MQTT nodes (in or out) can share the same broker connection if required.</p>
+  </script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('indysoft-mqtt-dynamic-topic-in', {
+        category: 'network',
+        defaults: {
+            name: { value: "" },
+            topic: { value: "", required: false, validate: RED.validators.regex(/^(#$|(\+|[^+#]*)(\/(\+|[^+#]*))*(\/(\+|#|[^+#]*))?$)/) },
+            qos: { value: "2" },
+            dataType: { value: "auto", required: true },
+            brokerId: { type: "mqtt-broker", required: true }
+        },
+        color:"#d8bfd8",
+        inputs:1,
+        outputs:1,
+        icon: "bridge.svg",
+        label: function() {
+            return this.name || this.topic || "mqtt";
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+            if (this.qos === undefined) {
+                $("#node-input-qos").val("2");
+            }
+            if (this.dataType === undefined) {
+                $("#node-input-dataType").val("auto");
+            }
+        }
+    });
+</script>

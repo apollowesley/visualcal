@@ -1,0 +1,18 @@
+{
+  "indySoft": {
+    "device": {
+      "result": {
+        "label": {
+          "actionName": "Action Name",
+          "readTag": "Read Tag",
+          "min": "Minimum",
+          "max": "Maximum",
+          "inputLevel": "Input Level",
+          "quantityType": "Quantity",
+          "quantityUnit": "Unit",
+          "toleranceType": "Tolerance Type"
+        }
+      }
+    }
+  }
+}

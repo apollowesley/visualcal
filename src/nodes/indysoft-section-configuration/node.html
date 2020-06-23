@@ -1,0 +1,33 @@
+<script type="text/x-red" data-template-name="indysoft-section-configuration">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+    <input type="text" id="node-config-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-shortName"><i class="fa fa-tag"></i> Short Name</label>
+    <input type="text" id="node-config-input-shortName">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-section-configuration">
+  <p>Used by node to identify which procedure section they are a part of.</p>
+  <p>VisualCal also uses this for display on the front-end.</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-section-configuration', {
+    category: 'config',
+    defaults: {
+      name: { value: '', required: true },
+      shortName: { value: '', required: true }
+    },
+    label: function () {
+      return this.name || 'Section: ' + this.name;
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    }
+  });
+  
+</script>

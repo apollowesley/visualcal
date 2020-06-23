@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import { BrowserWindow, dialog } from 'electron';
-import * as path from 'path';
 import * as RED from 'node-red';
-import { ConsoleWindowConfig } from '../managers/WindowConfigs';
+import { NodeRed } from '../../types/logic-server';
 
-const nodeRed = RED as RED.Red;
+const nodeRed = RED as NodeRed;
 
 let fileName = "";
 export const saveFlow = async (mainWindow: BrowserWindow) => {
@@ -13,7 +12,7 @@ export const saveFlow = async (mainWindow: BrowserWindow) => {
     defaultPath: fileName
   });
   if (result.filePath) {
-    var flo = JSON.stringify(nodeRed.nodes.getFlows().flows);
+    var flo = JSON.stringify((nodeRed.nodes as any).getFlows().flows);
     fs.writeFile(result.filePath, flo, function (err) {
       if (err) { dialog.showErrorBox('Error', JSON.stringify(err)); }
       else {
@@ -33,7 +32,7 @@ export const openFlow = async (mainWindow: BrowserWindow) => {
       try {
         var flo = JSON.parse(data);
         if (Array.isArray(flo) && (flo.length > 0)) {
-          nodeRed.nodes.setFlows(flo, "full");
+          (nodeRed.nodes as any).setFlows(flo, "full");
           fileName = filePath;
         } else {
           dialog.showErrorBox("Error", "Failed to parse flow file.\n\n  " + filePath + ".\n\nAre you sure it's a flow file ?");

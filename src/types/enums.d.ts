@@ -1,4 +1,4 @@
-export const enum VisualCalWindow {
+declare const enum VisualCalWindow {
   Main,
   Loading,
   Login,
@@ -6,7 +6,7 @@ export const enum VisualCalWindow {
   NodeRedEditor
 }
 
-export const enum WindowPathType {
+declare const enum WindowPathType {
   File,
   Url
 }

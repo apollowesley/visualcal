@@ -5,7 +5,6 @@ import path from 'path';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
-import { VisualCalWindow, WindowPathType } from 'src/types/enums';
 
 const serverListenPort = 18880;
 const vueListenPort = isDev ? 8080 : serverListenPort;

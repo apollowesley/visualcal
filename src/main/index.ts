@@ -12,13 +12,14 @@ import * as UserHomeUtils from './utils/HomeDir';
 import { login, isLoggedIn } from './security';
 import history from 'connect-history-api-fallback';
 import { init as initIpcManager } from './managers/IPCManager';
+import type { NodeRed } from '../types/logic-server';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
 
   const nodeRedApp = express();
   const httpServer = http.createServer(nodeRedApp);
-  const nodeRed = RED as RED.Red;
+  const nodeRed = RED as NodeRed;
 
   function init(ipcChannels: IpcChannel<any>[]) {
     initIpcManager();
@@ -29,6 +30,7 @@ try {
     nodeRed.init(httpServer, NodeRedSettings);
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
+    nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
 
     if (!global.visualCal.isDev) {
       // Enable history for Vue router

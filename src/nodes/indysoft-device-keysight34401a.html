@@ -1,0 +1,206 @@
+<script type="text/x-red" data-template-name="indysoft-device-keysight34401a">
+  <!-- Name -->
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+      <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+
+  <!-- Device config -->
+  <div class="form-row">
+    <label for="node-input-deviceConfigId"><i class="fa fa-tag"></i> Device</label>
+    <input type="text" id="node-input-deviceConfigId" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+
+  <!-- Mode -->
+  <div class="form-row">
+    <label for="node-input-mode"><i class="fa fa-tag"></i> Function</label>
+    <select id="node-input-mode" style="width:125px !important">
+      <option value="aac">Current AC</option>
+      <option value="adc">Current DC</option>
+      <option value="vac" selected>Voltage AC</option>
+      <option value="vdc">Voltage DC</option>
+      <option value="ohms">Resistance</option>
+      <option value="ohms4">Resistance 4-wire</option>
+      <option value="freq">Frequency</option>
+      <option value="per">Period</option>
+      <option value="cont">Continuity</option>
+      <option value="diode">Diode</option>
+    </select>
+  </div>
+
+  <!-- Rate -->
+  <!-- <div class="form-row">
+    <label for="node-input-setRate"><i class="fa fa-tag"></i> Set rate?</label>
+    <input type="checkbox" id="node-input-setRate" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="rate-row">
+    <label for="node-input-rate"><i class="fa fa-tag"></i> Rate</label>
+    <select id="node-input-rate" style="width:auto !important">
+      <option value="0" selected>Slow</option>
+      <option value="1">Medium</option>
+      <option value="2">Fast</option>
+    </select>
+  </div> -->
+
+  <!-- Range -->
+  <div class="form-row">
+    <label for="node-input-setRange"><i class="fa fa-tag"></i> Set range?</label>
+    <input type="checkbox" id="node-input-setRange" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="range-row">
+    <label for="node-input-range"><i class="fa fa-tag"></i> Range</label>
+    <select id="node-input-range" style="width:auto !important">
+    </select>
+  </div>
+
+  <!-- Relative -->
+  <div class="form-row">
+    <label for="node-input-relative"><i class="fa fa-tag"></i> Relative?</label>
+    <input type="checkbox" id="node-input-relative" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-measure"><i class="fa fa-tag"></i> Take measurement?</label>
+    <input type="checkbox" id="node-input-measure" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+
+  <!-- Pre-delay -->
+  <div class="form-row">
+    <label for="node-input-usePreDelay"><i class="fa fa-tag"></i> Pre-delay?</label>
+    <input type="checkbox" id="node-input-usePreDelay" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="pre-delay-row">
+    <label for="node-input-preDelay"><i class="fa fa-tag"></i> Pre-delay (ms)</label>
+    <input type="text" id="node-input-preDelay" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-device-keysight34401a">
+  <p>Provides a UI for configuring a Fluke 45.</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-device-keysight34401a', {
+    color: '#67F36E',
+    category: 'Digital Multimeter',
+    defaults: {
+      name: { value: '' },
+      deviceConfigId: { type: 'indysoft-device-configuration', required: true },
+      mode: { value: 'vac', required: true },
+      setRate: { value: false, required: true },
+      rate: { value: 0, required: true },
+      setRange: { value: false, required: true },
+      range: { value: '0', required: true },
+      relative: { value: false, required: true },
+      usePreDelay: { value: false, required: true },
+      preDelay: { value: 0, required: false, validate: RED.validators.number() },
+      measure: { value: true, required: true },
+      outputs: { value: 2 }
+    },
+    inputs: 1,
+    outputs: 2,
+    icon: 'serial.svg',
+    label: function() {
+      let retVal = this.name || 'Keysight 34401A';
+      if (!!this.useDelayBefore) retVal = `${retVal} (${this.delayBefore}mS)`;
+      return retVal;
+    },
+    outputLabels: function(index) {
+      if (index === 0) return 'Error';
+      const doneOutputLabel = this.measure ? 'Measurement' : 'Done';
+      return doneOutputLabel;
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'Keysight 34401A',
+    oneditprepare: function() {
+      const showOrHideRow = function(checkBox, rowId) { checkBox.prop('checked') ? $(rowId).show() : $(rowId).hide(); }
+      const that = this;
+      const rangeSelect = $('#node-input-range');
+
+      // *** Rate ***
+      // $('#node-input-setRate').on('change', function() { showOrHideRow($(this), '#rate-row'); }).change();
+
+      // *** Range ***
+      $('#node-input-setRange').on('change', function() { showOrHideRow($(this), '#range-row'); }).change();
+
+      // *** Mode/Ranges ***
+      $('#node-input-mode').on('change', () => {
+        const curMode = $('#node-input-mode option:selected').val();
+        rangeSelect.empty();
+        switch (curMode) {
+          case 'aac':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">1 A</option>');
+            rangeSelect.append('<option value="2">3 A</option>');
+            break;
+          case 'adc':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">10 mA</option>');
+            rangeSelect.append('<option value="2">100 mA</option>');
+            rangeSelect.append('<option value="3">1 A</option>');
+            rangeSelect.append('<option value="4">3 A</option>');
+            break;
+          case 'vac':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">100 mV</option>');
+            rangeSelect.append('<option value="2">1 V</option>');
+            rangeSelect.append('<option value="3">10 V</option>');
+            rangeSelect.append('<option value="4">100 V</option>');
+            rangeSelect.append('<option value="5">750 V</option>');
+            break;
+          case 'vdc':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">100 mV</option>');
+            rangeSelect.append('<option value="2">1 V</option>');
+            rangeSelect.append('<option value="3">10 V</option>');
+            rangeSelect.append('<option value="4">100 V</option>');
+            rangeSelect.append('<option value="5">1000 V</option>');
+            break;
+          case 'ohms':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">100 Ohms</option>');
+            rangeSelect.append('<option value="2">1 kOhms</option>');
+            rangeSelect.append('<option value="3">10 kOhms</option>');
+            rangeSelect.append('<option value="4">100 kOhms</option>');
+            rangeSelect.append('<option value="5">1 MOhms</option>');
+            rangeSelect.append('<option value="6">10 MOhms</option>');
+            rangeSelect.append('<option value="7">100 MOhms</option>');
+            break;
+          case 'ohms4':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">100 Ohms</option>');
+            rangeSelect.append('<option value="2">1 kOhms</option>');
+            rangeSelect.append('<option value="3">10 kOhms</option>');
+            rangeSelect.append('<option value="4">100 kOhms</option>');
+            rangeSelect.append('<option value="5">1 MOhms</option>');
+            rangeSelect.append('<option value="6">10 MOhms</option>');
+            rangeSelect.append('<option value="7">100 MOhms</option>');
+            break;
+          case 'freq':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">3 Hz or 0.33 sec</option>');
+            rangeSelect.append('<option value="2">300 kHz or 3.3 usec</option>');
+            break;
+          case 'per':
+            rangeSelect.append('<option value="0">Auto</option>');
+            rangeSelect.append('<option value="1">3 Hz or 0.33 sec</option>');
+            rangeSelect.append('<option value="2">300 kHz or 3.3 usec</option>');
+            break;
+        }
+        console.info(rangeSelect.val(), this.range);
+        rangeSelect.val(this.range);
+        rangeSelect.change();
+        console.info(rangeSelect.val(), this.range);
+      }).change();
+
+      $('#node-input-range option:selected').val(this.range);
+      rangeSelect.change();
+
+      // *** Pre-delay ***
+      $('#node-input-usePreDelay').on('change', function() { showOrHideRow($(this), '#pre-delay-row'); }).change();
+    }
+  });
+  
+</script>

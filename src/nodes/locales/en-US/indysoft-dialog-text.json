@@ -1,0 +1,12 @@
+{
+  "indySoft": {
+    "dialog": {
+      "text": {
+        "label": {
+          "title": "Title",
+          "text": "Text"
+        }
+      }
+    }
+  }
+}

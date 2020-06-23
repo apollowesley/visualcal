@@ -1,0 +1,229 @@
+[{
+    "id": "8a2331a5.10beb",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "3d2b01e3.f421ce",
+    "type": "mqtt-broker",
+    "z": "",
+    "name": "",
+    "broker": "10.0.0.114",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "compatmode": false,
+    "keepalive": "60",
+    "cleansession": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": ""
+  },
+  {
+    "id": "af1bf533.8efca8",
+    "type": "indysoft-command-sequence-builder",
+    "z": "8a2331a5.10beb",
+    "name": "Short:  Sequence Builder",
+    "respondInBulk": true,
+    "operations": [{
+        "type": "command",
+        "unitId": "fluke45",
+        "interfaceId": "",
+        "commandType": "query",
+        "writeData": "MEAS?",
+        "readDataType": "single",
+        "responseTag": "fluke45.dc.volts.90mv",
+        "delay": "1000",
+        "resetType": "device",
+        "unitIdPropertyType": "str",
+        "interfaceIdPropertyType": "msg",
+        "writeDataPropertyType": "str",
+        "responseTagPropertyType": "str",
+        "delayPropertyType": "msg"
+      },
+      {
+        "type": "command",
+        "unitId": "fluke5522a",
+        "interfaceId": "",
+        "commandType": "query",
+        "writeData": "OUT?",
+        "readDataType": "boolean",
+        "responseTag": "isOutputOn",
+        "delay": "1000",
+        "resetType": "device",
+        "unitIdPropertyType": "str",
+        "interfaceIdPropertyType": "msg",
+        "writeDataPropertyType": "str",
+        "responseTagPropertyType": "str",
+        "delayPropertyType": "msg"
+      }
+    ],
+    "x": 1210,
+    "y": 260,
+    "wires": [
+      [
+        "c35dbcfc.b8012"
+      ]
+    ]
+  },
+  {
+    "id": "c8cfa3f8.651d8",
+    "type": "inject",
+    "z": "8a2331a5.10beb",
+    "name": "Dummy start trigger",
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 970,
+    "y": 260,
+    "wires": [
+      [
+        "af1bf533.8efca8"
+      ]
+    ]
+  },
+  {
+    "id": "43afae4a.9300c",
+    "type": "debug",
+    "z": "8a2331a5.10beb",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "x": 1430,
+    "y": 320,
+    "wires": []
+  },
+  {
+    "id": "713c7b82.d5d104",
+    "type": "inject",
+    "z": "8a2331a5.10beb",
+    "name": "Dummy responses",
+    "topic": "",
+    "payload": "{\"count\":2,\"errors\":null,\"responses\":[{\"unitId\":\"fluke45\",\"tag\":\"fluke45.dc.volts.90mv\",\"payloadType\":\"single\",\"payload\":0.090015},{\"unitId\":\"fluke5522a\",\"tag\":\"isOutputOn\",\"payloadType\":\"boolean\",\"payload\":true}]}",
+    "payloadType": "json",
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "x": 970,
+    "y": 300,
+    "wires": [
+      [
+        "47ee1394.c995bc"
+      ]
+    ]
+  },
+  {
+    "id": "47ee1394.c995bc",
+    "type": "indysoft-response-handler",
+    "z": "8a2331a5.10beb",
+    "name": "Short:  Response Handler",
+    "outputs": 2,
+    "responses": [{
+        "unitId": "fluke45",
+        "unitIdPropertyType": "str",
+        "tag": "fluke45.dc.volts.90mv",
+        "tagPropertyType": "str",
+        "payloadType": "string"
+      },
+      {
+        "unitId": "fluke5522a",
+        "unitIdPropertyType": "str",
+        "tag": "isOutputOn",
+        "tagPropertyType": "str",
+        "payloadType": "string"
+      }
+    ],
+    "x": 1210,
+    "y": 300,
+    "wires": [
+      [
+        "43afae4a.9300c"
+      ],
+      [
+        "43afae4a.9300c"
+      ]
+    ]
+  },
+  {
+    "id": "c35dbcfc.b8012",
+    "type": "mqtt out",
+    "z": "8a2331a5.10beb",
+    "name": "",
+    "topic": "dev/response",
+    "qos": "1",
+    "retain": "false",
+    "broker": "3d2b01e3.f421ce",
+    "x": 1440,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "d10aeb4b.9476b8",
+    "type": "function",
+    "z": "8a2331a5.10beb",
+    "name": "",
+    "func": "msg.payload.responses = msg.payload.operations;\ndelete msg.payload.operations;\nmsg.payload.responses.forEach(function(response) {\n    response.tag = response.responseTag;\n    response.payloadType = response.readDataType;\n    switch (response.payloadType) {\n        case 'boolean':\n            response.payload = true;\n            break;\n        case 'integer':\n        case 'single':\n        case 'double':\n            response.payload = 0.5532;\n            break;\n    }\n    delete response.responseTag;\n    delete response.readDataType;\n})\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 1010,
+    "y": 340,
+    "wires": [
+      [
+        "47ee1394.c995bc"
+      ]
+    ]
+  },
+  {
+    "id": "591987ad.4ed148",
+    "type": "indysoft-mqtt-dynamic-topic-in",
+    "z": "8a2331a5.10beb",
+    "name": "",
+    "topic": "",
+    "qos": "2",
+    "datatype": "json",
+    "broker": "3d2b01e3.f421ce",
+    "x": 870,
+    "y": 340,
+    "wires": [
+      [
+        "d10aeb4b.9476b8"
+      ]
+    ]
+  },
+  {
+    "id": "2f3cd77a.2e4988",
+    "type": "inject",
+    "z": "8a2331a5.10beb",
+    "name": "",
+    "topic": "dev/response",
+    "payload": "true",
+    "payloadType": "bool",
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "x": 690,
+    "y": 340,
+    "wires": [
+      [
+        "591987ad.4ed148"
+      ]
+    ]
+  }
+]

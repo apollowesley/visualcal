@@ -1,0 +1,113 @@
+<script type="text/x-red" data-template-name="indysoft-device-result">
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+      <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-actionName"><i class="fa fa-tag"></i> Action Name</label>
+    <input type="text" id="node-input-actionName">
+  </div>
+  <div class="form-row">
+    <label for="node-input-deviceType"><i class="fa fa-tag"></i> Device Type</label>
+    <select id="node-input-deviceType" style="width:150px !important">
+      <option value="generic" selected>Generic</option>
+      <option value="dmm">Digital Multimeter</option>
+    </select>
+  </div>
+  <div class="form-row" id="multimeter-mode-row">
+    <label for="node-input-multimeterMode"><i class="fa fa-tag"></i> Function</label>
+    <select id="node-input-multimeterMode" style="width:150px !important">
+      <option value="aac">Current AC</option>
+      <option value="adc">Current DC</option>
+      <option value="vac" selected>Voltage AC</option>
+      <option value="vdc">Voltage DC</option>
+      <option value="ohms">Resistance</option>
+      <option value="freq">Frequency</option>
+      <option value="diode">Diode</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-toleranceType"><i class="fa fa-tag"></i> Tolerance Type</label>
+    <select id="node-input-toleranceType" style="width:150px !important">
+      <option value="limit" selected>Limit</option>
+      <option value="plusMinus">&#8208;&#47;&#43;</option>
+
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-min"><i class="fa fa-tag"></i> Minimum Value</label>
+    <input type="text" id="node-input-min">
+  </div>
+  <div class="form-row">
+    <label for="node-input-max"><i class="fa fa-tag"></i> Maximum Value</label>
+    <input type="text" id="node-input-max">
+  </div>
+  <div class="form-row">
+    <label for="node-input-inputLevel"><i class="fa fa-tag"></i> Stimulus Level</label>
+    <input type="text" id="node-input-inputLevel">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-device-result">
+  <p>Handles results read from a device</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-device-result', {
+    color: '#d3d936',
+    category: 'Results',
+    defaults: {
+      name: { value: '' },
+      description: { value: '' },
+      actionName: { value: '', required: true },
+      readTag: { value: '', required: true },
+      deviceType: { value: 'dmm', required: true },
+      multimeterMode: { value: 'vac', required: true },
+      toleranceType: { value: 'limit', required: true },
+      min: { value: '', required: true },
+      max: { value: '', required: true },
+      inputLevel: { value: '', required: true }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'measure.svg',
+    label: function() {
+      return this.name || `Result: ${this.description}`;
+    },
+    labelStyle: function() {
+      return `OBSOLETE ${this.name}` ? 'node_label_italic' : 'OBSOLETE - Device Result';
+    },
+    paletteLabel: 'OBSOLETE - Device Result',
+    oneditprepare: function() {
+      const deviceTypeSelectInput = $('#node-input-deviceType');
+      const multimeterModeRow = $('#multimeter-mode-row');
+
+      deviceTypeSelectInput.on('change', () => {
+        const value = deviceTypeSelectInput.val();
+        if (value === 'dmm') {
+          multimeterModeRow.show();
+        } else {
+          multimeterModeRow.hide();
+        }
+      });
+
+      deviceTypeSelectInput.change();
+
+    },
+    oneditsave: function() {
+      this.deviceType = $('#node-input-deviceType').val();
+      this.multimeterMode = $('#node-input-multimeterMode').val();
+      const multimeterModeText = $('#node-input-multimeterMode option:selected').text();
+      // description
+      switch (this.deviceType) {
+        case 'generic':
+          this.description = `${retVal} (generic)`;
+          break;
+        case 'dmm':
+          this.description = `(dmm) ${multimeterModeText}`;
+      }
+    }
+  });
+  
+</script>
