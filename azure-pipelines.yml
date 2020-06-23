@@ -20,11 +20,16 @@ steps:
   inputs:
     versionSpec: '14.x'
 
-- bash: cd renderer && npm install && npm build
+- bash: |
+    npm install
+    npm build
+  workingDirectory: 'renderer'
   displayName: 'Install and build renderer (Vue.js)'
 
-- bash: npm run rebuild && npm run release
-    displayName: 'Install and rebuild Electron app and build release'
+- bash: |
+    npm run rebuild
+    npm run release
+  displayName: 'Install and rebuild Electron app and build release'
 
 - task: CopyFiles@2
   displayName: 'Copy node-red nodes support files to dist'
