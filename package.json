@@ -102,8 +102,6 @@
     "files": [
       "dist/**/*",
       "public/**/*",
-      "nodes/**/*",
-      "logic-nodes/dist/**/*",
       "renderers/vuedist/**/*",
       "package.json"
     ],

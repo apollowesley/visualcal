@@ -20,9 +20,22 @@ steps:
   inputs:
     versionSpec: '14.x'
 
-- bash: |
-    npm run rebuild
-    npm run release
+- bash: cd renderer && npm install && npm build
+  displayName: 'Install and build renderer (Vue.js)'
+
+- bash: npm run rebuild && npm run release
+    displayName: 'Install and rebuild Electron app and build release'
+
+- task: CopyFiles@2
+  displayName: 'Copy node-red nodes support files to dist'
+  inputs:
+    Contents: |
+      src/nodes/package.json
+      src/nodes/*.html
+      src/nodes/examples
+      src/nodes/icons
+      src/nodes/locales
+    TargetFolder: 'dist/nodes'
 
 - task: PublishCodeCoverageResults@1
   inputs: 
