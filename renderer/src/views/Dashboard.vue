@@ -2,6 +2,26 @@
   <v-container
     fluid
   >
+    <v-snackbar
+      v-model="fAlert"
+      dismissible
+      block
+      dark
+      top
+      color="error"
+      timeout="4000"
+    >
+      {{ fAlertMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="gray"
+          v-bind="attrs"
+          @click="fAlert = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-row>
       <v-col>
         <v-row
@@ -19,15 +39,16 @@
                 :open="fOpen"
                 :items="fItems"
                 activatable
+                hoverable
                 item-key="name"
-                open-on-click
+                return-object
               >
                 <template v-slot:prepend="{ item, open }">
-                  <v-icon v-if="!item.name">
+                  <v-icon v-if="item.type === 'parent' || item.type === 'procedure'">
                     {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
                   </v-icon>
                   <v-icon v-else>
-                    {{ fFiles[item.file] }}
+                    {{ fFiles[item.type] }}
                   </v-icon>
                 </template>
               </v-treeview>
@@ -50,21 +71,25 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { getProcedures, Procedure, createProcedure } from '../utils/ipc';
+import { getProcedures, createProcedure } from '../utils/ipc';
+
+declare type TreeItemType = 'parent' | 'procedure' | 'procedure-section';
 
 interface TreeItem {
   name: string;
-  file?: string;
+  type: TreeItemType;
   children?: TreeItem[];
 }
 
 @Component
 export default class Dashboard extends Vue {
 
+  private fAlert: boolean = false;
+  private fAlertMessage: string = '';
   private fTree: TreeItem[] = [];
   private fOpen: string[] = ['public'];
   private fFiles = {
-    html: 'mdi-language-html5',
+    'procedure-section': 'mdi-language-html5',
     js: 'mdi-nodejs',
     json: 'mdi-json',
     md: 'mdi-markdown',
@@ -73,24 +98,56 @@ export default class Dashboard extends Vue {
     txt: 'mdi-file-document-outline',
     xls: 'mdi-file-excel',
   };
-  private fItems: Procedure[] = [];
+  private fItems: TreeItem[] = [
+    {
+      name: 'Procedures',
+      type: 'parent',
+      children: []
+    },
+    {
+      name: 'Drivers',
+      type: 'parent',
+      children: []
+    }
+  ];
 
   async mounted() {
     await this.refreshProcedures();
   }
 
   async refreshProcedures() {
-    await createProcedure({
-      name: 'procedure1',
-      sections: [
-        {
-          name: 'section1'
-        }
-      ]
-    });
+    try {
+      await createProcedure({
+        name: 'procedure1',
+        sections: [
+          {
+            name: 'section1'
+          }
+        ]
+      });
+    } catch (error) {
+      this.fAlertMessage = error.message;
+      this.fAlert = true;
+    }
     const procedures = await getProcedures();
     if (!procedures) return;
-    this.fItems = procedures;
+    procedures.forEach(proc => {
+      const item: TreeItem = {
+        name: proc.name,
+        type: 'procedure',
+      };
+      if (proc.sections && proc.sections.length > 0) {
+        item.children = [];
+        proc.sections.forEach(section => {
+          if (item.children) item.children.push({
+            name: section.name,
+            type: 'procedure-section'
+          })
+        });
+      }
+      const procedureParent = this.fItems.find(item => item.name === 'Procedures');
+      if (procedureParent && procedureParent.children) procedureParent.children.push(item);
+    });
   }
 
 }

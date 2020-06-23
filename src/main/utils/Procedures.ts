@@ -7,17 +7,25 @@ export const createProcedureDir = async () => await fsPromises.mkdir(global.visu
 export const exists = (name: string) => fs.existsSync(getPath(name));
 
 export const getAll = async () => {
-  const proceduresDir = (await fsPromises.readdir(global.visualCal.dirs.procedures, { withFileTypes: true })).filter(dir => dir.isDirectory());
+  const proceduresDir = (await fsPromises.readdir(global.visualCal.dirs.procedures, { withFileTypes: true })).filter(dir => dir.isDirectory() && dir.name !== 'logic');
+  const procDirExists = procedureDirExists();
   const retVal: Procedure[] = [];
-  if (!procedureDirExists()) return retVal;
-  proceduresDir.forEach(async (dir) => {
+  console.info('ProcDirExists', procDirExists);
+  if (!procDirExists) return retVal;
+  console.info('Number of procedures', proceduresDir.length);
+  proceduresDir.forEach((dir) => {
     const infoFilePath = path.join(getPath(dir.name), 'procedure.json');
-    if (fs.existsSync(infoFilePath)) {
-      const fileBuffer = (await fsPromises.readFile(infoFilePath)).toString();
+    const infoFileExists = fs.existsSync(infoFilePath);
+    console.info('infoFileExists', infoFileExists);
+    if (infoFileExists) {
+      const fileBuffer = (fs.readFileSync(infoFilePath)).toString();
+      console.info('fileBuffer', fileBuffer);
       const info = JSON.parse(fileBuffer) as Procedure;
+      console.info('info', info);
       retVal.push(info);
     }
   });
+  console.info('retVal', retVal);
   return retVal;
 }
 
