@@ -22,7 +22,7 @@ steps:
 
 - bash: |
     npm install
-    npm build
+    npm run build
   workingDirectory: 'renderer'
   displayName: 'Install and build renderer (Vue.js)'
 
