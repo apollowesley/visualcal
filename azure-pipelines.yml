@@ -20,8 +20,18 @@ steps:
   inputs:
     versionSpec: '14.x'
 
+- task: DownloadSecureFile@1
+  name: 'Certificates'
+  inputs:
+    secureFile: 'Certificates.p12'
+
 - bash: './release.sh'
   displayName: 'Release script'
+  env:
+    APPID: $(APPID)
+    APPLEIDPASS: $(APPLEIDPASS)
+    CSC_LINK: $(Certificates.secureFilePath)
+
 
 - task: PublishCodeCoverageResults@1
   inputs: 
