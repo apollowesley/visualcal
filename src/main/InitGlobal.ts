@@ -55,7 +55,8 @@ global.visualCal = {
     },
     renderers: {
       views: path.resolve(__dirname, '..', 'renderers', 'views'),
-      windows: path.resolve(__dirname, '..', 'renderers', 'windows')
+      windows: path.resolve(__dirname, '..', 'renderers', 'windows'),
+      nodeBrowser: path.resolve(__dirname, '..', 'renderers', 'node-browser')
     },
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')

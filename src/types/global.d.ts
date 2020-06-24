@@ -41,6 +41,7 @@ declare module NodeJS {
         renderers: {
           windows: string;
           views: string;
+          nodeBrowser: string;
         }
         procedures: string;
         visualCalUser: string;

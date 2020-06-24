@@ -7,8 +7,6 @@
 <script type="text/x-red" data-help-name="procedure-sidebar">
 </script>
 
-<script src="/browser-utils/visualcal.js"></script>
-
 <script type="text/javascript">
   (function ($) {
     var uip = 'ui';
@@ -52,7 +50,7 @@
 
         function ensureProcedureNode() {
           // if (globalProcedureNode) return;
-          globalProcedureNode = visualcal.getProcedureConfigNode();
+          globalProcedureNode = visualCal.browserUtils.getProcedureConfigNode();
           if (!globalProcedureNode) {
             globalProcedureNode = {
               name: '',
@@ -94,7 +92,7 @@
         }
 
         if (!refDocInput.length) {
-          const refDocInputFormParts = visualcal.fileUpload.createAssetUploadForm(imageInputOpts);
+          const refDocInputFormParts = visualCal.browserUtils.createAssetUploadForm(imageInputOpts);
           refDocInput = refDocInputFormParts.input;
         }
 

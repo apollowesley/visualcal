@@ -1,9 +1,9 @@
 import { ipcRenderer } from 'electron';
-
-export const test = (msg: string) => alert(msg);
+import browserUtils from '../node-browser';
 
 window.visualCal = {
   ipc: ipcRenderer,
+  browserUtils: browserUtils,
   log: {
     result(result: LogicResult) {
       ipcRenderer.send('node-red', result);

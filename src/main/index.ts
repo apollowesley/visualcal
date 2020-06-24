@@ -31,6 +31,7 @@ try {
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
     nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
+    nodeRedApp.use('/renderers/node-browser', express.static(global.visualCal.dirs.renderers.nodeBrowser)); // Some node-red nodes need browser-utils in renderers folder
 
     if (!global.visualCal.isDev) {
       // Enable history for Vue router
