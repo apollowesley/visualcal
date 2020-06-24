@@ -28,6 +28,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 var electron_notarize = require('electron-notarize');
 
+console.info(fs.existsSync(process.env.CSC_LINK));
 module.exports = async function (params) {
     // Only notarize the app on Mac OS only.
     if (process.platform !== 'darwin') {

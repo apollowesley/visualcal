@@ -7,7 +7,7 @@ npm install
 npm run build
 popd
 
-npm run rebuild
+npm install
 npm run build
 
 cp src/nodes/package.json dist/nodes
