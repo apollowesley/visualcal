@@ -8,7 +8,7 @@
   "scripts": {
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
-    "release": "npm run build && electron-builder build -p never",
+    "release": "electron-builder build -p never",
     "postinstall": "electron-builder install-app-deps",
     "build": "tsc",
     "watch": "tsc -w",
