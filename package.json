@@ -98,6 +98,7 @@
     "appId": "com.indysoft.visualcal",
     "productName": "VisualCal Electron",
     "copyright": "Copyright © 2020 IndySoft",
+    "asar": false,
     "files": [
       "dist/**/*",
       "public/**/*",
