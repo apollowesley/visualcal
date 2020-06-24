@@ -12,9 +12,9 @@ export interface RuntimeProperties extends NodeProperties {
   deviceType: string;
   multimeterMode: string;
   toleranceType: string;
-  inputLevel: number;
-  min?: number;
-  max?: number;
+  inputLevel: string;
+  min: string;
+  max: string;
 }
 
 export interface RuntimeNode extends NodeRedRuntimeNode {
@@ -24,8 +24,8 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   derivedQuantityPrefix?: string;
   toleranceType: string;
   inputValue: number;
-  min?: number;
-  max?: number;
+  min: number;
+  max: number;
 }
 
 export interface InputMessagePayload {
@@ -45,9 +45,9 @@ module.exports = (RED: NodeRed) => {
     RED.nodes.createNode(this, config);
     this.description = config.description;
     this.toleranceType = config.toleranceType;
-    this.inputValue = config.inputLevel;
-    this.min = config.min;
-    this.max = config.max;
+    this.inputValue = parseFloat(config.inputLevel);
+    this.min = parseFloat(config.min);
+    this.max = parseFloat(config.max);
     if (config.baseQuantity !== 'unitless' && config.derivedQuantity && config.derivedQuantityPrefix) {
       this.derivedQuantity = config.derivedQuantity;
       this.derivedQuantityPrefix = config.derivedQuantityPrefix;
@@ -80,17 +80,25 @@ module.exports = (RED: NodeRed) => {
         derivedQuantity: this.derivedQuantity,
         derivedQuantityPrefix: this.derivedQuantityPrefix === 'none' ? '' : this.derivedQuantityPrefix,
         inputLevel: this.inputValue,
-        minimum: this.min ? this.min : Number.NEGATIVE_INFINITY,
-        maximum: this.max ? this.max : Infinity,
+        minimum: this.min,
+        maximum: this.max,
         rawValue: msg.payload.value,
         measuredValue: measuredValue,
         passed: false
       };
-      if (this.min && this.max) result.passed = (measuredValue >= this.min) && (this.max >= measuredValue);
+      result.passed = (measuredValue >= this.min) && (this.max >= measuredValue);
       this.status({
         fill: result.passed ? 'green' : 'red',
-        shape: 'ring',
-        text: `Last result: ${result.passed ? 'Passed' : 'Failed'}`
+        shape: 'dot',
+        text: `Last: ${result.passed ? 'Passed' : 'Failed'} | ${result.measuredValue}`
+      });
+      global.visualCal.logger.info('result', {
+        type: 'result',
+        sessionId: msg.payload.sessionId,
+        runId: msg.payload.runId,
+        section: msg.payload.section,
+        action: msg.payload.action,
+        result: result
       });
       RED.settings.onActionResult({
         type: 'result',

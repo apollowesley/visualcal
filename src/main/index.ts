@@ -60,9 +60,7 @@ try {
   }
 
   function onWindowAllClosed() {
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    app.exit();
   }
 
   async function onActive() {

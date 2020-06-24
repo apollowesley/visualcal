@@ -1,49 +1,39 @@
+import type { IpcRendererEvent } from 'electron';
 const ipc = window.electron.ipcRenderer;
 
-export interface Section {
-  name: string;
-}
-
-export interface Procedure {
-  name: string;
-  sections: Section[];
-}
-
-
-export const getProcedures = (): Promise<Procedure[] | undefined> => {
-  console.info('Getting procedures');
-  return new Promise((resolve, reject) => {
-    try {
-      ipc.once('get-procedures-reply', (_, procedures: Procedure[]) => {
-        console.info('Response received');
-        return resolve(procedures);
-      });
-      ipc.send('get-procedures-request');
-      console.info('Request sent');
-    } catch (error) {
-      return reject(error);
+const channels = {
+  procedures: {
+    get: {
+      request: 'get-procedures-request',
+      response: 'get-procedures-reply',
+      error: 'get-procedures-error'
+    },
+    create: {
+      request: 'create-procedure-request',
+      response: 'create-procedure-reply',
+      error: 'create-procedure-error'
     }
-  });
+  }
 }
 
-export const createProcedure = (procedure: Procedure): Promise<boolean | Error> => {
-  console.info('Creating procedure');
-  return new Promise((resolve, reject) => {
-    try {
-      ipc.once('create-procedure-reply', () => {
-        console.info('Response received');
-        ipc.removeAllListeners('create-procedure-error');
-        return resolve(true);
-      });
-      ipc.once('create-procedure-error', (_, error: Error) => {
-        console.info('Error received');
-        ipc.removeAllListeners('create-procedure-reply');
-        return reject(error);
-      });
-      ipc.send('create-procedure-request', procedure);
-      console.info('Request sent');
-    } catch (error) {
-      return reject(error);
-    }
-  });
+export const getProcedures = () => ipc.send(channels.procedures.get.request);
+export const onGetProceduresResponse = (reply: (event: IpcRendererEvent, procedures: Procedure[]) => void, err?: (event: IpcRendererEvent, err: Error) => void) => {
+  ipc.on(channels.procedures.get.response, reply);
+  if (err) ipc.on(channels.procedures.get.error, err);
+}
+
+export const createProcedure = (procedure: Procedure) => ipc.send(channels.procedures.create.request, procedure);
+export const onCreateProceduresResponse = (reply: (event: IpcRendererEvent) => void, err?: (event: IpcRendererEvent, err: Error) => void) => {
+  ipc.on(channels.procedures.get.response, reply);
+  if (err) ipc.on(channels.procedures.get.error, err);
+}
+
+
+export const removeAllListeners = (channel?: string) => {
+  if (channel) {
+    ipc.removeAllListeners(channel);
+    return;
+  }
+  Object.keys(channels.procedures.get).forEach(c => ipc.removeAllListeners(c));
+  Object.keys(channels.procedures.create).forEach(c => ipc.removeAllListeners(c));
 }

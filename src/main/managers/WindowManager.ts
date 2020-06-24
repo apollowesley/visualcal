@@ -162,7 +162,6 @@ export class WindowManager {
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
     window.once('close', (e) => {
-      e.preventDefault(); // Required for node-red if it's in a modified state and changes haven't been deployed
       global.visualCal.windowManager.closeAll();
     });
     window.webContents.once('did-finish-load', async () => {
