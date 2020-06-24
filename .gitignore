@@ -15,6 +15,7 @@ logs
 *error*
 .DS_Store
 lib
+.env
 html/common
 html/renderers
 # This shouldn't exist
