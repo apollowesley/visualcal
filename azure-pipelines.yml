@@ -28,7 +28,7 @@ steps:
 - bash: './release.sh'
   displayName: 'Release script'
   env:
-    APPID: $(APPID)
+    APPLEID: $(APPLEID)
     APPLEIDPASS: $(APPLEIDPASS)
     CSC_LINK: $(Certificates.secureFilePath)
 
