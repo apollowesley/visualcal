@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pushd renderer
-npm run install
+npm install
 npm run build
 popd
 
