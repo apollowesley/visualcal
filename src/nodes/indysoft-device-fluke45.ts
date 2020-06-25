@@ -1,6 +1,6 @@
 import 'module-alias/register';
-import { DeviceNodeProperties } from '../types/logic-nodes';
-import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../types/logic-server';
+import { DeviceNodeProperties } from '../@types/logic-nodes';
+import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { Fluke45 } from '../drivers/devices/digital-multimeters/Fluke45';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
 

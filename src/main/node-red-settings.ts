@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as os from 'os';
-import type { Settings } from '../types/logic-server';
+import type { Settings } from '../@types/logic-server';
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 

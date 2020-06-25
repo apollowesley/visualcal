@@ -1,6 +1,6 @@
 import 'module-alias/register';
 import { NodeProperties } from 'node-red';
-import { NodeRedRuntimeNode, NodeRed, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../types/logic-server';
+import { NodeRedRuntimeNode, NodeRed, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-command-sequence-builder';
 

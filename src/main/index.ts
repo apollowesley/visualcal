@@ -12,7 +12,7 @@ import * as UserHomeUtils from './utils/HomeDir';
 import { login, isLoggedIn } from './security';
 import history from 'connect-history-api-fallback';
 import { init as initIpcManager } from './managers/IPCManager';
-import type { NodeRed } from '../types/logic-server';
+import type { NodeRed } from '../@types/logic-server';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -94,7 +94,9 @@ try {
           loginWindow.close();
         }
         global.visualCal.user = {
-          email: credentials.username
+          email: credentials.username,
+          nameFirst: credentials.username,
+          nameLast: credentials.username
         }
       } else {
         event.reply('login-error', 'Incorrect login credentials');

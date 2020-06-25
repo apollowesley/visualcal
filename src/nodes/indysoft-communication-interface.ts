@@ -1,6 +1,6 @@
 import 'module-alias/register';
 import { NodeProperties } from 'node-red';
-import { NodeRedRuntimeNode, NodeRed } from '../types/logic-server';
+import { NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
 import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
 import { SerialInterface } from '../drivers/communication-interfaces/SerialInterface';
 import { PrologixGpibUsbInterface } from '../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';

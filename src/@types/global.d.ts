@@ -4,10 +4,6 @@ interface VisualCalConfig {
   };
 }
 
-interface User {
-  email: string;
-}
-
 interface WindowInfo {
   id: VisualCalWindow;
   type: WindowPathType;

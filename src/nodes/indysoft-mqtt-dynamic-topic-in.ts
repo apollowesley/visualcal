@@ -1,7 +1,7 @@
 import 'module-alias/register';
 import { NodeProperties } from 'node-red';
 import { isUtf8 } from 'is-utf8';
-import { NodeRedRuntimeNode, NodeRed } from '../types/logic-server';
+import { NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-mqtt-dynamic-topic-in';
 

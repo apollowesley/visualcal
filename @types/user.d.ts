@@ -1,10 +1,10 @@
-export interface Person {
+interface Person {
   nameFirst: string;
   nameLast: string;
   email?: string;
 }
 
-export interface User extends Person {
+interface User extends Person {
   email: string;
   token?: string;
   bio?: string;
@@ -12,7 +12,7 @@ export interface User extends Person {
   roles?: string[];
 }
 
-export interface UserForRegistration {
+interface UserForRegistration {
   email: string;
   nameFirst: string;
   nameLast: string;
@@ -22,12 +22,12 @@ export interface UserForRegistration {
   roles?: string[];
 }
 
-export interface UserForLogin {
+interface UserForLogin {
   email: string;
   password: string;
 }
 
-export interface SessionForCreate {
+interface SessionForCreate {
   name: string;
   username: string;
   procedureShortName?: string;
@@ -35,60 +35,60 @@ export interface SessionForCreate {
   lastActionName?: string;
 }
 
-export interface UserSessionConfiguration {
+interface UserSessionConfiguration {
   communication?: CommunicationConfiguration;
 }
 
-export interface SessionForDb extends SessionForCreate {
+interface SessionForDb extends SessionForCreate {
   created: Date;
   updated: Date;
 }
 
-export interface UserSession extends SessionForDb {
+interface UserSession extends SessionForDb {
   id: string;
   configuration?: UserSessionConfiguration;
 }
 
-export interface Profile {
+interface Profile {
   email: string;
   bio?: string;
   image?: string;
 }
 
-export interface ProfileResponse {
+interface ProfileResponse {
   profile: Profile;
 }
 
-export interface UserForUpdate {
+interface UserForUpdate {
   email?: string;
   bio?: string;
   password?: string;
   image?: string;
 }
 
-export interface UserForTokenRenew {
+interface UserForTokenRenew {
   email: string;
   token: string;
 }
 
-export interface TokenRenewResponse {
+interface TokenRenewResponse {
   token: string;
 }
 
-export interface UserServerConfig {
+interface UserServerConfig {
   rolesEnabled: boolean;
 }
 
-export interface ActionRunForCreate {
+interface ActionRunForCreate {
   sessionId: string;
   name: string;
 }
 
-export interface ActionRunForDb extends ActionRunForCreate {
+interface ActionRunForDb extends ActionRunForCreate {
   created: Date;
   updated: Date;
 }
 
-export interface ActionRun extends ActionRunForDb {
+interface ActionRun extends ActionRunForDb {
   id: string;
 }

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { BrowserWindow, dialog } from 'electron';
 import * as RED from 'node-red';
-import { NodeRed } from '../../types/logic-server';
+import { NodeRed } from '../../@types/logic-server';
 
 const nodeRed = RED as NodeRed;
 

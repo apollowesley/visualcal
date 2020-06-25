@@ -62,9 +62,9 @@ export default class Dashboard extends Vue {
   private fAlert: boolean = false;
   private fAlertMessage: string = '';
 
-  onProceduresComponentActive(items: TreeItem[]) {
+  onProceduresComponentActive(items: Procedure[]) {
     if (!items || items.length <= 0) return;
-    alert(items[0].name + ' ' + items[0].type);
+    alert(items[0].name);
   }
 
   onProceduresComponentError(err: Error) {

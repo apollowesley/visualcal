@@ -1,14 +1,10 @@
-import { Person } from './user';
-import SourceFile from './SourceFile';
-import { RequiredStandard } from './standards';
-
-export interface ProcedureNameInfo {
+interface ProcedureNameInfo {
   name: string;
   shortName: string;
   validationErrors?: string[];
 }
 
-export interface ProcedureSection {
+interface ProcedureSection {
   name: string;
   shortName: string;
   order?: number;
@@ -19,7 +15,7 @@ export interface ProcedureSection {
   isRunning: boolean;
 }
 
-export interface ProcedureFile {
+interface ProcedureFile {
   name: string;
   shortName: string;
   version: string;
@@ -28,17 +24,17 @@ export interface ProcedureFile {
   authors: Person[];
 }
 
-export interface ActionInfo {
+interface ActionInfo {
   name: string;
 }
 
-export interface SectionInfo {
+interface SectionInfo {
   name: string;
   shortName: string;
   actions: ActionInfo[];
 }
 
-export interface ProcedureInfo {
+interface ProcedureInfo {
   name: string;
   shortName: string;
   version: string;
@@ -49,7 +45,7 @@ export interface ProcedureInfo {
   requiredStandards?: RequiredStandard[];
 }
 
-export interface Procedure {
+interface Procedure {
   name: string;
   shortName: string;
   version: string;
@@ -60,32 +56,32 @@ export interface Procedure {
   requiredStandards?: RequiredStandard[];
 }
 
-export interface ProcedureSectionIsCompletedCallback {
+interface ProcedureSectionIsCompletedCallback {
   (): boolean;
 }
 
-export interface ProcedureSectionLoadInfo {
+interface ProcedureSectionLoadInfo {
   procedure: string;
   section: string;
 }
 
-export interface ProcedureSectionRuntimeFiles {
+interface ProcedureSectionRuntimeFiles {
   compiled: SourceFile;
   components: SourceFile;
 }
 
-export interface ProcedureSectionEditorFiles {
+interface ProcedureSectionEditorFiles {
   program: SourceFile;
   unit: SourceFile;
   components: SourceFile;
   compiled?: SourceFile;
 }
 
-export interface ProcedureSectionEditorSaveFiles extends ProcedureSectionRuntimeFiles {
+interface ProcedureSectionEditorSaveFiles extends ProcedureSectionRuntimeFiles {
   unit: SourceFile;
 }
 
-export interface CreateProcedureInfo {
+interface CreateProcedureInfo {
   name: string;
   shortName?: string;
   version?: string;
@@ -94,11 +90,11 @@ export interface CreateProcedureInfo {
   authors?: Person[];
 }
 
-export interface CreatedProcedureInfo {
+interface CreatedProcedureInfo {
   name: string;
   shortName: string;
 }
 
-export interface ProceduresFile {
+interface ProceduresFile {
   active: string;
 }

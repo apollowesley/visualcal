@@ -2,7 +2,7 @@ import 'module-alias/register';
 import { NodeProperties } from 'node-red';
 import { resetProcedureActionStatus } from './utils';
 import { Red } from 'node-red';
-import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, ActionStartRuntimeNode, NodeResetOptions } from '../types/logic-server';
+import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, ActionStartRuntimeNode, NodeResetOptions } from '../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-action-completed';
 
