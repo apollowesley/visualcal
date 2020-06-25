@@ -1,6 +1,5 @@
 import 'module-alias/register';
 import { NodeRed, SectionRuntimeNode, SectionRuntimeProperties } from '../../@types/logic-server';
-import { IndySoftNodeTypeNames } from '../../@types/constants';
 
 module.exports = (RED: NodeRed) => {
   function nodeConstructor(this: SectionRuntimeNode, config: SectionRuntimeProperties) {

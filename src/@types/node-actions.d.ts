@@ -1,9 +1,9 @@
-export interface ResetOptions {
+interface ResetOptions {
   section: string;
   action: string;
 }
 
-export interface TriggerOptions {
+interface TriggerOptions {
   type: string;
   sessionId: string;
   runId: string;
@@ -11,12 +11,12 @@ export interface TriggerOptions {
   action: string;
 }
 
-export interface ResetResult extends ResetOptions {
+interface ResetResult extends ResetOptions {
   error?: string;
   message?: string;
 }
 
-export interface TriggerResult extends TriggerOptions {
+interface TriggerResult extends TriggerOptions {
   error?: string;
   message?: string;
 }
