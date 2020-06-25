@@ -5,24 +5,51 @@
   <v-card-title primary-title>
     Procedures
   </v-card-title>
-  <v-treeview
-    v-model="fTree"
+  <v-virtual-scroll
     :items="fProcedures"
+    item-height="30"
+    height="600"
     activatable
     hoverable
     item-key="name"
     return-object
     @update:active="onProceduresUpdateActive"
   >
-    <template v-slot:prepend="{ item, open }">
-      <v-icon v-if="item.type === 'procedure'">
-        {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-      </v-icon>
-      <v-icon v-else>
-        {{ fFiles[item.type] }}
-      </v-icon>
+    <template v-slot="{ item }">
+      <v-list-item>
+        <v-icon>{{ fTreeItemTypes[item.type] }}</v-icon>
+        <v-list-item-content>
+          <v-list-item-title>{{ item.name }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn
+            depressed
+            small
+          >
+            Edit
+            <v-icon
+              color="orange darken-4"
+              right
+            >
+              mdi-open-in-new
+            </v-icon>
+          </v-btn>
+          <v-btn
+            depressed
+            small
+          >
+            Run
+            <v-icon
+              color="orange darken-4"
+              right
+            >
+              mdi-open-in-new
+            </v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
     </template>
-  </v-treeview>
+  </v-virtual-scroll>
 </v-card>
 </template>
 
@@ -33,11 +60,11 @@ import * as procedureIpcUtils from '../../utils/ipc';
 @Component
 export default class DashboardProceduresComponent extends Vue {
 
-  private fTree: TreeItem[] = [];
-  private fFiles = {
-    'procedure-section': 'mdi-language-html5'
+  private fTree: Procedure[] = [];
+  private fTreeItemTypes = {
+    'procedure': 'mdi-language-html5'
   };
-  private fProcedures: TreeItem[] = [];
+  private fProcedures: Procedure[] = [];
 
   mounted() {
     procedureIpcUtils.onGetProceduresResponse((_, procedures) => this.onGotProcedures(procedures), (_, err) => this.onGetProceduresError(err));
@@ -55,20 +82,9 @@ export default class DashboardProceduresComponent extends Vue {
   onGotProcedures(procedures: Procedure[]) {
     if (!procedures) return;
     procedures.forEach(proc => {
-      const item: TreeItem = {
-        name: proc.name,
-        type: 'procedure',
-      };
-      if (proc.sections && proc.sections.length > 0) {
-        item.children = [];
-        proc.sections.forEach(section => {
-          if (item.children) item.children.push({
-            name: section.name,
-            type: 'procedure-section'
-          })
-        });
+      for (let index = 0; index < 200; index++) {
+        this.fProcedures.push(proc);
       }
-      this.fProcedures.push(item);
     });
   }
 
@@ -76,8 +92,8 @@ export default class DashboardProceduresComponent extends Vue {
     this.$emit('error', err);
   }
 
-  onProceduresUpdateActive(items: TreeItem[]) {
-    this.$emit('active', items);
+  onProceduresUpdateActive(procedures: Procedure[]) {
+    this.$emit('active', procedures);
   }
 
 }
