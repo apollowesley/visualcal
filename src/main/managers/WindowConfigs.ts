@@ -9,7 +9,6 @@ export const MainWindowConfig = (): CreateWindowOptions => {
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
-        preload: path.join(global.visualCal.dirs.renderers.windows, '..', 'vue-preload.js'),
         nodeIntegration: true
       }
     }
@@ -73,7 +72,7 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
       autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false,
-        preload: path.join(global.visualCal.dirs.renderers.windows, 'nodered.js')
+        preload: path.join(global.visualCal.dirs.renderers.base, 'visualcal.js')
       }
     }
   }

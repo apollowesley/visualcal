@@ -82,7 +82,7 @@ function nodeRedUploadAssetOnEditPrepare(this: nodeRedUploadAssetOnEditPrepareTh
 
 }
 
-const createAssetUploadForm = (opts: Options, onUploaded?: (filename: string) => void): CreateAssetUploadFormResult => {
+  const createAssetUploadForm = (opts: VisualCalBrowserUtilsFileUploadOptions, onUploaded?: (filename: string) => void): CreateAssetUploadFormResult => {
   const refDocInputDiv = $('<div>') as JQuery<HTMLDivElement>;
   const refDocForm = $('<form>').attr('id', opts.formId) as JQuery<HTMLFormElement>;
   const refDocInputLabel = $('<label>').attr('for', opts.inputId).text(opts.labelText) as JQuery<HTMLLabelElement>;

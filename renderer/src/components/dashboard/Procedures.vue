@@ -55,7 +55,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import * as procedureIpcUtils from '../../utils/ipc';
 
 @Component
 export default class DashboardProceduresComponent extends Vue {
@@ -66,30 +65,18 @@ export default class DashboardProceduresComponent extends Vue {
   };
   private fProcedures: Procedure[] = [];
 
-  mounted() {
-    procedureIpcUtils.onGetProceduresResponse((_, procedures) => this.onGotProcedures(procedures), (_, err) => this.onGetProceduresError(err));
-    this.refreshProcedures();
+  async mounted() {
+    await this.refreshProcedures();
   }
 
-  beforeDestroy() {
-    procedureIpcUtils.removeAllListeners();
-  }
-
-  refreshProcedures() {
-    procedureIpcUtils.getProcedures();
-  }
-
-  onGotProcedures(procedures: Procedure[]) {
+  async refreshProcedures() {
+    const procedures = await window.visualCal.procedures.getlAll();
     if (!procedures) return;
     procedures.forEach(proc => {
       for (let index = 0; index < 200; index++) {
         this.fProcedures.push(proc);
       }
     });
-  }
-
-  onGetProceduresError(err: Error) {
-    this.$emit('error', err);
   }
 
   onProceduresUpdateActive(procedures: Procedure[]) {

@@ -12,9 +12,7 @@ declare global {
   }
   
   interface Window {
-    electron: {
-      ipcRenderer: import('electron').IpcRenderer
-    }
+    visualCal: VisualCalRenderer;
   }
 
 }

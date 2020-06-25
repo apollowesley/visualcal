@@ -35,6 +35,7 @@ declare module NodeJS {
           fonts: string;
         },
         renderers: {
+          base: string;
           windows: string;
           views: string;
           nodeBrowser: string;
