@@ -1,4 +1,4 @@
-# Electron Node-RED
+# Electron VisualCal
 
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 [![GitHub version](https://badge.fury.io/gh/dceejay%2Felectron-node-red.svg)](https://badge.fury.io/gh/dceejay%2Felectron-node-red)
