@@ -44,14 +44,15 @@ interface VisualCalBrowserUtilsFileUploadOptions {
 
 interface VisualCalBrowserUtils {
   getProcedureConfigNode(): ProcedureRuntimeProperties | undefined;
-  fileUpload(opts: VisualCalBrowserUtilsFileUploadOptions, onUploaded?: (filename: string) => void): void;
+  createAssetUploadForm(opts: VisualCalBrowserUtilsFileUploadOptions, onUploaded?: (filename: string) => void): void;
   nodeRedUploadAssetOnEditPrepare(): void;
 }
 
 interface VisualCalRenderer {
   browserUtils: VisualCalBrowserUtils;
+  ipc: import('electron').IpcRenderer,
   procedures: {
-    getlAll(): Promise<Procedure[]>;
+    getAll(): Promise<Procedure[]>;
     getOne(name: string): Promise<Procedure | undefined>;
     create(info: CreateProcedureInfo): Promise<CreatedProcedureInfo>;
     remove(name: string): Promise<void>;
@@ -60,6 +61,25 @@ interface VisualCalRenderer {
   };
   log: {
     result(result: LogicResult): void;
+  },
+  dirs: {
+    base: string;
+    html: {
+      vue: string;
+      windows: string;
+      views: string;
+      css: string;
+      js: string;
+      fonts: string;
+    },
+    renderers: {
+      base: string;
+      windows: string;
+      views: string;
+      nodeBrowser: string;
+    }
+    procedures: string;
+    visualCalUser: string;
   }
 }
 

@@ -8,12 +8,16 @@ const lblError = document.getElementById('lbl');
 
 if (!form || ! btnLogin || !usernameInput || !passwordInput || !lblError) throw new Error('Missing required HTML elements');
 
+const doLogin = async (credentials: LoginCredentials) => {
+  ipcRenderer.send('login', credentials);
+}
+
 const onBtnLoginClicked = async (e: MouseEvent) => {
-  const credentials = {
+  const credentials: LoginCredentials = {
     username: usernameInput.value,
     password: passwordInput.value
   };
-  ipcRenderer.send('login', credentials);
+  await doLogin(credentials);
 }
 
 ipcRenderer.on('login-error', (event, args) => {

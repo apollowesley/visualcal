@@ -70,13 +70,17 @@ export default class DashboardProceduresComponent extends Vue {
   }
 
   async refreshProcedures() {
-    const procedures = await window.visualCal.procedures.getlAll();
-    if (!procedures) return;
-    procedures.forEach(proc => {
-      for (let index = 0; index < 200; index++) {
-        this.fProcedures.push(proc);
-      }
-    });
+    try {
+      const procedures = await window.visualCal.procedures.getAll();
+      if (!procedures) return;
+      procedures.forEach(proc => {
+        for (let index = 0; index < 200; index++) {
+          this.fProcedures.push(proc);
+        }
+      });
+    } catch (error) {
+      alert(error);
+    }
   }
 
   onProceduresUpdateActive(procedures: Procedure[]) {

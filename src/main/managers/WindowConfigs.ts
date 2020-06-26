@@ -9,7 +9,8 @@ export const MainWindowConfig = (): CreateWindowOptions => {
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        preload: path.join(global.visualCal.dirs.renderers.base, 'visualcal.js')
       }
     }
   }

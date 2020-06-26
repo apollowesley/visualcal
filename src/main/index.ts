@@ -9,7 +9,7 @@ import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';
-import { login, isLoggedIn } from './security';
+import { login, isLoggedIn, listenForLogin } from './security';
 import history from 'connect-history-api-fallback';
 import { init as initIpcManager } from './managers/IPCManager';
 import type { NodeRed } from '../@types/logic-server';
@@ -22,6 +22,7 @@ try {
   const nodeRed = RED as NodeRed;
 
   function init(ipcChannels: IpcChannel<any>[]) {
+    initMainMenu();
     initIpcManager();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
@@ -31,7 +32,6 @@ try {
     nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
     nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
     nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-    nodeRedApp.use('/renderers/node-browser', express.static(global.visualCal.dirs.renderers.nodeBrowser)); // Some node-red nodes need browser-utils in renderers folder
 
     if (!global.visualCal.isDev) {
       // Enable history for Vue router
@@ -76,32 +76,19 @@ try {
   }
 
   async function createLoadingWindow() {
-    const onLoadingWindowClosed = async () => await createLoginWindow();
+    const onLoadingWindowClosed = async () => {
+      if (global.visualCal.isDev) {
+        await global.visualCal.windowManager.ShowMain();
+      } else {
+        await createLoginWindow();
+      }
+    }
     await global.visualCal.windowManager.ShowLoading(onLoadingWindowClosed, 5000);
   }
 
   async function createLoginWindow() {
-    const loginWindow: BrowserWindow = await global.visualCal.windowManager.ShowLogin();
-    ipcMain.on('login', async (event, args: LoginCredentials) => {
-      if (!args) return event.sender.send('login-error', 'Missing credentials');
-      const credentials = args;
-      const result = login(credentials);
-      if (result) {
-        ipcMain.removeHandler('login');
-        initMainMenu();
-        await global.visualCal.windowManager.ShowMain();
-        if (loginWindow) {
-          loginWindow.close();
-        }
-        global.visualCal.user = {
-          email: credentials.username,
-          nameFirst: credentials.username,
-          nameLast: credentials.username
-        }
-      } else {
-        event.reply('login-error', 'Incorrect login credentials');
-      }
-    });
+    listenForLogin();
+    await global.visualCal.windowManager.ShowLogin();
   }
 
   init([
