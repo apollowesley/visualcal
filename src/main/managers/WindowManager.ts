@@ -169,7 +169,7 @@ export class WindowManager {
       window.title = 'VisualCal';
       window.show();
     });
-    await window.loadURL(global.visualCal.dirs.html.getWindowInfo(VisualCalWindow.Main).path);
+    await window.loadFile('../../bootstrap-studio/exported/index.html');
     return window;
   }
   

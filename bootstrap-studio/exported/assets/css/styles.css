@@ -1,0 +1,23 @@
+html {
+  position: relative;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: gray;
+  height: calc(100vh - 3px);
+  width: calc(100vw - 20px);
+  margin: 0;
+}
+
+main {
+  height: 100%;
+}
+
+.card {
+  background-color: gray;
+  margin: 20px;
+}
+
