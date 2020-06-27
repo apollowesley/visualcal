@@ -49,7 +49,7 @@ interface VisualCalBrowserUtils {
 }
 
 interface VisualCalRenderer {
-  browserUtils: VisualCalBrowserUtils;
+  browserUtils?: VisualCalBrowserUtils;
   ipc: import('electron').IpcRenderer,
   procedures: {
     getAll(): Promise<Procedure[]>;
@@ -65,7 +65,6 @@ interface VisualCalRenderer {
   dirs: {
     base: string;
     html: {
-      vue: string;
       windows: string;
       views: string;
       css: string;

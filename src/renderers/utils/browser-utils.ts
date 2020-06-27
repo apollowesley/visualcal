@@ -1,4 +1,3 @@
-import ('../window');
 import { Red, Nodes, NodeProperties } from 'node-red';
 
 interface NodesModule extends Nodes {
@@ -126,4 +125,10 @@ function nodeRedUploadAssetOnEditPrepare(this: nodeRedUploadAssetOnEditPrepareTh
     form: refDocForm,
     container: refDocInputDiv
   };
+}
+
+export const browserUtils = {
+  createAssetUploadForm,
+  getProcedureConfigNode,
+  nodeRedUploadAssetOnEditPrepare
 }

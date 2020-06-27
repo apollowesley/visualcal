@@ -2,8 +2,12 @@ import { ipcRenderer } from 'electron';
 import { getAll } from '../main/utils/Procedures';
 import path from 'path';
 import os from 'os';
+import { browserUtils } from './utils/browser-utils';
 
-window.visualCal = {
+const baseDir = path.resolve(__dirname, '..', '..', '..'); // <base>/dist
+
+const visualCal = {
+  browserUtils: browserUtils,
   ipc: ipcRenderer,
   log: {
     result(result: LogicResult) {
@@ -19,21 +23,23 @@ window.visualCal = {
     rename: async (oldName: string, newName: string) => await Promise.resolve()
   },
   dirs: {
-    base: path.resolve(__dirname, '..', '..', '..'), // <base>/dist
+    base: baseDir, 
     html: {
-      css: path.resolve(__dirname, '..', '..', '..', 'public', 'css'),
-      fonts: path.resolve(__dirname, '..', '..', '..', 'public', 'fonts'),
-      js: path.resolve(__dirname, '..', '..', '..', 'public', 'js'),
-      views: path.resolve(__dirname, '..', '..', '..', 'public', 'views'),
-      windows: path.resolve(__dirname, '..', '..', '..', 'public', 'windows')
+      css: path.resolve(baseDir,'public', 'css'),
+      fonts: path.resolve(baseDir, '..','public', 'fonts'),
+      js: path.resolve(baseDir, '..','public', 'js'),
+      views: path.resolve(baseDir, '..','public', 'views'),
+      windows: path.resolve(baseDir, '..','public', 'windows')
     },
     renderers: {
-      base: path.resolve(__dirname, '..', '..', 'renderers'),
-      views: path.resolve(__dirname, '..', '..', 'renderers', 'views'),
-      windows: path.resolve(__dirname, '..', '..', 'renderers', 'windows'),
-      nodeBrowser: path.resolve(__dirname, '..', '..', 'renderers', 'node-browser')
+      base: path.resolve(baseDir,'renderers'),
+      views: path.resolve(baseDir,'renderers', 'views'),
+      windows: path.resolve(baseDir,'renderers', 'windows'),
+      nodeBrowser: path.resolve(baseDir,'renderers', 'node-browser')
     },
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
   }
 }
+
+window.visualCal = visualCal;

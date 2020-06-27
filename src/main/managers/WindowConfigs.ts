@@ -9,8 +9,7 @@ export const MainWindowConfig = (): CreateWindowOptions => {
       fullscreenable: true,
       autoHideMenuBar: false,
       webPreferences: {
-        nodeIntegration: true,
-        preload: path.join(global.visualCal.dirs.renderers.base, 'visualcal.js')
+        nodeIntegration: true
       }
     }
   }
@@ -73,7 +72,7 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
       autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false,
-        preload: path.join(global.visualCal.dirs.renderers.base, 'visualcal.js')
+        preload: path.join(global.visualCal.dirs.renderers.windows, 'nodered.js')
       }
     }
   }

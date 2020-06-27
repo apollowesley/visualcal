@@ -2,11 +2,6 @@
 
 pwd
 
-pushd renderer
-npm install
-npm run build
-popd
-
 npm install
 npm run build
 
