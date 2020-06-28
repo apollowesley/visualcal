@@ -5,11 +5,18 @@ import path from 'path';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
+import { getAll } from '../main/utils/Procedures';
+import { browserUtils } from '../renderers/utils/browser-utils';
+import { ipcRenderer } from 'electron';
+
+const basePath = path.resolve(__dirname, '..', '..'); // <base>/dist
+const publicPath = path.join(basePath, 'public');
+const distPath = path.resolve(basePath, 'dist');
 
 const serverListenPort = 18880;
 const vueListenPort = isDev ? 8080 : serverListenPort;
 
-global.visualCal = {
+export const visualCal: VisualCalGlobal = {
   logger: createLogger(),
   isMac: process.platform === 'darwin',
   isDev: isDev,
@@ -19,7 +26,7 @@ global.visualCal = {
     }
   },
   dirs: {
-    base: path.resolve(__dirname, '..', '..'), // <base>/dist
+    base: basePath,
     html: {
       getWindowInfo: (id: VisualCalWindow) => {
         let windowPath = '';
@@ -46,27 +53,47 @@ global.visualCal = {
           type: WindowPathType.Url
         };
       },
-      vue: path.resolve(__dirname, '..', 'renderer'),
-      css: path.resolve(__dirname, '..', '..', 'public', 'css'),
-      fonts: path.resolve(__dirname, '..', '..', 'public', 'fonts'),
-      js: path.resolve(__dirname, '..', '..', 'public', 'js'),
-      views: path.resolve(__dirname, '..', '..', 'public', 'views'),
-      windows: path.resolve(__dirname, '..', '..', 'public', 'windows')
+      vue: path.resolve(distPath, 'renderer'),
+      css: path.resolve(publicPath, 'css'),
+      fonts: path.resolve(publicPath, 'fonts'),
+      js: path.resolve(publicPath, 'js'),
+      views: path.resolve(publicPath, 'views'),
+      windows: path.resolve(publicPath, 'windows'),
+      bootstrapStudio: path.resolve(basePath, 'bootstrap-studio', 'exported')
     },
     renderers: {
-      base: path.resolve(__dirname, '..', 'renderers'),
-      views: path.resolve(__dirname, '..', 'renderers', 'views'),
-      windows: path.resolve(__dirname, '..', 'renderers', 'windows'),
-      nodeBrowser: path.resolve(__dirname, '..', 'renderers', 'node-browser')
+      base: path.resolve(distPath, 'renderers'),
+      views: path.resolve(distPath, 'renderers', 'views'),
+      windows: path.resolve(distPath, 'renderers', 'windows'),
+      nodeBrowser: path.resolve(distPath, 'renderers', 'node-browser')
     },
     procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
     visualCalUser: path.join(os.homedir(), '.visualcal')
   },
+  log: {
+    result(result: LogicResult) {
+      ipcRenderer.send('node-red', result);
+    }
+  },
+  browserUtils: browserUtils,
+  electron: {
+    ipc: ipcRenderer,
+    getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req')
+  },
+  procedures: {
+    create: async (info: CreateProcedureInfo) => await Promise.resolve({ name: info.name, shortName: info.shortName || info.name }),
+    exists: async (name: string) => await Promise.resolve(true),
+    getOne: async (name: string) => await Promise.resolve(undefined),
+    getAll: getAll,
+    remove: async (name: string) => await Promise.resolve(),
+    rename: async (oldName: string, newName: string) => await Promise.resolve()
+  },
   assets: {
-    basePath: path.resolve(__dirname, '..', '..', 'public'),
-    get: (name: string) => fs.readFileSync(path.resolve(__dirname, '..', '..', 'public', name))
+    basePath: path.resolve(publicPath),
+    get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))
   },
   windowManager: new WindowManager()
 };
 
+global.visualCal = visualCal;
 NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;

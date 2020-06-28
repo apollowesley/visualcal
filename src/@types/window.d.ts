@@ -48,44 +48,7 @@ interface VisualCalBrowserUtils {
   nodeRedUploadAssetOnEditPrepare(): void;
 }
 
-interface VisualCalRenderer {
-  browserUtils?: VisualCalBrowserUtils;
-  electron: {
-    ipc: import('electron').IpcRenderer;
-    getVisualCalWindowId: () => void;
-  };
-  procedures: {
-    getAll(): Promise<Procedure[]>;
-    getOne(name: string): Promise<Procedure | undefined>;
-    create(info: CreateProcedureInfo): Promise<CreatedProcedureInfo>;
-    remove(name: string): Promise<void>;
-    exists(name: string): Promise<boolean>;
-    rename(oldName: string, newName: string): Promise<void>;
-  };
-  log: {
-    result(result: LogicResult): void;
-  },
-  dirs: {
-    base: string;
-    html: {
-      windows: string;
-      views: string;
-      css: string;
-      js: string;
-      fonts: string;
-    },
-    renderers: {
-      base: string;
-      windows: string;
-      views: string;
-      nodeBrowser: string;
-    }
-    procedures: string;
-    visualCalUser: string;
-  }
-}
-
 interface Window {
   moment: typeof import('moment');
-  visualCal: VisualCalRenderer;
+  visualCal: VisualCalGlobal;
 }

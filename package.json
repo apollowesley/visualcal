@@ -15,7 +15,13 @@
     "clean:dist": "rm -rf dist",
     "start": "npm run clean:dist && npm run build && electron --disable-gpu dist/main/index.js",
     "update:all": "npm-update-all",
-    "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force"
+    "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force",
+    "copynodes:packagejson": "cp src/nodes/package.json dist/nodes",
+    "copynodes:html": "cp src/nodes/*.html dist/nodes",
+    "copynodes:examples": "cp -R src/nodes/examples dist/nodes",
+    "copynodes:icons": "cp -R src/nodes/icons dist/nodes",
+    "copynodes:locales": "cp -R src/nodes/locales dist/nodes",
+    "copynodes": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales"
   },
   "repository": {
     "type": "git",
@@ -101,10 +107,11 @@
     "appId": "com.indysoft.visualcal",
     "productName": "VisualCal Electron",
     "copyright": "Copyright © 2020 IndySoft",
+    "asar": false,
     "files": [
       "dist/**/*",
       "public/**/*",
-      "renderers/vuedist/**/*",
+      "bootstrap-studio/exported/**/*",
       "package.json"
     ],
     "mac": {
