@@ -6,9 +6,12 @@ import { browserUtils } from './utils/browser-utils';
 
 const baseDir = path.resolve(__dirname, '..', '..', '..'); // <base>/dist
 
-const visualCal = {
+const visualCal: VisualCalRenderer = {
   browserUtils: browserUtils,
-  ipc: ipcRenderer,
+  electron: {
+    ipc: ipcRenderer,
+    getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req')
+  },
   log: {
     result(result: LogicResult) {
       ipcRenderer.send('node-red', result);

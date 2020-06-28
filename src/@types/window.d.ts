@@ -50,7 +50,10 @@ interface VisualCalBrowserUtils {
 
 interface VisualCalRenderer {
   browserUtils?: VisualCalBrowserUtils;
-  ipc: import('electron').IpcRenderer,
+  electron: {
+    ipc: import('electron').IpcRenderer;
+    getVisualCalWindowId: () => void;
+  };
   procedures: {
     getAll(): Promise<Procedure[]>;
     getOne(name: string): Promise<Procedure | undefined>;

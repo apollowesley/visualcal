@@ -1,4 +1,5 @@
 import { NodeRed, ActionStartRuntimeNode, ActionStartRuntimeProperties, SectionRuntimeNode, NodeResetOptions } from '../@types/logic-server';
+import { IndySoftNodeTypeNames } from '../@types/constants';
 
 module.exports = (RED: NodeRed) => {
 

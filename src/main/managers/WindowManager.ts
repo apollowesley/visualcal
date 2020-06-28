@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, app } from 'electron';
+import { BrowserWindow, dialog, app, ipcMain } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig } from './WindowConfigs';
@@ -10,6 +10,15 @@ export class WindowManager {
 
   constructor() {
     this.fWindows = new Set<BrowserWindow>();
+    ipcMain.on('get-visualcal-window-id-req', (event) => {
+      try {
+        const window = BrowserWindow.fromWebContents(event.sender);
+        if (!window) return;
+        event.reply('get-visualcal-window-res', window.visualCal.id);
+      } catch (error) {
+        event.reply('get-visualcal-window-err', error);
+      }
+    });
   }
 
   get(id: VisualCalWindow) {
@@ -121,7 +130,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(LoadingWindowConfig());
-    if (!window) throw new Error('Window must be undefined');
+    if (!window) throw new Error('Window must be defined');
     window.webContents.once('did-finish-load', () => {
       if (window) window.show();
       setTimeout(() => {
@@ -158,7 +167,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(MainWindowConfig());
-    if (!window) throw new Error('Window must be undefined');
+    if (!window) throw new Error('Window must be defined');
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
     window.once('close', (e) => {
@@ -181,7 +190,7 @@ export class WindowManager {
       return window;
     }
     window = global.visualCal.windowManager.create(ConsoleWindowConfig());
-    if (!window) throw new Error('Window must be undefined');
+    if (!window) throw new Error('Window must be defined');
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     window.webContents.on('did-finish-load', () => {
       try {

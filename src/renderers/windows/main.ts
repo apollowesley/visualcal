@@ -1,4 +1,3 @@
-import '../window';
 import * as d3 from 'd3';
 
 const loadProcedures = async () => {
@@ -16,4 +15,4 @@ const loadProcedures = async () => {
   }
 }
 
-window.addEventListener('load', async () => await loadProcedures());
+loadProcedures();

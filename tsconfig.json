@@ -13,12 +13,10 @@
     "skipLibCheck": true,
     "typeRoots": [
       "./node_modules/@types",
-      "./src/@types",
-      "./@types"
+      "./src/@types"
     ]
   },
   "include": [
-    "./src/**/*",
-    "./@types"
+    "./src/**/*"
   ]
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="opacity: 1;">
 
 <head>
     <meta charset="utf-8">
@@ -9,25 +9,51 @@
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body class="bg-dark" style="height: 100%;">
+<body class="bg-dark">
     <main id="vc-main">
-        <div class="row">
-            <div class="col-2">
-                <div class="card" id="vc-card-procedures">
-                    <div class="card-body">
-                        <h4 class="card-title">Local Procedures</h4>
-                        <h6 class="text-dark card-subtitle mb-2">Procedures on your machine</h6>
-                        <ul id="vc-card-procedures-list">
-                        </ul><button class="btn btn-light" type="button">Import</button></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-auto">
+                    <div class="card" id="vc-card-procedures">
+                        <div class="card-body">
+                            <h4 class="card-title">Local Procedures</h4>
+                            <h6 class="text-dark card-subtitle mb-2">Procedures on your machine</h6>
+                            <ul id="vc-card-procedures-list">
+                                <li>Item 1</li>
+                            </ul><button class="btn btn-light" id="vc-card-procedures-import-button" type="button">Import</button></div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="card" id="vc-card-sessions">
+                        <div class="card-body">
+                            <h4 class="card-title">Sessions</h4>
+                            <ul id="vc-card-sessions-list">
+                                <li>Item 1</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="card" id="vc-card-bench-config">
+                        <div class="card-body">
+                            <h4 class="card-title">Bench Configuration</h4>
+                            <h6>Communication Interfaces</h6>
+                            <ul id="vc-card-bench-config-interfaces-list">
+                                <li>Item 1</li>
+                            </ul>
+                            <h6>Devices/Instruments</h6>
+                            <ul id="vc-card-bench-config-devices-list">
+                                <li>Item 1</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script>
-        require('../../dist/renderers/windows/main.js');
-    </script>
+    <script src="assets/js/visualcal.js"></script>
 </body>
 
 </html>
