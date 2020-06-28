@@ -10,7 +10,7 @@ if (window.require) {
     // This script contains all of the preload stuff that's needed from here on.
     require('../../dist/renderers/window.js');
     // Listen for the IPC event that has our BrowserWindow.visualCal.id (number)
-    window.visualCal.electron.ipc.once('get-visualcal-window-res', (_, windowId) => {
+    window.visualCal.electron.ipc.once('get-visualcal-window-id-res', (_, windowId) => {
         // Determine which VisualCal window we're running in, then load the appropriate script
         switch (windowId) {
             case 0: // main

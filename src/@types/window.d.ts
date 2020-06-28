@@ -50,5 +50,5 @@ interface VisualCalBrowserUtils {
 
 interface Window {
   moment: typeof import('moment');
-  visualCal: VisualCalGlobal;
+  visualCal: VisualCalWindowAugment;
 }

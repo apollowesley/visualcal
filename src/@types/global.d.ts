@@ -14,7 +14,7 @@ declare module NodeJS {
 
   interface Global {
 
-    visualCal: VisualCalGlobal;
+    visualCal: VisualCalGlobalAugment;
 
   }
 

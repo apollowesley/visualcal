@@ -41,12 +41,10 @@ interface VisualCalGlobalProcedures {
   rename(oldName: string, newName: string): Promise<void>;
 }
 
-interface VisualCalGlobal {
+interface VisualCalAugment {
   isDev: boolean,
   isMac: boolean,
-  browserUtils?: VisualCalBrowserUtils;
   config: VisualCalConfig;
-  logger: import('winston').Logger;
   log: {
     result(result: LogicResult): void;
   };
@@ -55,11 +53,19 @@ interface VisualCalGlobal {
     basePath: string;
     get: (id: string) => Buffer;
   };
+  dirs: VisualCalGlobalDirs;
+  user?: User;
+}
+
+interface VisualCalGlobalAugment extends VisualCalAugment {
+  logger: import('winston').Logger;
+  windowManager: import('../main/managers/WindowManager').WindowManager;
+}
+
+interface VisualCalWindowAugment extends VisualCalAugment {
+  browserUtils?: VisualCalBrowserUtils;
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;
   };
-  dirs: VisualCalGlobalDirs;
-  windowManager: import('../main/managers/WindowManager').WindowManager;
-  user?: User;
 }

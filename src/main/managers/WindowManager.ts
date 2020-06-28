@@ -14,9 +14,9 @@ export class WindowManager {
       try {
         const window = BrowserWindow.fromWebContents(event.sender);
         if (!window) return;
-        event.reply('get-visualcal-window-res', window.visualCal.id);
+        event.reply('get-visualcal-window-id-res', window.visualCal.id);
       } catch (error) {
-        event.reply('get-visualcal-window-err', error);
+        event.reply('get-visualcal-window-id-err', error);
       }
     });
   }
@@ -178,7 +178,7 @@ export class WindowManager {
       window.title = 'VisualCal';
       window.show();
     });
-    await window.loadFile('../../bootstrap-studio/exported/index.html');
+    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
     return window;
   }
   
