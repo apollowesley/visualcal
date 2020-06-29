@@ -7,9 +7,11 @@ import NodeRedSettings from './node-red-settings';
 import { isDev } from './utils/is-dev-mode';
 import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
+import { SessionManager } from './managers/SessionManager';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
+dirs.sessions = path.join(dirs.visualCalUser, 'sessions');
 
 export const visualCal: VisualCalGlobalAugment = {
   logger: createLogger(),
@@ -29,6 +31,7 @@ export const visualCal: VisualCalGlobalAugment = {
     error: (msg: any) => global.visualCal.logger.error(msg)
   },
   procedureManager: new ProcedureManager(dirs.procedures),
+  sessionManager: new SessionManager(dirs.sessions),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

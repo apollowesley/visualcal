@@ -63,6 +63,48 @@ export const IpcChannels = {
       response: 'get-exists-procedure-response',
       error: 'get-exists-procedure-error'
     }
+  },
+  sessions: {
+    getAll: {
+      request: 'getAll-sessions-request',
+      response: 'getAll-sessions-response',
+      error: 'getAll-sessions-error'
+    },
+    getOne: {
+      request: 'getOne-sessions-request',
+      response: 'getOne-sessions-response',
+      error: 'getOne-sessions-error'
+    },
+    create: {
+      request: 'create-session-request',
+      response: 'create-session-response',
+      error: 'create-session-error'
+    },
+    rename: {
+      request: 'rename-session-request',
+      response: 'rename-session-response',
+      error: 'rename-session-error'
+    },
+    remove: {
+      request: 'remove-session-request',
+      response: 'remove-session-response',
+      error: 'remove-session-error'
+    },
+    getActive: {
+      request: 'get-active-session-request',
+      response: 'get-active-session-response',
+      error: 'get-active-session-error'
+    },
+    setActive: {
+      request: 'set-active-session-request',
+      response: 'set-active-session-response',
+      error: 'set-active-session-error'
+    },
+    getExists: {
+      request: 'get-exists-session-request',
+      response: 'get-exists-session-response',
+      error: 'get-exists-session-error'
+    }
   }
 }
 

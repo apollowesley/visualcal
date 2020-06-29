@@ -27,21 +27,25 @@ interface VisualCalAugmentDirs {
     js: string;
     fonts: string;
     bootstrapStudio: string;
-    procedure: VisualCalCRUDDir
+    procedure: VisualCalCRUDDir;
+    session: VisualCalCRUDDir;
   },
   renderers: {
     base: string;
     windows: string;
     views: string;
     nodeBrowser: string;
-    procedure: VisualCalCRUDDir
+    procedure: VisualCalCRUDDir;
+    session: VisualCalCRUDDir;
   }
   procedures: string;
+  sessions: string;
   visualCalUser: string;
 }
 
 interface VisualCalAugmentFiles {
   proceduresJson: string;
+  sessionsJson: string;
 }
 
 interface VisualCalAugment {
@@ -66,7 +70,8 @@ interface VisualCalAugment {
 interface VisualCalGlobalAugment extends VisualCalAugment {
   logger: import('winston').Logger;
   windowManager: import('../main/managers/WindowManager').WindowManager;
-  procedureManager: import('../main/managers/ProcedureManager').ProcedureManagerType;
+  procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
+  sessionManager: import('../main/managers/SessionManager').SessionManager;
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {

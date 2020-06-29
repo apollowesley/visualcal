@@ -11,6 +11,7 @@ export const distPath = path.join(basePath, 'dist');
 export const renderersPath = path.join(distPath, 'renderers');
 export const renderersWindowsPath = path.join(renderersPath, 'windows');
 export const renderersProcedurePath = path.join(renderersWindowsPath, 'procedure');
+export const renderersSessionPath = path.join(renderersWindowsPath, 'session');
 export const bootstrapStudioPath = path.join(basePath, 'bootstrap-studio', 'exported');
 
 export const dirs: VisualCalAugmentDirs = {
@@ -52,6 +53,11 @@ export const dirs: VisualCalAugmentDirs = {
       create: path.join(bootstrapStudioPath, 'procedure-create.html'),
       edit: path.join(bootstrapStudioPath, 'procedure-edit.html'),
       remove: path.join(bootstrapStudioPath, 'procedure-remove.html')
+    },
+    session: {
+      create: path.join(bootstrapStudioPath, 'session-create.html'),
+      edit: path.join(bootstrapStudioPath, 'session-edit.html'),
+      remove: path.join(bootstrapStudioPath, 'session-remove.html')
     }
   },
   renderers: {
@@ -63,12 +69,19 @@ export const dirs: VisualCalAugmentDirs = {
       create: path.join(renderersProcedurePath, 'create.js'),
       edit: path.join(renderersProcedurePath, 'edit.js'),
       remove: path.join(renderersProcedurePath, 'remove.js')
+    },
+    session: {
+      create: path.join(renderersSessionPath, 'create.js'),
+      edit: path.join(renderersSessionPath, 'edit.js'),
+      remove: path.join(renderersSessionPath, 'remove.js')
     }
   },
   procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
+  sessions: path.join(os.homedir(), '.visualcal', 'sessions'),
   visualCalUser: path.join(os.homedir(), '.visualcal')
 };
 
 export const files: VisualCalAugmentFiles = {
-  proceduresJson: path.join(dirs.procedures, 'procedures.json')
+  proceduresJson: path.join(dirs.procedures, 'procedures.json'),
+  sessionsJson: path.join(dirs.sessions, 'sessions.json')
 }
