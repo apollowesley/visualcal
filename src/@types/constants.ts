@@ -4,6 +4,17 @@ export interface IpcChannelRequestResponseErrorNames {
   error: string;
 }
 
+export interface IpcChannelCRUD {
+  getAll: IpcChannelRequestResponseErrorNames;
+  getOne: IpcChannelRequestResponseErrorNames;
+  create: IpcChannelRequestResponseErrorNames;
+  rename: IpcChannelRequestResponseErrorNames;
+  remove: IpcChannelRequestResponseErrorNames;
+  getExists: IpcChannelRequestResponseErrorNames;
+  getActive: IpcChannelRequestResponseErrorNames;
+  setActive: IpcChannelRequestResponseErrorNames;
+}
+
 export const IpcChannels = {
   log: {
     result: 'log-result',

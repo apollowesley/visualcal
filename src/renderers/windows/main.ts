@@ -1,5 +1,5 @@
 import { IpcChannels } from '../../@types/constants';
-import { GetAllResponseArgs, RenameResponseArgs } from '../managers/RendererProcedureManager';
+import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs } from '../managers/RendererCRUDManager';
 import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
@@ -66,21 +66,21 @@ const refreshProcedures = async (newProcedures: Procedure[]) => {
 }
 
 const init = async () => {
-  ipcRenderer.on(IpcChannels.procedures.create.response, async (_, procedure: CreateProcedureInfo) => {
-    console.info('Created', procedure);
+  window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, async (response: CreateResponseArgs<CreatedProcedureInfo>) => {
+    console.info('Created', response.item);
     await loadProcedures();
   });
   window.visualCal.procedureManager.on(IpcChannels.procedures.rename.response, async (response: RenameResponseArgs) => {
     console.info('Renamed', response.oldName, response.newName);
     await loadProcedures();
   });
-  ipcRenderer.on(IpcChannels.procedures.remove.response, async (_, name: string) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.remove.response, async (response: RemoveResponseArgs) => {
     console.info('Removed', name);
     await loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs) => {
-    console.info('GetAll', response.procedures);
-    await refreshProcedures(response.procedures);
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs<Procedure>) => {
+    console.info('GetAll', response.items);
+    await refreshProcedures(response.items);
   });
 
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;

@@ -1,5 +1,5 @@
 import { IpcChannels } from '../../../@types/constants';
-import { ErrorResponseArgs } from '../../managers/RendererProcedureManager';
+import { ErrorResponseArgs } from '../../managers/RendererCRUDManager';
 
 let nameField: HTMLInputElement;
 let descriptionField: HTMLTextAreaElement;

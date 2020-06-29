@@ -50,9 +50,9 @@ interface VisualCalAugment {
   config: VisualCalConfig;
   log: {
     result(result: LogicResult): void;
-    info(msg: any): void;
-    warn(msg: any): void;
-    error(msg: any): void;
+    info(msg: any, ...args: any[]): void;
+    warn(msg: any, ...args: any[]): void;
+    error(msg: any, ...args: any[]): void;
   };
   assets: {
     basePath: string;
@@ -76,5 +76,9 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     getVisualCalWindowId: () => void;
     showWindow: (windowId: VisualCalWindow) => void;
   };
-  procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManagerType;
+  procedureManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<CreateProcedureInfo>;
+}
+
+interface NamedType {
+  name: string;
 }
