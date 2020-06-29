@@ -26,7 +26,6 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
       try {
         const retVal = await this.create(procedure);
         event.reply(IpcChannels.procedures.create.response, retVal);
-        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.procedures.create.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.procedures.create.error, error);
       }
@@ -184,6 +183,7 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
       ...procedure
     };
     this.emit('created', retVal);
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.procedures.create.response, retVal);
     return retVal;
   }
   remove = async (name: string)  => {

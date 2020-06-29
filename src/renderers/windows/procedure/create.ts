@@ -1,3 +1,5 @@
+import { IpcChannels } from '../../../@types/constants';
+
 let nameField: HTMLInputElement;
 let descriptionField: HTMLTextAreaElement;
 let createButton: HTMLButtonElement;
@@ -25,17 +27,24 @@ const init = () => {
     updateCreateButton();
   });
 
+  window.visualCal.procedureManager.on(IpcChannels.procedures.create.error, (_, error: Error) => {
+    alert(error.message);
+  });
+
+  window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, () => {
+    alert('Procedure created!');
+    window.close();
+  });
+
   createButton.addEventListener('click', async () => {
     checkElementsExist();
     const procName = nameField.value;
     const procDescription = descriptionField.value;
     try {
-      await global.visualCal.procedureManager.create({
+      window.visualCal.procedureManager.create({
         name: procName,
         description: procDescription
       });
-      alert('Procedure created!');
-      window.close();
     } catch (error) {
       alert(error.message);
     }
