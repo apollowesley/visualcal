@@ -7,23 +7,23 @@ import { IpcChannels } from '../../@types/constants';
 
 let logger: Logger;
 
-const logWindowEvent = (type: string, event: IpcMainEvent, data: any) => {
+const logWindowEvent = (type: string, event: IpcMainEvent, data: any, ...args: any[]) => {
   try {
     const window = BrowserWindow.fromWebContents(event.sender);
     if (window && window.visualCal) {
       const windowMsg = { windowId: window.visualCal.id, msg: data };
       switch (type) {
         case IpcChannels.log.result:
-          logger.info(windowMsg);
+          logger.info(windowMsg.msg, { windowId: windowMsg.windowId }, args);
           break;
         case IpcChannels.log.info:
-          logger.info(windowMsg);
+          logger.info(windowMsg.msg, { windowId: windowMsg.windowId }, args);
           break;
         case IpcChannels.log.warn:
-          logger.warn(windowMsg);
+          logger.warn(windowMsg.msg, { windowId: windowMsg.windowId }, args);
           break;
         case IpcChannels.log.error:
-          logger.error(windowMsg);
+          logger.error(windowMsg.msg, { windowId: windowMsg.windowId }, args);
           break;
       }
     } else {
@@ -51,8 +51,8 @@ export const create = () => {
   });
 
   ipcMain.on(IpcChannels.log.result, (event, result: LogicResult) => logWindowEvent(IpcChannels.log.result, event, result));
-  ipcMain.on(IpcChannels.log.info, (event, msg: any) => logWindowEvent(IpcChannels.log.result, event, msg));
-  ipcMain.on(IpcChannels.log.warn, (event, msg: any) => logWindowEvent(IpcChannels.log.result, event, msg));
-  ipcMain.on(IpcChannels.log.error, (event, msg: any) => logWindowEvent(IpcChannels.log.result, event, msg));
+  ipcMain.on(IpcChannels.log.info, (event, msg: any, ...args: any[]) => logWindowEvent(IpcChannels.log.result, event, msg, args));
+  ipcMain.on(IpcChannels.log.warn, (event, msg: any, ...args: any[]) => logWindowEvent(IpcChannels.log.result, event, msg, args));
+  ipcMain.on(IpcChannels.log.error, (event, msg: any, ...args: any[]) => logWindowEvent(IpcChannels.log.result, event, msg, args));
   return logger;
 }

@@ -75,7 +75,7 @@ const init = async () => {
     await loadProcedures();
   });
   window.visualCal.procedureManager.on(IpcChannels.procedures.remove.response, async (response: RemoveResponseArgs) => {
-    console.info('Removed', name);
+    console.info('Removed', response.name);
     await loadProcedures();
   });
   window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs<Procedure>) => {

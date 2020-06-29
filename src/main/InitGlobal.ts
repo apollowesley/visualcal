@@ -1,11 +1,15 @@
 import * as fs from 'fs';
 import path from 'path';
+import { app } from 'electron';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
 import { isDev } from './utils/is-dev-mode';
 import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
+
+dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
 
 export const visualCal: VisualCalGlobalAugment = {
   logger: createLogger(),
@@ -24,7 +28,7 @@ export const visualCal: VisualCalGlobalAugment = {
     warn: (msg: any) => global.visualCal.logger.warn(msg),
     error: (msg: any) => global.visualCal.logger.error(msg)
   },
-  procedureManager: new ProcedureManager(),
+  procedureManager: new ProcedureManager(dirs.procedures),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

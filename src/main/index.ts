@@ -22,8 +22,6 @@ try {
   const nodeRed = RED as NodeRed;
 
   function init(ipcChannels: IpcChannel<any>[]) {
-    global.visualCal.dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
-    global.visualCal.dirs.procedures = path.join(global.visualCal.dirs.visualCalUser, 'procedures');
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
