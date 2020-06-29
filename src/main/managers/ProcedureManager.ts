@@ -109,10 +109,12 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     return procDir;
   };
   
-  procedureDirExists() { return fs.existsSync(global.visualCal.dirs.procedures); };
+  proceduresDirExists() { return fs.existsSync(global.visualCal.dirs.procedures); };
 
-  async createProcedureDir() { await fsPromises.mkdir(global.visualCal.dirs.procedures); };
-  
+  async createProceduresDir() { await fsPromises.mkdir(global.visualCal.dirs.procedures); };
+  async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
+  async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify({})); };
+
   async saveProceduresJson(content?: ProceduresFile) { await fsPromises.writeFile(global.visualCal.files.proceduresJson, JSON.stringify(content)); };
   async createProceduresJson() { await this.saveProceduresJson({}); };
 
@@ -135,11 +137,9 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     const procFile = JSON.parse((fileJson).toString()) as ProcedureFile;
     return procFile;
   };
-  
+
   exists(name: string, shouldExist: boolean = true) {
-    console.debug(`Check if procedure directory exists for procedure "${name}"`);
     const procedureDirPath = this.getProcedureDirPath(name);
-    console.debug(`Checking procedure directory path for procedure ${procedureDirPath}`);
     const doesExist = fs.existsSync(procedureDirPath);
     return doesExist && shouldExist;
   }
@@ -161,8 +161,8 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     return procInfo;
   }
   
-  getAll = async () => {
-    if (!this.procedureDirExists()) return [];
+  async getAll() {
+    if (!this.proceduresDirExists()) return [];
     const proceduresDirNames = (await fsPromises.readdir(global.visualCal.dirs.procedures, { withFileTypes: true })).filter(dir => dir.isDirectory() && dir.name !== 'logic').map(dir => dir.name);
     const retVal: Procedure[] = [];
     for (const procDirName of proceduresDirNames) {
@@ -172,12 +172,14 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     return retVal;
   }
   
-  create = async (procedure: CreateProcedureInfo) => {
+  async create(procedure: CreateProcedureInfo) {
     const sanitizedName = sanitizeFilename(procedure.name);
     this.checkNotExists(sanitizedName);
-    if (!this.procedureDirExists()) await this.createProcedureDir();
+    if (!this.proceduresDirExists()) await this.createProceduresDir();
     const procDirPath = this.getProcedureDirPath(sanitizedName);
-    if (!this.exists(sanitizedName)) await fsPromises.mkdir(procDirPath);
+    await fsPromises.mkdir(procDirPath);
+    await this.createProcedureLogicDir(sanitizedName);
+    await this.createProcedureLogicFile(sanitizedName);
     await this.saveProcedureJson(procedure.name, procedure);
     const retVal: CreatedProcedureInfo = {
       ...procedure

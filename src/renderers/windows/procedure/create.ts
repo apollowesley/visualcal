@@ -1,4 +1,5 @@
 import { IpcChannels } from '../../../@types/constants';
+import { ErrorResponseArgs } from '../../managers/RendererProcedureManager';
 
 let nameField: HTMLInputElement;
 let descriptionField: HTMLTextAreaElement;
@@ -7,6 +8,9 @@ let cancelButton: HTMLButtonElement;
 
 const checkElementsExist = () => {
   if (!nameField) throw new Error('Missing required element');
+  if (!descriptionField) throw new Error('Missing required element');
+  if (!createButton) throw new Error('Missing required element');
+  if (!cancelButton) throw new Error('Missing required element');
 }
 
 const updateCreateButton = () => {
@@ -19,16 +23,19 @@ const init = () => {
   createButton = document.getElementById('vc-procedure-create-button') as HTMLButtonElement;
   cancelButton = document.getElementById('vc-procedure-cancel-button') as HTMLButtonElement;
 
-  nameField.addEventListener('blur', () => {
+  checkElementsExist();
+
+  nameField.addEventListener('change', () => {
     updateCreateButton();
   });
 
-  descriptionField.addEventListener('blur', () => {
+  descriptionField.addEventListener('change', () => {
     updateCreateButton();
   });
 
-  window.visualCal.procedureManager.on(IpcChannels.procedures.create.error, (_, error: Error) => {
-    alert(error.message);
+  window.visualCal.procedureManager.on(IpcChannels.procedures.create.error, (response: ErrorResponseArgs) => {
+    alert(response.error.message);
+    updateCreateButton();
   });
 
   window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, () => {
@@ -37,7 +44,7 @@ const init = () => {
   });
 
   createButton.addEventListener('click', async () => {
-    checkElementsExist();
+    createButton.disabled = true;
     const procName = nameField.value;
     const procDescription = descriptionField.value;
     try {
@@ -55,5 +62,4 @@ const init = () => {
   });
 }
 
-// document.addEventListener('load', () => init());
 init();

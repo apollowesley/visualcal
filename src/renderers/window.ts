@@ -4,6 +4,7 @@ import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
+import { IpcChannels } from '../@types/constants';
 
 window.visualCal = {
   isMac: process.platform === 'darwin',
@@ -21,9 +22,10 @@ window.visualCal = {
   dirs: dirs,
   files: files,
   log: {
-    result(result: LogicResult) {
-      ipcRenderer.send('node-red', result);
-    }
+    result: (result: LogicResult) => ipcRenderer.send(IpcChannels.log.result, result),
+    info: (msg: any) => ipcRenderer.send(IpcChannels.log.info, msg),
+    warn: (msg: any) => ipcRenderer.send(IpcChannels.log.warn, msg),
+    error: (msg: any) => ipcRenderer.send(IpcChannels.log.error, msg)
   },
   procedureManager: new RendererProcedureManager(),
   assets: {

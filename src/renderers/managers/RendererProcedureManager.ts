@@ -56,8 +56,10 @@ export interface Response<T extends ResponseArgs> {
 
 export class RendererProcedureManager extends EventEmitter implements RendererProcedureManagerType {
 
+
   constructor() {
     super();
+    console.info(ipcRenderer.listenerCount(IpcChannels.procedures.getAll.response));
     ipcRenderer.on(IpcChannels.procedures.getAll.response, (event, procedures: Procedure[]) => this.emit(IpcChannels.procedures.getAll.response, { event: event, procedures: procedures }));
     ipcRenderer.on(IpcChannels.procedures.getAll.error, (event, error) => this.emit(IpcChannels.procedures.getAll.error, { event: event, error: error }));
 
@@ -89,6 +91,7 @@ export class RendererProcedureManager extends EventEmitter implements RendererPr
   }
 
   create(info: CreateProcedureInfo): void {
+    window.visualCal.log.info('Creating procedure');
     ipcRenderer.send(IpcChannels.procedures.create.request, info);
   }
 

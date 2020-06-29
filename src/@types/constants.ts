@@ -5,6 +5,12 @@ export interface IpcChannelRequestResponseErrorNames {
 }
 
 export const IpcChannels = {
+  log: {
+    result: 'log-result',
+    info: 'log-info',
+    warn: 'log-warn',
+    error: 'log-error'
+  },
   procedures: {
     getAll: {
       request: 'getAll-procedures-request',

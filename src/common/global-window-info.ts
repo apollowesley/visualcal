@@ -1,7 +1,6 @@
 import * as os from 'os';
 import path from 'path';
 import { isDev } from '../main/utils/is-dev-mode';
-import { ProcedureManager } from '../main/managers/ProcedureManager'
 
 export const serverListenPort = 18880;
 export const vueListenPort = isDev() ? 8080 : serverListenPort;

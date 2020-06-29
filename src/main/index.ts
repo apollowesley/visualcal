@@ -9,9 +9,9 @@ import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';
-import { login, isLoggedIn, listenForLogin } from './security';
+import { isLoggedIn, listenForLogin } from './security';
+import path from 'path';
 import history from 'connect-history-api-fallback';
-import { init as initIpcManager } from './managers/IPCManager';
 import type { NodeRed } from '../@types/logic-server';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
@@ -22,8 +22,9 @@ try {
   const nodeRed = RED as NodeRed;
 
   function init(ipcChannels: IpcChannel<any>[]) {
+    global.visualCal.dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+    global.visualCal.dirs.procedures = path.join(global.visualCal.dirs.visualCalUser, 'procedures');
     initMainMenu();
-    initIpcManager();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
