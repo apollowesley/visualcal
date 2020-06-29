@@ -1,5 +1,5 @@
 {
   "vetur.experimental.templateInterpolationService": true,
-  "typescript.format.semicolons": "remove",
+  "typescript.format.semicolons": "insert",
   "typescript.preferences.quoteStyle": "single"
 }

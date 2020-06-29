@@ -1,14 +1,50 @@
+export interface IpcChannelRequestResponseErrorNames {
+  request: string;
+  response: string;
+  error: string;
+}
+
 export const IpcChannels = {
   procedures: {
-    get: {
-      request: 'get-procedures-request',
-      response: 'get-procedures-reply',
-      error: 'get-procedures-error'
+    getAll: {
+      request: 'getAll-procedures-request',
+      response: 'getAll-procedures-response',
+      error: 'getAll-procedures-error'
+    },
+    getOne: {
+      request: 'getOne-procedures-request',
+      response: 'getOne-procedures-response',
+      error: 'getOne-procedures-error'
     },
     create: {
       request: 'create-procedure-request',
-      response: 'create-procedure-reply',
+      response: 'create-procedure-response',
       error: 'create-procedure-error'
+    },
+    rename: {
+      request: 'rename-procedure-request',
+      response: 'rename-procedure-response',
+      error: 'rename-procedure-error'
+    },
+    remove: {
+      request: 'remove-procedure-request',
+      response: 'remove-procedure-response',
+      error: 'remove-procedure-error'
+    },
+    getActive: {
+      request: 'get-active-procedure-request',
+      response: 'get-active-procedure-response',
+      error: 'get-active-procedure-error'
+    },
+    setActive: {
+      request: 'set-active-procedure-request',
+      response: 'set-active-procedure-response',
+      error: 'set-active-procedure-error'
+    },
+    getExists: {
+      request: 'get-exists-procedure-request',
+      response: 'get-exists-procedure-response',
+      error: 'get-exists-procedure-error'
     }
   }
 }

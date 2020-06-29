@@ -5,7 +5,8 @@ import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
 import { ipcRenderer } from 'electron';
 import { isDev } from './utils/is-dev-mode';
-import { serverListenPort, dirs, publicPath, files, procedureManager } from '../common/global-window-info';
+import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
+import { ProcedureManager } from './managers/ProcedureManager';
 
 export const visualCal: VisualCalGlobalAugment = {
   logger: createLogger(),
@@ -23,7 +24,7 @@ export const visualCal: VisualCalGlobalAugment = {
       ipcRenderer.send('node-red', result);
     }
   },
-  procedureManager: procedureManager,
+  procedureManager: new ProcedureManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

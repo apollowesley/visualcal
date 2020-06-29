@@ -2,6 +2,8 @@ import { EventEmitter } from 'events'
 import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import sanitizeFilename from 'sanitize-filename';
+import { ipcMain } from 'electron';
+import { IpcChannels } from '../../@types/constants';
 
 export type EventNames = 'created' | 'removed' | 'renamed' | 'set-active';
 
@@ -20,6 +22,78 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
 
   constructor() {
     super();
+    ipcMain.on(IpcChannels.procedures.create.request, async (event, procedure: CreateProcedureInfo) => {
+      try {
+        const retVal = await this.create(procedure);
+        event.reply(IpcChannels.procedures.create.response, retVal);
+        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.procedures.create.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.create.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.getActive.request, async (event) => {
+      try {
+        const retVal = await this.getActive();
+        event.reply(IpcChannels.procedures.getActive.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.getActive.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.getAll.request, async (event) => {
+      try {
+        const retVal = await this.getAll();
+        event.reply(IpcChannels.procedures.getAll.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.getAll.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.getExists.request, async (event, name: string) => {
+      try {
+        const retVal = await this.exists(name);
+        event.reply(IpcChannels.procedures.getExists.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.getExists.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.getOne.request, async (event, name: string) => {
+      try {
+        const retVal = await this.getOne(name);
+        event.reply(IpcChannels.procedures.getOne.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.getOne.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.remove.request, async (event, name: string) => {
+      try {
+        await this.remove(name);
+        event.reply(IpcChannels.procedures.remove.response, name);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.remove.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.remove.request, async (event, oldName: string, newName: string) => {
+      try {
+        await this.rename(oldName, newName);
+        event.reply(IpcChannels.procedures.rename.response, { oldName, newName });
+      } catch (error) {
+        event.reply(IpcChannels.procedures.rename.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.procedures.setActive.request, async (event, name: string) => {
+      try {
+        await this.setActive(name);
+        event.reply(IpcChannels.procedures.setActive.response, name);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.setActive.error, error);
+      }
+    });
   }
 
   static PROCEDURES_JSON_FILE_NAME = 'procedures.json';

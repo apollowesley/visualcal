@@ -44,20 +44,6 @@ interface VisualCalAugmentFiles {
   proceduresJson: string;
 }
 
-interface VisualCalAugmentProcedures {
-  getAll(): Promise<Procedure[]>;
-  getOne(name: string): Promise<Procedure | undefined>;
-  create(info: CreateProcedureInfo): Promise<CreatedProcedureInfo>;
-  onCreated(info: CreatedProcedureInfo): void;
-  remove(name: string): Promise<void>;
-  onRemoved(name: string): void;
-  exists(name: string): boolean;
-  rename(oldName: string, newName: string): Promise<ProcedureFile>;
-  onRenamed(oldName: string, newName: string): void;
-  getActive(): Promise<string | undefined>;
-  setActive(name: string): Promise<void>;
-}
-
 interface VisualCalAugment {
   isDev: boolean,
   isMac: boolean,
@@ -65,7 +51,6 @@ interface VisualCalAugment {
   log: {
     result(result: LogicResult): void;
   };
-  procedureManager: import('../main/managers/ProcedureManager').ProcedureManagerType;
   assets: {
     basePath: string;
     get: (id: string) => Buffer;
@@ -78,6 +63,7 @@ interface VisualCalAugment {
 interface VisualCalGlobalAugment extends VisualCalAugment {
   logger: import('winston').Logger;
   windowManager: import('../main/managers/WindowManager').WindowManager;
+  procedureManager: import('../main/managers/ProcedureManager').ProcedureManagerType;
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {
@@ -87,4 +73,5 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     getVisualCalWindowId: () => void;
     showWindow: (windowId: VisualCalWindow) => void;
   };
+  procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManagerType;
 }

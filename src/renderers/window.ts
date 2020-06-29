@@ -1,8 +1,9 @@
 import path from 'path';
-import { serverListenPort, dirs, publicPath, files, procedureManager } from '../common/global-window-info';
+import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
+import { RendererProcedureManager } from './managers/RendererProcedureManager';
 
 window.visualCal = {
   isMac: process.platform === 'darwin',
@@ -24,7 +25,7 @@ window.visualCal = {
       ipcRenderer.send('node-red', result);
     }
   },
-  procedureManager: procedureManager,
+  procedureManager: new RendererProcedureManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

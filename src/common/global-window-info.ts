@@ -13,7 +13,6 @@ export const renderersPath = path.join(distPath, 'renderers');
 export const renderersWindowsPath = path.join(renderersPath, 'windows');
 export const renderersProcedurePath = path.join(renderersWindowsPath, 'procedure');
 export const bootstrapStudioPath = path.join(basePath, 'bootstrap-studio', 'exported');
-export const procedureManager = new ProcedureManager();
 
 export const dirs: VisualCalAugmentDirs = {
   base: basePath,

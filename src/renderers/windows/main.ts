@@ -1,4 +1,7 @@
 import * as d3 from 'd3';
+import { IpcChannels } from '../../@types/constants';
+import { GetAllResponseArgs } from '../managers/RendererProcedureManager';
+import { ipcRenderer } from 'electron';
 
 let createProcedureButton: HTMLButtonElement;
 
@@ -16,14 +19,22 @@ const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    const newProcedures = await window.visualCal.procedureManager.getAll();
+    await window.visualCal.procedureManager.getAll();
+  } catch (error) {
+    alert(error.message);
+    throw error;
+  }
+}
+
+const refreshProcedures = async (procedures: Procedure[]) => {
+  try {
     console.info('Got procedures', procedures);
-    const areProcListsDifferent = areProcedureListsDifferent(newProcedures);
+    const areProcListsDifferent = areProcedureListsDifferent(procedures);
     if (!areProcListsDifferent) {
       console.info('Procedure lists are not different, aborting update');
       return;
     }
-    procedures = newProcedures;
+    procedures = procedures;
     const listSelection = d3.select('#vc-card-procedures-list')
     const listItemSelection = listSelection.selectAll('li');
     const data = listItemSelection.data(procedures, (d) => { console.info(d); return (d as Procedure).name; });
@@ -37,17 +48,21 @@ const loadProcedures = async () => {
 }
 
 const init = async () => {
-  window.visualCal.procedureManager.on('created', async (procedure: ProcedureFile) => {
+  ipcRenderer.on(IpcChannels.procedures.create.response, async (_, procedure: CreateProcedureInfo) => {
     console.info('Created', procedure);
     await loadProcedures();
   });
-  window.visualCal.procedureManager.on('renamed', async (info: { oldName: string, newName: string }) => {
+  ipcRenderer.on(IpcChannels.procedures.rename.response, async (_, info: { oldName: string, newName: string }) => {
     console.info('Renamed', info);
     await loadProcedures();
   });
-  window.visualCal.procedureManager.on('removed', async (name: string) => {
+  ipcRenderer.on(IpcChannels.procedures.remove.response, async (_, name: string) => {
     console.info('Removed', name);
     await loadProcedures();
+  });
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs) => {
+    console.info('GetAll', response.procedures);
+    await refreshProcedures(response.procedures);
   });
 
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
