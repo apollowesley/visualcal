@@ -7,7 +7,10 @@ import Tabulator from 'tabulator-tables';
 let createProcedureButton: HTMLButtonElement;
 let procedures: Procedure[] = [];
 
-const nameCellEdited = (cell: Tabulator.CellComponent) => {
+let createSessionButton: HTMLButtonElement;
+let sessions: Session[] = [];
+
+const procedureNameCellEdited = (cell: Tabulator.CellComponent) => {
   const oldName = cell.getOldValue() as string;
   const newName = cell.getValue() as string;
   ipcRenderer.once(IpcChannels.procedures.getExists.response, (_, exists: boolean) => {
@@ -21,11 +24,11 @@ const nameCellEdited = (cell: Tabulator.CellComponent) => {
   window.visualCal.procedureManager.getExists(newName);
 }
 
-const table = new Tabulator('#vc-procedures-tabulator', {
+const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
   data: procedures,
   layout: 'fitColumns',
   columns: [
-    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: nameCellEdited },
+    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: procedureNameCellEdited },
     { title: 'Description', field: 'description', editable: true, editor: 'textarea' }
   ]
 });
@@ -58,7 +61,7 @@ const refreshProcedures = async (newProcedures: Procedure[]) => {
       return;
     }
     procedures = newProcedures;
-    table.setData(procedures);
+    proceduresTable.setData(procedures);
   } catch (error) {
     alert(error.message);
     throw error;
@@ -86,6 +89,11 @@ const init = async () => {
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
   createProcedureButton.addEventListener('click', async () => {
     await window.visualCal.electron.showWindow(VisualCalWindow.CreateProcedure);
+  });
+
+  createSessionButton = document.getElementById('vc-card-sessions-create-button') as HTMLButtonElement;
+  createSessionButton.addEventListener('click', async () => {
+    await window.visualCal.electron.showWindow(VisualCalWindow.CreateSession);
   });
 
   await loadProcedures();

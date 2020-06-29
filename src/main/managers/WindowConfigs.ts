@@ -92,3 +92,18 @@ export const CreateProcedureWindowConfig = (): CreateWindowOptions => {
     }
   }
 }
+
+export const CreateSessionWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.CreateSession,
+    config: {
+      title: 'VisualCal - Create Session',
+      fullscreenable: false,
+      modal: true,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}

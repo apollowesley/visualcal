@@ -5,6 +5,7 @@ import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels } from '../@types/constants';
+import { RendererSessionManager } from './managers/RendererSessionManager';
 
 window.visualCal = {
   isMac: process.platform === 'darwin',
@@ -28,6 +29,7 @@ window.visualCal = {
     error: (msg: any) => ipcRenderer.send(IpcChannels.log.error, msg)
   },
   procedureManager: new RendererProcedureManager(),
+  sessionManager: new RendererSessionManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

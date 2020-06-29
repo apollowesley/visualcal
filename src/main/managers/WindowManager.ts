@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig } from './WindowConfigs';
 
 export class WindowManager {
 
@@ -25,6 +25,9 @@ export class WindowManager {
           break;
         case VisualCalWindow.CreateProcedure:
           await this.ShowCreateProcedureWindow();
+          break;
+        case VisualCalWindow.CreateSession:
+          await this.ShowCreateSessionWindow();
           break;
         case VisualCalWindow.Loading:
           break;
@@ -76,6 +79,12 @@ export class WindowManager {
 
   get createProcedureWindow() {
     const window = this.get(VisualCalWindow.CreateProcedure);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get createSessionWindow() {
+    const window = this.get(VisualCalWindow.CreateSession);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -254,6 +263,19 @@ export class WindowManager {
     window = this.create(CreateProcedureWindowConfig());
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(global.visualCal.dirs.html.procedure.create);
+    return window;
+  }
+
+  // Create session window 
+  async ShowCreateSessionWindow() {
+    let window = this.createSessionWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(CreateSessionWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(global.visualCal.dirs.html.session.create);
     return window;
   }
 
