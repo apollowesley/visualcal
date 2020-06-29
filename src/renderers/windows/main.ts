@@ -49,10 +49,6 @@ const init = async () => {
     console.info('Removed', name);
     await loadProcedures();
   });
-  window.visualCal.procedureManager.on('updated', async (procedure: ProcedureFile) => {
-    console.info('Updated', procedure);
-    await loadProcedures();
-  });
 
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
   createProcedureButton.addEventListener('click', async () => {

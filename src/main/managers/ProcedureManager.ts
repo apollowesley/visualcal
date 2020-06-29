@@ -3,7 +3,7 @@ import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import sanitizeFilename from 'sanitize-filename';
 
-export type EventNames = 'created' | 'updated' | 'removed' | 'renamed' | 'set-active';
+export type EventNames = 'created' | 'removed' | 'renamed' | 'set-active';
 
 export interface ProcedureManagerType extends EventEmitter {
   getAll(): Promise<Procedure[]>;
@@ -22,7 +22,6 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     super();
   }
 
-  static PROCEDURES_FOLDDER_NAME = 'procedures';
   static PROCEDURES_JSON_FILE_NAME = 'procedures.json';
 
   static PROCEDURE_LOGIC_FOLDER_NAME = 'logic';
@@ -52,13 +51,6 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
   };
   
   async saveProcedureJson(name: string, proc: ProcedureFile) {
-    const procFilePath = path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_JSON_FILE_NAME);
-    const procContent = JSON.stringify(proc);
-    await fsPromises.writeFile(procFilePath, procContent);
-    this.emit('updated', proc);
-  };
-
-  async createProcedureJson(proc: CreateProcedureInfo) {
     const procFilePath = path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_JSON_FILE_NAME);
     const procContent = JSON.stringify(proc);
     await fsPromises.writeFile(procFilePath, procContent);
@@ -113,7 +105,7 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     if (!this.procedureDirExists()) await this.createProcedureDir();
     const procDirPath = this.getProcedureDirPath(sanitizedName);
     if (!this.exists(sanitizedName)) await fsPromises.mkdir(procDirPath);
-    await this.createProcedureJson(procedure);
+    await this.saveProcedureJson(procedure.name, procedure);
     const retVal: CreatedProcedureInfo = {
       ...procedure
     };

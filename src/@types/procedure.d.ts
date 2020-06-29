@@ -15,10 +15,10 @@ interface ProcedureSection {
 
 interface ProcedureFile {
   name: string;
-  version: string;
-  description: string;
-  authorOrganization: string;
-  authors: Person[];
+  version?: string;
+  description?: string;
+  authorOrganization?: string;
+  authors?: Person[];
 }
 
 interface ActionInfo {
