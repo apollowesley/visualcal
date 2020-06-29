@@ -22,7 +22,7 @@ main {
   background-color: gray;
   margin: 20px;
   min-height: 250px;
-  min-width: 250px;
+  min-width: 500px;
 }
 
 .form-group {
@@ -36,5 +36,9 @@ button {
 textarea {
   resize: both;
   min-width: 250px;
+}
+
+.tabulator {
+  min-height: 300px;
 }
 

@@ -76,7 +76,7 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
       }
     });
 
-    ipcMain.on(IpcChannels.procedures.remove.request, async (event, oldName: string, newName: string) => {
+    ipcMain.on(IpcChannels.procedures.rename.request, async (event, oldName: string, newName: string) => {
       try {
         await this.rename(oldName, newName);
         event.reply(IpcChannels.procedures.rename.response, { oldName, newName });
@@ -219,6 +219,7 @@ export class ProcedureManager extends EventEmitter implements ProcedureManagerTy
     await fsPromises.rename(oldDirPath, newDirPath);
     console.info('Renamed procedure directory');
     this.emit('renamed', { oldName, newName });
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.procedures.rename.response, procJson);
     return procJson;
   }
   

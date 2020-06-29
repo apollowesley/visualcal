@@ -7,6 +7,7 @@
     <title>IndySoft VisualCal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/tabulator.min.css">
 </head>
 
 <body>
@@ -18,16 +19,14 @@
                         <div class="card-body">
                             <h4 class="card-title">Local Procedures</h4>
                             <h6 class="text-dark card-subtitle mb-2">Procedures on your machine</h6>
-                            <ul id="vc-card-procedures-list"></ul><button class="btn btn-light" id="vc-card-procedures-create-button" type="button">Create</button><button class="btn btn-light" id="vc-card-procedures-import-button" type="button">Import</button></div>
+                            <div id="vc-procedures-tabulator" class="tabulator"></div><button class="btn btn-light" id="vc-card-procedures-create-button" type="button">Create</button><button class="btn btn-light" id="vc-card-procedures-import-button" type="button">Import</button></div>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="card" id="vc-card-sessions">
                         <div class="card-body">
                             <h4 class="card-title">Sessions</h4>
-                            <ul id="vc-card-sessions-list">
-                                <li>Item 1</li>
-                            </ul>
+                            <div id="vc-sessions-tabulator" class="tabulator"></div>
                         </div>
                     </div>
                 </div>
@@ -36,13 +35,9 @@
                         <div class="card-body">
                             <h4 class="card-title">Bench Configuration</h4>
                             <h6>Communication Interfaces</h6>
-                            <ul id="vc-card-bench-config-interfaces-list">
-                                <li>Item 1</li>
-                            </ul>
+                            <div id="vc-bench-config-interfaces-list" class="tabulator"></div>
                             <h6>Devices/Instruments</h6>
-                            <ul id="vc-card-bench-config-devices-list">
-                                <li>Item 1</li>
-                            </ul>
+                            <div id="vc-bench-config-devices-list" class="tabulator"></div>
                         </div>
                     </div>
                 </div>

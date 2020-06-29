@@ -1,11 +1,34 @@
-import * as d3 from 'd3';
 import { IpcChannels } from '../../@types/constants';
-import { GetAllResponseArgs } from '../managers/RendererProcedureManager';
+import { GetAllResponseArgs, RenameResponseArgs } from '../managers/RendererProcedureManager';
 import { ipcRenderer } from 'electron';
+import moment from 'moment';
+import Tabulator from 'tabulator-tables';
 
 let createProcedureButton: HTMLButtonElement;
-
 let procedures: Procedure[] = [];
+
+const nameCellEdited = (cell: Tabulator.CellComponent) => {
+  const oldName = cell.getOldValue() as string;
+  const newName = cell.getValue() as string;
+  ipcRenderer.once(IpcChannels.procedures.getExists.response, (_, exists: boolean) => {
+    if (exists) {
+      cell.restoreOldValue();
+      alert(`Procedure name must be unique`);
+    } else {
+      window.visualCal.procedureManager.rename(oldName, newName);
+    }
+  });
+  window.visualCal.procedureManager.getExists(newName);
+}
+
+const table = new Tabulator('#vc-procedures-tabulator', {
+  data: procedures,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: nameCellEdited },
+    { title: 'Description', field: 'description', editable: true, editor: 'textarea' }
+  ]
+});
 
 const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
   const diff: Procedure[] = [];
@@ -19,28 +42,23 @@ const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    await window.visualCal.procedureManager.getAll();
+    window.visualCal.procedureManager.getAll();
   } catch (error) {
     alert(error.message);
     throw error;
   }
 }
 
-const refreshProcedures = async (procedures: Procedure[]) => {
+const refreshProcedures = async (newProcedures: Procedure[]) => {
   try {
-    console.info('Got procedures', procedures);
-    const areProcListsDifferent = areProcedureListsDifferent(procedures);
+    console.info('Got procedures', newProcedures);
+    const areProcListsDifferent = areProcedureListsDifferent(newProcedures);
     if (!areProcListsDifferent) {
       console.info('Procedure lists are not different, aborting update');
       return;
     }
-    procedures = procedures;
-    const listSelection = d3.select('#vc-card-procedures-list')
-    const listItemSelection = listSelection.selectAll('li');
-    const data = listItemSelection.data(procedures, (d) => { console.info(d); return (d as Procedure).name; });
-    // const updatedListItems = data.append('li').classed('procedure', true).text(d => d.name);
-    const enteredListItems = data.enter().append('li').classed('procedure', true).text(d => d.name);
-    const exitedListItems = data.exit().remove();
+    procedures = newProcedures;
+    table.setData(procedures);
   } catch (error) {
     alert(error.message);
     throw error;
@@ -52,8 +70,8 @@ const init = async () => {
     console.info('Created', procedure);
     await loadProcedures();
   });
-  ipcRenderer.on(IpcChannels.procedures.rename.response, async (_, info: { oldName: string, newName: string }) => {
-    console.info('Renamed', info);
+  window.visualCal.procedureManager.on(IpcChannels.procedures.rename.response, async (response: RenameResponseArgs) => {
+    console.info('Renamed', response.oldName, response.newName);
     await loadProcedures();
   });
   ipcRenderer.on(IpcChannels.procedures.remove.response, async (_, name: string) => {
