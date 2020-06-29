@@ -1,7 +1,7 @@
 import * as os from 'os';
 import path from 'path';
 import { isDev } from '../main/utils/is-dev-mode';
-import * as procedureUtils from '../main/utils/Procedures'
+import { ProcedureManager } from '../main/managers/ProcedureManager'
 
 export const serverListenPort = 18880;
 export const vueListenPort = isDev() ? 8080 : serverListenPort;
@@ -9,6 +9,7 @@ export const vueListenPort = isDev() ? 8080 : serverListenPort;
 export const basePath = path.resolve(__dirname, '..', '..'); // <base>/dist
 export const publicPath = path.join(basePath, 'public');
 export const distPath = path.resolve(basePath, 'dist');
+export const procedureManager = new ProcedureManager();
 
 export const dirs: VisualCalAugmentDirs = {
   base: basePath,
@@ -58,15 +59,4 @@ export const dirs: VisualCalAugmentDirs = {
 
 export const files: VisualCalAugmentFiles = {
   proceduresJson: path.join(dirs.procedures, 'procedures.json')
-}
-
-export const procedures: VisualCalAugmentProcedures = {
-  create: procedureUtils.create,
-  exists: procedureUtils.exists,
-  getOne: procedureUtils.getOne,
-  getAll: procedureUtils.getAll,
-  remove: procedureUtils.remove,
-  rename: procedureUtils.rename,
-  getActive: procedureUtils.getActive,
-  setActive: procedureUtils.setActive
 }

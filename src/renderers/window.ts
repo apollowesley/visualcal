@@ -1,8 +1,7 @@
 import path from 'path';
-import { serverListenPort, dirs, publicPath, files, procedures } from '../common/global-window-info';
+import { serverListenPort, dirs, publicPath, files, procedureManager } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
-import { getAll } from '../main/utils/Procedures';
 import fs from 'fs';
 
 window.visualCal = {
@@ -24,7 +23,7 @@ window.visualCal = {
       ipcRenderer.send('node-red', result);
     }
   },
-  procedures: procedures,
+  procedureManager: procedureManager,
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

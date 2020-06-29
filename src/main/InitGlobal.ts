@@ -3,10 +3,9 @@ import path from 'path';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
-import { getAll } from '../main/utils/Procedures';
 import { ipcRenderer } from 'electron';
 import { isDev } from './utils/is-dev-mode';
-import { serverListenPort, dirs, publicPath, files, procedures } from '../common/global-window-info';
+import { serverListenPort, dirs, publicPath, files, procedureManager } from '../common/global-window-info';
 
 export const visualCal: VisualCalGlobalAugment = {
   logger: createLogger(),
@@ -24,7 +23,7 @@ export const visualCal: VisualCalGlobalAugment = {
       ipcRenderer.send('node-red', result);
     }
   },
-  procedures: procedures,
+  procedureManager: procedureManager,
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

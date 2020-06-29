@@ -40,9 +40,12 @@ interface VisualCalAugmentProcedures {
   getAll(): Promise<Procedure[]>;
   getOne(name: string): Promise<Procedure | undefined>;
   create(info: CreateProcedureInfo): Promise<CreatedProcedureInfo>;
+  onCreated(info: CreatedProcedureInfo): void;
   remove(name: string): Promise<void>;
+  onRemoved(name: string): void;
   exists(name: string): boolean;
   rename(oldName: string, newName: string): Promise<ProcedureFile>;
+  onRenamed(oldName: string, newName: string): void;
   getActive(): Promise<string | undefined>;
   setActive(name: string): Promise<void>;
 }
@@ -54,7 +57,7 @@ interface VisualCalAugment {
   log: {
     result(result: LogicResult): void;
   };
-  procedures: VisualCalAugmentProcedures;
+  procedureManager: import('../main/managers/ProcedureManager').ProcedureManagerType;
   assets: {
     basePath: string;
     get: (id: string) => Buffer;

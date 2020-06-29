@@ -77,7 +77,7 @@ function getFileBody(root: string, path: string) {
 }
 
 export async function getLibraryEntry(type: string, path: string): Promise<any> {
-  const currentProcedureName = await global.visualCal.procedures.getActive();
+  const currentProcedureName = await global.visualCal.procedureManager.getActive();
   if (!currentProcedureName) return [];
   if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
   const libDir = fspath.join(settings.procedureBaseDirPath, currentProcedureName, 'logic');
@@ -144,7 +144,7 @@ export async function saveLibraryEntry(type: string, path: string, meta: MetaObj
   if (settings.readOnly) {
     return when.resolve();
   }
-  const currentProcedureName = await global.visualCal.procedures.getActive();
+  const currentProcedureName = await global.visualCal.procedureManager.getActive();
   if (!currentProcedureName) return;
   if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
   const libDir = fspath.join(settings.procedureBaseDirPath, currentProcedureName, 'logic');
