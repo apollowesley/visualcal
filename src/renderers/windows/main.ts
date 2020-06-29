@@ -1,10 +1,27 @@
 import * as d3 from 'd3';
 
+let procedures: Procedure[] = [];
+
+const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
+  const diff: Procedure[] = [];
+  newProcedures.forEach(newProc => {
+    const existing = procedures.find(p => p.name === newProc.name);
+    if (!existing) diff.push(newProc);
+  });
+  return diff.length > 0;
+}
+
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    const procedures = await global.visualCal.procedureManager.getAll();
+    const newProcedures = await global.visualCal.procedureManager.getAll();
     console.info('Got procedures', procedures);
+    const areProcListsDifferent = areProcedureListsDifferent(newProcedures);
+    if (!areProcListsDifferent) {
+      console.info('Procedure lists are not different, aborting update');
+      return;
+    }
+    procedures = newProcedures;
     const listSelection = d3.select('#vc-card-procedures-list')
     const listItemSelection = listSelection.selectAll('li');
     const data = listItemSelection.data(procedures, (d) => { console.info(d); return (d as Procedure).name; });
