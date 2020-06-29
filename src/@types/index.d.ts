@@ -10,7 +10,7 @@ interface TreeItem {
   children?: TreeItem[];
 }
 
-interface VisualCalGlobalDirs {
+interface VisualCalAugmentDirs {
   base: string;
   html: {
     getWindowInfo: (id: VisualCalWindow) => WindowInfo;
@@ -32,13 +32,19 @@ interface VisualCalGlobalDirs {
   visualCalUser: string;
 }
 
-interface VisualCalGlobalProcedures {
+interface VisualCalAugmentFiles {
+  proceduresJson: string;
+}
+
+interface VisualCalAugmentProcedures {
   getAll(): Promise<Procedure[]>;
   getOne(name: string): Promise<Procedure | undefined>;
   create(info: CreateProcedureInfo): Promise<CreatedProcedureInfo>;
   remove(name: string): Promise<void>;
-  exists(name: string): Promise<boolean>;
-  rename(oldName: string, newName: string): Promise<void>;
+  exists(name: string): boolean;
+  rename(oldName: string, newName: string): Promise<ProcedureFile>;
+  getActive(): Promise<string | undefined>;
+  setActive(name: string): Promise<void>;
 }
 
 interface VisualCalAugment {
@@ -48,12 +54,13 @@ interface VisualCalAugment {
   log: {
     result(result: LogicResult): void;
   };
-  procedures: VisualCalGlobalProcedures;
+  procedures: VisualCalAugmentProcedures;
   assets: {
     basePath: string;
     get: (id: string) => Buffer;
   };
-  dirs: VisualCalGlobalDirs;
+  dirs: VisualCalAugmentDirs;
+  files: VisualCalAugmentFiles;
   user?: User;
 }
 

@@ -1,12 +1,10 @@
 interface ProcedureNameInfo {
   name: string;
-  shortName: string;
   validationErrors?: string[];
 }
 
 interface ProcedureSection {
   name: string;
-  shortName: string;
   order?: number;
   description: string;
   icon?: string;
@@ -17,7 +15,6 @@ interface ProcedureSection {
 
 interface ProcedureFile {
   name: string;
-  shortName: string;
   version: string;
   description: string;
   authorOrganization: string;
@@ -30,13 +27,11 @@ interface ActionInfo {
 
 interface SectionInfo {
   name: string;
-  shortName: string;
   actions: ActionInfo[];
 }
 
 interface ProcedureInfo {
   name: string;
-  shortName: string;
   version: string;
   description: string;
   authorOrganization: string;
@@ -47,7 +42,6 @@ interface ProcedureInfo {
 
 interface Procedure {
   name: string;
-  shortName: string;
   version: string;
   description: string;
   authorOrganization: string;
@@ -83,7 +77,6 @@ interface ProcedureSectionEditorSaveFiles extends ProcedureSectionRuntimeFiles {
 
 interface CreateProcedureInfo {
   name: string;
-  shortName?: string;
   version?: string;
   description?: string;
   authorOrganization?: string;
@@ -92,9 +85,8 @@ interface CreateProcedureInfo {
 
 interface CreatedProcedureInfo {
   name: string;
-  shortName: string;
 }
 
 interface ProceduresFile {
-  active: string;
+  active?: string;
 }

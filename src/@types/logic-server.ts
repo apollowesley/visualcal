@@ -116,7 +116,7 @@ export interface NodeRedContextBase {
 
 type NodeRedContextFlow = NodeRedContextBase
 
-type LibraryType = 'flows' | 'functions' | 'templates';
+export type LibraryType = 'flows' | 'functions' | 'templates';
 
 export interface VisualCalContextGlobal {
   indySoftLogicServerVersion: string;
