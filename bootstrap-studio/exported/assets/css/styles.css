@@ -3,10 +3,11 @@ html {
   min-height: 100%;
   margin: 0;
   padding: 0;
+  width: calc(100vw - 20px);
 }
 
 body {
-  background-color: gray;
+  background-color: #666d70;
   height: calc(100vh - 3px);
   width: calc(100vw - 20px);
   margin: 0;
@@ -14,6 +15,7 @@ body {
 
 main {
   height: 100%;
+  width: calc(100vw - 20px);
 }
 
 .card {
@@ -25,5 +27,14 @@ main {
 
 .form-group {
   margin: 10px;
+}
+
+button {
+  margin: 5px;
+}
+
+textarea {
+  resize: both;
+  min-width: 250px;
 }
 

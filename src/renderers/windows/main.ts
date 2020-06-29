@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
 
+let createProcedureButton: HTMLButtonElement;
+
 let procedures: Procedure[] = [];
 
 const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
@@ -14,7 +16,7 @@ const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    const newProcedures = await global.visualCal.procedureManager.getAll();
+    const newProcedures = await window.visualCal.procedureManager.getAll();
     console.info('Got procedures', procedures);
     const areProcListsDifferent = areProcedureListsDifferent(newProcedures);
     if (!areProcListsDifferent) {
@@ -35,22 +37,28 @@ const loadProcedures = async () => {
 }
 
 const init = async () => {
-  global.visualCal.procedureManager.on('created', async (procedure: ProcedureFile) => {
+  window.visualCal.procedureManager.on('created', async (procedure: ProcedureFile) => {
     console.info('Created', procedure);
     await loadProcedures();
   });
-  global.visualCal.procedureManager.on('renamed', async (info: { oldName: string, newName: string }) => {
+  window.visualCal.procedureManager.on('renamed', async (info: { oldName: string, newName: string }) => {
     console.info('Renamed', info);
     await loadProcedures();
   });
-  global.visualCal.procedureManager.on('removed', async (name: string) => {
+  window.visualCal.procedureManager.on('removed', async (name: string) => {
     console.info('Removed', name);
     await loadProcedures();
   });
-  global.visualCal.procedureManager.on('updated', async (procedure: ProcedureFile) => {
+  window.visualCal.procedureManager.on('updated', async (procedure: ProcedureFile) => {
     console.info('Updated', procedure);
     await loadProcedures();
   });
+
+  createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
+  createProcedureButton.addEventListener('click', async () => {
+    await window.visualCal.electron.showWindow(VisualCalWindow.CreateProcedure);
+  });
+
   await loadProcedures();
 }
 

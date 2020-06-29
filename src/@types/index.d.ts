@@ -10,6 +10,12 @@ interface TreeItem {
   children?: TreeItem[];
 }
 
+interface VisualCalCRUDDir {
+  create: string;
+  edit: string;
+  remove?: string;
+}
+
 interface VisualCalAugmentDirs {
   base: string;
   html: {
@@ -21,12 +27,14 @@ interface VisualCalAugmentDirs {
     js: string;
     fonts: string;
     bootstrapStudio: string;
+    procedure: VisualCalCRUDDir
   },
   renderers: {
     base: string;
     windows: string;
     views: string;
     nodeBrowser: string;
+    procedure: VisualCalCRUDDir
   }
   procedures: string;
   visualCalUser: string;
@@ -77,5 +85,6 @@ interface VisualCalWindowAugment extends VisualCalAugment {
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;
+    showWindow: (windowId: VisualCalWindow) => void;
   };
 }

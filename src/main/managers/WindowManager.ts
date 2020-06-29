@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig } from './WindowConfigs';
 
 export class WindowManager {
 
@@ -17,6 +17,25 @@ export class WindowManager {
         event.reply('get-visualcal-window-id-res', window.visualCal.id);
       } catch (error) {
         event.reply('get-visualcal-window-id-err', error);
+      }
+    });
+    ipcMain.on('show-window', async (_, windowId: VisualCalWindow) => {
+      switch (windowId) {
+        case VisualCalWindow.Console:
+          break;
+        case VisualCalWindow.CreateProcedure:
+          await this.ShowCreateProcedureWindow();
+          break;
+        case VisualCalWindow.Loading:
+          break;
+        case VisualCalWindow.Login:
+          break;
+        case VisualCalWindow.Main:
+          break;
+        case VisualCalWindow.NodeRedEditor:
+          break;
+        default:
+          throw new Error(`Invalid window Id, ${windowId}`);
       }
     });
   }
@@ -51,6 +70,12 @@ export class WindowManager {
 
   get nodeRedEditorWindow() {
     const window = this.get(VisualCalWindow.NodeRedEditor);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get createProcedureWindow() {
+    const window = this.get(VisualCalWindow.CreateProcedure);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -216,6 +241,19 @@ export class WindowManager {
     window = this.create(NodeRedEditorWindowConfig());
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     await window.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/red`);
+    return window;
+  }
+
+  // Create procedure window 
+  async ShowCreateProcedureWindow() {
+    let window = this.createProcedureWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(CreateProcedureWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(global.visualCal.dirs.html.procedure.create);
     return window;
   }
 

@@ -3,7 +3,8 @@ declare const enum VisualCalWindow {
   Loading,
   Login,
   Console,
-  NodeRedEditor
+  NodeRedEditor,
+  CreateProcedure
 }
 
 declare const enum WindowPathType {

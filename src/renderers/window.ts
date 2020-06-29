@@ -9,7 +9,8 @@ window.visualCal = {
   isDev: isDev(),
   electron: {
     ipc: ipcRenderer,
-    getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req')
+    getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
+    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId)
   },
   config: {
     httpServer: {

@@ -8,7 +8,11 @@ export const vueListenPort = isDev() ? 8080 : serverListenPort;
 
 export const basePath = path.resolve(__dirname, '..', '..'); // <base>/dist
 export const publicPath = path.join(basePath, 'public');
-export const distPath = path.resolve(basePath, 'dist');
+export const distPath = path.join(basePath, 'dist');
+export const renderersPath = path.join(distPath, 'renderers');
+export const renderersWindowsPath = path.join(renderersPath, 'windows');
+export const renderersProcedurePath = path.join(renderersWindowsPath, 'procedure');
+export const bootstrapStudioPath = path.join(basePath, 'bootstrap-studio', 'exported');
 export const procedureManager = new ProcedureManager();
 
 export const dirs: VisualCalAugmentDirs = {
@@ -39,19 +43,29 @@ export const dirs: VisualCalAugmentDirs = {
         type: WindowPathType.Url
       };
     },
-    vue: path.resolve(distPath, 'renderer'),
-    css: path.resolve(publicPath, 'css'),
-    fonts: path.resolve(publicPath, 'fonts'),
-    js: path.resolve(publicPath, 'js'),
-    views: path.resolve(publicPath, 'views'),
-    windows: path.resolve(publicPath, 'windows'),
-    bootstrapStudio: path.resolve(basePath, 'bootstrap-studio', 'exported')
+    vue: path.join(distPath, 'renderer'),
+    css: path.join(publicPath, 'css'),
+    fonts: path.join(publicPath, 'fonts'),
+    js: path.join(publicPath, 'js'),
+    views: path.join(publicPath, 'views'),
+    windows: path.join(publicPath, 'windows'),
+    bootstrapStudio: bootstrapStudioPath,
+    procedure: {
+      create: path.join(bootstrapStudioPath, 'procedure-create.html'),
+      edit: path.join(bootstrapStudioPath, 'procedure-edit.html'),
+      remove: path.join(bootstrapStudioPath, 'procedure-remove.html')
+    }
   },
   renderers: {
-    base: path.resolve(distPath, 'renderers'),
-    views: path.resolve(distPath, 'renderers', 'views'),
-    windows: path.resolve(distPath, 'renderers', 'windows'),
-    nodeBrowser: path.resolve(distPath, 'renderers', 'node-browser')
+    base: renderersPath,
+    views: path.join(renderersPath, 'views'),
+    windows: path.join(renderersPath, 'windows'),
+    nodeBrowser: path.join(renderersPath, 'node-browser'),
+    procedure: {
+      create: path.join(renderersProcedurePath, 'create.js'),
+      edit: path.join(renderersProcedurePath, 'edit.js'),
+      remove: path.join(renderersProcedurePath, 'remove.js')
+    }
   },
   procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
   visualCalUser: path.join(os.homedir(), '.visualcal')

@@ -20,6 +20,9 @@ if (window.require) {
             //     const errMsg = 'Unknown window id, ' + windowId;
             //     console.error(errMsg);
             //     alert(errMsg);
+            case 5: // create procedure
+                require('../../dist/renderers/windows/procedure/create.js');
+                break;
         }
     });
     window.visualCal.electron.getVisualCalWindowId();

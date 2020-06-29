@@ -77,3 +77,18 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
     }
   }
 }
+
+export const CreateProcedureWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.CreateProcedure,
+    config: {
+      title: 'VisualCal - Create Procedure',
+      fullscreenable: false,
+      modal: true,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}
