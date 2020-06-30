@@ -46,7 +46,7 @@ try {
   }
 
   async function onAppReady() {
-    if (global.visualCal.isDev) (await import('vue-devtools')).install();
+    (await import('vue-devtools')).install();
     await UserHomeUtils.ensureExists();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
@@ -79,7 +79,9 @@ try {
       if (global.visualCal.isDev) {
         await global.visualCal.windowManager.ShowMain();
       } else {
-        await createLoginWindow();
+        await global.visualCal.windowManager.ShowMain();
+        // TODO: Disable for demo on 30-JUN-2020
+        // await createLoginWindow();
       }
     }
     await global.visualCal.windowManager.ShowLoading(onLoadingWindowClosed, 5000);

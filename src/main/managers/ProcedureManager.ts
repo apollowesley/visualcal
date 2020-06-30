@@ -3,7 +3,7 @@ import path from 'path';
 import { IpcChannels } from '../../@types/constants';
 import { CrudManager } from './CrudManager';
 
-export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedProcedureInfo, Procedure> {
+export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedProcedureInfo, ProcedureFile, Procedure> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.procedures, 'procedure');
@@ -19,7 +19,7 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     return procDir;
   };
   
-  async createProceduresDir() { await fsPromises.mkdir(global.visualCal.dirs.procedures); };
+  async createItemsDir() { await fsPromises.mkdir(global.visualCal.dirs.procedures); };
   async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
   async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify({})); };
 

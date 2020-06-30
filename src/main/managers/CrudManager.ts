@@ -7,18 +7,20 @@ import sanitizeFilename from 'sanitize-filename';
 
 export type EventNames = 'created' | 'removed' | 'renamed' | 'set-active';
 
-export interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItem extends NamedType> extends EventEmitter {
+export interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends EventEmitter {
   getAll(): Promise<TItem[]>;
   getOne(name: string): Promise<TItem | undefined>;
   create(info: TCreate): Promise<TCreated>;
   remove(name: string): Promise<void>;
   exists(name: string): boolean;
   rename(oldName: string, newName: string): Promise<TItem>;
+  update(item: TItem): Promise<TItem>;
   getActive(): Promise<string | undefined>;
   setActive(name: string): Promise<void>;
+  update(item: TItem): Promise<TItem>;
 }
 
-export abstract class CrudManager<TCreate extends NamedType, TCreated extends NamedType, TItem extends NamedType> extends EventEmitter implements CrudManagerType<TCreate, TCreated, TItem> {
+export abstract class CrudManager<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends EventEmitter implements CrudManagerType<TCreate, TCreated, TItemsFile, TItem> {
 
   private fBasePath: string;
   private fChannelNames: IpcChannelCRUD;
@@ -100,6 +102,15 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
         event.reply(this.fChannelNames.setActive.error, error);
       }
     });
+
+    ipcMain.on(this.fChannelNames.update.request, async (event, item: TItem) => {
+      try {
+        await this.update(item);
+        event.reply(this.fChannelNames.update.response, item);
+      } catch (error) {
+        event.reply(this.fChannelNames.update.error, error);
+      }
+    });
   }
 
   emit(event: EventNames | symbol, ...args: any[]): boolean {
@@ -113,10 +124,9 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   
   baseDirExists() { return fs.existsSync(this.fBasePath); };
 
-  async createProceduresDir() { await fsPromises.mkdir(this.fBasePath); };
+  async createItemsDir() { await fsPromises.mkdir(this.fBasePath); };
 
-  async saveProceduresJson(content?: ProceduresFile) { await fsPromises.writeFile(this.fItemFilename + 's', JSON.stringify(content)); };
-  async createProceduresJson() { await this.saveProceduresJson({}); };
+  async createItemsJson() { await this.saveItemsJson({}); };
 
   async getItemsJson(){
     const fileBuffer = await fsPromises.readFile(this.fItemFilename + 's');
@@ -125,10 +135,8 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     return procsJson;
   };
   
-  async saveItemJson(name: string, item: any) {
-    const procFilePath = path.join(this.getItemDirPath(name), this.fItemFilename + '.json');
-    const procContent = JSON.stringify(item);
-    await fsPromises.writeFile(procFilePath, procContent);
+  async saveItemsJson(content?: ProceduresFile) {
+    await fsPromises.writeFile(this.fItemFilename + 's', JSON.stringify(content));
   };
 
   async getItemJson(name: string) {
@@ -136,6 +144,12 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     const fileJson = await fsPromises.readFile(procedureJsonFilePath);
     const procFile = JSON.parse((fileJson).toString()) as TItem;
     return procFile;
+  };
+
+  async saveItemJson(name: string, item: any) {
+    const procFilePath = path.join(this.getItemDirPath(name), this.fItemFilename + '.json');
+    const procContent = JSON.stringify(item);
+    await fsPromises.writeFile(procFilePath, procContent);
   };
 
   exists(name: string, shouldExist: boolean = true) {
@@ -154,19 +168,18 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   
   async getOne(name: string) {
     if (!this.exists(name)) return undefined;
-    const procDirPath = this.getItemDirPath(name);
-    // const sectionsDirPath = path.join(procDirPath, 'sections');
-    const procInfoFilePath = path.join(procDirPath, 'procedure.json');
-    const procInfo = JSON.parse((await fsPromises.readFile(procInfoFilePath)).toString()) as TItem;
-    return procInfo;
+    const dirPath = this.getItemDirPath(name);
+    const infoFilePath = path.join(dirPath, this.fItemFilename + '.json');
+    const info = JSON.parse((await fsPromises.readFile(infoFilePath)).toString()) as TItem;
+    return info;
   }
   
   async getAll() {
     if (!this.baseDirExists()) return [];
-    const proceduresDirNames = (await fsPromises.readdir(this.fBasePath, { withFileTypes: true })).filter(dir => dir.isDirectory() && dir.name !== 'logic').map(dir => dir.name);
+    const dirNames = (await fsPromises.readdir(this.fBasePath, { withFileTypes: true })).filter(dir => dir.isDirectory() && dir.name !== 'logic').map(dir => dir.name);
     const retVal: TItem[] = [];
-    for (const procDirName of proceduresDirNames) {
-      const proc = await this.getOne(procDirName);
+    for (const dirName of dirNames) {
+      const proc = await this.getOne(dirName);
       if (proc) retVal.push(proc);
     }
     return retVal;
@@ -175,7 +188,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   async create(createItem: TCreate) {
     const sanitizedName = sanitizeFilename(createItem.name);
     this.checkNotExists(sanitizedName);
-    if (!this.baseDirExists()) await this.createProceduresDir();
+    if (!this.baseDirExists()) await this.createItemsDir();
     const itemDirPath = this.getItemDirPath(sanitizedName);
     await fsPromises.mkdir(itemDirPath);
     await this.onCreatedItemDir(itemDirPath, sanitizedName);
@@ -224,11 +237,17 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   
   async setActive(name: string) {
     this.checkExists(name);
-    if (!fs.existsSync(this.fItemFilename + 's')) await this.createProceduresJson();
+    if (!fs.existsSync(this.fItemFilename + 's')) await this.createItemsJson();
     const procsJson = await this.getItemsJson();
     procsJson.active = name;
-    await this.saveProceduresJson(procsJson);
+    await this.saveItemsJson(procsJson);
     this.emit('set-active', name);
   }
   
+  async update(item: TItem) {
+    this.checkExists(item.name);
+    await this.saveItemJson(item.name, item);
+    return item;
+  }
+
 }

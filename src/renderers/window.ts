@@ -4,12 +4,13 @@ import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
-import { IpcChannels } from '../@types/constants';
+import { IpcChannels, DemoUser } from '../@types/constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
 
 window.visualCal = {
   isMac: process.platform === 'darwin',
   isDev: isDev(),
+  user: DemoUser,
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),

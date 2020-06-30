@@ -1,3 +1,9 @@
+export const DemoUser: User = {
+  email: 'test@example.com',
+  nameFirst: 'Test',
+  nameLast: 'User'
+}
+
 export interface IpcChannelRequestResponseErrorNames {
   request: string;
   response: string;
@@ -10,6 +16,7 @@ export interface IpcChannelCRUD {
   create: IpcChannelRequestResponseErrorNames;
   rename: IpcChannelRequestResponseErrorNames;
   remove: IpcChannelRequestResponseErrorNames;
+  update: IpcChannelRequestResponseErrorNames;
   getExists: IpcChannelRequestResponseErrorNames;
   getActive: IpcChannelRequestResponseErrorNames;
   setActive: IpcChannelRequestResponseErrorNames;
@@ -62,6 +69,11 @@ export const IpcChannels = {
       request: 'get-exists-procedure-request',
       response: 'get-exists-procedure-response',
       error: 'get-exists-procedure-error'
+    },
+    update: {
+      request: 'update-procedure-request',
+      response: 'update-procedure-response',
+      error: 'update-procedure-error'
     }
   },
   sessions: {
@@ -104,6 +116,11 @@ export const IpcChannels = {
       request: 'get-exists-session-request',
       response: 'get-exists-session-response',
       error: 'get-exists-session-error'
+    },
+    update: {
+      request: 'update-session-request',
+      response: 'update-session-response',
+      error: 'update-session-error'
     }
   }
 }

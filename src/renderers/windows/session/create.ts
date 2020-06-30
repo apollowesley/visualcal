@@ -1,5 +1,5 @@
 import { IpcChannels } from '../../../@types/constants';
-import { ErrorResponseArgs } from '../../managers/RendererCRUDManager';
+import { ErrorResponseArgs, GetAllResponseArgs } from '../../managers/RendererCRUDManager';
 
 let nameField: HTMLInputElement;
 let procedureSelect: HTMLSelectElement;
@@ -33,6 +33,19 @@ const init = () => {
     updateCreateButton();
   });
 
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs<Procedure>) => {
+    console.info('GetAll', response.items);
+    for (let optionIndex = 0; optionIndex < procedureSelect.options.length; optionIndex++) {
+      procedureSelect.options.remove(optionIndex);
+    }
+    response.items.forEach(p => {
+      const pOptionElement = document.createElement('option');
+      pOptionElement.value = p.name;
+      pOptionElement.label = p.name;
+      procedureSelect.options.add(pOptionElement);
+    });
+  });
+
   window.visualCal.sessionManager.on(IpcChannels.sessions.create.error, (response: ErrorResponseArgs) => {
     alert(response.error.message);
     updateCreateButton();
@@ -62,6 +75,8 @@ const init = () => {
   cancelButton.addEventListener('click', () => {
     window.close();
   });
+
+  window.visualCal.procedureManager.getAll();
 }
 
 init();

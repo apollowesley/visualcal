@@ -82,7 +82,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showWindow: (windowId: VisualCalWindow) => void;
   };
   procedureManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<CreateProcedureInfo>;
-  sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session>;
+  sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session, Session>;
 }
 
 interface NamedType {

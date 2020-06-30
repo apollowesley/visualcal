@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { IpcChannelCRUD } from '../../@types/constants';
 
-export interface RendererCRUDManagerType<TCreate extends NamedType> extends EventEmitter {
+export interface RendererCRUDManagerType<TCreate extends NamedType, TItem extends NamedType> extends EventEmitter {
   getAll(): void;
   getOne(name: string): void;
   create(info: TCreate): void;
@@ -11,6 +11,7 @@ export interface RendererCRUDManagerType<TCreate extends NamedType> extends Even
   rename(oldName: string, newName: string): void;
   getActive(): void;
   setActive(name: string): void;
+  update(item: TItem): void;
 }
 
 export interface ResponseArgs {
@@ -50,11 +51,15 @@ export interface SetActiveResponseArgs extends ResponseArgs {
   name: string;
 }
 
+export interface UpdateResponseArgs<TItem> extends ResponseArgs {
+  item: TItem;
+}
+
 export interface Response<T extends ResponseArgs> {
   (args: T): void;
 }
 
-export abstract class RendererCRUDManager<TCreate extends NamedType, TCreated extends NamedType, TItem extends NamedType> extends EventEmitter implements RendererCRUDManagerType<TCreate> {
+export abstract class RendererCRUDManager<TCreate extends NamedType, TCreated extends NamedType, TItem extends NamedType> extends EventEmitter implements RendererCRUDManagerType<TCreate, TItem> {
 
   private fChannelNames: IpcChannelCRUD;
 
@@ -82,6 +87,9 @@ export abstract class RendererCRUDManager<TCreate extends NamedType, TCreated ex
 
     ipcRenderer.on(this.fChannelNames.setActive.response, (event, name: string) => this.emit(this.fChannelNames.setActive.response, { event, name }));
     ipcRenderer.on(this.fChannelNames.setActive.error, (event, error) => this.emit(this.fChannelNames.setActive.error, { event, error }));
+
+    ipcRenderer.on(this.fChannelNames.update.response, (event, item: TItem) => this.emit(this.fChannelNames.update.response, { event, item }));
+    ipcRenderer.on(this.fChannelNames.update.error, (event, error) => this.emit(this.fChannelNames.update.error, { event, error }));
   }
 
   getAll(): void {
@@ -122,6 +130,11 @@ export abstract class RendererCRUDManager<TCreate extends NamedType, TCreated ex
   setActive(name: string): void {
     window.visualCal.log.info('Setting active', name);
     ipcRenderer.send(this.fChannelNames.setActive.request, name);
+  }
+
+  update(item: TItem): void {
+    window.visualCal.log.info('Updating', item);
+    ipcRenderer.send(this.fChannelNames.update.request, item);
   }
 
 }

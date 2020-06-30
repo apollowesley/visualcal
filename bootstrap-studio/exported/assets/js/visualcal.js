@@ -12,12 +12,16 @@ if (window.require) {
     // Listen for the IPC event that has our BrowserWindow.visualCal.id (number)
     window.visualCal.electron.ipc.once('get-visualcal-window-id-res', (_, windowId) => {
         // Determine which VisualCal window we're running in, then load the appropriate script
+        console.info(windowId);
         switch (windowId) {
             case 0: // main
                 require('../../dist/renderers/windows/main.js');
                 break;
             case 5: // create procedure
                 require('../../dist/renderers/windows/procedure/create.js');
+                break;
+            case 6: // create session
+                require('../../dist/renderers/windows/session/create.js');
                 break;
         }
     });

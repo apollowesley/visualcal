@@ -3,7 +3,7 @@ import path from 'path';
 import { IpcChannels } from '../../@types/constants';
 import { CrudManager } from './CrudManager';
 
-export class SessionManager extends CrudManager<Session, Session, Session> {
+export class SessionManager extends CrudManager<Session, Session, Session, Session> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.sessions, 'session');

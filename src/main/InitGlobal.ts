@@ -8,6 +8,7 @@ import { isDev } from './utils/is-dev-mode';
 import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
+import { DemoUser } from '../@types/constants';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
@@ -17,6 +18,7 @@ export const visualCal: VisualCalGlobalAugment = {
   logger: createLogger(),
   isMac: process.platform === 'darwin',
   isDev: isDev(),
+  user: DemoUser,
   config: {
     httpServer: {
       port: serverListenPort
