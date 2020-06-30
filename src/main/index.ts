@@ -13,7 +13,8 @@ import history from 'connect-history-api-fallback';
 import path from 'path';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { ProcedureManager } from './managers/ProcedureManager';
-import { init as nodeRedUtilsInit } from './node-red/utils';
+import { init as nodeRedUtilsInit, addCommunicationInterface, addCommunicationInterfaceForDevice } from './node-red/utils';
+import { EmulatedCommunicationInterface } from '../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -27,6 +28,32 @@ try {
     NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
     NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
     nodeRedUtilsInit();
+
+    // TODO: DEMO ONLY!!!
+    addCommunicationInterface({
+      communicationInterface: new EmulatedCommunicationInterface(),
+      name: 'Emulated'
+    });
+    addCommunicationInterfaceForDevice({
+      communicationInterfaceName: 'Emulated',
+      deviceName: 'uut',
+      deviceDriver: {
+        categories: ['digital-multi-meter'],
+        deviceModel: '45',
+        manufacturer: 'Fluke'
+      }
+    });
+    addCommunicationInterfaceForDevice({
+      communicationInterfaceName: 'Emulated',
+      deviceName: 'calibrator',
+      deviceDriver: {
+        categories: ['multi-product-calibrator'],
+        deviceModel: '5522A',
+        manufacturer: 'Fluke'
+      }
+    });
+    // TODO: END DEMO
+
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
