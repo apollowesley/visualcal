@@ -14,14 +14,8 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
   static PROCEDURE_LOGIC_FOLDER_NAME = 'logic';
   static PROCEDURE_JSON_FILE_NAME = 'procedure.json';
  
-  getProcedureDirPath(name: string) {
-    const procDir = path.join(global.visualCal.dirs.procedures, name);
-    return procDir;
-  };
-  
-  async createItemsDir() { await fsPromises.mkdir(global.visualCal.dirs.procedures); };
-  async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
-  async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(this.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify({})); };
+  async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
+  async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify({})); };
 
   protected async onCreatedItemDir(itemDirPath: string, sanitizedName: string): Promise<void> {
     await this.createProcedureLogicDir(sanitizedName);
@@ -32,6 +26,11 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     return {
       ...createItem
     };
+  }
+
+  static getProcedureDirPath(name: string) {
+    const procDir = path.join(global.visualCal.dirs.procedures, name);
+    return procDir;
   }
 
 }

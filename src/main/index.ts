@@ -1,8 +1,7 @@
 import 'module-alias/register';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import express from 'express';
 import * as http from 'http';
-import * as RED from "node-red";
 import { IpcChannel } from "./IPC/IpcChannel";
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
 import { SystemInfoChannel } from "./IPC/SystemInfoChannel";
@@ -10,26 +9,25 @@ import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import * as UserHomeUtils from './utils/HomeDir';
 import { isLoggedIn, listenForLogin } from './security';
-import path from 'path';
 import history from 'connect-history-api-fallback';
-import type { NodeRed } from '../@types/logic-server';
+import path from 'path';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
 
   const nodeRedApp = express();
   const httpServer = http.createServer(nodeRedApp);
-  const nodeRed = RED as NodeRed;
 
   function init(ipcChannels: IpcChannel<any>[]) {
+    NodeRedSettings.userDir = path.join(global.visualCal.dirs.visualCalUser, 'logic'),
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
     app.on('activate', onActive);
-    nodeRed.init(httpServer, NodeRedSettings);
-    nodeRedApp.use(NodeRedSettings.httpAdminRoot, nodeRed.httpAdmin);
-    nodeRedApp.use(NodeRedSettings.httpNodeRoot, nodeRed.httpNode);
+    global.visualCal.nodeRed.init(httpServer, NodeRedSettings);
+    nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.httpAdmin);
+    nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.httpNode);
     nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
 
     if (!global.visualCal.isDev) {
@@ -50,7 +48,7 @@ try {
     await UserHomeUtils.ensureExists();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
-        await nodeRed.start();
+        await global.visualCal.nodeRed.start();
       } catch (error) {
         console.error(error);
       }

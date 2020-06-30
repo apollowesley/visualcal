@@ -1,4 +1,5 @@
-import * as fs from 'fs';
+import fs from 'fs';
+import * as RED from 'node-red';
 import path from 'path';
 import { app } from 'electron';
 import { create as createLogger } from './logging/CreateLogger';
@@ -9,6 +10,7 @@ import { serverListenPort, dirs, publicPath, files } from '../common/global-wind
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
 import { DemoUser } from '../@types/constants';
+import { NodeRed } from 'src/@types/logic-server';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
@@ -19,6 +21,7 @@ export const visualCal: VisualCalGlobalAugment = {
   isMac: process.platform === 'darwin',
   isDev: isDev(),
   user: DemoUser,
+  nodeRed: RED as NodeRed,
   config: {
     httpServer: {
       port: serverListenPort

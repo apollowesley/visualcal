@@ -72,6 +72,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   windowManager: import('../main/managers/WindowManager').WindowManager;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
   sessionManager: import('../main/managers/SessionManager').SessionManager;
+  nodeRed: import('./logic-server').NodeRed;
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {
