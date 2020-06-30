@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { NodeProperties } from 'node-red';
 import { getFlowSectionName } from './utils';
 import { NodeRedRuntimeNode, NodeRed, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';

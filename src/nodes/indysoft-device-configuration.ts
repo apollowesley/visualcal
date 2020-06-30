@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { NodeRed, DeviceConfigurationNode } from '../@types/logic-server';
 import { DeviceConfigurationProperties } from '../@types/logic-nodes';
 import { IndySoftNodeTypeNames } from '../@types/constants';

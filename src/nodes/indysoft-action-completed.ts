@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { NodeProperties } from 'node-red';
 import { resetProcedureActionStatus } from './utils';
 import { Red } from 'node-red';

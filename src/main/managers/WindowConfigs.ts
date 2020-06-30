@@ -115,6 +115,7 @@ export const ViewSessionWindowConfig = (): CreateWindowOptions => {
       title: 'VisualCal - View Session',
       fullscreenable: false,
       autoHideMenuBar: false,
+      modal: true,
       webPreferences: {
         nodeIntegration: true
       }

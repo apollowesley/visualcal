@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, NodeRedNodeMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 

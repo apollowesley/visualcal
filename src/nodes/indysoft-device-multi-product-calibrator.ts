@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRed, DeviceConfigurationNode, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { MultiProductCalibratorDevice } from '../drivers/devices/multi-product-calibrators/MultiProductCalibrator';

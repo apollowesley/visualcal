@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { Keysight34401A } from '../drivers/devices/digital-multimeters/Keysight34401A';

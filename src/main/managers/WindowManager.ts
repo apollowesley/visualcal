@@ -314,6 +314,7 @@ export class WindowManager {
       s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name } });
     });
     WindowUtils.centerWindowOnNearestCurorScreen(window);
+    if (this.mainWindow) window.setParentWindow(this.mainWindow);
     await window.loadFile(global.visualCal.dirs.html.session.view);
     window.webContents.send('session-view-info', sessionName, sections);
     return window;

@@ -1,4 +1,3 @@
-import 'module-alias/register';
 import { app, ipcMain } from 'electron';
 import express from 'express';
 import * as http from 'http';
@@ -78,7 +77,6 @@ try {
   }
 
   async function onAppReady() {
-    (await import('vue-devtools')).install();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
         await global.visualCal.nodeRed.app.start();
