@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig } from './WindowConfigs';
 
 export class WindowManager {
 
@@ -40,6 +40,9 @@ export class WindowManager {
         default:
           throw new Error(`Invalid window Id, ${windowId}`);
       }
+    });
+    ipcMain.on('show-view-session-window', async (_, sessionName: string) => {
+      await this.ShowViewSessionWindow(sessionName);
     });
   }
 
@@ -85,6 +88,12 @@ export class WindowManager {
 
   get createSessionWindow() {
     const window = this.get(VisualCalWindow.CreateSession);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get viewSessionWindow() {
+    const window = this.get(VisualCalWindow.ViewSession);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -276,6 +285,24 @@ export class WindowManager {
     window = this.create(CreateSessionWindowConfig());
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(global.visualCal.dirs.html.session.create);
+    return window;
+  }
+
+  async ShowViewSessionWindow(sessionName: string) {
+    let window = this.viewSessionWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    if (!global.visualCal.dirs.html.session.view) return;
+    window = this.create(ViewSessionWindowConfig());
+    const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] } });
+    sections.forEach(s => {
+      s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name } });
+    });
+    WindowUtils.centerWindowOnNearestCurorScreen(window);
+    await window.loadFile(global.visualCal.dirs.html.session.view);
+    window.webContents.send('session-view-info', sessionName, sections);
     return window;
   }
 

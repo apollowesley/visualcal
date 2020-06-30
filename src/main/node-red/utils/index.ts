@@ -48,14 +48,14 @@ export interface DeviceCommunicationInterfaceNamePair {
   deviceDriver?: DeviceDriver;
 }
 
-let logicServer: NodeRed;
+
 let driversPackagejson: DriversPackageJson;
 const communicationInterfaces: CommunicationInterfaceNamePair[] = [];
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
 export const onActionStateChange = (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => {
-  logicServer.events.emit('comms', { topic: 'visualcal', data: { type: 'action', state: options.state, section: options.section, action: options.action } });
-  console.debug(`[logicServer.settings.onActionStateChange] [${node.type}] [${node.id}] [action] [section: ${options.section}] [action: ${options.action}] [state: ${options.state}]`);
+  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { type: 'action', state: options.state, section: options.section, action: options.action } });
+  console.debug(`[global.visualCal.nodeRed.app.settings.onActionStateChange] [${node.type}] [${node.id}] [action] [section: ${options.section}] [action: ${options.action}] [state: ${options.state}]`);
 };
 
 export const onActionResult = async (options: NotifyFrontendActionResultOptions) => {
@@ -63,18 +63,18 @@ export const onActionResult = async (options: NotifyFrontendActionResultOptions)
 };
 
 export const onShowInstruction = (node: NodeRedNode, options: InstructionRequest) => {
-  logicServer.events.emit('comms', { topic: 'visualcal', data: options });
-  console.debug(`[logicServer.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [title: ${options.title}] [text: ${options.text}]`);
+  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: options });
+  console.debug(`[global.visualCal.nodeRed.app.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [title: ${options.title}] [text: ${options.text}]`);
 };
 
 export const onGetUserInput = (node: NodeRedNode, options: UserInputRequest) => {
-  logicServer.events.emit('comms', { topic: 'visualcal', data: options });
-  console.debug(`[logicServer.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [dataType: ${options.dataType}]`);
+  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: options });
+  console.debug(`[global.visualCal.nodeRed.app.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [dataType: ${options.dataType}]`);
 };
 
 export const onComment = (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
-  logicServer.events.emit('comms', { topic: 'visualcal', data: { source: source, type: 'comment', nodeId: node.id, nodeType: node.type, commentType: type, comment: comment } });
-  console.debug(`[logicServer.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
+  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { source: source, type: 'comment', nodeId: node.id, nodeType: node.type, commentType: type, comment: comment } });
+  console.debug(`[global.visualCal.nodeRed.app.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
 };
 
 export const getCommunicationInterface = (name: string) => {
@@ -152,7 +152,7 @@ export const getDriverForDevice = async (deviceName: string) => {
 
 export const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
   const retVal: DeviceNodeProperties[] = [];
-  logicServer.nodes.eachNode(node => {
+  global.visualCal.nodeRed.app.nodes.eachNode(node => {
     const nodeAny = node as DeviceNodeProperties;
     if (nodeAny.deviceConfigId === configNodeId) retVal.push(nodeAny);
     return retVal;
@@ -189,7 +189,7 @@ export const getDriverInfosForDevice = (deviceName: string) => {
   if (!deviceConfigNode) return [];
   const deviceOwners = findDeviceConfigurationNodeOwners(deviceConfigNode.id);
   if (!deviceOwners) return [];
-  let deviceOwnerRuntimeNodes = deviceOwners.map(node => logicServer.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
+  let deviceOwnerRuntimeNodes = deviceOwners.map(node => global.visualCal.nodeRed.app.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
   if (!deviceOwnerRuntimeNodes) return [];
   deviceOwnerRuntimeNodes = deviceOwnerRuntimeNodes.filter(node => node.isGenericDevice);
   const retVal: DriversPackageJsonDriver[] = [];
@@ -210,13 +210,13 @@ export const getInterfaceDriverInfos = () => {
 };
 
 export const resetAllNodes = () => {
-  logicServer.runtime.events.emit('reset');
+  global.visualCal.nodeRed.app.runtime.events.emit('reset');
 };
 
 export const getAllNodes = (): NodeRedRuntimeNode[] => {
   const retVal: NodeRedRuntimeNode[] = [];
-  logicServer.nodes.eachNode(np => {
-    const n = logicServer.nodes.getNode(np.id) as NodeRedRuntimeNode;
+  global.visualCal.nodeRed.app.nodes.eachNode(np => {
+    const n = global.visualCal.nodeRed.app.nodes.getNode(np.id) as NodeRedRuntimeNode;
     if (n && n.type !== 'tab') retVal.push(n);
   });
   return retVal;
@@ -247,7 +247,7 @@ export const resetAllConnectedNodes = (startFrom: NodeRedRuntimeNode, options?: 
   if (options && options.targetId !== startFrom.id) return;
   if (!startFrom.wires) return;
   startFrom.wires.forEach(nodeId => {
-    const currentNode = logicServer.nodes.getNode(nodeId);
+    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
     if (currentNode) {
       currentNode.emit('reset');
       resetAllConnectedNodes(currentNode, options);
@@ -262,7 +262,7 @@ export const resetAllConnectedNodes = (startFrom: NodeRedRuntimeNode, options?: 
 export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) => {
   if (!startFrom.wires) return;
   startFrom.wires.forEach(nodeId => {
-    const currentNode = logicServer.nodes.getNode(nodeId);
+    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
     if (currentNode) {
       if (currentNode.type.startsWith('indysoft-instruction') || currentNode.type.startsWith('indysoft-dialog')) currentNode.emit('reset');
       resetConnectedInstructionNodes(currentNode);
@@ -322,8 +322,7 @@ export const disableAllCommunicationInterfaces = () => {
   communicationInterfaces.forEach(ci => ci.communicationInterface.disable());
 };
 
-export const init = (server: NodeRed) => {
-  logicServer = server;
+export const init = () => {
   const driversPackagejsonPath = path.join(global.visualCal.dirs.drivers.base, 'package.json');
   driversPackagejson = fs.readJSONSync(driversPackagejsonPath);
 };

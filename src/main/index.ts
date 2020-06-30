@@ -13,6 +13,7 @@ import history from 'connect-history-api-fallback';
 import path from 'path';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { ProcedureManager } from './managers/ProcedureManager';
+import { init as nodeRedUtilsInit } from './node-red/utils';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -25,6 +26,7 @@ try {
     NodeRedSettings.userDir = path.join(global.visualCal.dirs.visualCalUser, 'logic'),
     NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
     NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
+    nodeRedUtilsInit();
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());

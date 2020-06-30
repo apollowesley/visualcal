@@ -16,6 +16,7 @@
     "start": "npm run clean:dist && npm run build && electron --disable-gpu dist/main/index.js",
     "update:all": "npm-update-all",
     "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force",
+    "copydrivers:packagejson": "cp src/drivers/package.json dist/drivers",
     "copynodes:packagejson": "cp src/nodes/package.json dist/nodes",
     "copynodes:html": "cp src/nodes/*.html dist/nodes",
     "copynodes:examples": "cp -R src/nodes/examples dist/nodes",

@@ -13,6 +13,7 @@ import { DemoUser } from '../@types/constants';
 import { NodeRed } from '../@types/logic-server';
 import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
 import { ResultManager } from './managers/ResultManager';
+import { ActionManager } from './managers/ActionManager';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
@@ -43,6 +44,7 @@ export const visualCal: VisualCalGlobalAugment = {
   sessionManager: new SessionManager(dirs.sessions),
   nodeRedFlowManager: new NodeRedFlowManager(),
   resultManager: new ResultManager(),
+  actionManager: new ActionManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

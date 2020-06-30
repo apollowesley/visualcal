@@ -13,6 +13,7 @@ interface TreeItem {
 interface VisualCalCRUDDir {
   create: string;
   edit: string;
+  view?: string;
   remove?: string;
 }
 
@@ -90,6 +91,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   sessionManager: import('../main/managers/SessionManager').SessionManager;
   nodeRedFlowManager: import('../main/managers/NodeRedFlowManager').NodeRedFlowManager;
   resultManager: import('../main/managers/ResultManager').ResultManager;
+  actionManager: import('../main/managers/ActionManager').ActionManager;
   nodeRed: {
     app: import('./logic-server').NodeRed;
   };
@@ -101,9 +103,12 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;
     showWindow: (windowId: VisualCalWindow) => void;
+    showViewSessionWindow: (sessionName: string) => void;
   };
   procedureManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<CreateProcedureInfo, Procedure>;
   sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session, Session>;
+  resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;
+  actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
 }
 
 interface NamedType {

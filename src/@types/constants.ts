@@ -139,6 +139,13 @@ export const IpcChannels = {
       response: 'saveOne-result-response',
       error: 'saveOne-result-error'
     }
+  },
+  actions: {
+    start: {
+      request: 'start-action-request',
+      response: 'start-action-response',
+      error: 'start-action-error'
+    }
   }
 }
 

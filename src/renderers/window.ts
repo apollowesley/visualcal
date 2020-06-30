@@ -7,6 +7,8 @@ import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels, DemoUser } from '../@types/constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
+import { RendererResultManager } from './managers/RendererResultManager';
+import { RendererActionManager } from './managers/RendererActionManager';
 
 window.visualCal = {
   browserUtils: browserUtils,
@@ -16,7 +18,8 @@ window.visualCal = {
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
-    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId)
+    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
+    showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName)
   },
   config: {
     httpServer: {
@@ -33,6 +36,8 @@ window.visualCal = {
   },
   procedureManager: new RendererProcedureManager(),
   sessionManager: new RendererSessionManager(),
+  resultsManager: new RendererResultManager(),
+  actionManager: new RendererActionManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

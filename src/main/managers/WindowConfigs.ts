@@ -107,3 +107,17 @@ export const CreateSessionWindowConfig = (): CreateWindowOptions => {
     }
   }
 }
+
+export const ViewSessionWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.ViewSession,
+    config: {
+      title: 'VisualCal - View Session',
+      fullscreenable: false,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ export class ResultManager extends EventEmitter {
     ipcMain.on(IpcChannels.results.load.request, async (event, sessionName: string) => {
       try {
         const retVal = await this.load(sessionName);
-        event.reply(IpcChannels.results.load.response, retVal);
+        event.reply(IpcChannels.results.load.response, sessionName, retVal);
       } catch (error) {
         event.reply(IpcChannels.results.load.error, error);
       }
@@ -20,7 +20,7 @@ export class ResultManager extends EventEmitter {
     ipcMain.on(IpcChannels.results.save.request, async (event, sessionName: string, results: LogicResult[]) => {
       try {
         await this.save(sessionName, results);
-        event.reply(IpcChannels.results.save.response, results);
+        event.reply(IpcChannels.results.save.response, sessionName, results);
       } catch (error) {
         event.reply(IpcChannels.results.save.error, error);
       }
@@ -29,7 +29,7 @@ export class ResultManager extends EventEmitter {
     ipcMain.on(IpcChannels.results.saveOne.request, async (event, sessionName: string, result: LogicResult) => {
       try {
         await this.saveOne(sessionName, result);
-        event.reply(IpcChannels.results.saveOne.response, result);
+        event.reply(IpcChannels.results.saveOne.response, sessionName, result);
       } catch (error) {
         event.reply(IpcChannels.results.saveOne.error, error);
       }

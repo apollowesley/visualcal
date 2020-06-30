@@ -23,6 +23,9 @@ if (window.require) {
             case 6: // create session
                 require('../../dist/renderers/windows/session/create.js');
                 break;
+            case 7: // view session
+                require('../../dist/renderers/windows/session/view.js');
+                break;
         }
     });
     window.visualCal.electron.getVisualCalWindowId();
