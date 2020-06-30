@@ -1,7 +1,7 @@
 import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../@types/constants';
-import { LoadResponseArgs } from '../../managers/RendererResultManager';
+import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
 
 let sessionName: string = '';
 let sections: SectionInfo[] = [];
@@ -65,7 +65,7 @@ const resultsTable = new Tabulator('#vc-results-tabulator', {
     { title: 'Action', field: 'action' },
     { title: 'Type', field: 'type' },
     { title: 'Description', field: 'description' },
-    { title: 'Timestamp', field: 'timestamp', formatter: 'datetime' },
+    { title: 'Timestamp', field: 'timestamp' },
     { title: 'Base EU', field: 'baseQuantity' },
     { title: 'Derived EU', field: 'derivedQuantity' },
     { title: 'Nominal', field: 'inputLevel' },
@@ -101,6 +101,11 @@ const init = () => {
 
   window.visualCal.resultsManager.on(IpcChannels.results.load.response, (response: LoadResponseArgs) => {
     results = response.results;
+    resultsTable.setData(results);
+  });
+
+  window.visualCal.resultsManager.on(IpcChannels.results.saveOne.response, (response: SaveOneResponseArgs) => {
+    results.push(response.result);
     resultsTable.setData(results);
   });
 
