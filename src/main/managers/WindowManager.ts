@@ -327,6 +327,7 @@ export class WindowManager {
       return window;
     }
     window = this.create(UserInstructionWindowConfig());
+    if (this.viewSessionWindow) window.setParentWindow(this.viewSessionWindow);
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(global.visualCal.dirs.html.userInstruction);
     window.webContents.send('user-instruction-request', request);
@@ -341,6 +342,7 @@ export class WindowManager {
       return window;
     }
     window = this.create(UserInputWindowConfig());
+    if (this.viewSessionWindow) window.setParentWindow(this.viewSessionWindow);
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(global.visualCal.dirs.html.userInput);
     window.webContents.send('user-input-request', request);

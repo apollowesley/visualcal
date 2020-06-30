@@ -130,6 +130,9 @@ export const UserInstructionWindowConfig = (): CreateWindowOptions => {
       fullscreenable: false,
       modal: true,
       autoHideMenuBar: false,
+      useContentSize: true,
+      width: 1000,
+      height: 750,
       webPreferences: {
         nodeIntegration: true
       }
@@ -145,6 +148,9 @@ export const UserInputWindowConfig = (): CreateWindowOptions => {
       fullscreenable: false,
       modal: true,
       autoHideMenuBar: false,
+      useContentSize: true,
+      width: 1000,
+      height: 750,
       webPreferences: {
         nodeIntegration: true
       }
