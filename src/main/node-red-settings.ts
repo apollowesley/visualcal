@@ -5,7 +5,6 @@ import type { Settings } from '../@types/logic-server';
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
 const settings: Settings = {
-  procedureBaseDirPath: '',
   disableAllCommunicationInterfaces: () => {},
   driversRoot: '',
   enableAllCommunicationInterfaces: () => {},

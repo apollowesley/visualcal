@@ -36,6 +36,11 @@ interface NodeRedStorageModule {
 
 let localSettings: LogicServerSettings;
 
+const getProcedureLogicDirPath = (procedureName: string) => fsPath.join(global.visualCal.dirs.procedures, procedureName, 'logic');
+const getProcedureFlowFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'flows.json');
+const getProcedureCredentialsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'credentials.json');
+const getProcedureSettingsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'settings.json');
+
 export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
     async init(settings: LogicServerSettings): Promise<void> {
       console.debug('VisualCalLogicServerFileSystem.init');
@@ -62,7 +67,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return [];
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'flows.json');
+      const filePath = getProcedureFlowFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) return [];
       const contentString = (await fsPromises.readFile(filePath)).toString();
       const retVal = JSON.parse(contentString);
@@ -72,7 +77,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return;
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'flows.json');
+      const filePath = getProcedureFlowFilePath(currentProcedureName);
       const contentString = JSON.stringify(flows, null, '\t');
       await fsPromises.writeFile(filePath, contentString);
     },
@@ -80,7 +85,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return [];
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'credentials.json');
+      const filePath = getProcedureCredentialsFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) return [];
       const contentString = (await fsPromises.readFile(filePath)).toString();
       const retVal = JSON.parse(contentString);
@@ -90,7 +95,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return;
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'credentials.json');
+      const filePath = getProcedureCredentialsFilePath(currentProcedureName);
       const contentString = JSON.stringify(credentials);
       await fsPromises.writeFile(filePath, contentString);
     },
@@ -98,7 +103,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return {};
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'settings.json');
+      const filePath = getProcedureSettingsFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) return {};
       const contentString = (await fsPromises.readFile(filePath)).toString();
       const retVal = JSON.parse(contentString);
@@ -109,7 +114,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return;
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'settings.json');
+      const filePath = getProcedureSettingsFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) {
         console.error(`${filePath} does not exist`);
         return {};
@@ -124,7 +129,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return [];
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'sessions.json');
+      const filePath = getProcedureSettingsFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) return [];
       const contentString = (await fsPromises.readFile(filePath)).toString();
       const retVal = JSON.parse(contentString);
@@ -135,7 +140,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       const currentProcedureName = await global.visualCal.procedureManager.getActive();
       if (!currentProcedureName) return;
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-      const filePath = fsPath.join(localSettings.procedureBaseDirPath, currentProcedureName, 'logic', 'sessions.json');
+      const filePath = getProcedureSettingsFilePath(currentProcedureName);
       const contentString = JSON.stringify(sessions);
       await fsPromises.writeFile(filePath, contentString);
     },

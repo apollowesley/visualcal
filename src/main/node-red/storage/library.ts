@@ -17,11 +17,16 @@
 import fs from 'fs-extra';
 import { promises as fsPromises } from 'fs';
 import when from 'when';
-import fspath from 'path';
+import fsPath from 'path';
 import { writeFile } from './util';
 import { Settings as LogicServerSettings } from '../../../@types/logic-server';
 
 let settings: LogicServerSettings;
+
+const getProcedureLogicDirPath = (procedureName: string) => fsPath.join(global.visualCal.dirs.procedures, procedureName, 'logic');
+const getProcedureFlowFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'flows.json');
+const getProcedureCredentialsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'credentials.json');
+const getProcedureSettingsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'settings.json');
 
 interface MetaObject {
   // eslint-disable-next-line
@@ -29,7 +34,7 @@ interface MetaObject {
 }
 
 function getFileMeta(root: string, path: string): MetaObject {
-  const fn = fspath.join(root, path);
+  const fn = fsPath.join(root, path);
   const fd = fs.openSync(fn, 'r');
   const { size } = fs.fstatSync(fd);
   const meta: MetaObject = {};
@@ -63,7 +68,7 @@ function getFileMeta(root: string, path: string): MetaObject {
 
 function getFileBody(root: string, path: string) {
   let body = '';
-  const fn = fspath.join(root, path);
+  const fn = fsPath.join(root, path);
   const data = fs.readFileSync(fn, 'utf8');
   const parts = data.split('\n');
   let scanning = true;
@@ -80,9 +85,9 @@ export async function getLibraryEntry(type: string, path: string): Promise<any> 
   const currentProcedureName = await global.visualCal.procedureManager.getActive();
   if (!currentProcedureName) return [];
   if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-  const libDir = fspath.join(settings.procedureBaseDirPath, currentProcedureName, 'logic');
-  const root = fspath.join(libDir, type);
-  const rootPath = fspath.join(libDir, type, path);
+  const libDir = getProcedureLogicDirPath(currentProcedureName);
+  const root = fsPath.join(libDir, type);
+  const rootPath = fsPath.join(libDir, type, path);
 
   // don't create the folder if it does not exist - we are only reading....
   try {
@@ -97,8 +102,8 @@ export async function getLibraryEntry(type: string, path: string): Promise<any> 
     const dirs: any[] = [];
     const files: any[] = [];
     fns.sort().filter((fn: string) => {
-      const fullPath = fspath.join(path, fn);
-      const absoluteFullPath = fspath.join(root, fullPath);
+      const fullPath = fsPath.join(path, fn);
+      const absoluteFullPath = fsPath.join(root, fullPath);
       if (fn[0] != '.') {
         const stats2 = fs.lstatSync(absoluteFullPath);
         if (stats2.isDirectory()) {
@@ -147,11 +152,11 @@ export async function saveLibraryEntry(type: string, path: string, meta: MetaObj
   const currentProcedureName = await global.visualCal.procedureManager.getActive();
   if (!currentProcedureName) return;
   if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
-  const libDir = fspath.join(settings.procedureBaseDirPath, currentProcedureName, 'logic');
+  const libDir = getProcedureLogicDirPath(currentProcedureName);
   if (type === 'flows' && !path.endsWith('.json')) {
     path += '.json';
   }
-  const fn = fspath.join(libDir, type, path);
+  const fn = fsPath.join(libDir, type, path);
   let headers = '';
   for (const i in meta) {
     if (Object.prototype.hasOwnProperty.call(meta, i)) {
@@ -161,7 +166,7 @@ export async function saveLibraryEntry(type: string, path: string, meta: MetaObj
   if (type === 'flows' && settings.flowFilePretty) {
     body = JSON.stringify(JSON.parse(body), null, 4);
   }
-  return fs.ensureDir(fspath.dirname(fn)).then(() => {
+  return fs.ensureDir(fsPath.dirname(fn)).then(() => {
     writeFile(fn, headers + body);
   });
 }

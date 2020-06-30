@@ -22,7 +22,6 @@ export interface NodeRedLogging {
 
 export interface Settings {
   adminAuth?: NodeRedAdminAuth;
-  procedureBaseDirPath: string;
   credentialSecret?: string;
   storageModule?: any;
   readOnly?: boolean;

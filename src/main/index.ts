@@ -11,6 +11,7 @@ import * as UserHomeUtils from './utils/HomeDir';
 import { isLoggedIn, listenForLogin } from './security';
 import history from 'connect-history-api-fallback';
 import path from 'path';
+import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -20,6 +21,7 @@ try {
 
   function init(ipcChannels: IpcChannel<any>[]) {
     NodeRedSettings.userDir = path.join(global.visualCal.dirs.visualCalUser, 'logic'),
+    NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
