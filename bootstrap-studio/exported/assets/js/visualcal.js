@@ -26,6 +26,12 @@ if (window.require) {
             case 7: // view session
                 require('../../dist/renderers/windows/session/view.js');
                 break;
+            case 8: // user instruction
+                require('../../dist/renderers/windows/user/instruction.js');
+                break;
+            case 9: // user input
+                require('../../dist/renderers/windows/user/input.js');
+                break;
         }
     });
     window.visualCal.electron.getVisualCalWindowId();

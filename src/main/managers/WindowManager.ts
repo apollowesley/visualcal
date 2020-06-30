@@ -1,7 +1,7 @@
-import { BrowserWindow, dialog, app, ipcMain } from 'electron';
+import { BrowserWindow, dialog, app, ipcMain, ipcRenderer } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig } from './WindowConfigs';
 
 export class WindowManager {
 
@@ -94,6 +94,18 @@ export class WindowManager {
 
   get viewSessionWindow() {
     const window = this.get(VisualCalWindow.ViewSession);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get userInstructionWindow() {
+    const window = this.get(VisualCalWindow.UserInstruction);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get userInputWindow() {
+    const window = this.get(VisualCalWindow.UserInput);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -288,13 +300,14 @@ export class WindowManager {
     return window;
   }
 
+  // View session window
   async ShowViewSessionWindow(sessionName: string) {
     let window = this.viewSessionWindow;
     if (window) {
       window.show();
       return window;
     }
-    if (!global.visualCal.dirs.html.session.view) return;
+    if (!global.visualCal.dirs.html.session.view) throw new Error('Missing window html file');
     window = this.create(ViewSessionWindowConfig());
     const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] } });
     sections.forEach(s => {
@@ -303,6 +316,34 @@ export class WindowManager {
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     await window.loadFile(global.visualCal.dirs.html.session.view);
     window.webContents.send('session-view-info', sessionName, sections);
+    return window;
+  }
+
+  // User instruction window 
+  async ShowUserInstructionWindow(request: InstructionRequest) {
+    let window = this.userInstructionWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(UserInstructionWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(global.visualCal.dirs.html.userInstruction);
+    window.webContents.send('user-instruction-request', request);
+    return window;
+  }
+
+  // User input window 
+  async ShowUserInputWindow(request: UserInputRequest) {
+    let window = this.userInputWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(UserInputWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(global.visualCal.dirs.html.userInput);
+    window.webContents.send('user-input-request', request);
     return window;
   }
 

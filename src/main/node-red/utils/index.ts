@@ -64,11 +64,13 @@ export const onActionResult = async (options: NotifyFrontendActionResultOptions)
 
 export const onShowInstruction = (node: NodeRedNode, options: InstructionRequest) => {
   global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: options });
+  global.visualCal.userInteractionManager.showInstruction(options);
   console.debug(`[global.visualCal.nodeRed.app.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [title: ${options.title}] [text: ${options.text}]`);
 };
 
 export const onGetUserInput = (node: NodeRedNode, options: UserInputRequest) => {
   global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: options });
+  global.visualCal.userInteractionManager.showInput(options);
   console.debug(`[global.visualCal.nodeRed.app.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [dataType: ${options.dataType}]`);
 };
 

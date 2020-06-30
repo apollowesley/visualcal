@@ -141,10 +141,22 @@ export const IpcChannels = {
     }
   },
   actions: {
-    start: {
+    trigger: {
       request: 'start-action-request',
       response: 'start-action-response',
       error: 'start-action-error'
+    }
+  },
+  user: {
+    showInstruction: {
+      request: 'show-instruction-request',
+      response: 'show-instruction-response',
+      error: 'show-instruction-error'
+    },
+    showInput: {
+      request: 'show-input-request',
+      response: 'show-input-response',
+      error: 'show-input-error'
     }
   }
 }

@@ -7,17 +7,17 @@ export class ActionManager extends EventEmitter {
 
   constructor() {
     super();
-    ipcMain.on(IpcChannels.actions.start.request, (event, opts: TriggerOptions) => {
+    ipcMain.on(IpcChannels.actions.trigger.request, (event, opts: TriggerOptions) => {
       try {
-        const result = this.start(opts);
-        event.reply(IpcChannels.actions.start.response, result);
+        const result = this.trigger(opts);
+        event.reply(IpcChannels.actions.trigger.response, result);
       } catch (error) {
-        event.reply(IpcChannels.actions.start.error, error);
+        event.reply(IpcChannels.actions.trigger.error, error);
       }
     });
   }
 
-  start(opts: TriggerOptions) {
+  trigger(opts: TriggerOptions) {
     const result = trigger(opts);
     if (result.error) {
       throw new Error(result.error);

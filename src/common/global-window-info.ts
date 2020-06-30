@@ -59,7 +59,9 @@ export const dirs: VisualCalAugmentDirs = {
       edit: path.join(bootstrapStudioPath, 'session-edit.html'),
       remove: path.join(bootstrapStudioPath, 'session-remove.html'),
       view: path.join(bootstrapStudioPath, 'session-view.html')
-    }
+    },
+    userInput: path.join(bootstrapStudioPath, 'action-user-input.html'),
+    userInstruction: path.join(bootstrapStudioPath, 'action-user-instruction.html')
   },
   renderers: {
     base: renderersPath,

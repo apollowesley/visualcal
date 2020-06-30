@@ -121,3 +121,33 @@ export const ViewSessionWindowConfig = (): CreateWindowOptions => {
     }
   }
 }
+
+export const UserInstructionWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.UserInstruction ,
+    config: {
+      title: 'VisualCal - User Instruction',
+      fullscreenable: false,
+      modal: true,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}
+
+export const UserInputWindowConfig = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.UserInput,
+    config: {
+      title: 'VisualCal - User Input',
+      fullscreenable: false,
+      modal: true,
+      autoHideMenuBar: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}

@@ -30,6 +30,8 @@ interface VisualCalAugmentDirs {
     bootstrapStudio: string;
     procedure: VisualCalCRUDDir;
     session: VisualCalCRUDDir;
+    userInstruction: string;
+    userInput: string;
   },
   renderers: {
     base: string;
@@ -92,6 +94,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   nodeRedFlowManager: import('../main/managers/NodeRedFlowManager').NodeRedFlowManager;
   resultManager: import('../main/managers/ResultManager').ResultManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;
+  userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
   nodeRed: {
     app: import('./logic-server').NodeRed;
   };

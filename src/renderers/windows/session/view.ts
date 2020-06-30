@@ -42,7 +42,7 @@ const startActionClick = async (cell: Tabulator.CellComponent) => {
     runId: Date.now().toString(),
     type: 'start'
   };
-  window.visualCal.actionManager.start(opts);
+  window.visualCal.actionManager.trigger(opts);
 }
 
 const actionsTable = new Tabulator('#vc-actions-tabulator', {
@@ -88,6 +88,14 @@ const init = () => {
         actions = firstSection.actions;
         actionsTable.setData(actions);
       }
+    }
+  });
+
+  ipcRenderer.on(IpcChannels.actions.trigger.error, (_, error: Error) => {
+    if (error.message) {
+      alert(error.message);
+    } else {
+      alert(error);
     }
   });
 
