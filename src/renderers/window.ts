@@ -6,8 +6,10 @@ import fs from 'fs';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels, DemoUser } from '../@types/constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
+import { browserUtils } from './utils/browser-utils';
 
 window.visualCal = {
+  browserUtils: browserUtils,
   isMac: process.platform === 'darwin',
   isDev: isDev(),
   user: DemoUser,

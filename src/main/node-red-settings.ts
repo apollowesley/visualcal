@@ -25,7 +25,7 @@ const settings: Settings = {
   onShowInstruction: () => undefined,
   resetAllConnectedInstructionNodes: () => undefined,
   resetAllConnectedNodes: () => undefined,
-
+  paletteCategories: ['Actions', 'User', 'Results', 'Digital Multimeter', 'Multi Product Calibrator', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
   httpAdminRoot: '/red',  // set to false to disable editor and deploy
   httpNodeRoot: '/',
   userDir: path.join(os.homedir(), '.visualcal', 'logic'),

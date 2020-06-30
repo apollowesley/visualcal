@@ -243,6 +243,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemsJson(procsJson);
     this.emit('set-active', name);
     this.onSetActive(name);
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.setActive.response, name);
   }
   
   protected async onSetActive(name: string) {

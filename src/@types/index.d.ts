@@ -77,7 +77,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {
-  browserUtils?: VisualCalBrowserUtils;
+  browserUtils: VisualCalBrowserUtils;
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;

@@ -33,4 +33,13 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     return procDir;
   }
 
+  /**
+   * Loads the active procedure, if any, from the procedures.json file.
+   * This should be call when the app starts.
+   */
+  static async loadActive() {
+    const activeProc = await global.visualCal.procedureManager.getActive();
+    if (activeProc) await global.visualCal.procedureManager.setActive(activeProc);
+  }
+
 }

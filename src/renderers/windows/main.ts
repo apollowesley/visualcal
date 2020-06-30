@@ -1,11 +1,12 @@
 import { IpcChannels } from '../../@types/constants';
-import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs } from '../managers/RendererCRUDManager';
+import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs, SetActiveResponseArgs } from '../managers/RendererCRUDManager';
 import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
 
 // ***** PROCEDURES *****
 
+let activeProcedureHeading: HTMLHeadingElement;
 let createProcedureButton: HTMLButtonElement;
 let procedures: Procedure[] = [];
 
@@ -29,6 +30,14 @@ const initProcedureListeners = () => {
   window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, async (response: UpdateResponseArgs<Procedure>) => {
     console.info('Update', response.item);
     await loadProcedures();
+  });
+  window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, async (response: SetActiveResponseArgs) => {
+    console.info('Update', response.name);
+    activeProcedureHeading.innerText = response.name;
+    const activeRow = proceduresTable.getRows().find((value) => (value.getCell('name').getValue() as string) === response.name);
+    if (activeRow) activeRow.getElement().classList.add('active-procedure');
+    const rest = proceduresTable.getRows().filter((value) => (value.getCell('name').getValue() as string) !== response.name);
+    if (rest) rest.forEach(r => r.getElement().classList.remove('active-procedure'));
   });
 }
 
@@ -219,6 +228,8 @@ const init = async () => {
   initProcedureListeners();
   initSessionListeners();
 
+  activeProcedureHeading = document.getElementById('vc-procedure-active-heading') as HTMLHeadingElement;
+
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
   createProcedureButton.addEventListener('click', () => {
     window.visualCal.electron.showWindow(VisualCalWindow.CreateProcedure);
@@ -231,6 +242,8 @@ const init = async () => {
 
   await loadProcedures();
   await loadSessions();
+
+  window.visualCal.procedureManager.getActive();
 }
 
 init();

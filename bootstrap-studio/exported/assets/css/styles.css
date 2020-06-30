@@ -22,7 +22,7 @@ main {
   background-color: gray;
   margin: 20px;
   min-height: 250px;
-  min-width: 500px;
+  min-width: 600px;
 }
 
 .form-group {
@@ -40,5 +40,9 @@ textarea {
 
 .tabulator {
   min-height: 300px;
+}
+
+.active-procedure {
+  background-color: green;
 }
 

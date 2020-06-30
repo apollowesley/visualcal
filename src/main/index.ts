@@ -12,6 +12,7 @@ import { isLoggedIn, listenForLogin } from './security';
 import history from 'connect-history-api-fallback';
 import path from 'path';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
+import { ProcedureManager } from './managers/ProcedureManager';
 import './InitGlobal'; // TODO: Does it matter where this is located in the order of imports?
 
 try {
@@ -51,6 +52,7 @@ try {
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
         await global.visualCal.nodeRed.start();
+        await ProcedureManager.loadActive();
       } catch (error) {
         console.error(error);
       }
