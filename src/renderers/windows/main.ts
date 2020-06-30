@@ -34,10 +34,6 @@ const initProcedureListeners = () => {
   window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, async (response: SetActiveResponseArgs) => {
     console.info('Update', response.name);
     activeProcedureHeading.innerText = response.name;
-    const activeRow = proceduresTable.getRows().find((value) => (value.getCell('name').getValue() as string) === response.name);
-    if (activeRow) activeRow.getElement().classList.add('active-procedure');
-    const rest = proceduresTable.getRows().filter((value) => (value.getCell('name').getValue() as string) !== response.name);
-    if (rest) rest.forEach(r => r.getElement().classList.remove('active-procedure'));
   });
 }
 

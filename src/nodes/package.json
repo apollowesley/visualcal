@@ -6,7 +6,7 @@
   "node-red": {
     "nodes": {
       "procedure-sidebar": "procedure-sidebar.js",
-      "indysoft-section-configuration": "indysoft-section-configuration/node.js",
+      "indysoft-section-configuration": "indysoft-section-configuration.js",
       "indysoft-action-completed": "indysoft-action-completed.js",
       "indysoft-action-start": "indysoft-action-start.js",
       "indysoft-command-sequence-builder": "indysoft-command-sequence-builder.js",

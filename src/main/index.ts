@@ -21,6 +21,7 @@ try {
   const httpServer = http.createServer(nodeRedApp);
 
   function init(ipcChannels: IpcChannel<any>[]) {
+    UserHomeUtils.ensureExists();
     NodeRedSettings.userDir = path.join(global.visualCal.dirs.visualCalUser, 'logic'),
     NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
     initMainMenu();
@@ -48,7 +49,6 @@ try {
 
   async function onAppReady() {
     (await import('vue-devtools')).install();
-    await UserHomeUtils.ensureExists();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
         await global.visualCal.nodeRed.start();
@@ -85,7 +85,7 @@ try {
         // TODO: Disable for demo on 30-JUN-2020
         // await createLoginWindow();
       }
-    }
+    };
     await global.visualCal.windowManager.ShowLoading(onLoadingWindowClosed, 5000);
   }
 
