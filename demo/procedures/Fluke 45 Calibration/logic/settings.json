@@ -1,0 +1,650 @@
+{
+	"nodes": {
+		"node-red": {
+			"name": "node-red",
+			"version": "1.0.6",
+			"local": false,
+			"nodes": {
+				"inject": {
+					"name": "inject",
+					"types": [
+						"inject"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/20-inject.js"
+				},
+				"debug": {
+					"name": "debug",
+					"types": [
+						"debug"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/21-debug.js"
+				},
+				"complete": {
+					"name": "complete",
+					"types": [
+						"complete"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/24-complete.js"
+				},
+				"catch": {
+					"name": "catch",
+					"types": [
+						"catch"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/25-catch.js"
+				},
+				"status": {
+					"name": "status",
+					"types": [
+						"status"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/25-status.js"
+				},
+				"link": {
+					"name": "link",
+					"types": [
+						"link in",
+						"link out"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/60-link.js"
+				},
+				"comment": {
+					"name": "comment",
+					"types": [
+						"comment"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/90-comment.js"
+				},
+				"unknown": {
+					"name": "unknown",
+					"types": [
+						"unknown"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/common/98-unknown.js"
+				},
+				"function": {
+					"name": "function",
+					"types": [
+						"function"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/10-function.js"
+				},
+				"switch": {
+					"name": "switch",
+					"types": [
+						"switch"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/10-switch.js"
+				},
+				"change": {
+					"name": "change",
+					"types": [
+						"change"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/15-change.js"
+				},
+				"range": {
+					"name": "range",
+					"types": [
+						"range"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/16-range.js"
+				},
+				"template": {
+					"name": "template",
+					"types": [
+						"template"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/80-template.js"
+				},
+				"delay": {
+					"name": "delay",
+					"types": [
+						"delay"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/89-delay.js"
+				},
+				"trigger": {
+					"name": "trigger",
+					"types": [
+						"trigger"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/89-trigger.js"
+				},
+				"exec": {
+					"name": "exec",
+					"types": [
+						"exec"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/function/90-exec.js"
+				},
+				"tls": {
+					"name": "tls",
+					"types": [
+						"tls-config"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/05-tls.js"
+				},
+				"httpproxy": {
+					"name": "httpproxy",
+					"types": [
+						"http proxy"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/06-httpproxy.js"
+				},
+				"mqtt": {
+					"name": "mqtt",
+					"types": [
+						"mqtt in",
+						"mqtt out",
+						"mqtt-broker"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/10-mqtt.js"
+				},
+				"httpin": {
+					"name": "httpin",
+					"types": [
+						"http in",
+						"http response"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/21-httpin.js"
+				},
+				"httprequest": {
+					"name": "httprequest",
+					"types": [
+						"http request"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/21-httprequest.js"
+				},
+				"websocket": {
+					"name": "websocket",
+					"types": [
+						"websocket in",
+						"websocket out",
+						"websocket-listener",
+						"websocket-client"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/22-websocket.js"
+				},
+				"tcpin": {
+					"name": "tcpin",
+					"types": [
+						"tcp in",
+						"tcp out",
+						"tcp request"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/31-tcpin.js"
+				},
+				"udp": {
+					"name": "udp",
+					"types": [
+						"udp in",
+						"udp out"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/network/32-udp.js"
+				},
+				"CSV": {
+					"name": "CSV",
+					"types": [
+						"csv"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/parsers/70-CSV.js"
+				},
+				"HTML": {
+					"name": "HTML",
+					"types": [
+						"html"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/parsers/70-HTML.js"
+				},
+				"JSON": {
+					"name": "JSON",
+					"types": [
+						"json"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/parsers/70-JSON.js"
+				},
+				"XML": {
+					"name": "XML",
+					"types": [
+						"xml"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/parsers/70-XML.js"
+				},
+				"YAML": {
+					"name": "YAML",
+					"types": [
+						"yaml"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/parsers/70-YAML.js"
+				},
+				"split": {
+					"name": "split",
+					"types": [
+						"split",
+						"join"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/sequence/17-split.js"
+				},
+				"sort": {
+					"name": "sort",
+					"types": [
+						"sort"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/sequence/18-sort.js"
+				},
+				"batch": {
+					"name": "batch",
+					"types": [
+						"batch"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/sequence/19-batch.js"
+				},
+				"file": {
+					"name": "file",
+					"types": [
+						"file",
+						"file in"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/storage/10-file.js"
+				},
+				"watch": {
+					"name": "watch",
+					"types": [
+						"watch"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/backend/node_modules/@node-red/nodes/core/storage/23-watch.js"
+				},
+				"indysoft-action-completed": {
+					"name": "indysoft-action-completed",
+					"types": [
+						"indysoft-action-completed"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-action-completed.js"
+				},
+				"indysoft-action-start": {
+					"name": "indysoft-action-start",
+					"types": [
+						"indysoft-action-start"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-action-start.js"
+				},
+				"indysoft-command-sequence-builder": {
+					"name": "indysoft-command-sequence-builder",
+					"types": [
+						"indysoft-command-sequence-builder"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-command-sequence-builder.js"
+				},
+				"indysoft-communication-interface": {
+					"name": "indysoft-communication-interface",
+					"types": [
+						"indysoft-communication-interface"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-communication-interface.js"
+				},
+				"indysoft-device-configuration": {
+					"name": "indysoft-device-configuration",
+					"types": [
+						"indysoft-device-configuration"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-configuration.js"
+				},
+				"indysoft-device-digital-multimeter": {
+					"name": "indysoft-device-digital-multimeter",
+					"types": [
+						"indysoft-device-digital-multimeter"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-digital-multimeter.js"
+				},
+				"indysoft-device-fluke45": {
+					"name": "indysoft-device-fluke45",
+					"types": [
+						"indysoft-device-fluke45"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-fluke45.js"
+				},
+				"indysoft-device-keysight34401a": {
+					"name": "indysoft-device-keysight34401a",
+					"types": [
+						"indysoft-device-keysight34401a"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-keysight34401a.js"
+				},
+				"indysoft-device-multi-product-calibrator": {
+					"name": "indysoft-device-multi-product-calibrator",
+					"types": [
+						"indysoft-device-multi-product-calibrator"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-multi-product-calibrator.js"
+				},
+				"indysoft-device-read-handler": {
+					"name": "indysoft-device-read-handler",
+					"types": [
+						"indysoft-device-read-handler"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-read-handler.js"
+				},
+				"indysoft-device-result": {
+					"name": "indysoft-device-result",
+					"types": [
+						"indysoft-device-result"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-device-result.js"
+				},
+				"indysoft-mqtt-dynamic-topic-in": {
+					"name": "indysoft-mqtt-dynamic-topic-in",
+					"types": [
+						"indysoft-mqtt-dynamic-topic-in"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-mqtt-dynamic-topic-in.js"
+				},
+				"indysoft-scalar-result": {
+					"name": "indysoft-scalar-result",
+					"types": [
+						"indysoft-scalar-result"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-scalar-result.js"
+				},
+				"node": {
+					"name": "node",
+					"types": [
+						"indysoft-section-configuration"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-section-configuration/node.js"
+				},
+				"indysoft-testpoint": {
+					"name": "indysoft-testpoint",
+					"types": [
+						"indysoft-testpoint"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-testpoint.js"
+				},
+				"indysoft-user-input": {
+					"name": "indysoft-user-input",
+					"types": [
+						"indysoft-user-input"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-user-input.js"
+				},
+				"indysoft-user-instruction": {
+					"name": "indysoft-user-instruction",
+					"types": [
+						"indysoft-user-instruction"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/indysoft-user-instruction.js"
+				},
+				"procedure-sidebar": {
+					"name": "procedure-sidebar",
+					"types": [
+						"procedure-sidebar"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/procedure-sidebar.js"
+				},
+				"prologix-gpib-tcp-config": {
+					"name": "prologix-gpib-tcp-config",
+					"types": [
+						"prologix-gpib-tcp-config"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/prologix-gpib-tcp-config.js"
+				},
+				"prologix-gpib-tcp": {
+					"name": "prologix-gpib-tcp",
+					"types": [
+						"prologix-gpib-tcp"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/workspaces/visualcal/logic-nodes/dist/prologix-gpib-tcp.js"
+				}
+			}
+		},
+		"node-red-contrib-signalrcore": {
+			"name": "node-red-contrib-signalrcore",
+			"version": "1.0.3",
+			"local": true,
+			"nodes": {
+				"signalr-client": {
+					"name": "signalr-client",
+					"types": [
+						"signalr in",
+						"signalr out",
+						"signalr-client"
+					],
+					"enabled": true,
+					"local": true,
+					"module": "node-red-contrib-signalrcore",
+					"file": "/workspaces/visualcal/logic/node_modules/node-red-contrib-signalrcore/signalr-client/node.js"
+				}
+			}
+		},
+		"node-red-node-rbe": {
+			"name": "node-red-node-rbe",
+			"version": "0.2.8",
+			"local": true,
+			"nodes": {
+				"rbe": {
+					"name": "rbe",
+					"types": [
+						"rbe"
+					],
+					"enabled": true,
+					"local": true,
+					"module": "node-red-node-rbe",
+					"file": "/workspaces/visualcal/logic/node_modules/node-red-node-rbe/rbe.js"
+				}
+			}
+		},
+		"node-red-node-serialport": {
+			"name": "node-red-node-serialport",
+			"version": "0.10.2",
+			"local": true,
+			"nodes": {
+				"serialport": {
+					"name": "serialport",
+					"types": [
+						"serial in",
+						"serial out",
+						"serial request",
+						"serial-port"
+					],
+					"enabled": true,
+					"local": true,
+					"module": "node-red-node-serialport",
+					"file": "/workspaces/visualcal/logic/node_modules/node-red-node-serialport/25-serial.js"
+				}
+			}
+		},
+		"node-red-node-tail": {
+			"name": "node-red-node-tail",
+			"version": "0.1.1",
+			"local": true,
+			"nodes": {
+				"tail": {
+					"name": "tail",
+					"types": [
+						"tail"
+					],
+					"enabled": true,
+					"local": true,
+					"module": "node-red-node-tail",
+					"file": "/workspaces/visualcal/logic/node_modules/node-red-node-tail/28-tail.js"
+				}
+			}
+		}
+	},
+	"users": {
+		"scott.page@indysoft.com": {
+			"editor": {
+				"view": {
+					"view-show-grid": true,
+					"view-snap-grid": true,
+					"view-grid-size": 20,
+					"view-node-status": true,
+					"view-node-show-label": true,
+					"view-show-tips": true
+				}
+			}
+		}
+	}
+}

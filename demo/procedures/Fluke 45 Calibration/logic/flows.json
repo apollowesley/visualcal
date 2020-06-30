@@ -1,0 +1,3080 @@
+[
+	{
+		"id": "3b731b51.7981f4",
+		"type": "tab",
+		"label": "DC Voltage",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "ea20ecb1.59a94",
+		"type": "tab",
+		"label": "AC Voltage",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "424156ac.d4afe8",
+		"type": "tab",
+		"label": "DC Current",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "1801adb0.01a932",
+		"type": "tab",
+		"label": "AC Current",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "62bf87fd.c33688",
+		"type": "tab",
+		"label": "Diode",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "5021c726.2281b8",
+		"type": "tab",
+		"label": "Frequency",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "12cb1568.bd710b",
+		"type": "tab",
+		"label": "Resistance",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "d0109b77.907688",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "Diode",
+		"shortName": "diode"
+	},
+	{
+		"id": "606c1c72.edd354",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "DC Volts",
+		"shortName": "dcVolts"
+	},
+	{
+		"id": "65fb620a.d4afec",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "AC Volts",
+		"shortName": "acVolts"
+	},
+	{
+		"id": "49286e58.8c493",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "DC Current",
+		"shortName": "dcCurrent"
+	},
+	{
+		"id": "52581738.17ed58",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "AC Current",
+		"shortName": "acCurrent"
+	},
+	{
+		"id": "566af271.885b7c",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "Frequency",
+		"shortName": "frequency"
+	},
+	{
+		"id": "647f4a99.14d164",
+		"type": "indysoft-section-configuration",
+		"z": 0,
+		"name": "Resistance",
+		"shortName": "resistance"
+	},
+	{
+		"id": "7103de52.469e3",
+		"type": "procedure-sidebar",
+		"z": 0,
+		"name": "Fluke 45 Calibration",
+		"shortName": "fluke45calibration"
+	},
+	{
+		"id": "99e08da0.feaeb",
+		"type": "indysoft-device-configuration",
+		"z": "",
+		"unitId": "uut"
+	},
+	{
+		"id": "ff5f8844.624ef8",
+		"type": "indysoft-device-configuration",
+		"z": "",
+		"unitId": "calibrator"
+	},
+	{
+		"id": "adb57c26.72891",
+		"type": "inject",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"topic": "",
+		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
+		"payloadType": "json",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"onceDelay": 0.1,
+		"x": 350,
+		"y": 940,
+		"wires": [
+			[
+				"c76a453.fcb2ab8"
+			]
+		]
+	},
+	{
+		"id": "88a7dffa.ef2dc",
+		"type": "debug",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "true",
+		"targetType": "full",
+		"x": 930,
+		"y": 940,
+		"wires": []
+	},
+	{
+		"id": "e691dbf7.db68e8",
+		"type": "indysoft-action-completed",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"x": 1850,
+		"y": 720,
+		"wires": []
+	},
+	{
+		"id": "f6d80818.3a5ef8",
+		"type": "indysoft-action-completed",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"x": 1430,
+		"y": 600,
+		"wires": []
+	},
+	{
+		"id": "8fa9d69e.e651b8",
+		"type": "indysoft-action-completed",
+		"z": "424156ac.d4afe8",
+		"name": "",
+		"x": 1250,
+		"y": 120,
+		"wires": []
+	},
+	{
+		"id": "8cfe14f4.a56968",
+		"type": "indysoft-action-completed",
+		"z": "424156ac.d4afe8",
+		"name": "",
+		"x": 1250,
+		"y": 220,
+		"wires": []
+	},
+	{
+		"id": "c8f7a3ee.3da0c",
+		"type": "indysoft-action-completed",
+		"z": "1801adb0.01a932",
+		"name": "AC Current 10 A",
+		"x": 1490,
+		"y": 360,
+		"wires": []
+	},
+	{
+		"id": "e766555b.3d70f8",
+		"type": "indysoft-action-completed",
+		"z": "1801adb0.01a932",
+		"name": "AC Current",
+		"x": 1490,
+		"y": 280,
+		"wires": []
+	},
+	{
+		"id": "a81c4b0e.727758",
+		"type": "indysoft-action-completed",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"x": 1110,
+		"y": 80,
+		"wires": []
+	},
+	{
+		"id": "1e93bac5.cd77f5",
+		"type": "indysoft-action-completed",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"x": 1250,
+		"y": 680,
+		"wires": []
+	},
+	{
+		"id": "e1abf6c5.623338",
+		"type": "indysoft-action-completed",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"x": 1110,
+		"y": 120,
+		"wires": []
+	},
+	{
+		"id": "a42fbbba.821d58",
+		"type": "indysoft-action-completed",
+		"z": "62bf87fd.c33688",
+		"name": "",
+		"x": 1130,
+		"y": 440,
+		"wires": []
+	},
+	{
+		"id": "4080db6d.30b144",
+		"type": "indysoft-action-completed",
+		"z": "62bf87fd.c33688",
+		"name": "",
+		"x": 1130,
+		"y": 500,
+		"wires": []
+	},
+	{
+		"id": "b3d0f90a.a49aa8",
+		"type": "indysoft-action-completed",
+		"z": "5021c726.2281b8",
+		"name": "",
+		"x": 1310,
+		"y": 200,
+		"wires": []
+	},
+	{
+		"id": "1342f62b.7fc1da",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.15mv.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": ".001487",
+		"max": ".001513",
+		"inputLevel": ".015",
+		"x": 1210,
+		"y": 180,
+		"wires": [
+			[
+				"ea00fc3e.3fe75"
+			]
+		]
+	},
+	{
+		"id": "d5b995a4.a6e818",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.15mv.100khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": ".01375",
+		"max": ".01625",
+		"inputLevel": ".015",
+		"x": 1210,
+		"y": 240,
+		"wires": [
+			[
+				"2a00e9e.ad94c16"
+			]
+		]
+	},
+	{
+		"id": "d0d3592b.d1db88",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.300mv.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": ".2993",
+		"max": ".3007",
+		"inputLevel": ".3",
+		"x": 1210,
+		"y": 300,
+		"wires": [
+			[
+				"d03988a3.391658"
+			]
+		]
+	},
+	{
+		"id": "5c35ec04.9fb9e4",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.300mv.100khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": ".2845",
+		"max": ".3155",
+		"inputLevel": ".3",
+		"x": 1210,
+		"y": 360,
+		"wires": [
+			[
+				"fd9183cf.8761a"
+			]
+		]
+	},
+	{
+		"id": "7ed0775c.797868",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.3v.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": "2.993",
+		"max": "3.007",
+		"inputLevel": "3",
+		"x": 1210,
+		"y": 420,
+		"wires": [
+			[
+				"e251c546.e32178"
+			]
+		]
+	},
+	{
+		"id": "abe47662.314b18",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.30v.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": "29.93",
+		"max": "30.07",
+		"inputLevel": "30",
+		"x": 1210,
+		"y": 480,
+		"wires": [
+			[
+				"d2bb884.5dadc78"
+			]
+		]
+	},
+	{
+		"id": "5eeafd24.28fda4",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.300v.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": "299.3",
+		"max": "300.7",
+		"inputLevel": "300",
+		"x": 1210,
+		"y": 540,
+		"wires": [
+			[
+				"44b3aba2.066674"
+			]
+		]
+	},
+	{
+		"id": "3ff4f59e.14ef8a",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVolts",
+		"readTag": "ac.volts.750v.1khz",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "plusMinus",
+		"min": "747.5",
+		"max": "752.5",
+		"inputLevel": "750",
+		"x": 1210,
+		"y": 600,
+		"wires": [
+			[
+				"f6d80818.3a5ef8"
+			]
+		]
+	},
+	{
+		"id": "d62c99a9.1b4da8",
+		"type": "indysoft-device-result",
+		"z": "424156ac.d4afe8",
+		"name": "",
+		"description": "(dmm) Current DC",
+		"actionName": "dcCurrent",
+		"readTag": "dc.current.100mA",
+		"deviceType": "dmm",
+		"multimeterMode": "adc",
+		"toleranceType": "limit",
+		"min": ".0993",
+		"max": ".1007",
+		"inputLevel": ".1",
+		"x": 1030,
+		"y": 120,
+		"wires": [
+			[
+				"8fa9d69e.e651b8"
+			]
+		]
+	},
+	{
+		"id": "f310820c.c0d5e",
+		"type": "indysoft-device-result",
+		"z": "1801adb0.01a932",
+		"name": "",
+		"description": "(dmm) Current AC",
+		"actionName": "acCurrent",
+		"readTag": "ac.current.100mA",
+		"deviceType": "dmm",
+		"multimeterMode": "aac",
+		"toleranceType": "limit",
+		"min": ".0994",
+		"max": ".1006",
+		"inputLevel": ".1",
+		"x": 1270,
+		"y": 280,
+		"wires": [
+			[
+				"e766555b.3d70f8"
+			]
+		]
+	},
+	{
+		"id": "f5684819.2f69d8",
+		"type": "indysoft-device-result",
+		"z": "ea20ecb1.59a94",
+		"name": "",
+		"description": "(dmm) Voltage AC",
+		"actionName": "acVoltsshort",
+		"readTag": "ac.volts.short",
+		"deviceType": "dmm",
+		"multimeterMode": "vac",
+		"toleranceType": "limit",
+		"min": "0",
+		"max": ".75",
+		"inputLevel": "0",
+		"x": 890,
+		"y": 80,
+		"wires": [
+			[
+				"a81c4b0e.727758"
+			]
+		]
+	},
+	{
+		"id": "c05eefae.56f77",
+		"type": "indysoft-device-result",
+		"z": "424156ac.d4afe8",
+		"name": "",
+		"description": "(dmm) Current DC",
+		"actionName": "dcCurrent",
+		"readTag": "dc.current.30mA",
+		"deviceType": "dmm",
+		"multimeterMode": "adc",
+		"toleranceType": "limit",
+		"min": ".029982",
+		"max": ".030018",
+		"inputLevel": ".03",
+		"x": 1030,
+		"y": 60,
+		"wires": [
+			[
+				"14f963a5.1b8f5c"
+			]
+		]
+	},
+	{
+		"id": "ea5d71c2.d6c01",
+		"type": "indysoft-device-result",
+		"z": "424156ac.d4afe8",
+		"name": "",
+		"description": "(dmm) Current DC",
+		"actionName": "dccurrent10a",
+		"readTag": "dc.current.10A",
+		"deviceType": "dmm",
+		"multimeterMode": "adc",
+		"toleranceType": "plusMinus",
+		"min": "9.975",
+		"max": "10.025",
+		"inputLevel": "10",
+		"x": 1030,
+		"y": 220,
+		"wires": [
+			[
+				"8cfe14f4.a56968"
+			]
+		]
+	},
+	{
+		"id": "4c087b79.c39814",
+		"type": "indysoft-device-result",
+		"z": "1801adb0.01a932",
+		"name": "",
+		"description": "(dmm) Current AC",
+		"actionName": "accurrent10a",
+		"readTag": "ac.current.10A",
+		"deviceType": "dmm",
+		"multimeterMode": "aac",
+		"toleranceType": "plusMinus",
+		"min": "9.89",
+		"max": "10.11",
+		"inputLevel": "10",
+		"x": 1270,
+		"y": 360,
+		"wires": [
+			[
+				"c8f7a3ee.3da0c"
+			]
+		]
+	},
+	{
+		"id": "edc93efd.52d2b",
+		"type": "indysoft-device-result",
+		"z": "1801adb0.01a932",
+		"name": "",
+		"description": "(dmm) Current AC",
+		"actionName": "acCurrent",
+		"readTag": "ac.current.30mA",
+		"deviceType": "dmm",
+		"multimeterMode": "aac",
+		"toleranceType": "limit",
+		"min": ".02984",
+		"max": ".03016",
+		"inputLevel": ".03",
+		"x": 1270,
+		"y": 220,
+		"wires": [
+			[
+				"aba203bc.1f8c4"
+			]
+		]
+	},
+	{
+		"id": "ee42b7fd.2a16f8",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: Short",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"c0657a6c.87dfe8"
+			]
+		]
+	},
+	{
+		"id": "f322989a.94d8c8",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 90mV",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0.09",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1030,
+		"y": 240,
+		"wires": [
+			[],
+			[
+				"7ebbc73b.d43178"
+			]
+		]
+	},
+	{
+		"id": "ce47024f.dfefd",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 900mV",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0.9",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": true,
+		"delayBefore": 1000,
+		"x": 1060,
+		"y": 300,
+		"wires": [
+			[],
+			[
+				"dcb8f71c.ffcee8"
+			]
+		]
+	},
+	{
+		"id": "4ee879d2.d71778",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: Short",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"2d4823d3.64552c"
+			]
+		]
+	},
+	{
+		"id": "b823a469.067648",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 300mV",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0.3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1030,
+		"y": 420,
+		"wires": [
+			[],
+			[
+				"dc3542eb.fccd3"
+			]
+		]
+	},
+	{
+		"id": "c8c24f3a.b3721",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 3V",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 480,
+		"wires": [
+			[],
+			[
+				"5a0ff748.62e178"
+			]
+		]
+	},
+	{
+		"id": "d4ff8ae0.7e13c8",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: -3V",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "-3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 540,
+		"wires": [
+			[],
+			[
+				"e8468592.507cc8"
+			]
+		]
+	},
+	{
+		"id": "19cb1195.f45a3e",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 30V",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "30",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 600,
+		"wires": [
+			[],
+			[
+				"37995141.cc2bde"
+			]
+		]
+	},
+	{
+		"id": "65add1f3.9a67",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 300V",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "300",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1020,
+		"y": 660,
+		"wires": [
+			[],
+			[
+				"6a3d8e0e.54594"
+			]
+		]
+	},
+	{
+		"id": "c018df3e.566ee",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "3b731b51.7981f4",
+		"name": "Calibrator: 1000V",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "1000",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "60",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 1030,
+		"y": 720,
+		"wires": [
+			[],
+			[
+				"7c6d0d33.dad3c4"
+			]
+		]
+	},
+	{
+		"id": "f98ba7e9.e870b8",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 15 mV 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": ".015",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 690,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"1e39a94b.6a4647"
+			]
+		]
+	},
+	{
+		"id": "ea00fc3e.3fe75",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 15 mV 100 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": ".015",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "100000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 690,
+		"y": 240,
+		"wires": [
+			[],
+			[
+				"20ade737.268a38"
+			]
+		]
+	},
+	{
+		"id": "2a00e9e.ad94c16",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 300 mV 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": ".3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 690,
+		"y": 300,
+		"wires": [
+			[],
+			[
+				"9cab6bc7.591088"
+			]
+		]
+	},
+	{
+		"id": "d03988a3.391658",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 300 mV 100 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": ".3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "100000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"dd8883bd.cd228"
+			]
+		]
+	},
+	{
+		"id": "fd9183cf.8761a",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 3 V 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "3",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 680,
+		"y": 420,
+		"wires": [
+			[],
+			[
+				"64838033.28739"
+			]
+		]
+	},
+	{
+		"id": "d2bb884.5dadc78",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 300 V 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "300",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 680,
+		"y": 540,
+		"wires": [
+			[],
+			[
+				"e77a8454.23fc28"
+			]
+		]
+	},
+	{
+		"id": "e251c546.e32178",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 30 V 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "30",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 680,
+		"y": 480,
+		"wires": [
+			[],
+			[
+				"2fab1567.5735ca"
+			]
+		]
+	},
+	{
+		"id": "44b3aba2.066674",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "ea20ecb1.59a94",
+		"name": "Calibrator 750 V 1 kHz",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "750",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 680,
+		"y": 600,
+		"wires": [
+			[],
+			[
+				"abe2990e.869f08"
+			]
+		]
+	},
+	{
+		"id": "9de012ee.e7a7",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "424156ac.d4afe8",
+		"name": "STD DCI 30 mA",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "adc",
+		"amps": ".03",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 520,
+		"y": 60,
+		"wires": [
+			[],
+			[
+				"d9d9a77a.bb8b68"
+			]
+		]
+	},
+	{
+		"id": "14f963a5.1b8f5c",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "424156ac.d4afe8",
+		"name": "STD DCI 100 mA",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "adc",
+		"amps": ".1",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 530,
+		"y": 120,
+		"wires": [
+			[],
+			[
+				"8e8f1699.268cd8"
+			]
+		]
+	},
+	{
+		"id": "31aa8f44.14434",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "424156ac.d4afe8",
+		"name": "STD DCI 10 A",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "adc",
+		"amps": "10",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 520,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"cfeb9e81.feaa2"
+			]
+		]
+	},
+	{
+		"id": "be01375e.814918",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1801adb0.01a932",
+		"name": "STD ACI 30 mA",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "aac",
+		"amps": ".03",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 780,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"ecc2b501.396a48"
+			]
+		]
+	},
+	{
+		"id": "aba203bc.1f8c4",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1801adb0.01a932",
+		"name": "STD ACI 100 mA",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "aac",
+		"amps": ".1",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 790,
+		"y": 280,
+		"wires": [
+			[],
+			[
+				"10a0b891.1389e7"
+			]
+		]
+	},
+	{
+		"id": "2d5f431f.ddd15c",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1801adb0.01a932",
+		"name": "STD ACI 10 A",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "aac",
+		"amps": "10",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 780,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"1535db63.dea265"
+			]
+		]
+	},
+	{
+		"id": "8f658eda.4561a",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "190",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 320,
+		"wires": [
+			[],
+			[
+				"849f6e91.711cc"
+			]
+		]
+	},
+	{
+		"id": "bb0d7fa8.96115",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "1900",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 380,
+		"wires": [
+			[],
+			[
+				"3476c8b1.e2b2c8"
+			]
+		]
+	},
+	{
+		"id": "d6ea63f9.f4724",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "19000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 440,
+		"wires": [
+			[],
+			[
+				"1430d6d5.b5bd69"
+			]
+		]
+	},
+	{
+		"id": "979f6143.fa72a",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "190000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 500,
+		"wires": [
+			[],
+			[
+				"6044735b.0f156c"
+			]
+		]
+	},
+	{
+		"id": "7d91ee8b.bb57f",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "1900000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 560,
+		"wires": [
+			[],
+			[
+				"189131c0.21d6be"
+			]
+		]
+	},
+	{
+		"id": "79915525.9f0cdc",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "19000000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 620,
+		"wires": [
+			[],
+			[
+				"ef2afcef.aa37"
+			]
+		]
+	},
+	{
+		"id": "4664ab51.b4bba4",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "100000000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 670,
+		"y": 680,
+		"wires": [
+			[],
+			[
+				"d325cc6e.3c5aa"
+			]
+		]
+	},
+	{
+		"id": "218d1673.282e0a",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "5021c726.2281b8",
+		"name": "",
+		"deviceConfigId": "ff5f8844.624ef8",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "5",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "10000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 750,
+		"y": 200,
+		"wires": [
+			[],
+			[
+				"5bf49d1d.9b7ab4"
+			]
+		]
+	},
+	{
+		"id": "723f3608.5c9d38",
+		"type": "indysoft-action-start",
+		"z": "3b731b51.7981f4",
+		"name": "DC Volts",
+		"sectionConfigId": "606c1c72.edd354",
+		"x": 220,
+		"y": 180,
+		"wires": [
+			[
+				"ba790645.f952f8"
+			]
+		]
+	},
+	{
+		"id": "2c24482e.8c20e8",
+		"type": "indysoft-action-start",
+		"z": "424156ac.d4afe8",
+		"name": "Low",
+		"sectionConfigId": "49286e58.8c493",
+		"x": 270,
+		"y": 60,
+		"wires": [
+			[
+				"9de012ee.e7a7"
+			]
+		]
+	},
+	{
+		"id": "dc515d0b.4a33d",
+		"type": "indysoft-action-start",
+		"z": "ea20ecb1.59a94",
+		"name": "Short",
+		"sectionConfigId": "65fb620a.d4afec",
+		"x": 430,
+		"y": 80,
+		"wires": [
+			[
+				"a83f3d24.025ff"
+			]
+		]
+	},
+	{
+		"id": "cd86fed2.a99c9",
+		"type": "indysoft-action-start",
+		"z": "424156ac.d4afe8",
+		"name": "10A",
+		"sectionConfigId": "49286e58.8c493",
+		"x": 270,
+		"y": 220,
+		"wires": [
+			[
+				"31aa8f44.14434"
+			]
+		]
+	},
+	{
+		"id": "c34e3813.356208",
+		"type": "indysoft-action-start",
+		"z": "1801adb0.01a932",
+		"name": "Low",
+		"sectionConfigId": "52581738.17ed58",
+		"x": 530,
+		"y": 220,
+		"wires": [
+			[
+				"be01375e.814918"
+			]
+		]
+	},
+	{
+		"id": "2bc9ac77.23fad4",
+		"type": "indysoft-action-start",
+		"z": "1801adb0.01a932",
+		"name": "10A",
+		"sectionConfigId": "52581738.17ed58",
+		"x": 530,
+		"y": 360,
+		"wires": [
+			[
+				"2d5f431f.ddd15c"
+			]
+		]
+	},
+	{
+		"id": "2f6f8f6b.bc2eb",
+		"type": "indysoft-action-start",
+		"z": "ea20ecb1.59a94",
+		"name": "AC Volts",
+		"sectionConfigId": "65fb620a.d4afec",
+		"x": 400,
+		"y": 180,
+		"wires": [
+			[
+				"f98ba7e9.e870b8"
+			]
+		]
+	},
+	{
+		"id": "ab84a074.b444a",
+		"type": "indysoft-action-start",
+		"z": "12cb1568.bd710b",
+		"name": "Short",
+		"sectionConfigId": "647f4a99.14d164",
+		"x": 380,
+		"y": 60,
+		"wires": [
+			[
+				"d5552d1a.8eb5d"
+			]
+		]
+	},
+	{
+		"id": "43805806.d35f78",
+		"type": "indysoft-action-start",
+		"z": "12cb1568.bd710b",
+		"name": "Ohms",
+		"sectionConfigId": "647f4a99.14d164",
+		"x": 380,
+		"y": 320,
+		"wires": [
+			[
+				"8f658eda.4561a"
+			]
+		]
+	},
+	{
+		"id": "7c232c5a.543d74",
+		"type": "indysoft-action-start",
+		"z": "62bf87fd.c33688",
+		"name": "Short",
+		"sectionConfigId": "d0109b77.907688",
+		"x": 540,
+		"y": 440,
+		"wires": [
+			[
+				"b9a7675d.d7af18"
+			]
+		]
+	},
+	{
+		"id": "178bb9ff.00dc06",
+		"type": "indysoft-action-start",
+		"z": "62bf87fd.c33688",
+		"name": "Open",
+		"sectionConfigId": "d0109b77.907688",
+		"x": 540,
+		"y": 500,
+		"wires": [
+			[
+				"20d2a422.70da1c"
+			]
+		]
+	},
+	{
+		"id": "b7225aa8.2929d8",
+		"type": "indysoft-action-start",
+		"z": "5021c726.2281b8",
+		"name": "Frequency",
+		"sectionConfigId": "566af271.885b7c",
+		"x": 450,
+		"y": 200,
+		"wires": [
+			[
+				"218d1673.282e0a"
+			]
+		]
+	},
+	{
+		"id": "c0657a6c.87dfe8",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: Short Slow",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1340,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"461430ff.ae1cf"
+			]
+		]
+	},
+	{
+		"id": "7ebbc73b.d43178",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 90mV Slow",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1340,
+		"y": 240,
+		"wires": [
+			[],
+			[
+				"5126dcaf.ba7fa4"
+			]
+		]
+	},
+	{
+		"id": "dcb8f71c.ffcee8",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 900mV Slow",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1340,
+		"y": 300,
+		"wires": [
+			[],
+			[
+				"5edb87d3.b97eb8"
+			]
+		]
+	},
+	{
+		"id": "2d4823d3.64552c",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: Short",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1320,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"3f67b25a.9f73ee"
+			]
+		]
+	},
+	{
+		"id": "dc3542eb.fccd3",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 300mV",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1320,
+		"y": 420,
+		"wires": [
+			[],
+			[
+				"6147a3da.8209bc"
+			]
+		]
+	},
+	{
+		"id": "5a0ff748.62e178",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 3V",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1310,
+		"y": 480,
+		"wires": [
+			[],
+			[
+				"7dd2b513.b7d09c"
+			]
+		]
+	},
+	{
+		"id": "e8468592.507cc8",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: -3V",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1310,
+		"y": 540,
+		"wires": [
+			[],
+			[
+				"1a9682bf.9cb08d"
+			]
+		]
+	},
+	{
+		"id": "6a3d8e0e.54594",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 300V",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "4",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1320,
+		"y": 660,
+		"wires": [
+			[],
+			[
+				"ee7c3d13.04d0b"
+			]
+		]
+	},
+	{
+		"id": "7c6d0d33.dad3c4",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 1000V",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "5",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1320,
+		"y": 720,
+		"wires": [
+			[],
+			[
+				"99c8cbf2.1cdaf8"
+			]
+		]
+	},
+	{
+		"id": "a83f3d24.025ff",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT Short",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 670,
+		"y": 80,
+		"wires": [
+			[],
+			[
+				"f5684819.2f69d8"
+			]
+		]
+	},
+	{
+		"id": "1e39a94b.6a4647",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 15 mV 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 950,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"1342f62b.7fc1da"
+			]
+		]
+	},
+	{
+		"id": "20ade737.268a38",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 15 mV 100 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 960,
+		"y": 240,
+		"wires": [
+			[],
+			[
+				"d5b995a4.a6e818"
+			]
+		]
+	},
+	{
+		"id": "9cab6bc7.591088",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 300 mV 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 950,
+		"y": 300,
+		"wires": [
+			[],
+			[
+				"d0d3592b.d1db88"
+			]
+		]
+	},
+	{
+		"id": "dd8883bd.cd228",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 300 mV 100 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 960,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"5c35ec04.9fb9e4"
+			]
+		]
+	},
+	{
+		"id": "64838033.28739",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 3 V 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 940,
+		"y": 420,
+		"wires": [
+			[],
+			[
+				"7ed0775c.797868"
+			]
+		]
+	},
+	{
+		"id": "e77a8454.23fc28",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 300 V 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 950,
+		"y": 540,
+		"wires": [
+			[],
+			[
+				"5eeafd24.28fda4"
+			]
+		]
+	},
+	{
+		"id": "2fab1567.5735ca",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 30 V 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 940,
+		"y": 480,
+		"wires": [
+			[],
+			[
+				"abe47662.314b18"
+			]
+		]
+	},
+	{
+		"id": "abe2990e.869f08",
+		"type": "indysoft-device-fluke45",
+		"z": "ea20ecb1.59a94",
+		"name": "UUT 750 V 1 kHz",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 950,
+		"y": 600,
+		"wires": [
+			[],
+			[
+				"3ff4f59e.14ef8a"
+			]
+		]
+	},
+	{
+		"id": "d9d9a77a.bb8b68",
+		"type": "indysoft-device-fluke45",
+		"z": "424156ac.d4afe8",
+		"name": "UUT DCI 30 mA",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "adc",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 760,
+		"y": 60,
+		"wires": [
+			[],
+			[
+				"c05eefae.56f77"
+			]
+		]
+	},
+	{
+		"id": "8e8f1699.268cd8",
+		"type": "indysoft-device-fluke45",
+		"z": "424156ac.d4afe8",
+		"name": "UUT DCI 100 mA",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "adc",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 770,
+		"y": 120,
+		"wires": [
+			[],
+			[
+				"d62c99a9.1b4da8"
+			]
+		]
+	},
+	{
+		"id": "cfeb9e81.feaa2",
+		"type": "indysoft-device-fluke45",
+		"z": "424156ac.d4afe8",
+		"name": "UUT DCI 10 A",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "adc",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 760,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"ea5d71c2.d6c01"
+			]
+		]
+	},
+	{
+		"id": "ecc2b501.396a48",
+		"type": "indysoft-device-fluke45",
+		"z": "1801adb0.01a932",
+		"name": "UUT DCI 30 mA",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "aac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1000,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"edc93efd.52d2b"
+			]
+		]
+	},
+	{
+		"id": "10a0b891.1389e7",
+		"type": "indysoft-device-fluke45",
+		"z": "1801adb0.01a932",
+		"name": "UUT ACI 100 mA",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "aac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1010,
+		"y": 280,
+		"wires": [
+			[],
+			[
+				"f310820c.c0d5e"
+			]
+		]
+	},
+	{
+		"id": "1535db63.dea265",
+		"type": "indysoft-device-fluke45",
+		"z": "1801adb0.01a932",
+		"name": "UUT ACI 10 A",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "aac",
+		"setRate": true,
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1000,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"4c087b79.c39814"
+			]
+		]
+	},
+	{
+		"id": "d5552d1a.8eb5d",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "1",
+		"relative": true,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 620,
+		"y": 60,
+		"wires": [
+			[],
+			[
+				"60496d55.160614"
+			]
+		]
+	},
+	{
+		"id": "849f6e91.711cc",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "1",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 320,
+		"wires": [
+			[],
+			[
+				"786afa6c.90b504"
+			]
+		]
+	},
+	{
+		"id": "3476c8b1.e2b2c8",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 380,
+		"wires": [
+			[],
+			[
+				"d6d7e3d2.c0ac7"
+			]
+		]
+	},
+	{
+		"id": "1430d6d5.b5bd69",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "3",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 440,
+		"wires": [
+			[],
+			[
+				"9bd663c4.6ca83"
+			]
+		]
+	},
+	{
+		"id": "6044735b.0f156c",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "4",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 500,
+		"wires": [
+			[],
+			[
+				"f88f88cf.2c8c78"
+			]
+		]
+	},
+	{
+		"id": "189131c0.21d6be",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "5",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 560,
+		"wires": [
+			[],
+			[
+				"6e6e6420.5d7a8c"
+			]
+		]
+	},
+	{
+		"id": "ef2afcef.aa37",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "6",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 620,
+		"wires": [
+			[],
+			[
+				"4669fb68.a26ef4"
+			]
+		]
+	},
+	{
+		"id": "d325cc6e.3c5aa",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "7",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 880,
+		"y": 680,
+		"wires": [
+			[],
+			[
+				"582d7d43.9e1ba4"
+			]
+		]
+	},
+	{
+		"id": "1ef8384f.3e5b58",
+		"type": "indysoft-device-fluke45",
+		"z": "12cb1568.bd710b",
+		"name": "range 2 short",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "ohms",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "2",
+		"relative": true,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 630,
+		"y": 120,
+		"wires": [
+			[],
+			[
+				"addc498d.5207d8"
+			]
+		]
+	},
+	{
+		"id": "b9a7675d.d7af18",
+		"type": "indysoft-device-fluke45",
+		"z": "62bf87fd.c33688",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "diode",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 760,
+		"y": 440,
+		"wires": [
+			[],
+			[
+				"f44c111f.5da7e"
+			]
+		]
+	},
+	{
+		"id": "20d2a422.70da1c",
+		"type": "indysoft-device-fluke45",
+		"z": "62bf87fd.c33688",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "diode",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 760,
+		"y": 500,
+		"wires": [
+			[],
+			[
+				"51722139.e222a"
+			]
+		]
+	},
+	{
+		"id": "5bf49d1d.9b7ab4",
+		"type": "indysoft-device-fluke45",
+		"z": "5021c726.2281b8",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "freq",
+		"setRate": true,
+		"rate": "0",
+		"setRange": true,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 960,
+		"y": 200,
+		"wires": [
+			[],
+			[
+				"34517433.131a6c"
+			]
+		]
+	},
+	{
+		"id": "37995141.cc2bde",
+		"type": "indysoft-device-fluke45",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 30V",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vdc",
+		"setRate": true,
+		"rate": "1",
+		"setRange": true,
+		"range": "3",
+		"relative": false,
+		"usePreDelay": true,
+		"preDelay": 1000,
+		"measure": true,
+		"outputs": 2,
+		"x": 1310,
+		"y": 600,
+		"wires": [
+			[],
+			[
+				"26b600d5.6fc36"
+			]
+		]
+	},
+	{
+		"id": "c76a453.fcb2ab8",
+		"type": "indysoft-user-input",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "",
+		"title": "User input test",
+		"text": "Enter a floating point number",
+		"append": "mV",
+		"dataType": "integer",
+		"showImage": true,
+		"imageSourceType": "asset",
+		"url": "",
+		"assetFilename": "1280theoffice_getty.jpg",
+		"x": 510,
+		"y": 940,
+		"wires": [
+			[
+				"245a7d52.4c6592"
+			]
+		]
+	},
+	{
+		"id": "9b2fbf5a.925e1",
+		"type": "indysoft-testpoint",
+		"z": "3b731b51.7981f4",
+		"name": "Slow Short",
+		"description": "",
+		"x": 800,
+		"y": 180,
+		"wires": [
+			[
+				"ee42b7fd.2a16f8"
+			]
+		]
+	},
+	{
+		"id": "ba790645.f952f8",
+		"type": "indysoft-user-instruction",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "",
+		"title": "Connection",
+		"text": "Connect a short",
+		"showImage": true,
+		"imageSourceType": "asset",
+		"url": "/api/v1/procedure/assets?procedure=fluke45calibration&filename=1280theoffice_getty.jpg",
+		"assetFilename": "Del Taco Inside.jpg",
+		"x": 530,
+		"y": 180,
+		"wires": [
+			[
+				"9b2fbf5a.925e1"
+			]
+		]
+	},
+	{
+		"id": "461430ff.ae1cf",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "0  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-0.006",
+		"max": "0.006",
+		"inputLevel": "0",
+		"x": 1620,
+		"y": 180,
+		"wires": [
+			[
+				"f322989a.94d8c8"
+			]
+		]
+	},
+	{
+		"id": "5126dcaf.ba7fa4",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "90 milli volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "milli",
+		"toleranceType": "limit",
+		"min": "89.971",
+		"max": "90.029",
+		"inputLevel": "90",
+		"x": 1630,
+		"y": 240,
+		"wires": [
+			[
+				"ce47024f.dfefd"
+			]
+		]
+	},
+	{
+		"id": "60496d55.160614",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms short",
+		"description": "[ohmsshort - ohms.short.1]: 0 N/A ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "0",
+		"max": "0.04",
+		"inputLevel": "0",
+		"x": 850,
+		"y": 60,
+		"wires": [
+			[
+				"1ef8384f.3e5b58"
+			]
+		]
+	},
+	{
+		"id": "786afa6c.90b504",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result : ohms",
+		"description": "[ohms - ohms.300]: 190 N/A ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "189.88",
+		"max": "190.14",
+		"inputLevel": "190",
+		"x": 1060,
+		"y": 320,
+		"wires": [
+			[
+				"bb0d7fa8.96115"
+			]
+		]
+	},
+	{
+		"id": "d6d7e3d2.c0ac7",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.1.9k]: 1.9 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "1.8988",
+		"max": "1.9012",
+		"inputLevel": "1.9",
+		"x": 1060,
+		"y": 380,
+		"wires": [
+			[
+				"d6ea63f9.f4724"
+			]
+		]
+	},
+	{
+		"id": "9bd663c4.6ca83",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.19k]: 19 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "18.988",
+		"max": "19.012",
+		"inputLevel": "19",
+		"x": 1060,
+		"y": 440,
+		"wires": [
+			[
+				"979f6143.fa72a"
+			]
+		]
+	},
+	{
+		"id": "f88f88cf.2c8c78",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.190k]: 190 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "189.88",
+		"max": "190.12",
+		"inputLevel": "190",
+		"x": 1060,
+		"y": 500,
+		"wires": [
+			[
+				"7d91ee8b.bb57f"
+			]
+		]
+	},
+	{
+		"id": "6e6e6420.5d7a8c",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.1.9M]: 1.9 mega ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "mega",
+		"toleranceType": "limit",
+		"min": "1.8987",
+		"max": "1.9013",
+		"inputLevel": "1.9",
+		"x": 1060,
+		"y": 560,
+		"wires": [
+			[
+				"79915525.9f0cdc"
+			]
+		]
+	},
+	{
+		"id": "4669fb68.a26ef4",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.19M]: 19 mega ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "mega",
+		"toleranceType": "limit",
+		"min": "18.949",
+		"max": "19.051",
+		"inputLevel": "19",
+		"x": 1060,
+		"y": 620,
+		"wires": [
+			[
+				"4664ab51.b4bba4"
+			]
+		]
+	},
+	{
+		"id": "582d7d43.9e1ba4",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms",
+		"description": "[ohms - ohms.100M]: 100 mega ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "mega",
+		"toleranceType": "limit",
+		"min": "98",
+		"max": "102",
+		"inputLevel": "100",
+		"x": 1060,
+		"y": 680,
+		"wires": [
+			[
+				"1e93bac5.cd77f5"
+			]
+		]
+	},
+	{
+		"id": "addc498d.5207d8",
+		"type": "indysoft-scalar-result",
+		"z": "12cb1568.bd710b",
+		"name": "Result: Ohms range 2 short",
+		"description": "[ohmsshort - ohms.short.2]: 0 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "0",
+		"max": "0.0002",
+		"inputLevel": "0",
+		"x": 880,
+		"y": 120,
+		"wires": [
+			[
+				"e1abf6c5.623338"
+			]
+		]
+	},
+	{
+		"id": "f44c111f.5da7e",
+		"type": "indysoft-scalar-result",
+		"z": "62bf87fd.c33688",
+		"name": "diode.short",
+		"description": "[diodeshort - diode.short]: 0 N/A ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-.0008",
+		"max": ".0008",
+		"inputLevel": "0",
+		"x": 950,
+		"y": 440,
+		"wires": [
+			[
+				"a42fbbba.821d58"
+			]
+		]
+	},
+	{
+		"id": "51722139.e222a",
+		"type": "indysoft-scalar-result",
+		"z": "62bf87fd.c33688",
+		"name": "diode.open",
+		"description": "[diodeopen - diode.open]: 1000000000 N/A ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "0",
+		"max": "1000000000",
+		"inputLevel": "1000000000",
+		"x": 950,
+		"y": 500,
+		"wires": [
+			[
+				"4080db6d.30b144"
+			]
+		]
+	},
+	{
+		"id": "34517433.131a6c",
+		"type": "indysoft-scalar-result",
+		"z": "5021c726.2281b8",
+		"name": "Result: freq",
+		"description": "[freq - freq.1]: 10 kilo hertz",
+		"baseQuantity": "frequency",
+		"derivedQuantity": "hertz",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "9.994",
+		"max": "10.006",
+		"inputLevel": "10",
+		"x": 1130,
+		"y": 200,
+		"wires": [
+			[
+				"b3d0f90a.a49aa8"
+			]
+		]
+	},
+	{
+		"id": "5edb87d3.b97eb8",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "0.9  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "0.89971",
+		"max": "0.90029",
+		"inputLevel": "0.9",
+		"x": 1620,
+		"y": 300,
+		"wires": [
+			[
+				"4ee879d2.d71778"
+			]
+		]
+	},
+	{
+		"id": "3f67b25a.9f73ee",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "0  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-0.02",
+		"max": "0.02",
+		"inputLevel": "0",
+		"x": 1620,
+		"y": 360,
+		"wires": [
+			[
+				"b823a469.067648"
+			]
+		]
+	},
+	{
+		"id": "6147a3da.8209bc",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "0.3  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "0.2999",
+		"max": "0.3001",
+		"inputLevel": "0.3",
+		"x": 1620,
+		"y": 420,
+		"wires": [
+			[
+				"c8c24f3a.b3721"
+			]
+		]
+	},
+	{
+		"id": "7dd2b513.b7d09c",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "3  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "2.999",
+		"max": "3.001",
+		"inputLevel": "3",
+		"x": 1620,
+		"y": 480,
+		"wires": [
+			[
+				"d4ff8ae0.7e13c8"
+			]
+		]
+	},
+	{
+		"id": "1a9682bf.9cb08d",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "-3  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-3.001",
+		"max": "-2.999",
+		"inputLevel": "-3",
+		"x": 1620,
+		"y": 540,
+		"wires": [
+			[
+				"19cb1195.f45a3e"
+			]
+		]
+	},
+	{
+		"id": "26b600d5.6fc36",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "30  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "29.99",
+		"max": "30.01",
+		"inputLevel": "30",
+		"x": 1620,
+		"y": 600,
+		"wires": [
+			[
+				"65add1f3.9a67"
+			]
+		]
+	},
+	{
+		"id": "ee7c3d13.04d0b",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "300  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "299.9",
+		"max": "300.1",
+		"inputLevel": "300",
+		"x": 1620,
+		"y": 660,
+		"wires": [
+			[
+				"c018df3e.566ee"
+			]
+		]
+	},
+	{
+		"id": "99c8cbf2.1cdaf8",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "1000  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "999.5",
+		"max": "1000.5",
+		"inputLevel": "1000",
+		"x": 1630,
+		"y": 720,
+		"wires": [
+			[
+				"e691dbf7.db68e8"
+			]
+		]
+	},
+	{
+		"id": "245a7d52.4c6592",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "50  celsius",
+		"baseQuantity": "temperature",
+		"derivedQuantity": "celsius",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-10",
+		"max": "110",
+		"inputLevel": "50",
+		"x": 730,
+		"y": 940,
+		"wires": [
+			[
+				"88a7dffa.ef2dc"
+			]
+		]
+	},
+	{
+		"id": "ef2c2c19.0e95a",
+		"type": "indysoft-device-keysight34401a",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"deviceConfigId": "99e08da0.feaeb",
+		"mode": "vac",
+		"setRate": false,
+		"rate": 0,
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 360,
+		"y": 400,
+		"wires": [
+			[],
+			[]
+		]
+	}
+]

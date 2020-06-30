@@ -117,6 +117,10 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     return super.emit(event, args);
   }
 
+  getItemsJsonFilePath() {
+    return path.join(this.fBasePath, this.fItemFilename + 's.json');
+  }
+
   getItemDirPath(name: string) {
     const procDir = path.join(this.fBasePath, name);
     return procDir;
@@ -129,14 +133,14 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   async createItemsJson() { await this.saveItemsJson({}); };
 
   async getItemsJson(){
-    const fileBuffer = await fsPromises.readFile(this.fItemFilename + 's');
+    const fileBuffer = await fsPromises.readFile(this.getItemsJsonFilePath());
     const fileContent = fileBuffer.toString();
     const procsJson = JSON.parse(fileContent) as ProceduresFile;
     return procsJson;
   };
   
   async saveItemsJson(content?: ProceduresFile) {
-    await fsPromises.writeFile(this.fItemFilename + 's', JSON.stringify(content));
+    await fsPromises.writeFile(this.getItemsJsonFilePath(), JSON.stringify(content));
   };
 
   async getItemJson(name: string) {
@@ -230,19 +234,19 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   }
   
   async getActive() {
-    if (!fs.existsSync(this.fItemFilename + 's')) return undefined;
+    if (!fs.existsSync(this.getItemsJsonFilePath())) return undefined;
     const procsJson = await this.getItemsJson();
     return procsJson.active;
   }
   
   async setActive(name: string) {
     this.checkExists(name);
-    if (!fs.existsSync(this.fItemFilename + 's')) await this.createItemsJson();
+    if (!fs.existsSync(this.getItemsJsonFilePath())) await this.createItemsJson();
     const procsJson = await this.getItemsJson();
     procsJson.active = name;
     await this.saveItemsJson(procsJson);
     this.emit('set-active', name);
-    this.onSetActive(name);
+    await this.onSetActive(name);
     if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.setActive.response, name);
   }
   
