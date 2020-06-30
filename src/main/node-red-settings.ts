@@ -1,30 +1,31 @@
 import * as path from 'path';
 import * as os from 'os';
 import type { Settings } from '../@types/logic-server';
+import { disableAllCommunicationInterfaces, enableAllCommunicationInterfaces, findNodeById, findNodesByType, getActionNodesForSection, getAllNodes, getCommunicationInterface, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, getSectionNodes, onActionResult, onActionStateChange, onComment, onGetUserInput, onShowInstruction, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
 const settings: Settings = {
-  disableAllCommunicationInterfaces: () => {},
+  disableAllCommunicationInterfaces: disableAllCommunicationInterfaces,
   driversRoot: '',
-  enableAllCommunicationInterfaces: () => {},
-  findNodeById: () => undefined,
-  findNodesByType: () => [],
-  getActionNodesForSection: () => [],
-  getAllNodes: () => [],
-  getCommunicationInterface: () => undefined,
-  getCommunicationInterfaceForDevice: () => undefined,
-  getDriverForDevice: async () => null,
-  getNodeConfig: () => undefined,
-  getProcedureStatus: () => null,
-  getSectionNodes: () => [],
-  onActionResult: () => {},
-  onActionStateChange: () => {},
-  onComment: () => {},
-  onGetUserInput: () => undefined,
-  onShowInstruction: () => undefined,
-  resetAllConnectedInstructionNodes: () => undefined,
-  resetAllConnectedNodes: () => undefined,
+  enableAllCommunicationInterfaces: enableAllCommunicationInterfaces,
+  findNodeById: findNodeById,
+  findNodesByType: findNodesByType,
+  getActionNodesForSection: getActionNodesForSection,
+  getAllNodes: getAllNodes,
+  getCommunicationInterface: getCommunicationInterface,
+  getCommunicationInterfaceForDevice: getCommunicationInterfaceForDevice,
+  getDriverForDevice: getDriverForDevice,
+  getNodeConfig: getNodeConfig,
+  getProcedureStatus: getProcedureStatus,
+  getSectionNodes: getSectionNodes,
+  onActionResult: onActionResult,
+  onActionStateChange: onActionStateChange,
+  onComment: onComment,
+  onGetUserInput: onGetUserInput,
+  onShowInstruction: onShowInstruction,
+  resetAllConnectedInstructionNodes: resetConnectedInstructionNodes,
+  resetAllConnectedNodes: resetAllConnectedNodes,
   paletteCategories: ['Actions', 'User', 'Results', 'Digital Multimeter', 'Multi Product Calibrator', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
   httpAdminRoot: '/red',  // set to false to disable editor and deploy
   httpNodeRoot: '/',
@@ -42,7 +43,7 @@ const settings: Settings = {
   functionGlobalContext: {
     indySoftLogicServerVersion: '0.1.0',
     visualCal: global.visualCal
-  },    // enables global context - add extras ehre if you need them
+  },    // enables global context - add extras here if you need them
   logging: {
     console: {
       level: 'info',

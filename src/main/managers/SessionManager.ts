@@ -21,7 +21,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
   
   async createSessionsDir() { await fsPromises.mkdir(global.visualCal.dirs.sessions); };
   async createSessionResultsDir(name: string) { await fsPromises.mkdir(path.join(this.getSessionDirPath(name), SessionManager.SESSION_RESULTS_FOLDER_NAME)); };
-  async createSessionResultsFile(name: string) { await fsPromises.writeFile(path.join(this.getSessionDirPath(name), SessionManager.SESSION_RESULTS_FOLDER_NAME, 'results.json'), JSON.stringify({})); };
+  async createSessionResultsFile(name: string) { await fsPromises.writeFile(path.join(this.getSessionDirPath(name), SessionManager.SESSION_RESULTS_FOLDER_NAME, 'results.json'), JSON.stringify([])); };
 
   protected async onCreatedItemDir(itemDirPath: string, sanitizedName: string): Promise<void> {
     await this.createSessionResultsDir(sanitizedName);

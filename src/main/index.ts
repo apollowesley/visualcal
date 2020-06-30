@@ -24,14 +24,15 @@ try {
     UserHomeUtils.ensureExists();
     NodeRedSettings.userDir = path.join(global.visualCal.dirs.visualCalUser, 'logic'),
     NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
+    NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
     app.on('window-all-closed', onWindowAllClosed);
     app.on('activate', onActive);
-    global.visualCal.nodeRed.init(httpServer, NodeRedSettings);
-    nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.httpAdmin);
-    nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.httpNode);
+    global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
+    nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
+    nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
     nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
 
     if (!global.visualCal.isDev) {
@@ -51,7 +52,7 @@ try {
     (await import('vue-devtools')).install();
     httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
       try {
-        await global.visualCal.nodeRed.start();
+        await global.visualCal.nodeRed.app.start();
         await ProcedureManager.loadActive();
       } catch (error) {
         console.error(error);

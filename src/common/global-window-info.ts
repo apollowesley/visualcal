@@ -76,6 +76,11 @@ export const dirs: VisualCalAugmentDirs = {
       remove: path.join(renderersSessionPath, 'remove.js')
     }
   },
+  drivers: {
+    base: path.join(distPath, 'drivers'),
+    communicationInterfaces: path.join(distPath, 'drivers', 'communication-interfaces'),
+    devices: path.join(distPath, 'drivers', 'devices')
+  },
   procedures: path.join(os.homedir(), '.visualcal', 'procedures'),
   sessions: path.join(os.homedir(), '.visualcal', 'sessions'),
   visualCalUser: path.join(os.homedir(), '.visualcal')

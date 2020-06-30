@@ -33,7 +33,7 @@ export class NodeRedFlowManager extends EventEmitter {
       }
     }
     try {
-      await global.visualCal.nodeRed.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
+      await global.visualCal.nodeRed.app.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
     } catch (error) {
       console.error(error);
     }

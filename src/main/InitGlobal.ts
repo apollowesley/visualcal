@@ -12,6 +12,7 @@ import { SessionManager } from './managers/SessionManager';
 import { DemoUser } from '../@types/constants';
 import { NodeRed } from '../@types/logic-server';
 import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
+import { ResultManager } from './managers/ResultManager';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
@@ -22,7 +23,9 @@ export const visualCal: VisualCalGlobalAugment = {
   isMac: process.platform === 'darwin',
   isDev: isDev(),
   user: DemoUser,
-  nodeRed: RED as NodeRed,
+  nodeRed: {
+    app: RED as NodeRed
+  },
   config: {
     httpServer: {
       port: serverListenPort
@@ -39,6 +42,7 @@ export const visualCal: VisualCalGlobalAugment = {
   procedureManager: new ProcedureManager(dirs.procedures),
   sessionManager: new SessionManager(dirs.sessions),
   nodeRedFlowManager: new NodeRedFlowManager(),
+  resultManager: new ResultManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

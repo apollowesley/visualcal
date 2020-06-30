@@ -122,6 +122,23 @@ export const IpcChannels = {
       response: 'update-session-response',
       error: 'update-session-error'
     }
+  },
+  results: {
+    load: {
+      request: 'load-results-request',
+      response: 'load-results-response',
+      error: 'load-results-error'
+    },
+    save: {
+      request: 'save-results-request',
+      response: 'save-results-response',
+      error: 'save-results-error'
+    },
+    saveOne: {
+      request: 'saveOne-result-request',
+      response: 'saveOne-result-response',
+      error: 'saveOne-result-error'
+    }
   }
 }
 

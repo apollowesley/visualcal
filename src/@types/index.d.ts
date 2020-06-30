@@ -38,6 +38,11 @@ interface VisualCalAugmentDirs {
     procedure: VisualCalCRUDDir;
     session: VisualCalCRUDDir;
   }
+  drivers: {
+    base: string;
+    communicationInterfaces: string;
+    devices: string;
+  }
   procedures: string;
   sessions: string;
   visualCalUser: string;
@@ -67,13 +72,27 @@ interface VisualCalAugment {
   user?: User;
 }
 
+interface NodeRedUtils {
+  actions: {
+    trigger: (section: string, action: string) => void;
+    stop: (section: string, action: string) => void;
+    reset: (section: string, action: string) => void;
+  };
+  nodes: {
+    find: (name: string) => import('./logic-server').NodeRedRuntimeNode | undefined;
+  }
+}
+
 interface VisualCalGlobalAugment extends VisualCalAugment {
   logger: import('winston').Logger;
   windowManager: import('../main/managers/WindowManager').WindowManager;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
   sessionManager: import('../main/managers/SessionManager').SessionManager;
   nodeRedFlowManager: import('../main/managers/NodeRedFlowManager').NodeRedFlowManager;
-  nodeRed: import('./logic-server').NodeRed;
+  resultManager: import('../main/managers/ResultManager').ResultManager;
+  nodeRed: {
+    app: import('./logic-server').NodeRed;
+  };
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {
