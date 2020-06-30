@@ -10,7 +10,8 @@ import { serverListenPort, dirs, publicPath, files } from '../common/global-wind
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
 import { DemoUser } from '../@types/constants';
-import { NodeRed } from 'src/@types/logic-server';
+import { NodeRed } from '../@types/logic-server';
+import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
 
 dirs.visualCalUser = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
 dirs.procedures = path.join(dirs.visualCalUser, 'procedures');
@@ -37,6 +38,7 @@ export const visualCal: VisualCalGlobalAugment = {
   },
   procedureManager: new ProcedureManager(dirs.procedures),
   sessionManager: new SessionManager(dirs.sessions),
+  nodeRedFlowManager: new NodeRedFlowManager(),
   assets: {
     basePath: path.resolve(publicPath),
     get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))

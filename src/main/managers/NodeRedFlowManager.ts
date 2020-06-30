@@ -24,8 +24,19 @@ export class NodeRedFlowManager extends EventEmitter {
       } catch (error) {
         console.error(error);
       }
+      if (global.visualCal.windowManager.nodeRedEditorWindow) {
+        try {
+          global.visualCal.windowManager.nodeRedEditorWindow.destroy();
+        } catch (error) {
+          console.error(error);
+        }
+      }
     }
-    await global.visualCal.nodeRed.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
+    try {
+      await global.visualCal.nodeRed.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
+    } catch (error) {
+      console.error(error);
+    }
     if (nodeRedEditorWindowWasOpen) await global.visualCal.windowManager.ShowNodeRedEditor();
   }
 

@@ -15,7 +15,7 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
   static PROCEDURE_JSON_FILE_NAME = 'procedure.json';
  
   async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
-  async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify({})); };
+  async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify([])); };
 
   protected async onCreatedItemDir(itemDirPath: string, sanitizedName: string): Promise<void> {
     await this.createProcedureLogicDir(sanitizedName);

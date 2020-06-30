@@ -242,8 +242,14 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     procsJson.active = name;
     await this.saveItemsJson(procsJson);
     this.emit('set-active', name);
+    this.onSetActive(name);
   }
   
+  protected async onSetActive(name: string) {
+    // Override if needed
+    return Promise.resolve();
+  }
+
   async update(item: TItem) {
     this.checkExists(item.name);
     await this.saveItemJson(item.name, item);

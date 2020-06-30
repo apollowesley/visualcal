@@ -158,13 +158,23 @@ const sessionProcedureCellEdited = (cell: Tabulator.CellComponent) => {
   window.visualCal.sessionManager.update(session);
 }
 
+const activateSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+  return '<button>Activate</button>';
+}
+
+const activateSessionClick = async (cell: Tabulator.CellComponent) => {
+  const sessionName = cell.getRow().getCell('name').getValue() as string;
+  window.visualCal.sessionManager.setActive(sessionName);
+}
+
 const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
   data: sessions,
   layout: 'fitColumns',
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited },
     { title: 'Procedure', field: 'procedureName', editable: true, editor: 'select', editorParams: () => procedures.map(p => p.name), cellEdited: sessionProcedureCellEdited },
-    { title: 'Username', field: 'username', editable: false }
+    { title: 'Username', field: 'username', editable: false, minWidth: 120 },
+    { title: 'Activate', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) }
   ]
 });
 

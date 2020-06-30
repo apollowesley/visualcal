@@ -34,4 +34,13 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     };
   }
 
+  protected async onSetActive(name: string) {
+    const session = await this.getItemJson(name);
+    try {
+      await global.visualCal.nodeRedFlowManager.load(session.procedureName);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 }
