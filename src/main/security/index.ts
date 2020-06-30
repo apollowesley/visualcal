@@ -3,7 +3,7 @@ import { ipcMain } from 'electron';
 export const isLoggedIn = () => global.visualCal.user !== null;
 
 export const login = (credentials: LoginCredentials) => {
-  return credentials.username.toLocaleUpperCase() === 'TEST@EXAMPLE.COM'.toLocaleUpperCase();
+  return credentials.username.toLocaleUpperCase() === 'DEMO@INDYSOFT.COM'.toLocaleUpperCase();
 };
 
 export const listenForLogin = () => {

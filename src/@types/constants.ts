@@ -1,5 +1,5 @@
 export const DemoUser: User = {
-  email: 'test@example.com',
+  email: 'demo@indysoft.com',
   nameFirst: 'Test',
   nameLast: 'User'
 }

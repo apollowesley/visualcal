@@ -41,9 +41,22 @@ const procedureNameCellEdited = (cell: Tabulator.CellComponent) => {
       alert(`Procedure name must be unique`);
     } else {
       window.visualCal.procedureManager.rename(oldName, newName);
+      alert(`Procedure, ${newName}, renamed`);
     }
   });
   window.visualCal.procedureManager.getExists(newName);
+}
+
+const procedureDescriptionCellEdited = (cell: Tabulator.CellComponent) => {
+  const newDesc = cell.getValue() as string;
+  const procName = cell.getRow().getCell('name').getValue() as string;
+  const proc = procedures.find(p => p.name === procName);
+  if (!proc) throw new Error('Procedure not found!');
+  ipcRenderer.once(IpcChannels.procedures.update.response, (_, procedure: Procedure) => {
+    alert(`Procedure, ${procedure.name}, updated`);
+  });
+  proc.description = newDesc;
+  window.visualCal.procedureManager.update(proc);
 }
 
 const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
@@ -51,7 +64,7 @@ const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
   layout: 'fitColumns',
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: procedureNameCellEdited },
-    { title: 'Description', field: 'description', editable: true, editor: 'textarea' }
+    { title: 'Description', field: 'description', editable: true, editor: 'textarea', cellEdited: procedureDescriptionCellEdited }
   ]
 });
 
@@ -127,6 +140,7 @@ const sessionNameCellEdited = (cell: Tabulator.CellComponent) => {
       alert(`Session name must be unique`);
     } else {
       window.visualCal.sessionManager.rename(oldName, newName);
+      alert(`Session, ${newName}, renamed`);
     }
   });
   window.visualCal.sessionManager.getExists(newName);
@@ -140,13 +154,8 @@ const sessionProcedureCellEdited = (cell: Tabulator.CellComponent) => {
   ipcRenderer.once(IpcChannels.sessions.update.response, (_, session: Session) => {
     alert(`Session, ${session.name}, updated`);
   });
-  window.visualCal.sessionManager.update({
-    name: sessionName,
-    procedureName: newProcedureName,
-    username: session.username,
-    lastActionName: session.lastActionName,
-    lastSectionName: session.lastSectionName
-  });
+  session.procedureName = newProcedureName;
+  window.visualCal.sessionManager.update(session);
 }
 
 const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
