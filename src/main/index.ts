@@ -93,14 +93,6 @@ try {
   }
 
   async function onActive() {
-    if (isLoggedIn() && global.visualCal.windowManager.mainWindow) {
-      global.visualCal.windowManager.mainWindow.show();
-      return;
-    }
-    if (!isLoggedIn()) {
-      await createLoginWindow();
-      return;
-    }
     await global.visualCal.windowManager.ShowMain();
   }
 
