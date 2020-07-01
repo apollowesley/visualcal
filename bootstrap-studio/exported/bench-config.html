@@ -5,29 +5,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>IndySoft VisualCal</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/superhero.min.css">
-    <link rel="stylesheet" href="assets/css/tabulator.min.css">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=d1b1c151fdc1de4d280598e5a95d15f8">
+    <link rel="stylesheet" href="assets/css/styles.min.css?h=39787228ec11c1e053caa1e5b40e8d15">
 </head>
 
 <body>
     <main>
         <form class="d-flex">
             <div class="form-row">
+                <!-- Start: Interface name -->
                 <div class="col-auto">
                     <div class="form-group"><label for="vc-interface-name">Name</label><input class="form-control" type="text" id="vc-interface-name" placeholder="Enter an interface name" autofocus="" autocomplete="off" required="" minlength="1"></div>
                 </div>
+                <!-- End: Interface name -->
+                <!-- Start: Interface type -->
                 <div class="col-auto">
                     <div class="form-group"><label for="vc-interface-type">Type</label><select class="form-control" id="vc-interface-type" required=""><optgroup label="GPIB"><option value="0" selected="">Prologix TCP</option><option value="1">Prologix USB</option></optgroup></select></div>
                 </div>
+                <!-- End: Interface type -->
             </div>
         </form>
+        <!-- Start: visualcal-script -->
         <!--visualcal-script-->
+        <!-- End: visualcal-script -->
     </main>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/visualcal.js"></script>
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=7c038681746a729e2fff9520a575e78c"></script>
+    <script src="assets/js/script.min.js?h=29b2fbf39b4f3cecb796848930062ee5"></script>
 </body>
 
 </html>
