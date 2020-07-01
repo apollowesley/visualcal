@@ -1,28 +1,14 @@
-html {
-  position: relative;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-  width: calc(100vw - 20px);
-}
-
 body {
-  background-color: #666d70;
   height: calc(100vh - 3px);
   width: calc(100vw - 20px);
-  margin: 0;
 }
 
-main {
-  height: 100%;
-  width: calc(100vw - 20px);
+.container {
+  margin: 10px;
 }
 
-.card {
-  background-color: gray;
-  margin: 20px;
-  min-height: 250px;
-  min-width: 600px;
+.container-fluid {
+  margin: 10px;
 }
 
 .form-group {
@@ -30,7 +16,7 @@ main {
 }
 
 button {
-  margin: 5px;
+  margin: 10px;
 }
 
 textarea {

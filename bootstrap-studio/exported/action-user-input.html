@@ -7,10 +7,38 @@
     <title>IndySoft VisualCal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/superhero.min.css">
     <link rel="stylesheet" href="assets/css/tabulator.min.css">
 </head>
 
 <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card" id="vc-card-procedures">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="text-center">Input</h1>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="text-center" id="vc-instruction-title">Title</h1>
+                            </div>
+                        </div>
+                        <div class="row text-center d-flex" id="vc-user-input-image" style="min-height: 500px;">
+                            <div class="col-12 col-xl-12 offset-xl-0"><img width="100%"></div>
+                        </div>
+                        <div class="row" id="vc-user-input-textarea" style="min-height: 500px;">
+                            <div class="col">
+                                <p id="vc-instruction-text" style="width: 100%;height: 100%;">Text</p>
+                            </div>
+                        </div><button class="btn btn-primary" id="vc-instruction-ok-button" type="button">Ok</button><button class="btn btn-secondary" id="vc-instruction-cancel-button" type="button">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/visualcal.js"></script>
