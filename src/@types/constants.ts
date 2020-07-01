@@ -158,6 +158,18 @@ export const IpcChannels = {
       response: 'show-input-response',
       error: 'show-input-error'
     }
+  },
+  benchConfig: {
+    load: {
+      request: 'get-bench-config-request',
+      response: 'get-bench-config-response',
+      error: 'get-bench-config-error'
+    },
+    save: {
+      request: 'save-bench-config-request',
+      response: 'save-bench-config-response',
+      error: 'save-bench-config-error'
+    }
   }
 }
 
