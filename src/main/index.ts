@@ -2,6 +2,8 @@ import { app, ipcMain } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
+import { FileManager } from '../common/managers/FileManager';
+import { EmulatedCommunicationInterface } from '../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import { init as initGlobal } from './InitGlobal';
 import { IpcChannel } from "./IPC/IpcChannel";
 import { NodeRedResultChannel } from "./IPC/NodeRedResultChannel";
@@ -10,9 +12,8 @@ import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
-import { init as nodeRedUtilsInit } from './node-red/utils';
+import { addCommunicationInterface, addCommunicationInterfaceForDevice, init as nodeRedUtilsInit } from './node-red/utils';
 import { listenForLogin } from './security';
-import { FileManager } from '../common/managers/FileManager';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -28,6 +29,32 @@ async function init(ipcChannels: IpcChannel<any>[]) {
     NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
     NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
     nodeRedUtilsInit();
+
+    // TODO: DEMO ONLY!!!
+    addCommunicationInterface({
+      communicationInterface: new EmulatedCommunicationInterface(),
+      name: 'Emulated'
+    });
+    addCommunicationInterfaceForDevice({
+      communicationInterfaceName: 'Emulated',
+      deviceName: 'uut',
+      deviceDriver: {
+        categories: ['digital-multi-meter'],
+        deviceModel: '45',
+        manufacturer: 'Fluke'
+      }
+    });
+    addCommunicationInterfaceForDevice({
+      communicationInterfaceName: 'Emulated',
+      deviceName: 'calibrator',
+      deviceDriver: {
+        categories: ['multi-product-calibrator'],
+        deviceModel: '5522A',
+        manufacturer: 'Fluke'
+      }
+    });
+    // TODO: END DEMO
+
     initMainMenu();
     registerIpcChannels(ipcChannels);
     app.on('ready', async () => await onAppReady());
