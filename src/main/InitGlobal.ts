@@ -17,6 +17,7 @@ import { UserInteractionManager } from './managers/UserInteractionManager';
 import { IpcManager } from './managers/IpcManager';
 
 export let visualCal: VisualCalGlobalAugment;
+const windowManager = new WindowManager();
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
@@ -43,18 +44,18 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
       warn: (msg: any) => global.visualCal.logger.warn(msg),
       error: (msg: any) => global.visualCal.logger.error(msg)
     },
+    windowManager: windowManager,
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(localDirs.userHomeData.sessions),
     nodeRedFlowManager: new NodeRedFlowManager(),
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
-    ipcManager: new IpcManager(),
+    ipcManager: new IpcManager(windowManager),
     assets: {
       basePath: dirs().public,
       get: (name: string) => fs.readFileSync(path.join(localDirs.public, name))
-    },
-    windowManager: new WindowManager()
+    }
   };
 
   global.visualCal = visualCal;

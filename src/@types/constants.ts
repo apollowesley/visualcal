@@ -25,6 +25,10 @@ export interface IpcChannelCRUD {
 export const IpcChannels = {
   getDirs: 'get-dirs-request',
   getFiles: 'get-files-request',
+  windows: {
+    show: 'show-window',
+    showErrorDialog: 'show-error-dialog'
+  },
   log: {
     result: 'log-result',
     info: 'log-info',

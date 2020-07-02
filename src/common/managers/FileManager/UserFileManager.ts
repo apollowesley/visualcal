@@ -26,7 +26,8 @@ export class UserDirFileManager extends FileManagerBase {
   get sessions() { return this.fSessionsFileManager; };
 
   async getConfig() {
-    return await this.readFileAsJson<UserConfig>(this.configFilePath);
+    const contents = await this.readFileAsString(this.configFilePath);
+    return await JSON.parse(contents) as UserConfig;
   }
 
   async saveConfig(config: UserConfig) {
@@ -45,5 +46,21 @@ export class UserDirFileManager extends FileManagerBase {
     await this.fSessionsFileManager.ensureInitizilied();
     await this.ensureConfigFileInitialized();
   }
+
+  // ***** ABSTRACT INHERITED *****
+
+  getItemDirPath(name: string): string {
+    return this.baseDirPath;
+  }
+
+  getItemFileInfoPath(name: string): string {
+    return path.join(this.baseDirPath, UserDirFileManager.CONFIG_FILE_NAME);
+  }
+
+  onRename(oldName: string, newName: string, item: UserConfig): UserConfig {
+    return item;
+  }
+
+  // ******************************
 
 }

@@ -4,24 +4,11 @@ import path from 'path';
 
 export abstract class FileManagerBase extends EventEmitter {
 
-  static FORBIDDEN_NAMES = [ '.DS_Store' ];
-
   private fBaseDirPath: string;
 
   constructor(baseDirPath: string) {
     super();
     this.fBaseDirPath = baseDirPath;
-  }
-
-  get baseDirPath() { return this.fBaseDirPath };
-
-  getIsForbiddenName(name: string) {
-    const nameUpperCaseName = name.toLocaleUpperCase();
-    let retVal = false;
-    FileManagerBase.FORBIDDEN_NAMES.forEach(forbiddenName => {
-      if (forbiddenName.toLocaleUpperCase() === nameUpperCaseName) retVal = true;
-    });
-    return retVal;
   }
 
   /**
@@ -30,19 +17,7 @@ export abstract class FileManagerBase extends EventEmitter {
    */
   abstract async ensureInitizilied(): Promise<void>;
 
-  protected async readAllJsonFiles<T>(jsonFilename: string) {
-    const retVal: T[] = [];
-    const possibleDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
-    const possibleDirsFiltered = possibleDirs.filter(d => d.isDirectory && !this.getIsForbiddenName(d.name));
-    await Promise.all(possibleDirsFiltered.map(async (possibleDir) => {
-      const jsonPath = path.join(this.fBaseDirPath, possibleDir.name, jsonFilename);
-      if (fs.existsSync(jsonPath)) {
-        const content = await this.readFileAsJson<T>(jsonPath);
-        retVal.push(content);
-      }
-    }));
-    return retVal;
-  }
+  get baseDirPath() { return this.fBaseDirPath };
 
   protected async readFileAsString(path: string) {
     const buffer = await fsPromises.readFile(path);
@@ -50,13 +25,7 @@ export abstract class FileManagerBase extends EventEmitter {
     return bufferAsString;
   }
 
-  protected async readFileAsJson<T>(path: string) {
-    const bufferAsString = await this.readFileAsString(path);
-    const asJson = JSON.parse(bufferAsString) as T;
-    return asJson;
-  }
-
-  protected async saveJsonToFile(path: string, contents: object, pretty: boolean = false) {
+  protected async saveJsonToFile(path: string, contents: any, pretty: boolean = true) {
     const spaces = pretty ? 2 : '';
     const contentsString = JSON.stringify(contents, null, spaces);
     await fsPromises.writeFile(path, contentsString);

@@ -1,4 +1,4 @@
-import ('../window');
+import('../window'); // The script we are in now get's preloaded by the BrowserWindow (because we can't run with nodeIntegration enabled).  So we import window here, whereas normally we would preload window.js.
 import { Red, Nodes, NodeProperties } from 'node-red';
 
 interface NodesModule extends Nodes {

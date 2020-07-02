@@ -70,7 +70,7 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
       title: 'VisualCal - Logic Editor',
       webPreferences: {
         nodeIntegration: false,
-        preload: path.join(global.visualCal.dirs.renderers.windows, 'nodered.js')
+        preload: path.join(global.visualCal.dirs.renderers.windows, 'node-red.js')
       }
     }
   }

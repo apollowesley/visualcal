@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, app, ipcMain, ipcRenderer } from 'electron';
+import { BrowserWindow, dialog, app, ipcMain, ipcRenderer, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig } from './WindowConfigs';
@@ -17,28 +17,6 @@ export class WindowManager {
         event.reply('get-visualcal-window-id-res', window.visualCal.id);
       } catch (error) {
         event.reply('get-visualcal-window-id-err', error);
-      }
-    });
-    ipcMain.on('show-window', async (_, windowId: VisualCalWindow) => {
-      switch (windowId) {
-        case VisualCalWindow.Console:
-          break;
-        case VisualCalWindow.CreateProcedure:
-          await this.ShowCreateProcedureWindow();
-          break;
-        case VisualCalWindow.CreateSession:
-          await this.ShowCreateSessionWindow();
-          break;
-        case VisualCalWindow.Loading:
-          break;
-        case VisualCalWindow.Login:
-          break;
-        case VisualCalWindow.Main:
-          break;
-        case VisualCalWindow.NodeRedEditor:
-          break;
-        default:
-          throw new Error(`Invalid window Id, ${windowId}`);
       }
     });
     ipcMain.on('show-view-session-window', async (_, sessionName: string) => {
@@ -177,6 +155,39 @@ export class WindowManager {
   // *************************************************
   // ************** CREATE/SHOW WINDOWS **************
   // *************************************************
+
+  async show(windowId: VisualCalWindow) {
+    switch (windowId) {
+      case VisualCalWindow.Console:
+        break;
+      case VisualCalWindow.CreateProcedure:
+        await this.ShowCreateProcedureWindow();
+        break;
+      case VisualCalWindow.CreateSession:
+        await this.ShowCreateSessionWindow();
+        break;
+      case VisualCalWindow.Loading:
+        break;
+      case VisualCalWindow.Login:
+        break;
+      case VisualCalWindow.Main:
+        break;
+      case VisualCalWindow.NodeRedEditor:
+        break;
+      case VisualCalWindow.UserInput:
+        break;
+      case VisualCalWindow.UserInstruction:
+        break;
+      default:
+        throw new Error(`Invalid window Id, ${windowId}`);
+    }
+  }
+
+  async showErrorDialog(parentWebContents: WebContents, error: Error) {
+    const parent = BrowserWindow.fromWebContents(parentWebContents);
+    if (!parent) throw new Error('Unable to find BrowserWindow from WebContents');
+    dialog.showErrorBox('Error', error.message);
+  }
 
   // Loading window
   async ShowLoading(closedCallback: () => void, duration: number = 5000) {

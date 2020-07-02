@@ -9,6 +9,7 @@ import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
+import { FileManager } from '../common/managers/FileManager';
 
 const dirs: VisualCalAugmentDirs = ipcRenderer.sendSync(IpcChannels.getDirs);
 const files: VisualCalAugmentFiles = ipcRenderer.sendSync(IpcChannels.getFiles);
@@ -21,8 +22,9 @@ window.visualCal = {
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
-    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
-    showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName)
+    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, windowId),
+    showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName),
+    showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error)
   },
   config: {
     httpServer: {
@@ -41,6 +43,7 @@ window.visualCal = {
   sessionManager: new RendererSessionManager(),
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
+  fileManager: new FileManager(dirs.base, dirs.userHomeData.base),
   assets: {
     basePath: path.resolve(dirs.public),
     get: (name: string) => fs.readFileSync(path.resolve(dirs.public, name))
