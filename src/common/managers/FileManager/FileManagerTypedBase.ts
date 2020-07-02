@@ -3,13 +3,25 @@ import fs, { promises as fsPromises } from 'fs';
 import sanitizeFilename from 'sanitize-filename';
 import { FileManagerBase } from './FileManagerBase';
 
+export interface Activatable {
+  active: string;
+}
+
 export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
 
   static FORBIDDEN_NAMES = [ '.DS_Store' ];
 
-  constructor(baseDirPath: string) {
+  private fItemFilenameWithoutExtension: string;
+
+  constructor(baseDirPath: string, itemFilenameWithoutExtension: string) {
     super(baseDirPath);
+    this.fItemFilenameWithoutExtension = itemFilenameWithoutExtension;
   }
+
+  get itemFilenameWithoutExtension() { return this.fItemFilenameWithoutExtension; }
+  get itemFilenameWithExtension() { return `${this.itemFilenameWithoutExtension}.json`; }
+  get itemsFilenameWithExtension() { return `${this.itemFilenameWithoutExtension}s.json` }
+  get itemsFilePath() { return path.join(this.baseDirPath, this.itemFilenameWithExtension); }
 
   getIsForbiddenName(name: string) {
     const nameUpperCaseName = name.toLocaleUpperCase();
@@ -26,12 +38,12 @@ export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
     return asJson;
   }
 
-  protected async readAllJsonFiles(jsonFilename: string) {
+  protected async readAllJsonFiles(filename: string) {
     const retVal: TItem[] = [];
     const possibleDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
     const possibleDirsFiltered = possibleDirs.filter(d => d.isDirectory() && !this.getIsForbiddenName(d.name));
     await Promise.all(possibleDirsFiltered.map(async (possibleDir) => {
-      const jsonPath = path.join(this.baseDirPath, possibleDir.name, jsonFilename);
+      const jsonPath = path.join(this.baseDirPath, possibleDir.name, filename);
       if (fs.existsSync(jsonPath)) {
         const content = await this.readFileAsJson(jsonPath);
         retVal.push(content);
@@ -71,6 +83,41 @@ export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
     await fsPromises.rename(oldDirPath, newDirPath);
     this.emit('renamed', { oldName, newName });
     return item;
+  }
+
+  async remove(name: string) {
+    const nameSanitized = sanitizeFilename(name);
+    this.checkExists(nameSanitized);
+    const dirPath = this.getItemDirPath(nameSanitized);
+    await fsPromises.rmdir(dirPath, { recursive: true });
+  }
+
+  private async getItemsFileContents() {
+    const itemsFilePath = path.join(this.baseDirPath, this.itemsFilenameWithExtension);
+    const buffer = await fsPromises.readFile(itemsFilePath);
+    const bufferString = buffer.toString();
+    const itemsContents: Activatable = JSON.parse(bufferString);
+    return itemsContents;
+  }
+
+  async getActive() {
+    const itemsContents = await this.getItemsFileContents();
+    return itemsContents.active;
+  }
+
+  async setActive(name: string) {
+    this.checkExists(name);
+    const itemsContents = await this.getItemsFileContents();
+    itemsContents.active = name;
+    const itemsContentsString = JSON.stringify(itemsContents);
+    await fsPromises.writeFile(this.itemsFilePath, itemsContentsString);
+    this.emit('set-active', name);
+  }
+
+  async update(name: string, contents: TItem) {
+    this.checkExists(name);
+    const filePath = this.getItemFileInfoPath(name);
+    await this.saveJsonToFile(filePath, contents);
   }
 
 }

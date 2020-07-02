@@ -9,7 +9,7 @@ export class SessionFileManager extends FileManagerTypedBase<Session> {
   static SESSION_JSON_NAME = 'session.json';
 
   constructor(baseDirPath: string) {
-    super(baseDirPath);
+    super(baseDirPath, 'session');
   }
 
   get sessionsJsonPath() { return path.join(this.baseDirPath, SessionFileManager.SESSIONS_JSON_NAME); }

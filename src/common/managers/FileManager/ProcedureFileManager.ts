@@ -7,9 +7,9 @@ export class ProcedureFileManager extends FileManagerTypedBase<Procedure> {
   static PROCEDURES_DIR_NAME = 'procedures';
   static PROCEDURES_JSON_NAME = 'procedures.json';
   static PROCEDURE_JSON_NAME = 'procedure.json';
-
+  
   constructor(baseDirPath: string) {
-    super(baseDirPath);
+    super(baseDirPath, 'procedure');
   }
 
   get proceduresJsonPath() { return path.join(this.baseDirPath, ProcedureFileManager.PROCEDURES_JSON_NAME); }
