@@ -3,6 +3,8 @@ import fs, { promises as fsPromises } from 'fs';
 import { ProcedureFileManager } from './ProcedureFileManager';
 import { SessionFileManager } from './SessionFileManager';
 import path from 'path';
+import { UserConfig } from '../../../types/UserConfig';
+import { UserConfigDefaults } from '../../../types/constants';
 
 export class UserDirFileManager extends FileManagerBase {
 
@@ -25,7 +27,16 @@ export class UserDirFileManager extends FileManagerBase {
 
   private async ensureConfigFileInitialized() {
     if (fs.existsSync(this.configFilePath)) return;
-    await fsPromises.mkdir(this.configFilePath);
+    const defaults = UserConfigDefaults;
+    this.saveConfig(defaults);
+  }
+
+  async getConfig() {
+    return await this.readFileAsJson<UserConfig>(this.configFilePath);
+  }
+
+  async saveConfig(config: UserConfig) {
+    await this.saveJsonToFile(this.configFilePath, config, true);
   }
 
   async ensureInitizilied() {

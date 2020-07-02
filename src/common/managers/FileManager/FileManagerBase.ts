@@ -31,4 +31,10 @@ export abstract class FileManagerBase extends EventEmitter {
     return asJson;
   }
 
+  protected async saveJsonToFile(path: string, contents: object, pretty: boolean = false) {
+    const spaces = pretty ? 2 : '';
+    const contentsString = JSON.stringify(contents, null, spaces);
+    await fsPromises.writeFile(path, contentsString);
+  }
+
 }
