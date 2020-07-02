@@ -36,7 +36,7 @@ interface NodeRedStorageModule {
 
 let localSettings: LogicServerSettings;
 
-const getProcedureLogicDirPath = (procedureName: string) => fsPath.join(global.visualCal.dirs.procedures, procedureName, 'logic');
+const getProcedureLogicDirPath = (procedureName: string) => fsPath.join(global.visualCal.dirs.userHomeData.procedures, procedureName, 'logic');
 const getProcedureFlowFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'flows.json');
 const getProcedureCredentialsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'credentials.json');
 const getProcedureSettingsFilePath = (procedureName: string) => fsPath.join(getProcedureLogicDirPath(procedureName), 'settings.json');

@@ -29,7 +29,7 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
   }
 
   static getProcedureDirPath(name: string) {
-    const procDir = path.join(global.visualCal.dirs.userHomeData.procedures, name);
+    const procDir = path.join(window.visualCal.dirs.userHomeData.procedures, name);
     return procDir;
   }
 
@@ -38,8 +38,9 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
    * This should be call when the app starts.
    */
   static async loadActive() {
-    const activeProc = await global.visualCal.procedureManager.getActive();
-    if (activeProc) await global.visualCal.procedureManager.setActive(activeProc);
+    const procManager = new ProcedureManager(window.visualCal.dirs.userHomeData.procedures);
+    const activeProc = await procManager.getActive();
+    if (activeProc) await procManager.setActive(activeProc);
   }
 
 }

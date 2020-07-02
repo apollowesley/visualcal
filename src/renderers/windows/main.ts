@@ -3,9 +3,11 @@ import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveRespo
 import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
+import { ProcedureManager } from '../managers/ProcedureManager';
 
 // ***** PROCEDURES *****
 
+const procManager = new ProcedureManager(window.visualCal.dirs.userHomeData.procedures);
 let activeProcedureHeading: HTMLHeadingElement;
 let createProcedureButton: HTMLButtonElement;
 let procedures: Procedure[] = [];
@@ -85,7 +87,9 @@ const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    window.visualCal.procedureManager.getAll();
+    procedures = await procManager.getAll();
+    proceduresTable.setData(procedures);
+    console.info(procedures);
   } catch (error) {
     alert(error.message);
     throw error;

@@ -23,6 +23,7 @@ export interface IpcChannelCRUD {
 }
 
 export const IpcChannels = {
+  getDirs: 'get-dirs-request',
   log: {
     result: 'log-result',
     info: 'log-info',

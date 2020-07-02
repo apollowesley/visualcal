@@ -15,11 +15,11 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
   static SESSION_JSON_FILE_NAME = 'session.json';
  
   getSessionDirPath(name: string) {
-    const procDir = path.join(global.visualCal.dirs.sessions, name);
+    const procDir = path.join(global.visualCal.dirs.userHomeData.sessions, name);
     return procDir;
   };
   
-  async createSessionsDir() { await fsPromises.mkdir(global.visualCal.dirs.sessions); };
+  async createSessionsDir() { await fsPromises.mkdir(global.visualCal.dirs.userHomeData.sessions); };
   async createSessionResultsDir(name: string) { await fsPromises.mkdir(path.join(this.getSessionDirPath(name), SessionManager.SESSION_RESULTS_FOLDER_NAME)); };
   async createSessionResultsFile(name: string) { await fsPromises.writeFile(path.join(this.getSessionDirPath(name), SessionManager.SESSION_RESULTS_FOLDER_NAME, 'results.json'), JSON.stringify([])); };
 

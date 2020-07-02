@@ -1,5 +1,5 @@
 import path from 'path';
-import { serverListenPort, dirs, publicPath, files } from '../common/global-window-info';
+import { serverListenPort, files } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
@@ -9,6 +9,8 @@ import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
+
+const dirs: VisualCalAugmentDirs = ipcRenderer.sendSync(IpcChannels.getDirs);
 
 window.visualCal = {
   browserUtils: browserUtils,
@@ -39,7 +41,7 @@ window.visualCal = {
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
   assets: {
-    basePath: path.resolve(publicPath),
-    get: (name: string) => fs.readFileSync(path.resolve(publicPath, name))
+    basePath: path.resolve(dirs.public),
+    get: (name: string) => fs.readFileSync(path.resolve(dirs.public, name))
   }
 };

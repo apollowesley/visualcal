@@ -1,13 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
-
-export interface UserConfig {
-  showSplash: boolean;
-  lastProcedure?: string;
-}
+import { UserConfig } from '../../types/UserConfig';
 
 const getConfigFilePath = () => {
-  return path.join(global.visualCal.dirs.visualCalUser, 'config.json');
+  return path.join(global.visualCal.dirs.userHomeData.base, 'config.json');
 }
 
 export const exists = () => fs.existsSync(getConfigFilePath());

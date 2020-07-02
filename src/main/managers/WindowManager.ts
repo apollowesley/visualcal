@@ -44,6 +44,7 @@ export class WindowManager {
     ipcMain.on('show-view-session-window', async (_, sessionName: string) => {
       await this.ShowViewSessionWindow(sessionName);
     });
+    ipcMain.on('get-user-visualcal-dir-request', (event) => event.returnValue = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal'));
   }
 
   get(id: VisualCalWindow) {
@@ -281,8 +282,8 @@ export class WindowManager {
       window.show();
       return window;
     }
-    window = this.create(CreateProcedureWindowConfig());
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    window = this.create(CreateProcedureWindowConfig(this.mainWindow));
     await window.loadFile(global.visualCal.dirs.html.procedure.create);
     return window;
   }
@@ -294,8 +295,8 @@ export class WindowManager {
       window.show();
       return window;
     }
-    window = this.create(CreateSessionWindowConfig());
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    window = this.create(CreateSessionWindowConfig(this.mainWindow));
     await window.loadFile(global.visualCal.dirs.html.session.create);
     return window;
   }
@@ -308,13 +309,13 @@ export class WindowManager {
       return window;
     }
     if (!global.visualCal.dirs.html.session.view) throw new Error('Missing window html file');
-    window = this.create(ViewSessionWindowConfig());
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    window = this.create(ViewSessionWindowConfig(this.mainWindow));
     const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] } });
     sections.forEach(s => {
       s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name } });
     });
     WindowUtils.centerWindowOnNearestCurorScreen(window);
-    if (this.mainWindow) window.setParentWindow(this.mainWindow);
     await window.loadFile(global.visualCal.dirs.html.session.view);
     window.webContents.send('session-view-info', sessionName, sections);
     return window;
@@ -327,9 +328,8 @@ export class WindowManager {
       window.show();
       return window;
     }
-    window = this.create(UserInstructionWindowConfig());
-    if (this.viewSessionWindow) window.setParentWindow(this.viewSessionWindow);
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    if (!this.viewSessionWindow) throw new Error('View session window must be defined');
+    window = this.create(UserInstructionWindowConfig(this.viewSessionWindow));
     await window.loadFile(global.visualCal.dirs.html.userInstruction);
     window.webContents.send('user-instruction-request', request);
     return window;
@@ -342,9 +342,8 @@ export class WindowManager {
       window.show();
       return window;
     }
-    window = this.create(UserInputWindowConfig());
-    if (this.viewSessionWindow) window.setParentWindow(this.viewSessionWindow);
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    if (!this.viewSessionWindow) throw new Error('View session window must be defined');
+    window = this.create(UserInputWindowConfig(this.viewSessionWindow));
     await window.loadFile(global.visualCal.dirs.html.userInput);
     window.webContents.send('user-input-request', request);
     return window;

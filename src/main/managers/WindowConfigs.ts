@@ -1,4 +1,4 @@
-import { screen } from 'electron';
+import { screen, BrowserWindow } from 'electron';
 import path from 'path';
 
 export const MainWindowConfig = (): CreateWindowOptions => {
@@ -68,8 +68,6 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
     id: VisualCalWindow.NodeRedEditor,
     config: {
       title: 'VisualCal - Logic Editor',
-      fullscreenable: true,
-      autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: false,
         preload: path.join(global.visualCal.dirs.renderers.windows, 'nodered.js')
@@ -78,14 +76,13 @@ export const NodeRedEditorWindowConfig = (): CreateWindowOptions => {
   }
 }
 
-export const CreateProcedureWindowConfig = (): CreateWindowOptions => {
+export const CreateProcedureWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.CreateProcedure,
     config: {
       title: 'VisualCal - Create Procedure',
-      fullscreenable: false,
       modal: true,
-      autoHideMenuBar: false,
+      parent: parent,
       webPreferences: {
         nodeIntegration: true
       }
@@ -93,14 +90,13 @@ export const CreateProcedureWindowConfig = (): CreateWindowOptions => {
   }
 }
 
-export const CreateSessionWindowConfig = (): CreateWindowOptions => {
+export const CreateSessionWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.CreateSession,
     config: {
       title: 'VisualCal - Create Session',
-      fullscreenable: false,
       modal: true,
-      autoHideMenuBar: false,
+      parent: parent,
       webPreferences: {
         nodeIntegration: true
       }
@@ -108,14 +104,12 @@ export const CreateSessionWindowConfig = (): CreateWindowOptions => {
   }
 }
 
-export const ViewSessionWindowConfig = (): CreateWindowOptions => {
+export const ViewSessionWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.ViewSession,
     config: {
       title: 'VisualCal - View Session',
-      fullscreenable: false,
-      autoHideMenuBar: false,
-      modal: true,
+      parent: parent,
       webPreferences: {
         nodeIntegration: true
       }
@@ -123,15 +117,14 @@ export const ViewSessionWindowConfig = (): CreateWindowOptions => {
   }
 }
 
-export const UserInstructionWindowConfig = (): CreateWindowOptions => {
+export const UserInstructionWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.UserInstruction ,
     config: {
       title: 'VisualCal - User Instruction',
       fullscreenable: false,
       modal: true,
-      autoHideMenuBar: false,
-      useContentSize: true,
+      parent: parent,
       width: 1000,
       height: 750,
       webPreferences: {
@@ -141,15 +134,14 @@ export const UserInstructionWindowConfig = (): CreateWindowOptions => {
   }
 }
 
-export const UserInputWindowConfig = (): CreateWindowOptions => {
+export const UserInputWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.UserInput,
     config: {
       title: 'VisualCal - User Input',
       fullscreenable: false,
       modal: true,
-      autoHideMenuBar: false,
-      useContentSize: true,
+      parent: parent,
       width: 1000,
       height: 750,
       webPreferences: {

@@ -19,9 +19,8 @@ interface VisualCalCRUDDir {
 
 interface VisualCalAugmentDirs {
   base: string;
+  public: string;
   html: {
-    getWindowInfo: (id: VisualCalWindow) => WindowInfo;
-    vue: string;
     windows: string;
     views: string;
     css: string;
@@ -37,7 +36,7 @@ interface VisualCalAugmentDirs {
     base: string;
     windows: string;
     views: string;
-    nodeBrowser: string;
+    nodeRed: string;
     procedure: VisualCalCRUDDir;
     session: VisualCalCRUDDir;
   }
@@ -46,9 +45,11 @@ interface VisualCalAugmentDirs {
     communicationInterfaces: string;
     devices: string;
   }
-  procedures: string;
-  sessions: string;
-  visualCalUser: string;
+  userHomeData: {
+    base: string;
+    procedures: string;
+    sessions: string;
+  }
 }
 
 interface VisualCalAugmentFiles {
@@ -95,6 +96,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   resultManager: import('../main/managers/ResultManager').ResultManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
+  ipcManager: import('../main/managers/IpcManager').IpcManager;
   nodeRed: {
     app: import('./logic-server').NodeRed;
   };

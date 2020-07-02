@@ -57,7 +57,7 @@ export class ResultManager extends EventEmitter {
   }
 
   static getResultsDirPath(sessionName: string) {
-    const retVal = path.join(global.visualCal.dirs.sessions, sessionName, 'results');
+    const retVal = path.join(global.visualCal.dirs.userHomeData.sessions, sessionName, 'results');
     return retVal;
   }
 
