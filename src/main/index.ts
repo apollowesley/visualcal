@@ -18,24 +18,28 @@ const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
 
 async function init(ipcChannels: IpcChannel<any>[]) {
-  const appBaseDirPath: string = path.resolve(__dirname, '..', '..'); // <base>/dist
-  const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
-  initGlobal(appBaseDirPath, userHomeDataDirPath);
-  const fileManager = new FileManager(appBaseDirPath, userHomeDataDirPath);
-  await fileManager.ensureInitizilied();
-  NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
-  NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
-  NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
-  nodeRedUtilsInit();
-  initMainMenu();
-  registerIpcChannels(ipcChannels);
-  app.on('ready', async () => await onAppReady());
-  app.on('window-all-closed', onWindowAllClosed);
-  app.on('activate', onActive);
-  global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
-  nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
-  nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
-  nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
+  try {
+    const appBaseDirPath: string = path.resolve(__dirname, '..', '..'); // <base>/dist
+    const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+    initGlobal(appBaseDirPath, userHomeDataDirPath);
+    const fileManager = new FileManager(appBaseDirPath, userHomeDataDirPath);
+    await fileManager.ensureInitizilied();
+    NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
+    NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
+    NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
+    nodeRedUtilsInit();
+    initMainMenu();
+    registerIpcChannels(ipcChannels);
+    app.on('ready', async () => await onAppReady());
+    app.on('window-all-closed', onWindowAllClosed);
+    app.on('activate', onActive);
+    global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
+    nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
+    nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
+    nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function registerIpcChannels(ipcChannels: IpcChannel<string>[]) {

@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
-import { promises as fsPromises } from 'fs';
+import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 
 export abstract class FileManagerBase extends EventEmitter {
+
+  static FORBIDDEN_NAMES = [ '.DS_Store' ];
 
   private fBaseDirPath: string;
 
@@ -13,11 +15,34 @@ export abstract class FileManagerBase extends EventEmitter {
 
   get baseDirPath() { return this.fBaseDirPath };
 
+  getIsForbiddenName(name: string) {
+    const nameUpperCaseName = name.toLocaleUpperCase();
+    let retVal = false;
+    FileManagerBase.FORBIDDEN_NAMES.forEach(forbiddenName => {
+      if (forbiddenName.toLocaleUpperCase() === nameUpperCaseName) retVal = true;
+    });
+    return retVal;
+  }
+
   /**
    * Determines if the directory exists and is initialized, and if not creates it and all required sub directories and files.
    * <br>DO NOT CALL FROM RENDERER
    */
   abstract async ensureInitizilied(): Promise<void>;
+
+  protected async readAllJsonFiles<T>(jsonFilename: string) {
+    const retVal: T[] = [];
+    const possibleDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
+    const possibleDirsFiltered = possibleDirs.filter(d => d.isDirectory && !this.getIsForbiddenName(d.name));
+    await Promise.all(possibleDirsFiltered.map(async (possibleDir) => {
+      const jsonPath = path.join(this.fBaseDirPath, possibleDir.name, jsonFilename);
+      if (fs.existsSync(jsonPath)) {
+        const content = await this.readFileAsJson<T>(jsonPath);
+        retVal.push(content);
+      }
+    }));
+    return retVal;
+  }
 
   protected async readFileAsString(path: string) {
     const buffer = await fsPromises.readFile(path);

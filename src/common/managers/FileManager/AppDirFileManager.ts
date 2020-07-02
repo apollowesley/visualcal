@@ -7,7 +7,7 @@ export class AppDirFileManager extends FileManagerBase {
   }
 
   async ensureInitizilied() {
-    return Promise.resolve();
+    await Promise.resolve();
   }
 
 }

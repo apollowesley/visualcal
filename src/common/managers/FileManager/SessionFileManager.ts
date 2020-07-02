@@ -22,15 +22,7 @@ export class SessionFileManager extends FileManagerBase {
   }
 
   async getSessionInfos() {
-    const sessionInfos: Session[] = [];
-    const possibleSessionDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
-    for await (const possibleSessionDir of possibleSessionDirs) {
-      const jsonPath = this.getSessionJsonPath(possibleSessionDir.name);
-      if (!fs.existsSync(jsonPath)) return;
-      const content = await this.readFileAsJson<Session>(jsonPath);
-      sessionInfos.push(content);
-    }
-    return sessionInfos;
+    return await this.readAllJsonFiles<ProcedureInfo>(SessionFileManager.SESSIONS_JSON_NAME);
   }
 
 }

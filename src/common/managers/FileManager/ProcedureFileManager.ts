@@ -22,11 +22,7 @@ export class ProcedureFileManager extends FileManagerBase {
   }
 
   async getProcedureInfos() {
-    const procInfos: ProcedureInfo[] = [];
-    const possibleProcDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
-    possibleProcDirs.forEach(possibleProcDir => {
-
-    });
+    return await this.readAllJsonFiles<ProcedureInfo>(ProcedureFileManager.PROCEDURE_JSON_NAME);
   }
 
 }

@@ -1,17 +1,15 @@
 import path from 'path';
-import  { getDirs } from './dirs';
+import { init as initDirs, getDirs } from './dirs';
+import { init as initFiles, getFiles } from './files';
 import { isDev } from '../main/utils/is-dev-mode';
 
 export const serverListenPort = 18880;
 export const vueListenPort = isDev() ? 8080 : serverListenPort;
 
-export let dirs: VisualCalAugmentDirs;
-export let files: VisualCalAugmentFiles;
+export const dirs = () => getDirs();
+export const files = () => getFiles();
 
 export const init = (appBaseDirPath: string, userHomeBaseDirPath: string) => {
-  dirs = getDirs(appBaseDirPath, userHomeBaseDirPath);
-  files = {
-    proceduresJson: path.join(dirs.userHomeData.procedures, 'procedures.json'),
-    sessionsJson: path.join(dirs.userHomeData.sessions, 'sessions.json')
-  }
+  initDirs(appBaseDirPath, userHomeBaseDirPath);
+  initFiles(getDirs());
 }

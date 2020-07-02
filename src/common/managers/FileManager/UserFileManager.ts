@@ -25,18 +25,18 @@ export class UserDirFileManager extends FileManagerBase {
   get procedures() { return this.fProceduresFileManager; };
   get sessions() { return this.fSessionsFileManager; };
 
-  private async ensureConfigFileInitialized() {
-    if (fs.existsSync(this.configFilePath)) return;
-    const defaults = UserConfigDefaults;
-    this.saveConfig(defaults);
-  }
-
   async getConfig() {
     return await this.readFileAsJson<UserConfig>(this.configFilePath);
   }
 
   async saveConfig(config: UserConfig) {
     await this.saveJsonToFile(this.configFilePath, config, true);
+  }
+
+  private async ensureConfigFileInitialized() {
+    if (fs.existsSync(this.configFilePath)) return;
+    const defaults = UserConfigDefaults;
+    await this.saveConfig(defaults);
   }
 
   async ensureInitizilied() {

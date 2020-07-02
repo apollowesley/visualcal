@@ -1,5 +1,5 @@
 import path from 'path';
-import { serverListenPort, files } from '../common/global-window-info';
+import { serverListenPort } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
@@ -11,6 +11,7 @@ import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
 
 const dirs: VisualCalAugmentDirs = ipcRenderer.sendSync(IpcChannels.getDirs);
+const files: VisualCalAugmentFiles = ipcRenderer.sendSync(IpcChannels.getFiles);
 
 window.visualCal = {
   browserUtils: browserUtils,

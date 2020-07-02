@@ -14,7 +14,11 @@ const getCRUDDir = (basePath: string, extension: string, filePrefix?: string): V
   }
 }
 
-export const getDirs = (appBase: string, userHomeBase: string) => {
+let dirs: VisualCalAugmentDirs;
+
+export const getDirs = () => dirs;
+
+export const init = (appBase: string, userHomeBase: string) => {
   const publicPath = path.join(appBase, 'public');
   const distPath = path.join(appBase, 'dist');
   const bootstrapStudioHtmlPath = path.join(appBase, 'bootstrap-studio', 'exported');
@@ -22,7 +26,7 @@ export const getDirs = (appBase: string, userHomeBase: string) => {
   const renderersWindowsPath = path.join(renderersPath, 'windows');
   const renderersProcedurePath = path.join(renderersWindowsPath, 'procedure');
   const renderersSessionPath = path.join(renderersWindowsPath, 'session');
-  const dirs: VisualCalAugmentDirs = {
+  dirs = {
     base: appBase,
     public: publicPath,
     drivers: {

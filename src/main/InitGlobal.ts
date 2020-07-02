@@ -20,7 +20,8 @@ export let visualCal: VisualCalGlobalAugment;
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
-
+  const localDirs = dirs();
+  const localFiles = files();
   visualCal = {
     logger: createLogger(),
     isMac: process.platform === 'darwin',
@@ -34,24 +35,24 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
         port: serverListenPort
       }
     },
-    dirs: dirs,
-    files: files,
+    dirs: localDirs,
+    files: localFiles,
     log: {
       result: (result: LogicResult) => global.visualCal.logger.info('result', result),
       info: (msg: any) => global.visualCal.logger.info(msg),
       warn: (msg: any) => global.visualCal.logger.warn(msg),
       error: (msg: any) => global.visualCal.logger.error(msg)
     },
-    procedureManager: new ProcedureManager(dirs.userHomeData.procedures),
-    sessionManager: new SessionManager(dirs.userHomeData.sessions),
+    procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
+    sessionManager: new SessionManager(localDirs.userHomeData.sessions),
     nodeRedFlowManager: new NodeRedFlowManager(),
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
     ipcManager: new IpcManager(),
     assets: {
-      basePath: dirs.public,
-      get: (name: string) => fs.readFileSync(path.join(dirs.public, name))
+      basePath: dirs().public,
+      get: (name: string) => fs.readFileSync(path.join(localDirs.public, name))
     },
     windowManager: new WindowManager()
   };
