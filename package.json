@@ -1,8 +1,8 @@
 {
-  "name": "visualcal-electron",
-  "productName": "IndySoft VisualCal",
+  "name": "visualcal",
+  "productName": "VisualCal",
   "version": "0.1.0",
-  "description": "IndySoft VisualCal",
+  "description": "VisualCal",
   "private": true,
   "main": "dist/main/index.js",
   "scripts": {
@@ -106,9 +106,9 @@
   "homepage": "https://dev.azure.com/indysoftdev/VisualCal/_git/visualcal-electron",
   "build": {
     "appId": "com.indysoft.visualcal",
-    "productName": "VisualCal Electron",
+    "productName": "VisualCal",
     "copyright": "Copyright © 2020 IndySoft",
-    "asar": true,
+    "asar": false,
     "files": [
       "dist/**/*",
       "public/**/*",
