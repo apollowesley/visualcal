@@ -17,18 +17,6 @@
       "sourceMaps": true,
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Watch & Debug Main Process",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-      "program": "${workspaceFolder}/src/main/index.ts",
-      "preLaunchTask": "tsc: watch - tsconfig.json",
-      "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "args": [ "--watch", "dist" ],
-      "restart": true
     }
   ]
 }

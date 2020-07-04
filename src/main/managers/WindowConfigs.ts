@@ -5,7 +5,7 @@ export const MainWindowConfig = (): CreateWindowOptions => {
   return {
     id: VisualCalWindow.Main,
     config: {
-      title: 'VisualCal - Logic Editor',
+      title: 'VisualCal',
       webPreferences: {
         nodeIntegration: true
       }

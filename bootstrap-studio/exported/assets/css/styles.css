@@ -1,15 +1,11 @@
-html {
-  overflow: hidden;
-  -webkit-scrollbar {display: none;
-}
-
 body {
   height: calc(100vh - 60px);
   width: calc(100vw);
   overflow: hidden;
   -webkit-scrollbar {display: none;
-  margin-top: 30px;
+  margin-top: 30px !important;
   margin-bottom: 30px;
+  border: dotted;
 }
 
 .container {

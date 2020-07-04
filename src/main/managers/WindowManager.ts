@@ -235,13 +235,11 @@ export class WindowManager {
     }
     window = global.visualCal.windowManager.create(MainWindowConfig());
     if (!window) throw new Error('Window must be defined');
-    if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
     window.once('close', (e) => {
       global.visualCal.windowManager.closeAll();
     });
-    window.webContents.once('did-finish-load', async () => {
+    window.webContents.once('did-finish-load', () => {
       if (!window) return
-      window.title = 'VisualCal';
       window.show();
     });
     await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
