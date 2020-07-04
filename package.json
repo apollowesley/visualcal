@@ -71,7 +71,6 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/ajv": "^1.0.0",
     "@types/d3": "^5.7.2",
     "@types/events": "^3.0.0",
     "@types/express": "^4.17.6",
@@ -83,7 +82,7 @@
     "@types/tabulator-tables": "^4.7.0",
     "@types/toastr": "^2.1.38",
     "@types/when": "^2.4.33",
-    "electron": "^10.0.0-beta.4",
+    "electron": "^9.0.5",
     "electron-builder": "^22.7.0",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^1.11.0",
@@ -115,18 +114,7 @@
       "bootstrap-studio/exported/**/*",
       "demo/**/*",
       "package.json"
-    ],
-    "mac": {
-      "category": "public.app-category.developer-tools",
-      "target": "dmg",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
-    },
-    "dmg": {
-      "sign": false
-    }
+    ]
   },
   "visualcal": {
     "drivers": {

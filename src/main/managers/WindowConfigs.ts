@@ -6,8 +6,6 @@ export const MainWindowConfig = (): CreateWindowOptions => {
     id: VisualCalWindow.Main,
     config: {
       title: 'VisualCal - Logic Editor',
-      fullscreenable: true,
-      autoHideMenuBar: false,
       webPreferences: {
         nodeIntegration: true
       }

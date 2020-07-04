@@ -25,21 +25,6 @@ export interface Options {
 export const create: () => Array<MenuItemConstructorOptions> = () => {
   const template: Array<MenuItemConstructorOptions> = [];
 
-  if (global.visualCal.isMac) template.push({
-    label: app.name,
-    submenu: [
-      { role: 'about' },
-      { type: 'separator' },
-      { role: 'services' },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideOthers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' }
-    ]
-  }),
-
   template.push({
     label: "View",
     submenu: [
@@ -85,15 +70,15 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
       { type: 'separator' },
       {
         label: 'Documentation',
-        click: async () => { await shell.openExternal('https://nodered.org/docs') }
+        click: async () => { await shell.openExternal('https://nodered.org/docs'); }
       },
       {
         label: 'Flows and Nodes',
-        click: async () => { await shell.openExternal('https://flows.nodered.org') }
+        click: async () => { await shell.openExternal('https://flows.nodered.org'); }
       },
       {
         label: 'Discourse Forum',
-        click: async () => { await shell.openExternal('https://discourse.nodered.org/') }
+        click: async () => { await shell.openExternal('https://discourse.nodered.org/'); }
       },
       { type: 'separator' },
       { role: 'togglefullscreen' },
@@ -130,30 +115,28 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
   }
 
   // Add Dev menu if in dev mode
-  if (true) {
-    template.push({
-      label: 'Development',
-      submenu: [
-        {
-          label: 'Reload', accelerator: 'CmdOrCtrl+R',
-          click(_, focusedWindow) {
-            if (focusedWindow) focusedWindow.reload()
-          }
-        },
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: process.platform === 'darwin' ? 'F12' : 'F12',
-          click(_, focusedWindow) {
-            if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-          }
+  template.push({
+    label: 'Development',
+    submenu: [
+      {
+        label: 'Reload', accelerator: 'CmdOrCtrl+R',
+        click(_, focusedWindow) {
+          if (focusedWindow) focusedWindow.reload();
         }
-      ]
-    })
-  }
+      },
+      {
+        label: 'Toggle Developer Tools',
+        accelerator: process.platform === 'darwin' ? 'F12' : 'F12',
+        click(_, focusedWindow) {
+          if (focusedWindow) focusedWindow.webContents.toggleDevTools();
+        }
+      }
+    ]
+  })
   return template;
 }
 
 export const init = () => {
-  const menu = Menu.buildFromTemplate(create());
-  Menu.setApplicationMenu(menu);
+  // const menu = Menu.buildFromTemplate(create());
+  // Menu.setApplicationMenu(menu);
 }
