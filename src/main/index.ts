@@ -80,22 +80,7 @@ app.on('ready', async () => {
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
   });
-  const menuTemplate: MenuItemConstructorOptions[] = [
-    {
-      role: 'fileMenu'
-    },
-    {
-      role: 'editMenu'
-    },
-    {
-      role: 'viewMenu'
-    },
-    {
-      role: 'windowMenu'
-    }
-  ];
-  const menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
+  initMainMenu();
   load();
   await global.visualCal.windowManager.ShowLoading(async () => {
       await global.visualCal.windowManager.ShowMain();

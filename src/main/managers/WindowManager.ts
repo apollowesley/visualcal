@@ -235,12 +235,9 @@ export class WindowManager {
     }
     window = global.visualCal.windowManager.create(MainWindowConfig());
     if (!window) throw new Error('Window must be defined');
+    WindowUtils.centerWindowOnNearestCurorScreen(window, true);
     window.once('close', (e) => {
       global.visualCal.windowManager.closeAll();
-    });
-    window.webContents.once('did-finish-load', () => {
-      if (!window) return
-      window.show();
     });
     await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
     return window;

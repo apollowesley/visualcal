@@ -137,6 +137,6 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
 }
 
 export const init = () => {
-  // const menu = Menu.buildFromTemplate(create());
-  // Menu.setApplicationMenu(menu);
+  const menu = Menu.buildFromTemplate(create());
+  Menu.setApplicationMenu(menu);
 }
