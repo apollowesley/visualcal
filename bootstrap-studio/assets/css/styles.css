@@ -1,0 +1,46 @@
+html {
+  height: calc(100vh - 100px);
+  width: calc(100vw - 100px);
+  overflow: hidden;
+  -webkit-scrollbar {display: none;
+  overflow-x: hidden;
+}
+
+body {
+  height: calc(100vh - 100px);
+  width: calc(100vw - 100px);
+  overflow: hidden;
+  -webkit-scrollbar {display: none;
+  overflow-x: hidden;
+}
+
+.container {
+  margin: 10px;
+}
+
+.container-fluid {
+  margin: 10px;
+}
+
+.form-group {
+  margin: 10px;
+}
+
+button {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+textarea {
+  resize: both;
+  min-width: 250px;
+}
+
+.tabulator {
+  min-height: 300px;
+}
+
+.active-procedure {
+  background-color: green;
+}
+

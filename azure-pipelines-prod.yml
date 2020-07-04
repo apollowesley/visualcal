@@ -7,8 +7,8 @@ strategy:
   matrix:
     # linux:
     #   imageName: 'ubuntu-latest'
-    mac:
-      imageName: 'macos-latest'
+    # mac:
+    #   imageName: 'macos-latest'
     windows:
       imageName: 'windows-latest'
 
@@ -20,18 +20,17 @@ steps:
   inputs:
     versionSpec: '14.x'
 
-- task: DownloadSecureFile@1
-  name: 'Certificates'
-  inputs:
-    secureFile: 'Certificates.p12'
+# - task: DownloadSecureFile@1
+#   name: 'Certificates'
+#   inputs:
+#     secureFile: 'Certificates.p12'
 
 - bash: './release.sh'
   displayName: 'Release script'
-  env:
-    APPLEID: $(APPLEID)
-    APPLEIDPASS: $(APPLEIDPASS)
-    CSC_LINK: $(Certificates.secureFilePath)
-
+  # env:
+  #   APPLEID: $(APPLEID)
+  #   APPLEIDPASS: $(APPLEIDPASS)
+  #   CSC_LINK: $(Certificates.secureFilePath)
 
 - task: PublishCodeCoverageResults@1
   inputs: 
@@ -46,21 +45,21 @@ steps:
       dist/*.exe
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- task: CopyFiles@2
-  displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: |
-      dist/*.snap
-      dist/*.AppImage
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+# - task: CopyFiles@2
+#   displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
+#   inputs:
+#     Contents: |
+#       dist/*.snap
+#       dist/*.AppImage
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- task: CopyFiles@2
-  displayName: 'Copy Mac files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: |
-      dist/*.dmg
-      dist/*.dmg.blockmap
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+# - task: CopyFiles@2
+#   displayName: 'Copy Mac files to: $(Build.ArtifactStagingDirectory)'
+#   inputs:
+#     Contents: |
+#       dist/*.dmg
+#       dist/*.dmg.blockmap
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Linux Build Artifacts'

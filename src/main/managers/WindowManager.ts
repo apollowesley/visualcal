@@ -235,7 +235,6 @@ export class WindowManager {
     }
     window = global.visualCal.windowManager.create(MainWindowConfig());
     if (!window) throw new Error('Window must be defined');
-    WindowUtils.centerWindowOnNearestCurorScreen(window);
     if (process.platform !== 'darwin') window.setAutoHideMenuBar(true);
     window.once('close', (e) => {
       global.visualCal.windowManager.closeAll();

@@ -1,0 +1,44 @@
+html {
+  overflow: hidden;
+  -webkit-scrollbar {display: none;
+}
+
+body {
+  height: calc(100vh - 60px);
+  width: calc(100vw);
+  overflow: hidden;
+  -webkit-scrollbar {display: none;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.container {
+  margin: 10px;
+}
+
+.container-fluid {
+  margin: 10px;
+}
+
+.form-group {
+  margin: 10px;
+}
+
+button {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+textarea {
+  resize: both;
+  min-width: 250px;
+}
+
+.tabulator {
+  min-height: 300px;
+}
+
+.active-procedure {
+  background-color: green;
+}
+
