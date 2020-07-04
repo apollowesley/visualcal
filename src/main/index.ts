@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, MenuItemConstructorOptions, dialog } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
@@ -11,6 +11,7 @@ import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { addCommunicationInterface, addCommunicationInterfaceForDevice, init as nodeRedUtilsInit } from './node-red/utils';
 import { WindowManager } from './managers/WindowManager';
+import fs, { promises as fsPromises } from 'fs';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -26,9 +27,20 @@ async function createMainWindow() {
   await mainWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
 }
 
+async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
+  const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
+  if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
+    console.info('node-red nodes examples directory does not exist, creating');
+    await fsPromises.mkdir(nodeRedNodeExamplesDirPath);
+  } else {
+    console.info('node-red nodes examples directory exists');
+  }
+}
+
 async function load() {
-  const appBaseDirPath: string = path.resolve(__dirname, '..', '..'); // <base>/dist
+  const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+  await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   // initMainMenu();
   const fileManager = new FileManager(appBaseDirPath, userHomeDataDirPath);
@@ -80,11 +92,15 @@ app.on('ready', async () => {
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
   });
-  initMainMenu();
-  load();
-  await global.visualCal.windowManager.ShowLoading(async () => {
-      await global.visualCal.windowManager.ShowMain();
-  });
+  try {
+    initMainMenu();
+    await load();
+    await global.visualCal.windowManager.ShowLoading(async () => {
+        await global.visualCal.windowManager.ShowMain();
+    });
+  } catch (error) {
+    dialog.showErrorBox('Oops!  Something went wrong', error.message);
+  }
 });
 
 app.on('window-all-closed', () => {
