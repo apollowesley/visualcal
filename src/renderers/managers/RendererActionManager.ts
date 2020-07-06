@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../@types/constants';
+import { TriggerOptions, TriggerResult } from '../../main/node-red/utils/actions';
 
 export class RendererActionManager extends EventEmitter {
 

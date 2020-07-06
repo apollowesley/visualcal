@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
 import fs, { promises as fsPromises } from 'fs';
-import path from 'path';
 
 export abstract class FileManagerBase extends EventEmitter {
 
@@ -18,11 +17,15 @@ export abstract class FileManagerBase extends EventEmitter {
   abstract async ensureInitizilied(): Promise<void>;
 
   get baseDirPath() { return this.fBaseDirPath };
+  get baseDirExists() { return fs.existsSync(this.baseDirPath); };
 
-  protected async readFileAsString(path: string) {
-    const buffer = await fsPromises.readFile(path);
-    const bufferAsString = buffer.toString();
-    return bufferAsString;
+  protected async createBaseDir() {
+    await fsPromises.mkdir(this.baseDirPath, { recursive: true });
+  }
+
+  protected readFileAsString(filePath: string) {
+    const dataAsString = fs.readFileSync(filePath).toString();
+    return dataAsString;
   }
 
   protected async saveJsonToFile(path: string, contents: any, pretty: boolean = true) {

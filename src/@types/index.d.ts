@@ -71,8 +71,6 @@ interface VisualCalAugment {
     basePath: string;
     get: (id: string) => Buffer;
   };
-  dirs: VisualCalAugmentDirs;
-  files: VisualCalAugmentFiles;
   user?: User;
 }
 
@@ -96,7 +94,8 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   resultManager: import('../main/managers/ResultManager').ResultManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
-  ipcManager: import('../main/managers/IpcManager').IpcManager;
+  dirs: VisualCalAugmentDirs;
+  files: VisualCalAugmentFiles;
   nodeRed: {
     app: import('./logic-server').NodeRed;
   };
@@ -111,11 +110,10 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
   };
-  procedureManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<CreateProcedureInfo, Procedure>;
   sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session, Session>;
   resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;
   actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
-  fileManager: import('../common/managers/FileManager').FileManager;
+  procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;
 }
 
 interface NamedType {

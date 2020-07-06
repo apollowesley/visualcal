@@ -1,8 +1,9 @@
 import { FileManagerTypedBase } from './FileManagerTypedBase';
 import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
+import sanitizeFilename from 'sanitize-filename';
 
-export class ProcedureFileManager extends FileManagerTypedBase<Procedure> {
+export class ProcedureFileManager extends FileManagerTypedBase<Procedure, CreateProcedureInfo> {
 
   static PROCEDURES_DIR_NAME = 'procedures';
   static PROCEDURES_JSON_NAME = 'procedures.json';
@@ -21,8 +22,9 @@ export class ProcedureFileManager extends FileManagerTypedBase<Procedure> {
     if (!fs.existsSync(this.baseDirPath)) await fsPromises.mkdir(this.baseDirPath, { recursive: true });
   }
 
-  async getProcedures() {
-    return await this.readAllJsonFiles(ProcedureFileManager.PROCEDURE_JSON_NAME);
+  getProcedures() {
+    console.info('ProcedureFileManager.getProcedures');
+    return this.readAllJsonFiles(ProcedureFileManager.PROCEDURE_JSON_NAME);
   }
 
   // ***** ABSTRACT INHERITED *****
@@ -38,6 +40,28 @@ export class ProcedureFileManager extends FileManagerTypedBase<Procedure> {
   onRename(oldName: string, newName: string, item: Procedure): Procedure {
     item.name = newName;
     return item;
+  }
+
+  async onCreatedItemDir(itemDirPath: string, sanitizedName: string) {
+    const logicDirPath = path.join(itemDirPath, 'logic');
+    const logicFlowFilePath = path.join(logicDirPath, 'flows.json');
+    await fsPromises.mkdir(logicDirPath, { recursive: true });
+    await fsPromises.writeFile(logicFlowFilePath, '[]');
+  }
+
+  async saveItemJson(createItem: CreateProcedureInfo): Promise<Procedure> {
+    const itemPath = this.getItemFileInfoPath(createItem.name);
+    const procedure: Procedure = {
+      name: createItem.name,
+      description: createItem.description || '',
+      authorOrganization: '',
+      authors: [],
+      sections: [],
+      version: ''
+    };
+    const procedureString = JSON.stringify(procedure);
+    await fsPromises.writeFile(itemPath, procedureString);
+    return procedure;
   }
 
   // ******************************

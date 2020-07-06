@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { trigger } from '../node-red/utils/actions';
+import { trigger, TriggerOptions } from '../node-red/utils/actions';
 import { ipcMain } from 'electron';
 import { IpcChannels } from '../../@types/constants';
 

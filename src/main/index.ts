@@ -10,7 +10,6 @@ import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { addCommunicationInterface, addCommunicationInterfaceForDevice, init as nodeRedUtilsInit } from './node-red/utils';
-import { WindowManager } from './managers/WindowManager';
 import fs, { promises as fsPromises } from 'fs';
 
 const nodeRedApp = express();

@@ -1,5 +1,5 @@
 import path from 'path';
-import { serverListenPort } from '../common/global-window-info';
+import { serverListenPort, dirs } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import fs from 'fs';
@@ -9,10 +9,6 @@ import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
-import { FileManager } from '../common/managers/FileManager';
-
-const dirs: VisualCalAugmentDirs = ipcRenderer.sendSync(IpcChannels.getDirs);
-const files: VisualCalAugmentFiles = ipcRenderer.sendSync(IpcChannels.getFiles);
 
 window.visualCal = {
   browserUtils: browserUtils,
@@ -22,7 +18,7 @@ window.visualCal = {
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
-    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, windowId),
+    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
     showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName),
     showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error)
   },
@@ -31,8 +27,6 @@ window.visualCal = {
       port: serverListenPort
     }
   },
-  dirs: dirs,
-  files: files,
   log: {
     result: (result: LogicResult) => ipcRenderer.send(IpcChannels.log.result, result),
     info: (msg: any) => ipcRenderer.send(IpcChannels.log.info, msg),
@@ -43,9 +37,8 @@ window.visualCal = {
   sessionManager: new RendererSessionManager(),
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
-  fileManager: new FileManager(dirs.base, dirs.userHomeData.base),
   assets: {
-    basePath: path.resolve(dirs.public),
-    get: (name: string) => fs.readFileSync(path.resolve(dirs.public, name))
+    basePath: path.resolve(dirs().userHomeData.base),
+    get: (name: string) => fs.readFileSync(path.resolve(dirs().userHomeData.base, name))
   }
 };

@@ -2,12 +2,13 @@ import path from 'path';
 import fs, { promises as fsPromises } from 'fs';
 import sanitizeFilename from 'sanitize-filename';
 import { FileManagerBase } from './FileManagerBase';
+import { IpcChannels } from '../../../@types/constants';
 
 export interface Activatable {
   active: string;
 }
 
-export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
+export abstract class FileManagerTypedBase<TItem extends NamedType, TCreateItem extends NamedType> extends FileManagerBase {
 
   static FORBIDDEN_NAMES = [ '.DS_Store' ];
 
@@ -32,23 +33,35 @@ export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
     return retVal;
   }
 
-  protected async readFileAsJson(path: string) {
-    const bufferAsString = await this.readFileAsString(path);
+  protected readFileAsJson(path: string) {
+    const bufferAsString = this.readFileAsString(path);
     const asJson = JSON.parse(bufferAsString) as TItem;
     return asJson;
   }
 
-  protected async readAllJsonFiles(filename: string) {
+  protected readAllJsonFiles(filename: string) {
+    console.info('FileManagerTypedBase.readAllJsonFiles');
     const retVal: TItem[] = [];
-    const possibleDirs = await fsPromises.readdir(this.baseDirPath, { withFileTypes: true });
+    const possibleDirs = fs.readdirSync(this.baseDirPath, { withFileTypes: true });
+    console.info('FileManagerTypedBase.readAllJsonFiles.possibleDirs', possibleDirs);
     const possibleDirsFiltered = possibleDirs.filter(d => d.isDirectory() && !this.getIsForbiddenName(d.name));
-    await Promise.all(possibleDirsFiltered.map(async (possibleDir) => {
+    console.info('FileManagerTypedBase.readAllJsonFiles.possibleDirsFiltered', possibleDirsFiltered);
+    for (let index = 0; index < possibleDirsFiltered.length; index++) {
+      const possibleDir = possibleDirsFiltered[index];
       const jsonPath = path.join(this.baseDirPath, possibleDir.name, filename);
+      console.info('FileManagerTypedBase.readAllJsonFiles - Found item file', jsonPath);
       if (fs.existsSync(jsonPath)) {
-        const content = await this.readFileAsJson(jsonPath);
-        retVal.push(content);
+        console.info('FileManagerTypedBase.readAllJsonFiles - Reading item file contents', jsonPath);
+         try {
+          const content = this.readFileAsJson(jsonPath);
+          retVal.push(content);
+          console.info('FileManagerTypedBase.readAllJsonFiles - Added item file contents to retVal', retVal);
+         } catch (error) {
+           throw error;
+         }
       }
-    }));
+    }
+    console.info('FileManagerTypedBase.readAllJsonFiles.retVal', retVal);
     return retVal;
   }
 
@@ -66,6 +79,26 @@ export abstract class FileManagerTypedBase<TItem> extends FileManagerBase {
 
   abstract getItemDirPath(name: string): string;
   abstract getItemFileInfoPath(name: string): string;
+
+  async onCreatedItemDir(itemDirPath: string, sanitizedName: string) {
+    // override if needed
+  }
+
+  abstract async saveItemJson(createItem: TCreateItem): Promise<TItem>;
+
+  async create(item: TCreateItem): Promise<TItem> {
+    const sanitizedName = sanitizeFilename(item.name);
+    this.checkNotExists(sanitizedName);
+    if (!this.baseDirExists) await this.createBaseDir();
+    const itemDirPath = this.getItemDirPath(sanitizedName);
+    await fsPromises.mkdir(itemDirPath);
+    await this.onCreatedItemDir(itemDirPath, sanitizedName);
+    const retVal = await this.saveItemJson(item);
+    this.emit('created', retVal);
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.procedures.create.response, retVal);
+    return retVal;
+  }
+
   abstract onRename(oldName: string, newName: string, item: TItem): TItem;
 
   async rename(oldName: string, newName: string): Promise<TItem> {

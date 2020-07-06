@@ -2,6 +2,7 @@ import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../@types/constants';
 import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
+import { TriggerOptions } from '../../../main/node-red/utils/actions';
 
 let sessionName: string = '';
 let sections: SectionInfo[] = [];

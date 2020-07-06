@@ -1,9 +1,34 @@
 import { ActionStartRuntimeNode } from '../../../@types/logic-server';
 
+export type TriggerType = 'start' | 'stop' | 'reset';
+
+export interface ResetOptions {
+  section: string;
+  action: string;
+}
+
+export interface ResetResult extends ResetOptions {
+  error?: string;
+  message?: string;
+}
+
+export interface TriggerResult extends TriggerOptions {
+  error?: string;
+  message?: string;
+}
+
+export interface TriggerOptions {
+  type: TriggerType;
+  sessionId: string;
+  runId: string;
+  section: string;
+  action: string;
+}
+
 export const trigger = (options: TriggerOptions): TriggerResult => {
   const { type, section, action } = options;
   const response: TriggerResult = {
-    type: type.toLowerCase(),
+    type: type,
     sessionId: options.sessionId,
     runId: options.runId,
     section: section.toLowerCase(),

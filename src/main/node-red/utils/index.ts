@@ -48,7 +48,6 @@ export interface DeviceCommunicationInterfaceNamePair {
   deviceDriver?: DeviceDriver;
 }
 
-
 let driversPackagejson: DriversPackageJson;
 const communicationInterfaces: CommunicationInterfaceNamePair[] = [];
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];

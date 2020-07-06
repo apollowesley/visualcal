@@ -1,5 +1,6 @@
 import { IpcChannels } from '../../@types/constants';
-import { CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs } from '../managers/RendererCRUDManager';
+import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs, SetActiveResponseArgs } from '../managers/RendererCRUDManager';
+import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
 
@@ -10,39 +11,57 @@ let createProcedureButton: HTMLButtonElement;
 let procedures: Procedure[] = [];
 
 const initProcedureListeners = () => {
-  window.visualCal.fileManager.on('set-active', (name: string) => activeProcedureHeading.innerText = name);
   window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, async (response: CreateResponseArgs<CreatedProcedureInfo>) => {
     console.info('Created', response.item);
+    await loadProcedures();
+  });
+  window.visualCal.procedureManager.on(IpcChannels.procedures.rename.response, async (response: RenameResponseArgs) => {
+    console.info('Renamed', response.oldName, response.newName);
     await loadProcedures();
   });
   window.visualCal.procedureManager.on(IpcChannels.procedures.remove.response, async (response: RemoveResponseArgs) => {
     console.info('Removed', response.name);
     await loadProcedures();
   });
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs<Procedure>) => {
+    console.info('GetAll', response.items);
+    await refreshProcedures(response.items);
+  });
   window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, async (response: UpdateResponseArgs<Procedure>) => {
     console.info('Update', response.item);
     await loadProcedures();
+  });
+  window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, async (response: SetActiveResponseArgs) => {
+    console.info('Update', response.name);
+    activeProcedureHeading.innerText = response.name;
   });
 }
 
 const procedureNameCellEdited = (cell: Tabulator.CellComponent) => {
   const oldName = cell.getOldValue() as string;
   const newName = cell.getValue() as string;
-  try {
-    if (window.visualCal.fileManager.user.procedures.exists(newName)) {
-      const error = new Error(`Unable to rename the procedure from ${oldName} to ${newName}, since ${newName} already exists.`);
-      window.visualCal.electron.showErrorDialog(error);
-      return;
+  ipcRenderer.once(IpcChannels.procedures.getExists.response, (_, exists: boolean) => {
+    if (exists) {
+      cell.restoreOldValue();
+      alert(`Procedure name must be unique`);
+    } else {
+      window.visualCal.procedureManager.rename(oldName, newName);
+      alert(`Procedure, ${newName}, renamed`);
     }
-    window.visualCal.fileManager.user.procedures.rename(oldName, newName);
-  } catch (error) {
-    window.visualCal.electron.showErrorDialog(error);
-  }
+  });
+  window.visualCal.procedureManager.getExists(newName);
 }
 
-const procedureDescriptionCellEdited = async (cell: Tabulator.CellComponent) => {
-  const proc = cell.getData() as Procedure;
-  await window.visualCal.fileManager.user.procedures.update(proc.name, proc);
+const procedureDescriptionCellEdited = (cell: Tabulator.CellComponent) => {
+  const newDesc = cell.getValue() as string;
+  const procName = cell.getRow().getCell('name').getValue() as string;
+  const proc = procedures.find(p => p.name === procName);
+  if (!proc) throw new Error('Procedure not found!');
+  ipcRenderer.once(IpcChannels.procedures.update.response, (_, procedure: Procedure) => {
+    alert(`Procedure, ${procedure.name}, updated`);
+  });
+  proc.description = newDesc;
+  window.visualCal.procedureManager.update(proc);
 }
 
 const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
@@ -54,12 +73,35 @@ const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
   ]
 });
 
+const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
+  const diff: Procedure[] = [];
+  newProcedures.forEach(newProc => {
+    const existing = procedures.find(p => p.name === newProc.name);
+    if (!existing) diff.push(newProc);
+  });
+  return diff.length > 0;
+}
+
 const loadProcedures = async () => {
   console.info('Loading procedures');
   try {
-    procedures = await window.visualCal.fileManager.user.procedures.getProcedures();
+    window.visualCal.procedureManager.getAll();
+  } catch (error) {
+    alert(error.message);
+    throw error;
+  }
+}
+
+const refreshProcedures = async (newProcedures: Procedure[]) => {
+  try {
+    console.info('Got procedures', newProcedures);
+    const areListsDifferent = areProcedureListsDifferent(newProcedures);
+    if (!areListsDifferent) {
+      console.info('Procedure lists are not different, aborting update');
+      return;
+    }
+    procedures = newProcedures;
     proceduresTable.setData(procedures);
-    sessionsTable.setData(sessions); // Update sessions to trigger a refresh of the procedure selects
   } catch (error) {
     alert(error.message);
     throw error;
@@ -76,9 +118,17 @@ const initSessionListeners = () => {
     console.info('Created', response.item);
     await loadSessions();
   });
+  window.visualCal.sessionManager.on(IpcChannels.sessions.rename.response, async (response: RenameResponseArgs) => {
+    console.info('Renamed', response.oldName, response.newName);
+    await loadSessions();
+  });
   window.visualCal.sessionManager.on(IpcChannels.sessions.remove.response, async (response: RemoveResponseArgs) => {
     console.info('Removed', response.name);
     await loadSessions();
+  });
+  window.visualCal.sessionManager.on(IpcChannels.sessions.getAll.response, async (response: GetAllResponseArgs<Session>) => {
+    console.info('GetAll', response.items);
+    await refreshSessions(response.items);
   });
   window.visualCal.sessionManager.on(IpcChannels.sessions.update.response, async (response: UpdateResponseArgs<Session>) => {
     console.info('Update', response.item);
@@ -89,21 +139,28 @@ const initSessionListeners = () => {
 const sessionNameCellEdited = (cell: Tabulator.CellComponent) => {
   const oldName = cell.getOldValue() as string;
   const newName = cell.getValue() as string;
-  try {
-    if (window.visualCal.fileManager.user.sessions.exists(newName)) {
-      const error = new Error(`Unable to rename the session from ${oldName} to ${newName}, since ${newName} already exists.`)
-      window.visualCal.electron.showErrorDialog(error);
-      return;
+  ipcRenderer.once(IpcChannels.sessions.getExists.response, (_, exists: boolean) => {
+    if (exists) {
+      cell.restoreOldValue();
+      alert(`Session name must be unique`);
+    } else {
+      window.visualCal.sessionManager.rename(oldName, newName);
+      alert(`Session, ${newName}, renamed`);
     }
-    window.visualCal.fileManager.user.sessions.rename(oldName, newName);
-  } catch (error) {
-    window.visualCal.electron.showErrorDialog(error);
-  }
+  });
+  window.visualCal.sessionManager.getExists(newName);
 }
 
-const sessionProcedureCellEdited = async (cell: Tabulator.CellComponent) => {
-  const session = cell.getData() as Session;
-  await window.visualCal.fileManager.user.sessions.update(session.name, session);
+const sessionProcedureCellEdited = (cell: Tabulator.CellComponent) => {
+  const newProcedureName = cell.getValue() as string;
+  const sessionName = cell.getRow().getCell('name').getValue() as string;
+  const session = sessions.find(s => s.name === sessionName);
+  if (!session) throw new Error('Session not found!');
+  ipcRenderer.once(IpcChannels.sessions.update.response, (_, session: Session) => {
+    alert(`Session, ${session.name}, updated`);
+  });
+  session.procedureName = newProcedureName;
+  window.visualCal.sessionManager.update(session);
 }
 
 const activateSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
@@ -116,7 +173,7 @@ const viewSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulat
 
 const activateSessionClick = async (cell: Tabulator.CellComponent) => {
   const sessionName = cell.getRow().getCell('name').getValue() as string;
-  await window.visualCal.fileManager.user.sessions.setActive(sessionName);
+  window.visualCal.sessionManager.setActive(sessionName);
 }
 
 const viewSessionClick = async (cell: Tabulator.CellComponent) => {
@@ -131,15 +188,39 @@ const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited },
     { title: 'Procedure', field: 'procedureName', editable: true, editor: 'select', editorParams: () => procedures.map(p => p.name), cellEdited: sessionProcedureCellEdited },
     { title: 'Username', field: 'username', editable: false, minWidth: 120 },
-    { title: '', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) },
-    { title: '', formatter: viewSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => viewSessionClick(cell) }
+    { title: 'Activate', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) },
+    { title: 'Activate', formatter: viewSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => viewSessionClick(cell) }
   ]
 });
+
+const areSessionListsDifferent = (newSessions: Session[]) => {
+  const diff: Session[] = [];
+  newSessions.forEach(newSession => {
+    const existing = sessions.find(p => p.name === newSession.name);
+    if (!existing) diff.push(newSession);
+  });
+  return diff.length > 0;
+}
 
 const loadSessions = async () => {
   console.info('Loading sessions');
   try {
-    sessions = await window.visualCal.fileManager.user.sessions.getSessions();
+    window.visualCal.sessionManager.getAll();
+  } catch (error) {
+    alert(error.message);
+    throw error;
+  }
+}
+
+const refreshSessions = async (newSessions: Session[]) => {
+  try {
+    console.info('Got sessions', newSessions);
+    const areListsDifferent = areSessionListsDifferent(newSessions);
+    if (!areListsDifferent) {
+      console.info('Session lists are not different, aborting update');
+      return;
+    }
+    sessions = newSessions;
     sessionsTable.setData(sessions);
   } catch (error) {
     alert(error.message);
@@ -168,7 +249,7 @@ const init = async () => {
   await loadProcedures();
   await loadSessions();
 
-  activeProcedureHeading.innerText = await window.visualCal.fileManager.user.procedures.getActive();
+  window.visualCal.procedureManager.getActive();
 }
 
 init();

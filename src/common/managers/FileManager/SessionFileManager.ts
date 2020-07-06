@@ -2,7 +2,7 @@ import { FileManagerTypedBase } from './FileManagerTypedBase';
 import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 
-export class SessionFileManager extends FileManagerTypedBase<Session> {
+export class SessionFileManager extends FileManagerTypedBase<Session, Session> {
 
   static SESSIONS_DIR_NAME = 'sessions';
   static SESSIONS_JSON_NAME = 'sessions.json';
@@ -21,8 +21,8 @@ export class SessionFileManager extends FileManagerTypedBase<Session> {
     if (!fs.existsSync(this.baseDirPath)) await fsPromises.mkdir(this.baseDirPath, { recursive: true });
   }
 
-  async getSessions() {
-    return await this.readAllJsonFiles(SessionFileManager.SESSION_JSON_NAME);
+  getSessions() {
+    return this.readAllJsonFiles(SessionFileManager.SESSION_JSON_NAME);
   }
 
   // ***** ABSTRACT INHERITED *****
@@ -38,6 +38,20 @@ export class SessionFileManager extends FileManagerTypedBase<Session> {
   onRename(oldName: string, newName: string, item: Session): Session {
     item.name = newName;
     return item;
+  }
+
+  async onCreatedItemDir(itemDirPath: string, sanitizedName: string) {
+    const logicDirPath = path.join(itemDirPath, 'logic');
+    const logicFlowFilePath = path.join(logicDirPath, 'flows.json');
+    await fsPromises.mkdir(logicDirPath, { recursive: true });
+    await fsPromises.writeFile(logicFlowFilePath, '[]');
+  }
+
+  async saveItemJson(createItem: Session): Promise<Session> {
+    const itemPath = this.getItemFileInfoPath(createItem.name);
+    const sessionString = JSON.stringify(createItem);
+    await fsPromises.writeFile(itemPath, sessionString);
+    return createItem;
   }
 
   // ******************************
