@@ -14,6 +14,7 @@ import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
 import { ResultManager } from './managers/ResultManager';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
+import { AssetManager } from './managers/AssetManager';
 
 export let visualCal: VisualCalGlobalAugment;
 const windowManager = new WindowManager();
@@ -50,10 +51,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
-    assets: {
-      basePath: dirs().public,
-      get: (name: string) => fs.readFileSync(path.join(localDirs.public, name))
-    }
+    assetManager: new AssetManager()
   };
 
   global.visualCal = visualCal;

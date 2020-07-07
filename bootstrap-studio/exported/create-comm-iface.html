@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>IndySoft VisualCal</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/superhero.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/tabulator.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                <h1>Adding a communication interface</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <h3>Selected Session:</h3>
+            </div>
+            <div class="col">
+                <h3 id="vc-selected-session-name">selectedSessionName</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form>
+                    <div class="form-group"><label for="vc-iface-name">Name</label><input class="form-control" type="text" id="vc-iface-name" required="" minlength="1" placeholder="Unique interface name for this session"></div>
+                    <div class="form-group"><label for="vc-iface-type">Type</label><select class="form-control" id="vc-iface-type" required=""></select></div>
+                    <div class="form-group"><label>IP Address</label><input class="form-control" type="text" placeholder="Example 10.0.0.100"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/visualcal.js"></script>
+</body>
+
+</html>

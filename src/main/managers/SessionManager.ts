@@ -2,11 +2,28 @@ import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { IpcChannels } from '../../@types/constants';
 import { CrudManager } from './CrudManager';
+import { ipcMain, session } from 'electron';
 
 export class SessionManager extends CrudManager<Session, Session, Session, Session> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.sessions, 'session');
+    ipcMain.on(IpcChannels.sessions.getCommunicationInterfaces.request, async (event, sessionName: string) => {
+      try {
+        const retVal = await this.getCommunicationInterfaces(sessionName);
+        event.reply(IpcChannels.sessions.getCommunicationInterfaces.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.sessions.getCommunicationInterfaces.error, error);
+      }
+    });
+    ipcMain.on(IpcChannels.sessions.addCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
+      try {
+        const retVal = await this.addCommunicationInterface(sessionName, iface);
+        event.reply(IpcChannels.sessions.addCommunicationInterface.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.sessions.addCommunicationInterface.error, error);
+      }
+    });
   }
 
   static SESSIONS_JSON_FILE_NAME = 'sessions.json';
@@ -42,6 +59,30 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     } catch (error) {
       console.error(error);
     }
+  }
+
+  // ***** COMMUNICATION INTERFACES *****
+
+  async getCommunicationInterfaces(sessionName: string) {
+    const session = await this.getOne(sessionName);
+    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
+    if (session.configuration) return session.configuration.interfaces;
+    return [];
+  }
+
+  async addCommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
+    const session = await this.getOne(sessionName);
+    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
+    if (!session.configuration) {
+      session.configuration = {
+        devices: [],
+        interfaces: [iface]
+      };
+    } else {
+      session.configuration.interfaces.push(iface);
+    }
+    await this.update(session);
+    return iface;
   }
 
 }

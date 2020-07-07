@@ -55,6 +55,10 @@ export interface UpdateResponseArgs<TItem> extends ResponseArgs {
   item: TItem;
 }
 
+export interface GetAllCommunicationInterfacesResponse extends ResponseArgs {
+  iface: CommunicationInterfaceInfo;
+}
+
 export interface Response<T extends ResponseArgs> {
   (args: T): void;
 }

@@ -44,7 +44,8 @@ export const init = (appBase: string, userHomeBase: string) => {
       userInput: path.join(bootstrapStudioHtmlPath, 'action-user-input.html'),
       userInstruction: path.join(bootstrapStudioHtmlPath, 'action-user-instruction.html'),
       views: path.join(publicPath, 'views'),
-      windows: path.join(publicPath, 'windows')
+      windows: path.join(publicPath, 'windows'),
+      createCommIface: path.join(bootstrapStudioHtmlPath, 'create-comm-iface.html')
     },
     renderers: {
       base: renderersPath,

@@ -31,6 +31,7 @@ interface VisualCalAugmentDirs {
     session: VisualCalCRUDDir;
     userInstruction: string;
     userInput: string;
+    createCommIface: string;
   },
   renderers: {
     base: string;
@@ -67,10 +68,6 @@ interface VisualCalAugment {
     warn(msg: any, ...args: any[]): void;
     error(msg: any, ...args: any[]): void;
   };
-  assets: {
-    basePath: string;
-    get: (id: string) => Buffer;
-  };
   user?: User;
 }
 
@@ -94,6 +91,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   resultManager: import('../main/managers/ResultManager').ResultManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
+  assetManager: import('../main/managers/AssetManager').AssetManager;
   dirs: VisualCalAugmentDirs;
   files: VisualCalAugmentFiles;
   nodeRed: {
@@ -109,11 +107,13 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showWindow: (windowId: VisualCalWindow) => void;
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
+    showCreateCommIfaceWindow: (sessionName: string) => void;
   };
   sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session, Session>;
   resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;
   actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
   procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;
+  assetManager: import('../renderers/managers/RendererAssetManager').RendererAssetManager;
 }
 
 interface NamedType {

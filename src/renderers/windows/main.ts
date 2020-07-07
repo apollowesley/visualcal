@@ -1,5 +1,5 @@
 import { IpcChannels } from '../../@types/constants';
-import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs, SetActiveResponseArgs } from '../managers/RendererCRUDManager';
+import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs, SetActiveResponseArgs, GetAllCommunicationInterfacesResponse } from '../managers/RendererCRUDManager';
 import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
@@ -11,27 +11,27 @@ let createProcedureButton: HTMLButtonElement;
 let procedures: Procedure[] = [];
 
 const initProcedureListeners = () => {
-  window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, async (response: CreateResponseArgs<CreatedProcedureInfo>) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, (response: CreateResponseArgs<CreatedProcedureInfo>) => {
     console.info('Created', response.item);
-    await loadProcedures();
+    loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.rename.response, async (response: RenameResponseArgs) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.rename.response, (response: RenameResponseArgs) => {
     console.info('Renamed', response.oldName, response.newName);
-    await loadProcedures();
+    loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.remove.response, async (response: RemoveResponseArgs) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.remove.response, (response: RemoveResponseArgs) => {
     console.info('Removed', response.name);
-    await loadProcedures();
+    loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, async (response: GetAllResponseArgs<Procedure>) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, (response: GetAllResponseArgs<Procedure>) => {
     console.info('GetAll', response.items);
-    await refreshProcedures(response.items);
+    refreshProcedures(response.items);
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, async (response: UpdateResponseArgs<Procedure>) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, (response: UpdateResponseArgs<Procedure>) => {
     console.info('Update', response.item);
-    await loadProcedures();
+    loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, async (response: SetActiveResponseArgs) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, (response: SetActiveResponseArgs) => {
     console.info('Update', response.name);
     activeProcedureHeading.innerText = response.name;
   });
@@ -82,7 +82,7 @@ const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
   return diff.length > 0;
 }
 
-const loadProcedures = async () => {
+const loadProcedures = () => {
   console.info('Loading procedures');
   try {
     window.visualCal.procedureManager.getAll();
@@ -92,7 +92,7 @@ const loadProcedures = async () => {
   }
 }
 
-const refreshProcedures = async (newProcedures: Procedure[]) => {
+const refreshProcedures = (newProcedures: Procedure[]) => {
   try {
     console.info('Got procedures', newProcedures);
     const areListsDifferent = areProcedureListsDifferent(newProcedures);
@@ -112,27 +112,33 @@ const refreshProcedures = async (newProcedures: Procedure[]) => {
 
 let createSessionButton: HTMLButtonElement;
 let sessions: Session[] = [];
+let selectedSession: Session | null = null;
+let createSessionCommsIfaceButton: HTMLButtonElement;
 
 const initSessionListeners = () => {
-  window.visualCal.sessionManager.on(IpcChannels.sessions.create.response, async (response: CreateResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.sessions.create.response, (response: CreateResponseArgs<Session>) => {
     console.info('Created', response.item);
-    await loadSessions();
+    loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.rename.response, async (response: RenameResponseArgs) => {
+  window.visualCal.sessionManager.on(IpcChannels.sessions.rename.response, (response: RenameResponseArgs) => {
     console.info('Renamed', response.oldName, response.newName);
-    await loadSessions();
+    loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.remove.response, async (response: RemoveResponseArgs) => {
+  window.visualCal.sessionManager.on(IpcChannels.sessions.remove.response, (response: RemoveResponseArgs) => {
     console.info('Removed', response.name);
-    await loadSessions();
+    loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.getAll.response, async (response: GetAllResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.sessions.getAll.response, (response: GetAllResponseArgs<Session>) => {
     console.info('GetAll', response.items);
-    await refreshSessions(response.items);
+    refreshSessions(response.items);
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.update.response, async (response: UpdateResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.sessions.update.response, (response: UpdateResponseArgs<Session>) => {
     console.info('Update', response.item);
-    await loadSessions();
+    loadSessions();
+  });
+  window.visualCal.sessionManager.on(IpcChannels.sessions.getCommunicationInterfaces.response, (response: GetAllCommunicationInterfacesResponse) => {
+    console.info('GetAllCommunicationInterfacesResponse', response.iface);
+    loadSessions();
   });
 }
 
@@ -171,25 +177,43 @@ const viewSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulat
   return '<button>View</button>';
 }
 
-const activateSessionClick = async (cell: Tabulator.CellComponent) => {
+const activateSessionClick = (cell: Tabulator.CellComponent) => {
   const sessionName = cell.getRow().getCell('name').getValue() as string;
   window.visualCal.sessionManager.setActive(sessionName);
 }
 
-const viewSessionClick = async (cell: Tabulator.CellComponent) => {
+const viewSessionClick = (cell: Tabulator.CellComponent) => {
   const sessionName = cell.getRow().getCell('name').getValue() as string;
   window.visualCal.electron.showViewSessionWindow(sessionName);
+}
+
+const refreshSessionCommIfaces = (selectedRow: Tabulator.RowComponent) => {
+  selectedSession = selectedRow.getData() as Session;
+  if (selectedSession.configuration) {
+    sessionCommIfacesTable.setData(selectedSession.configuration.interfaces);
+  } else {
+    sessionCommIfacesTable.setData([]);
+  }
 }
 
 const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
   data: sessions,
   layout: 'fitColumns',
+  rowClick: (_, row) => refreshSessionCommIfaces(row),
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited },
     { title: 'Procedure', field: 'procedureName', editable: true, editor: 'select', editorParams: () => procedures.map(p => p.name), cellEdited: sessionProcedureCellEdited },
     { title: 'Username', field: 'username', editable: false, minWidth: 120 },
     { title: 'Activate', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) },
     { title: 'Activate', formatter: viewSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => viewSessionClick(cell) }
+  ]
+});
+
+const sessionCommIfacesTable = new Tabulator('#vc-session-comm-ifaces-tabulator', {
+  data: sessions,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited }
   ]
 });
 
@@ -202,7 +226,7 @@ const areSessionListsDifferent = (newSessions: Session[]) => {
   return diff.length > 0;
 }
 
-const loadSessions = async () => {
+const loadSessions = () => {
   console.info('Loading sessions');
   try {
     window.visualCal.sessionManager.getAll();
@@ -212,7 +236,7 @@ const loadSessions = async () => {
   }
 }
 
-const refreshSessions = async (newSessions: Session[]) => {
+const refreshSessions = (newSessions: Session[]) => {
   try {
     console.info('Got sessions', newSessions);
     const areListsDifferent = areSessionListsDifferent(newSessions);
@@ -222,6 +246,7 @@ const refreshSessions = async (newSessions: Session[]) => {
     }
     sessions = newSessions;
     sessionsTable.setData(sessions);
+    sessionCommIfacesTable.setData([]);
   } catch (error) {
     alert(error.message);
     throw error;
@@ -230,7 +255,7 @@ const refreshSessions = async (newSessions: Session[]) => {
 
 // ***** INIT *****
 
-const init = async () => {
+const init = () => {
   initProcedureListeners();
   initSessionListeners();
 
@@ -246,8 +271,17 @@ const init = async () => {
     window.visualCal.electron.showWindow(VisualCalWindow.CreateSession);
   });
 
-  await loadProcedures();
-  await loadSessions();
+  createSessionCommsIfaceButton = document.getElementById('vc-card-session-comm-ifaces-create-button') as HTMLButtonElement;
+  createSessionCommsIfaceButton.addEventListener('click', () => {
+    if (!selectedSession) {
+      alert('Please select a session first');
+      return;
+    }
+    window.visualCal.electron.showCreateCommIfaceWindow(selectedSession.name);
+  });
+
+  loadProcedures();
+  loadSessions();
 
   window.visualCal.procedureManager.getActive();
 }

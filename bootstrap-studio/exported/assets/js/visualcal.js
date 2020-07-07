@@ -32,6 +32,9 @@ if (window.require) {
             case 9: // user input
                 require('../../dist/renderers/windows/user/input.js');
                 break;
+            case 10: // Create communication interface
+                require('../../dist/renderers/windows/session/create-comm-iface.js');
+                break;
         }
     });
     window.visualCal.electron.getVisualCalWindowId();

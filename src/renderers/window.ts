@@ -1,14 +1,13 @@
-import path from 'path';
 import { serverListenPort, dirs } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
-import fs from 'fs';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels, DemoUser } from '../@types/constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
+import { RendererAssetManager } from './managers/RendererAssetManager';
 
 window.visualCal = {
   browserUtils: browserUtils,
@@ -20,7 +19,8 @@ window.visualCal = {
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
     showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
     showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName),
-    showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error)
+    showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error),
+    showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName)
   },
   config: {
     httpServer: {
@@ -37,8 +37,5 @@ window.visualCal = {
   sessionManager: new RendererSessionManager(),
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
-  assets: {
-    basePath: path.resolve(dirs().userHomeData.base),
-    get: (name: string) => fs.readFileSync(path.resolve(dirs().userHomeData.base, name))
-  }
+  assetManager: new RendererAssetManager()
 };

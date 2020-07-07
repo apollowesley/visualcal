@@ -27,7 +27,8 @@ export const IpcChannels = {
   getFiles: 'get-files-request',
   windows: {
     show: 'show-window',
-    showErrorDialog: 'show-error-dialog'
+    showErrorDialog: 'show-error-dialog',
+    showCreateCommIface: 'show-create-comm-iface-window'
   },
   log: {
     result: 'log-result',
@@ -127,6 +128,31 @@ export const IpcChannels = {
       request: 'update-session-request',
       response: 'update-session-response',
       error: 'update-session-error'
+    },
+    getCommunicationInterfaces: {
+      request: 'get-session-communication-interfaces-request',
+      response: 'get-session-communication-interfaces-response',
+      error: 'get-session-communication-interfaces-error'
+    },
+    addCommunicationInterface: {
+      request: 'add-session-communication-interface-request',
+      response: 'add-session-communication-interface-response',
+      error: 'add-session-communication-interface-error'
+    },
+    removeCommunicationInterface: {
+      request: 'remove-session-communication-interface-request',
+      response: 'remove-session-communication-interface-response',
+      error: 'remove-session-communication-interface-error'
+    },
+    renameCommunicationInterface: {
+      request: 'rename-session-communication-interface-request',
+      response: 'rename-session-communication-interface-response',
+      error: 'rename-session-communication-interface-error'
+    },
+    updateCommunicationInterface: {
+      request: 'update-session-communication-interface-request',
+      response: 'update-session-communication-interface-response',
+      error: 'update-session-communication-interface-error'
     }
   },
   results: {

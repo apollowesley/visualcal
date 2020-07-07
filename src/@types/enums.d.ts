@@ -8,7 +8,8 @@ declare const enum VisualCalWindow {
   CreateSession,
   ViewSession,
   UserInstruction,
-  UserInput
+  UserInput,
+  CreateCommIface
 }
 
 declare const enum WindowPathType {

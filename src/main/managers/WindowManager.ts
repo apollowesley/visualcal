@@ -1,7 +1,8 @@
-import { BrowserWindow, dialog, app, ipcMain, ipcRenderer, WebContents } from 'electron';
+import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
+import { IpcChannels } from '../../@types/constants';
 
 export class WindowManager {
 
@@ -23,6 +24,7 @@ export class WindowManager {
       await this.ShowViewSessionWindow(sessionName);
     });
     ipcMain.on('get-user-visualcal-dir-request', (event) => event.returnValue = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal'));
+    ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
   }
 
   get(id: VisualCalWindow) {
@@ -85,6 +87,12 @@ export class WindowManager {
 
   get userInputWindow() {
     const window = this.get(VisualCalWindow.UserInput);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get createCommIfaceWindow() {
+    const window = this.get(VisualCalWindow.CreateCommIface);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -351,6 +359,20 @@ export class WindowManager {
     window = this.create(UserInputWindowConfig(this.viewSessionWindow));
     await window.loadFile(global.visualCal.dirs.html.userInput);
     window.webContents.send('user-input-request', request);
+    return window;
+  }
+
+  // Create communication interface window
+  async showCreateCommIfaceWindow(sessionName: string) {
+    let window = this.userInputWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    window = this.create(CreateCommIfaceWindow(this.mainWindow));
+    await window.loadFile(global.visualCal.dirs.html.createCommIface);
+    window.webContents.send('selected-session', sessionName);
     return window;
   }
 

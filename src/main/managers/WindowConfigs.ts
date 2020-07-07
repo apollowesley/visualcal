@@ -148,3 +148,20 @@ export const UserInputWindowConfig = (parent: BrowserWindow): CreateWindowOption
     }
   }
 }
+
+export const CreateCommIfaceWindow = (parent: BrowserWindow): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.CreateCommIface,
+    config: {
+      title: 'VisualCal - Add Communication Interface to session',
+      fullscreenable: false,
+      modal: true,
+      parent: parent,
+      width: 1000,
+      height: 750,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}
