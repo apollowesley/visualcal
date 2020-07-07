@@ -8,6 +8,14 @@ export const CommunicationInterfaceTypes = [
   'Emulated'
 ];
 
+export const enum CommunicationInterfaceTypesEnum {
+  NationalInstrumentsGPIB = 'National Instruments GPIB',
+  SerialPort = 'Serial Port',
+  PrologixGPIBTCP = 'Prologix GPIB TCP',
+  PrologixGPIBUSB = 'Prologix GPIB USB',
+  Emulated = 'Emulated'
+}
+
 export const DemoUser: User = {
   email: 'demo@indysoft.com',
   nameFirst: 'Test',

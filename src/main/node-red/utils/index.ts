@@ -7,7 +7,6 @@ import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { Fluke5522A } from '../../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
 import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
-import { EventNames } from '../../../@types/constants';
 
 interface DriversPackageJsonInterface {
   displayName: string;

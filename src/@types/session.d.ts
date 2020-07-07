@@ -10,4 +10,5 @@ interface Session {
 interface CreateCommunicationInterfaceInitialData {
   sessionName: string;
   communicationInterfaceTypes: string[];
+  serialPortNames: string[];
 }

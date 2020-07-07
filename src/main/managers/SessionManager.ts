@@ -26,7 +26,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     });
     ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
       try {
-        const retVal = await this.addCommunicationInterface(sessionName, iface);
+        const retVal = await this.createcommunicationInterface(sessionName, iface);
         event.reply(IpcChannels.sessions.createCommunicationInterface.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.sessions.createCommunicationInterface.error, error);
@@ -63,7 +63,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     const session = await this.getItemJson(name);
     try {
       await global.visualCal.procedureManager.setActive(session.procedureName);
-      await global.visualCal.nodeRedFlowManager.load(session.procedureName);
+      await global.visualCal.nodeRedFlowManager.load(session);
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +82,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     return [];
   }
 
-  async addCommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
+  async createcommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
     const session = await this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
     if (!session.configuration) {

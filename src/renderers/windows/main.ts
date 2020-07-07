@@ -213,7 +213,8 @@ const sessionCommIfacesTable = new Tabulator('#vc-session-comm-ifaces-tabulator'
   data: sessions,
   layout: 'fitColumns',
   columns: [
-    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited }
+    { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input' },
+    { title: 'Type', field: 'type', validator: ['required', 'string', 'unique'], editable: true, editor: 'input' }
   ]
 });
 
