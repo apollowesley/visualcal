@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
 
 export class WindowManager {
 
@@ -372,7 +372,11 @@ export class WindowManager {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     window = this.create(CreateCommIfaceWindow(this.mainWindow));
     await window.loadFile(global.visualCal.dirs.html.createCommIface);
-    window.webContents.send('selected-session', sessionName);
+    const data: CreateCommunicationInterfaceInitialData = {
+      sessionName: sessionName,
+      communicationInterfaceTypes: CommunicationInterfaceTypes
+    }
+    window.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
     return window;
   }
 

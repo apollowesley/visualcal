@@ -1,3 +1,13 @@
+export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
+
+export const CommunicationInterfaceTypes = [
+  'National Instruments GPIB',
+  'Serial Port',
+  'Prologix GPIB TCP',
+  'Prologix GPIB USB',
+  'Emulated'
+];
+
 export const DemoUser: User = {
   email: 'demo@indysoft.com',
   nameFirst: 'Test',
@@ -129,15 +139,20 @@ export const IpcChannels = {
       response: 'update-session-response',
       error: 'update-session-error'
     },
+    getCommunicationInterfaceTypes: {
+      request: 'get-session-communication-interface-types-request',
+      response: 'get-session-communication-interface-types-response',
+      error: 'get-session-communication-interface-types-error'
+    },
     getCommunicationInterfaces: {
       request: 'get-session-communication-interfaces-request',
       response: 'get-session-communication-interfaces-response',
       error: 'get-session-communication-interfaces-error'
     },
-    addCommunicationInterface: {
-      request: 'add-session-communication-interface-request',
-      response: 'add-session-communication-interface-response',
-      error: 'add-session-communication-interface-error'
+    createCommunicationInterface: {
+      request: 'create-session-communication-interface-request',
+      response: 'create-session-communication-interface-response',
+      error: 'create-session-communication-interface-error'
     },
     removeCommunicationInterface: {
       request: 'remove-session-communication-interface-request',
@@ -153,7 +168,8 @@ export const IpcChannels = {
       request: 'update-session-communication-interface-request',
       response: 'update-session-communication-interface-response',
       error: 'update-session-communication-interface-error'
-    }
+    },
+    createCommunicationInterfaceInitialData: 'create-communication-interface-inital-data'
   },
   results: {
     load: {

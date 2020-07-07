@@ -6,3 +6,8 @@ interface Session {
   lastActionName?: string;
   configuration?: CommunicationConfiguration;
 }
+
+interface CreateCommunicationInterfaceInitialData {
+  sessionName: string;
+  communicationInterfaceTypes: string[];
+}

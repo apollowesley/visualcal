@@ -1,13 +1,21 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
 import { CrudManager } from './CrudManager';
-import { ipcMain, session } from 'electron';
+import { ipcMain } from 'electron';
 
 export class SessionManager extends CrudManager<Session, Session, Session, Session> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.sessions, 'session');
+    ipcMain.on(IpcChannels.sessions.getCommunicationInterfaceTypes.request, async (event) => {
+      try {
+        const retVal = await this.getCommunicationInterfaceTypes();
+        event.reply(IpcChannels.sessions.getCommunicationInterfaceTypes.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.sessions.getCommunicationInterfaceTypes.error, error);
+      }
+    });
     ipcMain.on(IpcChannels.sessions.getCommunicationInterfaces.request, async (event, sessionName: string) => {
       try {
         const retVal = await this.getCommunicationInterfaces(sessionName);
@@ -16,12 +24,12 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
         event.reply(IpcChannels.sessions.getCommunicationInterfaces.error, error);
       }
     });
-    ipcMain.on(IpcChannels.sessions.addCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
+    ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
       try {
         const retVal = await this.addCommunicationInterface(sessionName, iface);
-        event.reply(IpcChannels.sessions.addCommunicationInterface.response, retVal);
+        event.reply(IpcChannels.sessions.createCommunicationInterface.response, retVal);
       } catch (error) {
-        event.reply(IpcChannels.sessions.addCommunicationInterface.error, error);
+        event.reply(IpcChannels.sessions.createCommunicationInterface.error, error);
       }
     });
   }
@@ -62,6 +70,10 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
   }
 
   // ***** COMMUNICATION INTERFACES *****
+
+  async getCommunicationInterfaceTypes() {
+    return CommunicationInterfaceTypes.sort();
+  }
 
   async getCommunicationInterfaces(sessionName: string) {
     const session = await this.getOne(sessionName);

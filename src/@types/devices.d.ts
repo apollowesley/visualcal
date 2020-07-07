@@ -172,11 +172,9 @@ interface SerialPortConfiguration {
   baudRate: number;
 }
 
-type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
-
 interface CommunicationInterfaceInfo {
   name: string;
-  type: CommunicationInterfaceType;
+  type: import('./constants').CommunicationInterfaceType;
   nationalInstrumentsGpib?: NationalInstrumentsGpibConfiguration;
   tcp?: TcpConfiguration;
   serial?: SerialPortConfiguration;
