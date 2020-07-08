@@ -10,7 +10,7 @@ const CurrentACRangeCommands: string[] = ['AUTO ON', '0.1', '1', '3' ];
 const CurrentDCRangeCommands: string[] = ['AUTO ON', '0.01', '0.1', '1', '3' ];
 
 // Resistance Ranges (ohms)
-const OhmsRangeCommands: string[] = ['AUTO ON', '100', '1000', '10000', '100000', '1000000', '100000000' ]; // 2-wire and 4-wire
+const OhmsRangeCommands: string[] = ['AUTO ON', '100', '1000', '10000', '100000', '1000000', '10000000', '100000000' ]; // 2-wire and 4-wire
 
 // Frequency/Period (Hz or s)
 const FreqRangeCommands: string[] = ['AUTO ON', '3', '300000' ]; // Frequency in Hz
@@ -131,7 +131,8 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
         break;
     }
     if (config.relative) {
-      await this.communicationInterface.writeString('CALC:FUNC:NULL');
+      await this.communicationInterface.writeString('CALC:FUNC NULL');
+      await this.communicationInterface.writeString('CALC:STATE ON');
       await delay(1000);
     }
     const value = await this.communicationInterface.queryString(command);
