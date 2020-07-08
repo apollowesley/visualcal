@@ -9,7 +9,7 @@ let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
 let sections: SectionInfo[] = [];
 let actions: ActionInfo[] = [];
-let results: LogicResult[] = []
+let results: LogicResult[] = [];
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
 const onSectionRowSelected = (selectedRow: Tabulator.RowComponent) => {
@@ -32,11 +32,12 @@ const onActionRowSelected = (selectedRow: Tabulator.RowComponent) => {
   const action = selectedRow.getData() as ActionInfo;
 }
 
-const startActionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+const startStopActionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+  if (session.lastSectionName && session.lastActionName) return '<button>Stop</button>'; // Already triggered
   return '<button>Start</button>';
 }
 
-const startActionClick = async (cell: Tabulator.CellComponent) => {
+const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const section = sectionsTable.getSelectedRows()[0].getData() as SectionInfo;
   const action = cell.getRow().getData() as ActionInfo;
   const opts: TriggerOptions = {
@@ -46,7 +47,16 @@ const startActionClick = async (cell: Tabulator.CellComponent) => {
     runId: Date.now().toString(),
     type: 'start'
   };
+  if (session.lastSectionName && session.lastActionName) {
+    opts.type = 'stop'; // Already triggered
+    session.lastSectionName = undefined;
+    session.lastActionName = undefined;
+  } else {
+    session.lastSectionName = section.name;
+    session.lastActionName = action.name;
+  }
   window.visualCal.actionManager.trigger(opts);
+  cell.getRow().reformat();
 }
 
 const actionsTable = new Tabulator('#vc-actions-tabulator', {
@@ -56,7 +66,7 @@ const actionsTable = new Tabulator('#vc-actions-tabulator', {
   rowSelected: onActionRowSelected,
   columns: [
     { title: 'Name', field: 'name' },
-    { title: 'Start', formatter: startActionIcon, minWidth: 100, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => startActionClick(cell) }
+    { title: 'Start', formatter: startStopActionIcon, minWidth: 100, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => startStopActionClick(cell) }
   ]
 });
 
@@ -89,12 +99,20 @@ const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
   return retVal;
 }
 
+const devicesTableGetCommInterfaces = () => {
+  const retVal: Tabulator.SelectParams = {
+    values: session.configuration.interfaces.map(d => d.name)
+  };
+  return retVal;
+}
+
 const devicesTable = new Tabulator('#vc-devices-tabulator', {
   data: deviceConfigurationNodeInfosForCurrentFlow,
   layout: 'fitColumns',
   columns: [
     { title: 'Device Unit Id', field: 'unitId' },
-    { title: 'Driver', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) }
+    { title: 'Driver', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
+    { title: 'Interface', editor: 'select', editorParams: (cell) => devicesTableGetCommInterfaces() }
   ]
 });
 
@@ -135,5 +153,20 @@ const init = () => {
 
   window.visualCal.resultsManager.load(sessionName);
 }
+
+const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
+resetButton.addEventListener('click', () => {
+  const triggerOpts: TriggerOptions = {
+    action: '',
+    section: '',
+    sessionId: sessionName,
+    runId: Date.now().toString(),
+    type: 'start'
+  };
+  session.lastSectionName = undefined;
+  session.lastActionName = undefined;
+  actionsTable.getRows().forEach(row => row.reformat());
+  window.visualCal.actionManager.trigger(triggerOpts);
+});
 
 init();

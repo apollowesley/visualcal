@@ -1,4 +1,5 @@
 import { ActionStartRuntimeNode } from '../../../@types/logic-server';
+import { resetAllNodes } from '.';
 
 export type TriggerType = 'start' | 'stop' | 'reset';
 
@@ -52,7 +53,10 @@ export const trigger = (options: TriggerOptions): TriggerResult => {
       response.message = 'ok';
     }
   } else {
-    response.error = 'Unable to find action start node';
+    if (type === 'reset') {
+      resetAllNodes();
+    }
+    // response.error = 'Unable to find action start node';
   }
   return response;
 };

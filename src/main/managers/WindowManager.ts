@@ -30,6 +30,9 @@ export class WindowManager {
     });
     ipcMain.on('get-user-visualcal-dir-request', (event) => event.returnValue = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal'));
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
+    ipcMain.on(IpcChannels.windows.show, async (_, windowId: VisualCalWindow) => {
+      await this.show(windowId);
+    });
   }
 
   get(id: VisualCalWindow) {
