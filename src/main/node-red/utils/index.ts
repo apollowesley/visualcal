@@ -154,10 +154,6 @@ export const getDeviceDriverCategories = () => {
   return flatDevices.filter((item, index) => flatDevices.indexOf(item) === index);
 };
 
-export const getAvailableDriverInfosForDevice = (unitId: string) => {
-
-}
-
 export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
   const retVal: DeviceNodeDriverRequirementsInfo[] = [];
   global.visualCal.nodeRed.app.nodes.eachNode((node) => {
