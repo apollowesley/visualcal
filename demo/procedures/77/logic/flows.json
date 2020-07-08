@@ -1,0 +1,1383 @@
+[
+	{
+		"id": "52d9fc70.0cb3d4",
+		"type": "tab",
+		"label": "DCV",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "e8d824f4.5da378",
+		"type": "tab",
+		"label": "Resistance",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "1d85e63e.8ed1da",
+		"type": "tab",
+		"label": "VAC",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "7103de52.469e3",
+		"type": "procedure-sidebar",
+		"z": 0,
+		"name": "77",
+		"shortName": "77"
+	},
+	{
+		"id": "70cbb03b.1d43c",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "DC Volts",
+		"shortName": "DCV"
+	},
+	{
+		"id": "feb1bfac.f939f",
+		"type": "indysoft-device-configuration",
+		"z": "",
+		"unitId": "TEST789"
+	},
+	{
+		"id": "4b28ab6e.8b9af4",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "Resistance",
+		"shortName": "Ohms"
+	},
+	{
+		"id": "a6a1cfa2.e6484",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "Volts AC",
+		"shortName": "VAC"
+	},
+	{
+		"id": "a2ecf8b3.193a18",
+		"type": "indysoft-device-configuration",
+		"z": "",
+		"unitId": "34401A"
+	},
+	{
+		"id": "bca0f476.93bca8",
+		"type": "indysoft-action-start",
+		"z": "52d9fc70.0cb3d4",
+		"name": "VDC",
+		"sectionConfigId": "70cbb03b.1d43c",
+		"x": 150,
+		"y": 100,
+		"wires": [
+			[
+				"d1632f7c.c01e7"
+			]
+		]
+	},
+	{
+		"id": "a69b464d.acbdb8",
+		"type": "indysoft-user-instruction",
+		"z": "52d9fc70.0cb3d4",
+		"name": "VDC Connection",
+		"description": "",
+		"title": "DCV connection",
+		"text": "Connect the calibrator voltage output to the UUT voltage input. Connect the calibrator ground/common/low output to the COM input of the UUT. Set the UUT function switch to DCV. ",
+		"showImage": true,
+		"imageSourceType": "asset",
+		"url": "",
+		"assetFilename": "Fatality gif.gif",
+		"x": 450,
+		"y": 100,
+		"wires": [
+			[
+				"b0371e89.5a872"
+			]
+		]
+	},
+	{
+		"id": "cb7216b5.fb39e8",
+		"type": "indysoft-scalar-result",
+		"z": "52d9fc70.0cb3d4",
+		"name": "2.7 VDC result",
+		"description": "2.7  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "2.691",
+		"max": "2.709",
+		"inputLevel": "2.7",
+		"x": 1340,
+		"y": 100,
+		"wires": [
+			[
+				"512b92b1.95f4ec"
+			]
+		]
+	},
+	{
+		"id": "45064f0d.15913",
+		"type": "indysoft-user-input",
+		"z": "52d9fc70.0cb3d4",
+		"name": "2.7 VDC Reading",
+		"description": "",
+		"title": "READING",
+		"text": "Please enter the reading for 2.7 VDC displayed on the UUT",
+		"dataType": "float",
+		"x": 1050,
+		"y": 100,
+		"wires": [
+			[
+				"cb7216b5.fb39e8"
+			]
+		]
+	},
+	{
+		"id": "b0371e89.5a872",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Calibrator 2.7 VDC",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "2.7",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 730,
+		"y": 100,
+		"wires": [
+			[],
+			[
+				"45064f0d.15913"
+			]
+		]
+	},
+	{
+		"id": "512b92b1.95f4ec",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Calibrator 27 VDC",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "27",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 730,
+		"y": 160,
+		"wires": [
+			[],
+			[
+				"a251310.dc0e3d"
+			]
+		]
+	},
+	{
+		"id": "cab6bd59.a45d2",
+		"type": "indysoft-scalar-result",
+		"z": "52d9fc70.0cb3d4",
+		"name": "27 VDC result",
+		"description": "27.00  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "26.85",
+		"max": "27.15",
+		"inputLevel": "27.00",
+		"x": 1340,
+		"y": 160,
+		"wires": [
+			[
+				"c0b28203.7781c"
+			]
+		]
+	},
+	{
+		"id": "c0b28203.7781c",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Calibrator 270 VDC",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "270",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 730,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"3504aef7.009d42"
+			]
+		]
+	},
+	{
+		"id": "e4124314.a59ee",
+		"type": "indysoft-scalar-result",
+		"z": "52d9fc70.0cb3d4",
+		"name": "270 VDC result",
+		"description": "270  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "268.5",
+		"max": "271.5",
+		"inputLevel": "270",
+		"x": 1340,
+		"y": 220,
+		"wires": [
+			[
+				"6a03029d.99c1bc"
+			]
+		]
+	},
+	{
+		"id": "2e8cd33d.110d2c",
+		"type": "indysoft-scalar-result",
+		"z": "52d9fc70.0cb3d4",
+		"name": "1000 VDC result",
+		"description": "1000  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "993",
+		"max": "1007",
+		"inputLevel": "1000",
+		"x": 1340,
+		"y": 280,
+		"wires": [
+			[
+				"9dda8281.cba5f"
+			]
+		]
+	},
+	{
+		"id": "a0e2182.179bae8",
+		"type": "indysoft-scalar-result",
+		"z": "52d9fc70.0cb3d4",
+		"name": "300 mVDC result",
+		"description": "300.0 milli volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "milli",
+		"toleranceType": "limit",
+		"min": "298.7",
+		"max": "301.3",
+		"inputLevel": "300.0",
+		"x": 1350,
+		"y": 340,
+		"wires": [
+			[
+				"753bbca9.ebe0c4"
+			]
+		]
+	},
+	{
+		"id": "6a03029d.99c1bc",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Calibrator 1000 VDC",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "2.7",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 740,
+		"y": 280,
+		"wires": [
+			[],
+			[
+				"c2c527fc.064608"
+			]
+		]
+	},
+	{
+		"id": "c9ed0650.5cf678",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Calibrator 300 mVDC",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vdc",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": ".300",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 740,
+		"y": 340,
+		"wires": [
+			[],
+			[
+				"ca6426e6.e5abc8"
+			]
+		]
+	},
+	{
+		"id": "a251310.dc0e3d",
+		"type": "indysoft-user-input",
+		"z": "52d9fc70.0cb3d4",
+		"name": "27 VDC Reading",
+		"description": "",
+		"title": "READING",
+		"text": "Please enter the reading for 27 VDC displayed on the UUT",
+		"dataType": "float",
+		"x": 1050,
+		"y": 160,
+		"wires": [
+			[
+				"cab6bd59.a45d2"
+			]
+		]
+	},
+	{
+		"id": "3504aef7.009d42",
+		"type": "indysoft-user-input",
+		"z": "52d9fc70.0cb3d4",
+		"name": "270 VDC Reading",
+		"description": "",
+		"title": "READING",
+		"text": "Please enter the reading for 270 VDC displayed on the UUT",
+		"dataType": "float",
+		"x": 1050,
+		"y": 220,
+		"wires": [
+			[
+				"e4124314.a59ee"
+			]
+		]
+	},
+	{
+		"id": "c2c527fc.064608",
+		"type": "indysoft-user-input",
+		"z": "52d9fc70.0cb3d4",
+		"name": "1000 VDC Reading",
+		"description": "",
+		"title": "READING",
+		"text": "Please enter the reading for 1000 VDC displayed on the UUT",
+		"dataType": "float",
+		"x": 1050,
+		"y": 280,
+		"wires": [
+			[
+				"2e8cd33d.110d2c"
+			]
+		]
+	},
+	{
+		"id": "ca6426e6.e5abc8",
+		"type": "indysoft-user-input",
+		"z": "52d9fc70.0cb3d4",
+		"name": "300 mVDC Reading",
+		"description": "",
+		"title": "READING",
+		"text": "Please enter the reading for 200 mVDC displayed on the UUT",
+		"dataType": "float",
+		"x": 1060,
+		"y": 340,
+		"wires": [
+			[
+				"a0e2182.179bae8"
+			]
+		]
+	},
+	{
+		"id": "be5c0e04.0ba96",
+		"type": "indysoft-action-completed",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"x": 1750,
+		"y": 340,
+		"wires": []
+	},
+	{
+		"id": "9dda8281.cba5f",
+		"type": "indysoft-user-instruction",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"description": "",
+		"title": "mVDC connection",
+		"text": "Set the UUT switch to mVDC",
+		"showImage": false,
+		"imageSourceType": "asset",
+		"url": "",
+		"x": 910,
+		"y": 660,
+		"wires": [
+			[
+				"c9ed0650.5cf678"
+			]
+		]
+	},
+	{
+		"id": "49ec6006.2e53",
+		"type": "indysoft-user-instruction",
+		"z": "e8d824f4.5da378",
+		"name": "Resistance ",
+		"description": "",
+		"title": "Connection",
+		"text": "Connect the calibrator voltage output to the UUT voltage/resistance/diode input. Connect the calibrator ground/common/low output to the COM input of the UUT. Set the UUT function switch to Ohms. ",
+		"showImage": false,
+		"imageSourceType": "asset",
+		"url": "",
+		"x": 450,
+		"y": 120,
+		"wires": [
+			[
+				"2693e04a.8a89e"
+			]
+		]
+	},
+	{
+		"id": "4726a46.d9c8b5c",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "190 Ohms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 190 ohms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 120,
+		"wires": [
+			[
+				"7b1fd8ed.70a128"
+			]
+		]
+	},
+	{
+		"id": "7b1fd8ed.70a128",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "190 Ohm Result",
+		"description": "190  ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "188.8",
+		"max": "191.2",
+		"inputLevel": "190",
+		"x": 1220,
+		"y": 120,
+		"wires": [
+			[
+				"2a28d61.a460d2a"
+			]
+		]
+	},
+	{
+		"id": "2a28d61.a460d2a",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 1.9  kOhms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "1900",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 200,
+		"wires": [
+			[],
+			[
+				"5b63b4a1.b4f22c"
+			]
+		]
+	},
+	{
+		"id": "4de5b959.12a308",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 19 kOhms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "19000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 280,
+		"wires": [
+			[],
+			[
+				"e2373d3e.f630c"
+			]
+		]
+	},
+	{
+		"id": "9a3c264a.da4b78",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 190 kOhms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "190000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"2e7933f9.91986c"
+			]
+		]
+	},
+	{
+		"id": "2dd3188a.eb40c8",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 1.9 MOhms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "1900000000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 440,
+		"wires": [
+			[],
+			[
+				"e15335fe.277928"
+			]
+		]
+	},
+	{
+		"id": "26388324.8993ac",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 19 MOhms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "19000000000",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 520,
+		"wires": [
+			[],
+			[
+				"40bc831f.ed08dc"
+			]
+		]
+	},
+	{
+		"id": "5b63b4a1.b4f22c",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "1.9 kOhms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 1900 ohms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 200,
+		"wires": [
+			[
+				"c01735c.d1293c8"
+			]
+		]
+	},
+	{
+		"id": "e2373d3e.f630c",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "19 kOhms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 19 kOhms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 280,
+		"wires": [
+			[
+				"f74958b2.caa0b8"
+			]
+		]
+	},
+	{
+		"id": "2e7933f9.91986c",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "190 kOhms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 190 kOhms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 360,
+		"wires": [
+			[
+				"119c028a.ea56cd"
+			]
+		]
+	},
+	{
+		"id": "e15335fe.277928",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "1.9 MOhms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 1.9 MOhms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 440,
+		"wires": [
+			[
+				"ec32f015.e37f9"
+			]
+		]
+	},
+	{
+		"id": "40bc831f.ed08dc",
+		"type": "indysoft-user-input",
+		"z": "e8d824f4.5da378",
+		"name": "19  MOhms reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 19 MOhms as displayed on the UUT.",
+		"dataType": "string",
+		"x": 970,
+		"y": 520,
+		"wires": [
+			[
+				"de892e46.70bb3"
+			]
+		]
+	},
+	{
+		"id": "c01735c.d1293c8",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "1.9 kOhm Result",
+		"description": "1900  ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "1889",
+		"max": "1911",
+		"inputLevel": "1900",
+		"x": 1230,
+		"y": 200,
+		"wires": [
+			[
+				"4de5b959.12a308"
+			]
+		]
+	},
+	{
+		"id": "f74958b2.caa0b8",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "19 kOhms Result",
+		"description": "19 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "18.89",
+		"max": "19.11",
+		"inputLevel": "19",
+		"x": 1230,
+		"y": 280,
+		"wires": [
+			[
+				"9a3c264a.da4b78"
+			]
+		]
+	},
+	{
+		"id": "119c028a.ea56cd",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "190 kOhms Result",
+		"description": "190 kilo ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "kilo",
+		"toleranceType": "limit",
+		"min": "188.9",
+		"max": "191.1",
+		"inputLevel": "190",
+		"x": 1230,
+		"y": 360,
+		"wires": [
+			[
+				"2dd3188a.eb40c8"
+			]
+		]
+	},
+	{
+		"id": "ec32f015.e37f9",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "1.9 MOhms Result",
+		"description": "1.9 mega ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "mega",
+		"toleranceType": "limit",
+		"min": "1.889",
+		"max": "1.911",
+		"inputLevel": "1.9",
+		"x": 1230,
+		"y": 440,
+		"wires": [
+			[
+				"26388324.8993ac"
+			]
+		]
+	},
+	{
+		"id": "de892e46.70bb3",
+		"type": "indysoft-scalar-result",
+		"z": "e8d824f4.5da378",
+		"name": "19 MOhms Result",
+		"description": "19 mega ohm",
+		"baseQuantity": "resistance",
+		"derivedQuantity": "ohm",
+		"derivedQuantityPrefix": "mega",
+		"toleranceType": "limit",
+		"min": "18.61",
+		"max": "19.39",
+		"inputLevel": "19",
+		"x": 1230,
+		"y": 520,
+		"wires": [
+			[
+				"6d0e1d9f.f80f04"
+			]
+		]
+	},
+	{
+		"id": "6d0e1d9f.f80f04",
+		"type": "indysoft-action-completed",
+		"z": "e8d824f4.5da378",
+		"name": "",
+		"x": 1500,
+		"y": 520,
+		"wires": []
+	},
+	{
+		"id": "a4369d84.aba96",
+		"type": "indysoft-action-start",
+		"z": "e8d824f4.5da378",
+		"name": "Ohms",
+		"sectionConfigId": "4b28ab6e.8b9af4",
+		"x": 200,
+		"y": 120,
+		"wires": [
+			[
+				"49ec6006.2e53"
+			]
+		]
+	},
+	{
+		"id": "b3d3603b.b7fba",
+		"type": "indysoft-scalar-result",
+		"z": "1d85e63e.8ed1da",
+		"name": "750 V 1000 HZ result",
+		"description": "750  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "733",
+		"max": "767",
+		"inputLevel": "750",
+		"x": 1234,
+		"y": 321,
+		"wires": [
+			[
+				"6ccaea53.30ea14"
+			]
+		]
+	},
+	{
+		"id": "37123133.52ae2e",
+		"type": "indysoft-user-input",
+		"z": "1d85e63e.8ed1da",
+		"name": "750 V, 1000 Hz reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 750 V, 1000 HZ as displayed on the UUT",
+		"dataType": "string",
+		"x": 964,
+		"y": 321,
+		"wires": [
+			[
+				"b3d3603b.b7fba"
+			]
+		]
+	},
+	{
+		"id": "6b3e4be0.937324",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1d85e63e.8ed1da",
+		"name": "Calibrator 750 V, 1000 Hz",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "2.7",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "1000",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 704,
+		"y": 321,
+		"wires": [
+			[],
+			[
+				"37123133.52ae2e"
+			]
+		]
+	},
+	{
+		"id": "e7095d76.6309c",
+		"type": "indysoft-scalar-result",
+		"z": "1d85e63e.8ed1da",
+		"name": "750 V 100 HZ result",
+		"description": "750  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "733",
+		"max": "767",
+		"inputLevel": "750",
+		"x": 1240,
+		"y": 240,
+		"wires": [
+			[
+				"6b3e4be0.937324"
+			]
+		]
+	},
+	{
+		"id": "f32e08fe.3f82d8",
+		"type": "indysoft-user-input",
+		"z": "1d85e63e.8ed1da",
+		"name": "750 V, 100 Hz reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 750V, 100 HZ as displayed on the UUT",
+		"dataType": "string",
+		"x": 954,
+		"y": 241,
+		"wires": [
+			[
+				"e7095d76.6309c"
+			]
+		]
+	},
+	{
+		"id": "5ace269e.782448",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1d85e63e.8ed1da",
+		"name": "Calibrator 750 V, 100 Hz",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "750",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "100",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 704,
+		"y": 241,
+		"wires": [
+			[],
+			[
+				"f32e08fe.3f82d8"
+			]
+		]
+	},
+	{
+		"id": "88ca3e42.cbbf4",
+		"type": "indysoft-scalar-result",
+		"z": "1d85e63e.8ed1da",
+		"name": "2.7 V 500 HZ result",
+		"description": "2.7  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "2.644",
+		"max": "2.756",
+		"inputLevel": "2.7",
+		"x": 1224,
+		"y": 161,
+		"wires": [
+			[
+				"5ace269e.782448"
+			]
+		]
+	},
+	{
+		"id": "c69c7429.696f28",
+		"type": "indysoft-user-input",
+		"z": "1d85e63e.8ed1da",
+		"name": "2.7 V, 500 Hz reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 2.7 V, 100 HZ as displayed on the UUT",
+		"dataType": "string",
+		"x": 954,
+		"y": 161,
+		"wires": [
+			[
+				"88ca3e42.cbbf4"
+			]
+		]
+	},
+	{
+		"id": "2583e99.1a4f916",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1d85e63e.8ed1da",
+		"name": "Calibrator 2.7 V, 500 Hz",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "2.7",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "500",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 704,
+		"y": 161,
+		"wires": [
+			[],
+			[
+				"c69c7429.696f28"
+			]
+		]
+	},
+	{
+		"id": "2ee10dd5.1b68f2",
+		"type": "indysoft-scalar-result",
+		"z": "1d85e63e.8ed1da",
+		"name": "2.7 V 100 HZ result",
+		"description": "2.7  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "2.644",
+		"max": "2.756",
+		"inputLevel": "2.7",
+		"x": 1224,
+		"y": 81,
+		"wires": [
+			[
+				"2583e99.1a4f916"
+			]
+		]
+	},
+	{
+		"id": "64c17491.8be19c",
+		"type": "indysoft-user-input",
+		"z": "1d85e63e.8ed1da",
+		"name": "2.7 V, 100 Hz reading",
+		"description": "",
+		"title": "Reading",
+		"text": "Please enter the reading for 2.7 V, 100 HZ as displayed on the UUT",
+		"dataType": "string",
+		"x": 954,
+		"y": 81,
+		"wires": [
+			[
+				"2ee10dd5.1b68f2"
+			]
+		]
+	},
+	{
+		"id": "d75b553b.1eb788",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "1d85e63e.8ed1da",
+		"name": "Calibrator 2.7 V, 100 Hz",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "vac",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "2.7",
+		"voltsType": "num",
+		"ohms": "0",
+		"ohmsType": "num",
+		"frequency": "100",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 704,
+		"y": 81,
+		"wires": [
+			[],
+			[
+				"64c17491.8be19c"
+			]
+		]
+	},
+	{
+		"id": "eaa59eb2.95282",
+		"type": "indysoft-user-instruction",
+		"z": "1d85e63e.8ed1da",
+		"name": "VAC Connection",
+		"description": "",
+		"title": "Connection",
+		"text": "Connect the calibrator voltage output to the UUT voltage input. Connect the calibrator ground/common/low output to the COM input of the UUT. Set the UUT function switch to VAC. ",
+		"showImage": false,
+		"imageSourceType": "asset",
+		"url": "",
+		"x": 420,
+		"y": 80,
+		"wires": [
+			[
+				"d75b553b.1eb788"
+			]
+		]
+	},
+	{
+		"id": "2693e04a.8a89e",
+		"type": "indysoft-device-multi-product-calibrator",
+		"z": "e8d824f4.5da378",
+		"name": "Calibrator: 190 Ohms",
+		"deviceConfigId": "feb1bfac.f939f",
+		"mode": "ohms",
+		"amps": "0",
+		"ampsType": "num",
+		"volts": "0",
+		"voltsType": "num",
+		"ohms": "190",
+		"ohmsType": "num",
+		"frequency": "0",
+		"frequencyType": "num",
+		"outputOn": true,
+		"useDelayBefore": false,
+		"delayBefore": 1000,
+		"x": 700,
+		"y": 120,
+		"wires": [
+			[],
+			[
+				"4726a46.d9c8b5c"
+			]
+		]
+	},
+	{
+		"id": "d0380616.328da8",
+		"type": "indysoft-action-start",
+		"z": "1d85e63e.8ed1da",
+		"name": "VAC",
+		"sectionConfigId": "a6a1cfa2.e6484",
+		"x": 140,
+		"y": 80,
+		"wires": [
+			[
+				"eaa59eb2.95282"
+			]
+		]
+	},
+	{
+		"id": "6ccaea53.30ea14",
+		"type": "indysoft-action-completed",
+		"z": "1d85e63e.8ed1da",
+		"name": "",
+		"x": 1434,
+		"y": 321,
+		"wires": []
+	},
+	{
+		"id": "753bbca9.ebe0c4",
+		"type": "indysoft-user-instruction",
+		"z": "52d9fc70.0cb3d4",
+		"name": "Complete",
+		"description": "",
+		"title": "Complete",
+		"text": "VDC Complete",
+		"showImage": false,
+		"imageSourceType": "asset",
+		"url": "",
+		"x": 1560,
+		"y": 340,
+		"wires": [
+			[
+				"be5c0e04.0ba96"
+			]
+		]
+	},
+	{
+		"id": "b3aa5b76.529cb8",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "vdc",
+		"setRate": false,
+		"rate": 0,
+		"setRange": true,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 250,
+		"y": 200,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "384b6777.067908",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "vac",
+		"setRate": false,
+		"rate": 0,
+		"setRange": false,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 260,
+		"y": 300,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "200394b8.2b01bc",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "ohms",
+		"setRate": false,
+		"rate": 0,
+		"setRange": false,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 280,
+		"y": 420,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "21adce9f.2f49d2",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "ohms2wire",
+		"setRate": false,
+		"rate": 0,
+		"setRange": false,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 280,
+		"y": 540,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "d1632f7c.c01e7",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "aac",
+		"setRate": false,
+		"rate": 0,
+		"setRange": true,
+		"range": "2",
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 290,
+		"y": 600,
+		"wires": [
+			[
+				"21511a04.e11876"
+			],
+			[
+				"21511a04.e11876"
+			]
+		]
+	},
+	{
+		"id": "c576d46a.df9db8",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "adc",
+		"setRate": false,
+		"rate": 0,
+		"setRange": false,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 300,
+		"y": 700,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "aa471443.d105b8",
+		"type": "indysoft-device-keysight34401a",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"deviceConfigId": "a2ecf8b3.193a18",
+		"mode": "adc",
+		"setRate": false,
+		"rate": 0,
+		"setRange": false,
+		"range": 0,
+		"relative": false,
+		"usePreDelay": false,
+		"preDelay": 0,
+		"measure": true,
+		"outputs": 2,
+		"x": 280,
+		"y": 780,
+		"wires": [
+			[],
+			[]
+		]
+	},
+	{
+		"id": "21511a04.e11876",
+		"type": "debug",
+		"z": "52d9fc70.0cb3d4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "true",
+		"targetType": "full",
+		"x": 500,
+		"y": 600,
+		"wires": []
+	}
+]

@@ -121,13 +121,13 @@
 		"type": "inject",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"topic": "",
-		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
-		"payloadType": "json",
 		"repeat": "",
 		"crontab": "",
 		"once": false,
 		"onceDelay": 0.1,
+		"topic": "",
+		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
+		"payloadType": "json",
 		"x": 350,
 		"y": 940,
 		"wires": [
@@ -3052,29 +3052,6 @@
 			[
 				"88a7dffa.ef2dc"
 			]
-		]
-	},
-	{
-		"id": "ef2c2c19.0e95a",
-		"type": "indysoft-device-keysight34401a",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vac",
-		"setRate": false,
-		"rate": 0,
-		"setRange": true,
-		"range": "2",
-		"relative": false,
-		"usePreDelay": false,
-		"preDelay": 0,
-		"measure": true,
-		"outputs": 2,
-		"x": 360,
-		"y": 400,
-		"wires": [
-			[],
-			[]
 		]
 	}
 ]

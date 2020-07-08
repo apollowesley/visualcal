@@ -1,1 +1,1 @@
-{"name":"Demo","procedureName":"Fluke 45 Calibration","username":"demo@indysoft.com"}
+{"name":"Demo","procedureName":"Fluke 45 Calibration","username":"demo@indysoft.com","configuration":{"devices":[],"interfaces":[{"name":"prologixtcp","type":"Prologix GPIB TCP","tcp":{"host":"10.0.0.206","port":1234}},{"name":"emulated","type":"Emulated"}]}}
