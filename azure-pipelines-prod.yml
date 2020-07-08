@@ -39,10 +39,17 @@ steps:
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 - task: CopyFiles@2
-  displayName: 'Copy Windows files to: $(Build.ArtifactStagingDirectory)'
+  displayName: 'Copy Windows exe files to: $(Build.ArtifactStagingDirectory)'
   inputs:
     Contents: |
       dist/*.exe
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: CopyFiles@2
+  displayName: 'Copy Windows zip files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    Contents: |
+      dist/*.zip
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 # - task: CopyFiles@2
