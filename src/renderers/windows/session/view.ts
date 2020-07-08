@@ -3,11 +3,14 @@ import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../@types/constants';
 import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
 import { TriggerOptions } from '../../../main/node-red/utils/actions';
+import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
 
 let sessionName: string = '';
+let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
 let sections: SectionInfo[] = [];
 let actions: ActionInfo[] = [];
 let results: LogicResult[] = []
+let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
 const onSectionRowSelected = (selectedRow: Tabulator.RowComponent) => {
   const section = selectedRow.getData() as SectionInfo;
@@ -78,10 +81,30 @@ const resultsTable = new Tabulator('#vc-results-tabulator', {
   ]
 });
 
+const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
+  const deviceInfo = cell.getRow().getData() as DeviceNodeDriverRequirementsInfo;
+  const retVal: Tabulator.SelectParams = {
+    values: deviceInfo.availableDrivers.map(d => d.displayName)
+  };
+  return retVal;
+}
+
+const devicesTable = new Tabulator('#vc-devices-tabulator', {
+  data: deviceConfigurationNodeInfosForCurrentFlow,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Device Unit Id', field: 'unitId' },
+    { title: 'Driver', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) }
+  ]
+});
+
 const init = () => {
-  ipcRenderer.on('session-view-info', (_, newSessionName: string, newSections: SectionInfo[]) => {
-    sessionName = newSessionName;
-    sections = newSections;
+  ipcRenderer.on(IpcChannels.sessions.viewInfo, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+    sessionName = viewInfo.session.name;
+    session = viewInfo.session;
+    sections = viewInfo.sections;
+    deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
+    devicesTable.setData(deviceConfigurationNodeInfosForCurrentFlow);
     sectionsTable.setData(sections);
     if (sections.length > 0) {
       const firstSection = sections[0];

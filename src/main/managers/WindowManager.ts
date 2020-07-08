@@ -4,6 +4,8 @@ import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
 import SerialPort from 'serialport';
+import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
+import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 
 export class WindowManager {
 
@@ -22,7 +24,9 @@ export class WindowManager {
       }
     });
     ipcMain.on('show-view-session-window', async (_, sessionName: string) => {
-      await this.ShowViewSessionWindow(sessionName);
+      const session = await global.visualCal.sessionManager.getOne(sessionName);
+      if (!session) throw new Error(`Unable to find session, ${sessionName}`);
+      await this.ShowViewSessionWindow(session);
     });
     ipcMain.on('get-user-visualcal-dir-request', (event) => event.returnValue = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal'));
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
@@ -316,7 +320,7 @@ export class WindowManager {
   }
 
   // View session window
-  async ShowViewSessionWindow(sessionName: string) {
+  async ShowViewSessionWindow(session: Session) {
     let window = this.viewSessionWindow;
     if (window) {
       window.show();
@@ -331,7 +335,13 @@ export class WindowManager {
     });
     WindowUtils.centerWindowOnNearestCurorScreen(window);
     await window.loadFile(global.visualCal.dirs.html.session.view);
-    window.webContents.send('session-view-info', sessionName, sections);
+    const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
+    const viewInfo: SessionViewWindowOpenIPCInfo = {
+      session: session,
+      sections: sections,
+      deviceConfigurationNodeInfosForCurrentFlow: deviceConfigurationNodeInfosForCurrentFlow
+    };
+    window.webContents.send(IpcChannels.sessions.viewInfo, viewInfo);
     return window;
   }
 

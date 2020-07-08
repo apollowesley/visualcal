@@ -1,30 +1,19 @@
-import { app, BrowserWindow, Menu, MenuItem, MenuItemConstructorOptions, dialog } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
 import { FileManager } from '../common/managers/FileManager';
-import { EmulatedCommunicationInterface } from '../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import { init as initGlobal } from './InitGlobal';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
-import { addCommunicationInterface, addCommunicationInterfaceForDevice, init as nodeRedUtilsInit } from './node-red/utils';
+import { init as nodeRedUtilsInit } from './node-red/utils';
 import fs, { promises as fsPromises } from 'fs';
+import { isDev } from './utils/is-dev-mode';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
-let mainWindow: BrowserWindow | null = null;
-
-async function createMainWindow() {
-  mainWindow = new BrowserWindow({
-    webPreferences: {
-      nodeIntegration: true
-    }
-  });
-  mainWindow.visualCal.id = VisualCalWindow.Main;
-  await mainWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
-}
 
 async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
   const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
@@ -48,31 +37,6 @@ async function load() {
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   nodeRedUtilsInit();
-6
-  // TODO: DEMO ONLY!!!
-  addCommunicationInterface({
-    communicationInterface: new EmulatedCommunicationInterface(),
-    name: 'Emulated'
-  });
-  addCommunicationInterfaceForDevice({
-    communicationInterfaceName: 'Emulated',
-    deviceName: 'uut',
-    deviceDriver: {
-      categories: ['digital-multi-meter'],
-      deviceModel: '45',
-      manufacturer: 'Fluke'
-    }
-  });
-  addCommunicationInterfaceForDevice({
-    communicationInterfaceName: 'Emulated',
-    deviceName: 'calibrator',
-    deviceDriver: {
-      categories: ['multi-product-calibrator'],
-      deviceModel: '5522A',
-      manufacturer: 'Fluke'
-    }
-  });
-  // TODO: END DEMO
   global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
   nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
   nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
@@ -87,6 +51,10 @@ async function load() {
   });
 }
 
+function testingOnly() {
+  // TODO: TESTING ONLY!!!
+}
+
 app.on('ready', async () => {
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
@@ -95,7 +63,8 @@ app.on('ready', async () => {
     initMainMenu();
     await load();
     await global.visualCal.windowManager.ShowLoading(async () => {
-        await global.visualCal.windowManager.ShowMain();
+      await global.visualCal.windowManager.ShowMain();
+      if (isDev()) testingOnly();
     });
   } catch (error) {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);

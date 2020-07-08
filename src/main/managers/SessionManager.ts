@@ -3,11 +3,13 @@ import path from 'path';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
 import { CrudManager } from './CrudManager';
 import { ipcMain } from 'electron';
+import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 
 export class SessionManager extends CrudManager<Session, Session, Session, Session> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.sessions, 'session');
+
     ipcMain.on(IpcChannels.sessions.getCommunicationInterfaceTypes.request, async (event) => {
       try {
         const retVal = await this.getCommunicationInterfaceTypes();
@@ -16,6 +18,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
         event.reply(IpcChannels.sessions.getCommunicationInterfaceTypes.error, error);
       }
     });
+
     ipcMain.on(IpcChannels.sessions.getCommunicationInterfaces.request, async (event, sessionName: string) => {
       try {
         const retVal = await this.getCommunicationInterfaces(sessionName);
@@ -24,6 +27,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
         event.reply(IpcChannels.sessions.getCommunicationInterfaces.error, error);
       }
     });
+
     ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
       try {
         const retVal = await this.createCommunicationInterface(sessionName, iface);
@@ -32,12 +36,22 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
         event.reply(IpcChannels.sessions.createCommunicationInterface.error, error);
       }
     });
+
     ipcMain.on(IpcChannels.sessions.removeCommunicationInterface.request, async (event, sessionName: string, ifaceName: string) => {
       try {
         const retVal = await this.removeCommunicationInterface(sessionName, ifaceName);
         event.reply(IpcChannels.sessions.removeCommunicationInterface.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.sessions.removeCommunicationInterface.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.request, async (event, sessionName: string, ifaceName: string) => {
+      try {
+        const retVal = getDeviceConfigurationNodeInfosForCurrentFlow();
+        event.reply(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.error, error);
       }
     });
   }
@@ -108,5 +122,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     await this.update(session);
     return { sessionName: sessionName, ifaceName: ifaceName };
   }
+
+  // ***** DEVICES *****
 
 }

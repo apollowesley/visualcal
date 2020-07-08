@@ -102,6 +102,7 @@ export const IpcChannels = {
     }
   },
   sessions: {
+    viewInfo: 'session-view-info', // Sent by WindowManager when it opens a session view window (procedure session view to run the procedure)
     getAll: {
       request: 'getAll-sessions-request',
       response: 'getAll-sessions-response',
@@ -177,7 +178,12 @@ export const IpcChannels = {
       response: 'update-session-communication-interface-response',
       error: 'update-session-communication-interface-error'
     },
-    createCommunicationInterfaceInitialData: 'create-communication-interface-inital-data'
+    createCommunicationInterfaceInitialData: 'create-communication-interface-inital-data',
+    getDeviceConfigurationNodeInfosForCurrentFlow: {
+      request: 'get-device-config-node-infos-for-current-flow-request',
+      response: 'get-device-config-node-infos-for-current-flow-response',
+      error: 'get-device-config-node-infos-for-current-flow-error'
+    }
   },
   results: {
     load: {

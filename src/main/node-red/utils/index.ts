@@ -1,4 +1,4 @@
-import { NodeRed, NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, ProcedureRuntimeNode, SectionRuntimeNode, ActionStartRuntimeNode } from '../../../@types/logic-server';
+import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, ProcedureRuntimeNode, SectionRuntimeNode, ActionStartRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
 import { CommunicationInterface } from '../../../drivers/communication-interfaces/CommunicationInterface';
 import { Node as NodeRedNode } from 'node-red';
 import fs from 'fs-extra';
@@ -8,34 +8,7 @@ import { Fluke5522A } from '../../../drivers/devices/multi-product-calibrators/F
 import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
 import { dialog } from 'electron';
-
-interface DriversPackageJsonInterface {
-  displayName: string;
-  class: string;
-  path: string;
-}
-
-interface DriversPackageJsonDriver {
-  displayName: string;
-  class: string;
-  manufacturer: string;
-  model: string;
-  categories: string[];
-  path: string;
-}
-
-interface DriversPackageJsonVisualCalDrivers {
-  interfaces: DriversPackageJsonInterface[];
-  devices: DriversPackageJsonDriver[];
-}
-
-interface DriversPackageJsonVisualCal {
-  drivers: DriversPackageJsonVisualCalDrivers;
-}
-
-interface DriversPackageJson {
-  visualcal: DriversPackageJsonVisualCal;
-}
+import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
 
 export interface CommunicationInterfaceNamePair {
   name: string;
@@ -45,7 +18,7 @@ export interface CommunicationInterfaceNamePair {
 export interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
   communicationInterfaceName: string;
-  deviceDriver?: DeviceDriver;
+  deviceDriver?: DeviceDriverInfo;
 }
 
 let driversPackagejson: DriversPackageJson;
@@ -181,14 +154,41 @@ export const getDeviceDriverCategories = () => {
   return flatDevices.filter((item, index) => flatDevices.indexOf(item) === index);
 };
 
+export const getAvailableDriverInfosForDevice = (unitId: string) => {
+
+}
+
+export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
+  const retVal: DeviceNodeDriverRequirementsInfo[] = [];
+  global.visualCal.nodeRed.app.nodes.eachNode((node) => {
+    if (node.type === 'indysoft-device-configuration') {
+      const configNode = node as DeviceConfigurationNode;
+      const deviceNodes = findDeviceConfigurationNodeOwners(node.id);
+      if (deviceNodes && deviceNodes.length > 0) {
+        const firstDeviceNodeDefId = deviceNodes[0].id; // Only need the first since all device nodes are assumed to use a single device
+        const firstDeviceNode = global.visualCal.nodeRed.app.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
+        if (!firstDeviceNode) throw new Error(`Unable to locate node runtime for node id ${firstDeviceNodeDefId}`);
+        const availableDrivers = getDriverInfosForDevice(configNode.unitId);
+        retVal.push({
+          configNodeId: configNode.id,
+          unitId: configNode.unitId,
+          driverCategories: firstDeviceNode.deviceDriverRequiredCategories || undefined,
+          availableDrivers: availableDrivers
+        });
+      }
+    }
+  });
+  return retVal;
+}
+
 export const getDeviceDriverInfos = (opts?: { category: string }) => {
   if (opts) return driversPackagejson.visualcal.drivers.devices.filter(d => d.categories.includes(opts.category));
   return driversPackagejson.visualcal.drivers.devices;
 };
 
 export const getDriverInfosForDevice = (deviceName: string) => {
-  const device = deviceCommunicationInterfaces.find(d => d.deviceName.toLocaleUpperCase() === deviceName.toUpperCase());
-  if (!device) return [];
+  // const device = deviceCommunicationInterfaces.find(d => d.deviceName.toLocaleUpperCase() === deviceName.toUpperCase());
+  // if (!device) return [];
   const deviceConfigNode = findNodesByType('indysoft-device-configuration').find(node => (node as any).unitId.toUpperCase() === deviceName.toUpperCase());
   if (!deviceConfigNode) return [];
   const deviceOwners = findDeviceConfigurationNodeOwners(deviceConfigNode.id);

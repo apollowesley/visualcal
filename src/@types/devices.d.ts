@@ -181,29 +181,28 @@ interface CommunicationInterfaceInfo {
   gpib?: GpibInterfaceConfiguration;
 }
 
-interface CommunicationInterfaceNodeInfo {
-  id: string;
-  type: string;
+interface DeviceNodeDriverRequirementsInfo {
+  configNodeId: string;
   unitId: string;
-  parentNodes: import('node-red').NodeProperties[];
+  driverCategories?: string[]; // Only found on generic device nodes
+  availableDrivers: import('./drivers-package-json').DriversPackageJsonDriver[];
 }
 
-interface DeviceDriver {
+interface DeviceDriverInfo {
   manufacturer: string;
   deviceModel: string;
   categories: string[];
 }
 
-interface DeviceNodeConfiguration {
-  id: string;
-  type: string;
+interface CommunicationInterfaceDeviceNodeConfiguration {
+  configNodeId: string;
   unitId: string;
   interfaceName: string;
   gpib?: GpibDeviceConfiguration;
-  driver?: DeviceDriver;
+  driver?: DeviceDriverInfo;
 }
 
 interface CommunicationConfiguration {
   interfaces: CommunicationInterfaceInfo[];
-  devices: DeviceNodeConfiguration[];
+  devices: CommunicationInterfaceDeviceNodeConfiguration[];
 }
