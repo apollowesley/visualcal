@@ -4,7 +4,7 @@ interface Session {
   procedureName: string;
   lastSectionName?: string;
   lastActionName?: string;
-  configuration?: CommunicationConfiguration;
+  configuration: CommunicationConfiguration;
 }
 
 interface CreateCommunicationInterfaceInitialData {

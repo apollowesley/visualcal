@@ -65,7 +65,11 @@ const init = () => {
       window.visualCal.sessionManager.create({
         name: name,
         procedureName: selectedProc,
-        username: window.visualCal.user.email
+        username: window.visualCal.user.email,
+        configuration: {
+          devices: [],
+          interfaces: []
+        }
       });
     } catch (error) {
       alert(error.message);

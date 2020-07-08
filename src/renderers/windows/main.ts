@@ -4,6 +4,18 @@ import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
 
+const activateSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+  return '<button>Activate</button>';
+}
+
+const viewSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+  return '<button>View</button>';
+}
+
+const removeButtonIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+  return '<button>Remove</button>';
+}
+
 // ***** PROCEDURES *****
 
 let activeProcedureHeading: HTMLHeadingElement;
@@ -32,9 +44,11 @@ const initProcedureListeners = () => {
     loadProcedures();
   });
   window.visualCal.procedureManager.on(IpcChannels.procedures.setActive.response, (response: SetActiveResponseArgs) => {
-    console.info('Update', response.name);
+    console.info('setActive', response.name);
     activeProcedureHeading.innerText = response.name;
   });
+
+  ipcRenderer.on(IpcChannels.procedures.remove.error, (_, error: Error) => alert(error.message));
 }
 
 const procedureNameCellEdited = (cell: Tabulator.CellComponent) => {
@@ -64,23 +78,20 @@ const procedureDescriptionCellEdited = (cell: Tabulator.CellComponent) => {
   window.visualCal.procedureManager.update(proc);
 }
 
+const removeProcedureClick = (cell: Tabulator.CellComponent) => {
+  const proc = cell.getRow().getData() as Procedure;
+  window.visualCal.procedureManager.remove(proc.name);
+}
+
 const proceduresTable = new Tabulator('#vc-procedures-tabulator', {
   data: procedures,
   layout: 'fitColumns',
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: procedureNameCellEdited },
-    { title: 'Description', field: 'description', editable: true, editor: 'textarea', cellEdited: procedureDescriptionCellEdited }
+    { title: 'Description', field: 'description', editable: true, editor: 'textarea', cellEdited: procedureDescriptionCellEdited },
+    { title: '', formatter: removeButtonIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => removeProcedureClick(cell) }
   ]
 });
-
-const areProcedureListsDifferent = (newProcedures: Procedure[]) => {
-  const diff: Procedure[] = [];
-  newProcedures.forEach(newProc => {
-    const existing = procedures.find(p => p.name === newProc.name);
-    if (!existing) diff.push(newProc);
-  });
-  return diff.length > 0;
-}
 
 const loadProcedures = () => {
   console.info('Loading procedures');
@@ -95,11 +106,6 @@ const loadProcedures = () => {
 const refreshProcedures = (newProcedures: Procedure[]) => {
   try {
     console.info('Got procedures', newProcedures);
-    const areListsDifferent = areProcedureListsDifferent(newProcedures);
-    if (!areListsDifferent) {
-      console.info('Procedure lists are not different, aborting update');
-      return;
-    }
     procedures = newProcedures;
     proceduresTable.setData(procedures);
   } catch (error) {
@@ -109,6 +115,10 @@ const refreshProcedures = (newProcedures: Procedure[]) => {
 }
 
 // ***** SESSIONS *****
+
+interface SessionCommunicationInterfaceInfo extends CommunicationInterfaceInfo {
+  sessionName: string;
+}
 
 let createSessionButton: HTMLButtonElement;
 let sessions: Session[] = [];
@@ -140,6 +150,20 @@ const initSessionListeners = () => {
     console.info('GetAllCommunicationInterfacesResponse', response.iface);
     loadSessions();
   });
+
+  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, sessionName: string, iface: CommunicationInterfaceInfo) => {
+    loadSessions();
+  });
+  ipcRenderer.on(IpcChannels.sessions.removeCommunicationInterface.response, (_, response: { sessionName: string, ifaceName: string }) => {
+    const session = sessions.find(s => s.name === response.sessionName);
+    if (!session) return;
+    const index = session.configuration.interfaces.findIndex(i => i.name === response.ifaceName);
+    if (index >= 0) session.configuration.interfaces.splice(index);
+    loadSessions();
+  });
+
+  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.error, (_, error: Error) => alert(error.message));
+  ipcRenderer.on(IpcChannels.sessions.removeCommunicationInterface.error, (_, error: Error) => alert(error.message));
 }
 
 const sessionNameCellEdited = (cell: Tabulator.CellComponent) => {
@@ -169,14 +193,6 @@ const sessionProcedureCellEdited = (cell: Tabulator.CellComponent) => {
   window.visualCal.sessionManager.update(session);
 }
 
-const activateSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
-  return '<button>Activate</button>';
-}
-
-const viewSessionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
-  return '<button>View</button>';
-}
-
 const activateSessionClick = (cell: Tabulator.CellComponent) => {
   const sessionName = cell.getRow().getCell('name').getValue() as string;
   window.visualCal.sessionManager.setActive(sessionName);
@@ -187,15 +203,36 @@ const viewSessionClick = (cell: Tabulator.CellComponent) => {
   window.visualCal.electron.showViewSessionWindow(sessionName);
 }
 
-const refreshSessionCommIfaces = (selectedRow: Tabulator.RowComponent) => {
-  selectedSession = selectedRow.getData() as Session;
-  if (selectedSession.configuration) {
-    sessionCommIfacesTable.setData(selectedSession.configuration.interfaces);
-  } else {
-    sessionCommIfacesTable.setData([]);
-  }
+const removeSessionClick = (cell: Tabulator.CellComponent) => {
+  const sessionName = cell.getRow().getCell('name').getValue() as string;
+  window.visualCal.sessionManager.remove(sessionName);
 }
 
+const removeSessionCommInterfaceClick = (cell: Tabulator.CellComponent) => {
+  const ifaceInfo = cell.getRow().getData() as SessionCommunicationInterfaceInfo;
+  window.visualCal.sessionManager.removeCommunicationInterface(ifaceInfo.sessionName, ifaceInfo.name);
+}
+
+const refreshSessionCommIfaces = (selectedRow?: Tabulator.RowComponent) => {
+  const sessionRows = sessionsTable.getRows();
+  if (!selectedRow && sessionRows.length > 0) selectedRow = sessionsTable.getRows()[0];
+  if (!selectedRow) {
+    sessionCommIfacesTable.setData([]);
+    return;
+  };
+  selectedSession = selectedRow.getData() as Session;
+  const sessionIfaces: SessionCommunicationInterfaceInfo[] = [];
+  selectedSession.configuration.interfaces.forEach(iface => {
+    if (selectedSession) {
+      const sessionIface: SessionCommunicationInterfaceInfo = {
+        sessionName: selectedSession.name,
+        ...iface
+      };
+      sessionIfaces.push(sessionIface);
+    }
+  });
+  sessionCommIfacesTable.setData(sessionIfaces);
+}
 const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
   data: sessions,
   layout: 'fitColumns',
@@ -204,8 +241,9 @@ const sessionsTable = new Tabulator('#vc-sessions-tabulator', {
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input', cellEdited: sessionNameCellEdited },
     { title: 'Procedure', field: 'procedureName', editable: true, editor: 'select', editorParams: () => procedures.map(p => p.name), cellEdited: sessionProcedureCellEdited },
     { title: 'Username', field: 'username', editable: false, minWidth: 120 },
-    { title: 'Activate', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) },
-    { title: 'Activate', formatter: viewSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => viewSessionClick(cell) }
+    { title: '', formatter: activateSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => activateSessionClick(cell) },
+    { title: '', formatter: viewSessionIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => viewSessionClick(cell) },
+    { title: '', formatter: removeButtonIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => removeSessionClick(cell) }
   ]
 });
 
@@ -214,18 +252,10 @@ const sessionCommIfacesTable = new Tabulator('#vc-session-comm-ifaces-tabulator'
   layout: 'fitColumns',
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'], editable: true, editor: 'input' },
-    { title: 'Type', field: 'type', validator: ['required', 'string', 'unique'], editable: true, editor: 'input' }
+    { title: 'Type', field: 'type', validator: ['required', 'string', 'unique'], editable: true, editor: 'input' },
+    { title: '', formatter: removeButtonIcon, width: 80, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => removeSessionCommInterfaceClick(cell) }
   ]
 });
-
-const areSessionListsDifferent = (newSessions: Session[]) => {
-  const diff: Session[] = [];
-  newSessions.forEach(newSession => {
-    const existing = sessions.find(p => p.name === newSession.name);
-    if (!existing) diff.push(newSession);
-  });
-  return diff.length > 0;
-}
 
 const loadSessions = () => {
   console.info('Loading sessions');
@@ -240,14 +270,11 @@ const loadSessions = () => {
 const refreshSessions = (newSessions: Session[]) => {
   try {
     console.info('Got sessions', newSessions);
-    const areListsDifferent = areSessionListsDifferent(newSessions);
-    if (!areListsDifferent) {
-      console.info('Session lists are not different, aborting update');
-      return;
-    }
     sessions = newSessions;
     sessionsTable.setData(sessions);
+    selectedSession = sessions[0];
     sessionCommIfacesTable.setData([]);
+    refreshSessionCommIfaces();
   } catch (error) {
     alert(error.message);
     throw error;

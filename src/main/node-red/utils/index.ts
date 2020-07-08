@@ -7,6 +7,7 @@ import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { Fluke5522A } from '../../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
 import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
+import { dialog } from 'electron';
 
 interface DriversPackageJsonInterface {
   displayName: string;
@@ -75,6 +76,9 @@ export const onGetUserInput = (node: NodeRedNode, options: UserInputRequest) => 
 export const onComment = (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
   global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { source: source, type: 'comment', nodeId: node.id, nodeType: node.type, commentType: type, comment: comment } });
   console.debug(`[global.visualCal.nodeRed.app.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
+  if (type === 'error') {
+    dialog.showErrorBox('An error occured', comment);
+  }
 };
 
 export const getCommunicationInterface = (name: string) => {

@@ -109,7 +109,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showErrorDialog: (error: Error) => void;
     showCreateCommIfaceWindow: (sessionName: string) => void;
   };
-  sessionManager: import('../renderers/managers/RendererCRUDManager').RendererCRUDManagerType<Session, Session>;
+  sessionManager: import('../renderers/managers/RendererSessionManager').RendererSessionManager;
   resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;
   actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
   procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;

@@ -26,10 +26,18 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     });
     ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
       try {
-        const retVal = await this.createcommunicationInterface(sessionName, iface);
+        const retVal = await this.createCommunicationInterface(sessionName, iface);
         event.reply(IpcChannels.sessions.createCommunicationInterface.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.sessions.createCommunicationInterface.error, error);
+      }
+    });
+    ipcMain.on(IpcChannels.sessions.removeCommunicationInterface.request, async (event, sessionName: string, ifaceName: string) => {
+      try {
+        const retVal = await this.removeCommunicationInterface(sessionName, ifaceName);
+        event.reply(IpcChannels.sessions.removeCommunicationInterface.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.sessions.removeCommunicationInterface.error, error);
       }
     });
   }
@@ -82,19 +90,23 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     return [];
   }
 
-  async createcommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
+  async createCommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
     const session = await this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    if (!session.configuration) {
-      session.configuration = {
-        devices: [],
-        interfaces: [iface]
-      };
-    } else {
-      session.configuration.interfaces.push(iface);
-    }
+    const existingIfaceWithSameName = session.configuration.interfaces.find(i => i.name.toLocaleUpperCase() === iface.name.toLocaleUpperCase());
+    if (existingIfaceWithSameName) throw new Error(`Interface, ${iface.name}, already exists in session, ${sessionName}`);
+    session.configuration.interfaces.push(iface);
     await this.update(session);
     return iface;
+  }
+
+  async removeCommunicationInterface(sessionName: string, ifaceName: string) {
+    const session = await this.getOne(sessionName);
+    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
+    const ifaceIndex = session.configuration.interfaces.findIndex(findIface => findIface.name === ifaceName);
+    session.configuration.interfaces.splice(ifaceIndex, 1);
+    await this.update(session);
+    return { sessionName: sessionName, ifaceName: ifaceName };
   }
 
 }
