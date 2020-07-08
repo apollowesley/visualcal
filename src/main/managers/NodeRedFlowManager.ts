@@ -3,11 +3,7 @@ import fs, { promises as fsPromises } from 'fs';
 import { ProcedureManager } from './ProcedureManager';
 import path from 'path';
 import { NodeRedFlow } from '../../@types/node-red-info';
-import { clearCommunicationInterfaces, addCommunicationInterface } from '../node-red/utils';
-import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
-import { EmulatedCommunicationInterface } from '../../drivers/communication-interfaces/EmulatedCommunicationInterface';
-import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
-import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
+import { loadCommunicationConfiguration } from '../node-red/utils';
 
 export class NodeRedFlowManager extends EventEmitter {
 
@@ -39,41 +35,7 @@ export class NodeRedFlowManager extends EventEmitter {
     }
     try {
       await global.visualCal.nodeRed.app.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
-      clearCommunicationInterfaces();
-      if (session.configuration) {
-        session.configuration.interfaces.forEach(ifaceInfo => {
-          let iface: CommunicationInterface | null = null;
-          switch (ifaceInfo.type) {
-            case 'Emulated':
-              iface = new EmulatedCommunicationInterface();
-              break;
-            case 'Prologix GPIB TCP':
-              iface = new PrologixGpibTcpInterface();
-              const prologixTcpIface = iface as PrologixGpibTcpInterface;
-              if (!ifaceInfo.tcp) throw new Error('TCP communiation interface configuration is missing');
-              prologixTcpIface.configure({
-                id: ifaceInfo.name,
-                host: ifaceInfo.tcp.host,
-                port: ifaceInfo.tcp.port
-              });
-              break;
-            case 'Prologix GPIB USB':
-              iface = new PrologixGpibUsbInterface();
-              const prologixUcbIface = iface as PrologixGpibUsbInterface;
-              if (!ifaceInfo.serial) throw new Error('Serial communiation interface configuration is missing');
-              prologixUcbIface.configure({
-                id: ifaceInfo.name,
-                portName: ifaceInfo.serial.port
-              });
-              break;
-          }
-          if (!iface) throw new Error('Communication interface cannot be null');
-          addCommunicationInterface({
-            name: ifaceInfo.name,
-            communicationInterface: iface
-          });
-        });
-      }
+      loadCommunicationConfiguration(session);
     } catch (error) {
       console.error(error);
     }

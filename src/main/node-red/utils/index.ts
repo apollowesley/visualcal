@@ -9,6 +9,9 @@ import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
 import { dialog } from 'electron';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
+import { EmulatedCommunicationInterface } from '../../../drivers/communication-interfaces/EmulatedCommunicationInterface';
+import { PrologixGpibTcpInterface } from '../../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
+import { PrologixGpibUsbInterface } from '../../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
 
 export interface CommunicationInterfaceNamePair {
   name: string;
@@ -60,7 +63,7 @@ export const getCommunicationInterface = (name: string) => {
   return undefined;
 };
 
-export const addCommunicationInterface = (options: { name: string; communicationInterface: CommunicationInterface }) => {
+export const addCommunicationInterface = (options: { name: string; communicationInterface: CommunicationInterface; }) => {
   const existingIface = getCommunicationInterface(options.name);
   if (existingIface) return false;
   communicationInterfaces.push(options);
@@ -165,43 +168,56 @@ export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
         const firstDeviceNode = global.visualCal.nodeRed.app.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
         if (!firstDeviceNode) throw new Error(`Unable to locate node runtime for node id ${firstDeviceNodeDefId}`);
         const availableDrivers = getDriverInfosForDevice(configNode.unitId);
+        const isGeneric = firstDeviceNode.deviceDriverRequiredCategories && firstDeviceNode.deviceDriverRequiredCategories.length > 0;
         retVal.push({
           configNodeId: configNode.id,
           unitId: configNode.unitId,
-          driverCategories: firstDeviceNode.deviceDriverRequiredCategories || undefined,
-          availableDrivers: availableDrivers
+          driverCategories: isGeneric ? firstDeviceNode.deviceDriverRequiredCategories : undefined,
+          availableDrivers: availableDrivers,
+          isGeneric: isGeneric
         });
       }
     }
   });
   return retVal;
-}
+};
 
-export const getDeviceDriverInfos = (opts?: { category: string }) => {
+export const getDeviceDriverInfos = (opts?: { category: string; }) => {
   if (opts) return driversPackagejson.visualcal.drivers.devices.filter(d => d.categories.includes(opts.category));
   return driversPackagejson.visualcal.drivers.devices;
 };
 
 export const getDriverInfosForDevice = (deviceName: string) => {
-  // const device = deviceCommunicationInterfaces.find(d => d.deviceName.toLocaleUpperCase() === deviceName.toUpperCase());
-  // if (!device) return [];
   const deviceConfigNode = findNodesByType('indysoft-device-configuration').find(node => (node as any).unitId.toUpperCase() === deviceName.toUpperCase());
   if (!deviceConfigNode) return [];
   const deviceOwners = findDeviceConfigurationNodeOwners(deviceConfigNode.id);
   if (!deviceOwners) return [];
   let deviceOwnerRuntimeNodes = deviceOwners.map(node => global.visualCal.nodeRed.app.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
   if (!deviceOwnerRuntimeNodes) return [];
-  deviceOwnerRuntimeNodes = deviceOwnerRuntimeNodes.filter(node => node.isGenericDevice);
+
   const retVal: DriversPackageJsonDriver[] = [];
-  deviceOwnerRuntimeNodes.forEach(node => {
-    node.deviceDriverRequiredCategories.forEach(category => {
-      const driverInfos = getDeviceDriverInfos({ category });
-      driverInfos.forEach(info => {
-        const existingInfo = retVal.find(existing => info.displayName === existing.displayName);
-        if (!existingInfo) retVal.push(info);
+  const firstDeviceOwnerRuntimeNode = deviceOwnerRuntimeNodes[0];
+  // First check if this is not a generic node
+  if (!firstDeviceOwnerRuntimeNode.isGenericDevice && firstDeviceOwnerRuntimeNode.specificDriverInfo) {
+    // Not a generic node
+    const driverDisplayName = `${firstDeviceOwnerRuntimeNode.specificDriverInfo.manufacturer} ${firstDeviceOwnerRuntimeNode.specificDriverInfo.model}`;
+    const packageJsonDriverInfo = driversPackagejson.visualcal.drivers.devices.find(dpj => dpj.displayName === driverDisplayName);
+    if (!packageJsonDriverInfo) throw new Error(`Unable to locate specific driver, ${driverDisplayName}, in package.json for device node, ${firstDeviceOwnerRuntimeNode.type}`);
+    retVal.push(packageJsonDriverInfo);
+  } else {
+    // Generic node
+    deviceOwnerRuntimeNodes = deviceOwnerRuntimeNodes.filter(node => node.isGenericDevice);
+    deviceOwnerRuntimeNodes.forEach(node => {
+      node.deviceDriverRequiredCategories.forEach(category => {
+        const driverInfos = getDeviceDriverInfos({ category });
+        driverInfos.forEach(info => {
+          const existingInfo = retVal.find(existing => info.displayName === existing.displayName);
+          if (!existingInfo) retVal.push(info);
+        });
       });
     });
-  });
+  }
+
   return retVal;
 };
 
@@ -321,6 +337,67 @@ export const enableAllCommunicationInterfaces = () => {
 export const disableAllCommunicationInterfaces = () => {
   communicationInterfaces.forEach(ci => ci.communicationInterface.disable());
 };
+
+export const loadCommuniationInterfaces = (session: Session) => {
+  clearCommunicationInterfaces();
+  session.configuration.interfaces.forEach(ifaceInfo => {
+    let iface: CommunicationInterface | null = null;
+    switch (ifaceInfo.type) {
+      case 'Emulated':
+        iface = new EmulatedCommunicationInterface();
+        break;
+      case 'Prologix GPIB TCP':
+        iface = new PrologixGpibTcpInterface();
+        const prologixTcpIface = iface as PrologixGpibTcpInterface;
+        if (!ifaceInfo.tcp) throw new Error('TCP communiation interface configuration is missing');
+        prologixTcpIface.configure({
+          id: ifaceInfo.name,
+          host: ifaceInfo.tcp.host,
+          port: ifaceInfo.tcp.port
+        });
+        break;
+      case 'Prologix GPIB USB':
+        iface = new PrologixGpibUsbInterface();
+        const prologixUcbIface = iface as PrologixGpibUsbInterface;
+        if (!ifaceInfo.serial) throw new Error('Serial communiation interface configuration is missing');
+        prologixUcbIface.configure({
+          id: ifaceInfo.name,
+          portName: ifaceInfo.serial.port
+        });
+        break;
+    }
+    if (!iface) throw new Error('Communication interface cannot be null');
+    addCommunicationInterface({
+      name: ifaceInfo.name,
+      communicationInterface: iface
+    });
+  });
+};
+
+export const loadDevices = (session: Session) => {
+  clearDeviceCommunicationInterfaces();
+  session.configuration.devices.forEach(deviceConfig => {
+    const drivers = getDriverInfosForDevice(deviceConfig.unitId);
+    const driver = drivers.find(d => d.displayName = deviceConfig.driverDisplayName);
+    if (!driver) throw new Error(`Could not find driver for ${deviceConfig.unitId}, ${deviceConfig.driverDisplayName}`);
+    deviceCommunicationInterfaces.push({
+      communicationInterfaceName: deviceConfig.interfaceName,
+      deviceName: deviceConfig.unitId,
+      deviceDriver: {
+        categories: driver.categories,
+        deviceModel: driver.model,
+        manufacturer: driver.manufacturer
+      }
+    });
+    // const driverDisplayName = deviceConfig.driver ? `${deviceConfig.driver.manufacturer} ${deviceConfig.driver.deviceModel}` : '';
+    // assignDriverToDevice(deviceConfig.unitId, driverDisplayName);
+  });
+}
+
+export const loadCommunicationConfiguration = (session: Session) => {
+  loadCommuniationInterfaces(session);
+  loadDevices(session);
+}
 
 export const init = () => {
   const driversPackagejsonPath = path.join(global.visualCal.dirs.drivers.base, 'package.json');

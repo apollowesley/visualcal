@@ -49,6 +49,11 @@ module.exports = (RED: NodeRed) => {
     RED.nodes.createNode(this, config);
     this.isDevice = true;
     this.isGenericDevice = false;
+    this.specificDriverInfo = {
+      manufacturer: 'Fluke',
+      model: '45',
+      nomenclature: 'Digital Multimeter'
+    }
     this.deviceConfigNode = (RED.nodes.getNode(config.deviceConfigId) as DeviceConfigurationNode);
     if (!this.deviceConfigNode) {
       this.error('Please assign a device driver configuration');

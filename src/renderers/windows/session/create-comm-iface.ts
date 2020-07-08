@@ -94,7 +94,7 @@ const init = () => {
       case CommunicationInterfaceTypesEnum.PrologixGPIBTCP:
         iface.tcp = {
           host: ipNetworkSettingsHostElement.value,
-          port: ipNetworkSettingsPortElement.valueAsNumber
+          port: parseInt(ipNetworkSettingsPortElement.value)
         }
         break;
       case CommunicationInterfaceTypesEnum.PrologixGPIBUSB:

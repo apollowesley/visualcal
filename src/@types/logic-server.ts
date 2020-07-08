@@ -1,5 +1,6 @@
 import { Red, NodeProperties, Node as NodeRedNode } from 'node-red';
 import { NodeRedFlowNode } from './node-red-info';
+import { DriverInfo } from './logic-drivers';
 
 export interface NodeRedAdminAuth {
   type: string;
@@ -352,6 +353,7 @@ export interface NodeRedCommunicationInterfaceRuntimeNode extends NodeRedRuntime
   deviceConfigNode: DeviceConfigurationNode;
   communicationInterface?: ICommunicationInterface;
   device?: IControllableDevice;
+  specificDriverInfo?: DriverInfo;
 }
 
 export interface ProcedureRuntimeNode extends NodeRedRuntimeNode {

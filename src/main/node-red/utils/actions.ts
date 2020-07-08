@@ -1,5 +1,5 @@
 import { ActionStartRuntimeNode } from '../../../@types/logic-server';
-import { resetAllNodes } from '.';
+import { resetAllNodes, clearCommunicationInterfaces, loadCommunicationConfiguration } from '.';
 
 export type TriggerType = 'start' | 'stop' | 'reset';
 
@@ -24,10 +24,11 @@ export interface TriggerOptions {
   runId: string;
   section: string;
   action: string;
+  session?: Session;
 }
 
 export const trigger = (options: TriggerOptions): TriggerResult => {
-  const { type, section, action } = options;
+  const { type, section, action, session } = options;
   const response: TriggerResult = {
     type: type,
     sessionId: options.sessionId,
@@ -41,6 +42,9 @@ export const trigger = (options: TriggerOptions): TriggerResult => {
       if (startNode.isRunning) {
         response.error = 'Already running';
       } else {
+        if (session) {
+          loadCommunicationConfiguration(session);
+        }
         startNode.emit('start', options);
         response.message = 'ok';
       }

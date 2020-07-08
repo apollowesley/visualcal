@@ -11,6 +11,7 @@ let sections: SectionInfo[] = [];
 let actions: ActionInfo[] = [];
 let results: LogicResult[] = [];
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
+const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 
 const onSectionRowSelected = (selectedRow: Tabulator.RowComponent) => {
   const section = selectedRow.getData() as SectionInfo;
@@ -40,12 +41,15 @@ const startStopActionIcon = (cell: Tabulator.CellComponent, formatterParams: Tab
 const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const section = sectionsTable.getSelectedRows()[0].getData() as SectionInfo;
   const action = cell.getRow().getData() as ActionInfo;
+  devices.forEach(d => d.gpib = { address: d.gpibAddress });
+  session.configuration.devices = devices;
   const opts: TriggerOptions = {
     action: action.name,
     section: section.shortName,
     sessionId: sessionName,
     runId: Date.now().toString(),
-    type: 'start'
+    type: 'start',
+    session: session
   };
   if (session.lastSectionName && session.lastActionName) {
     opts.type = 'stop'; // Already triggered
@@ -92,9 +96,11 @@ const resultsTable = new Tabulator('#vc-results-tabulator', {
 });
 
 const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
-  const deviceInfo = cell.getRow().getData() as DeviceNodeDriverRequirementsInfo;
+  const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
+  const foundDeviceConfig = deviceConfigurationNodeInfosForCurrentFlow.find(d => d.unitId === deviceInfo.unitId);
+  if (!foundDeviceConfig) throw new Error('Unable to find device config');
   const retVal: Tabulator.SelectParams = {
-    values: deviceInfo.availableDrivers.map(d => d.displayName)
+    values: foundDeviceConfig.availableDrivers.map(d => d.displayName)
   };
   return retVal;
 }
@@ -107,12 +113,13 @@ const devicesTableGetCommInterfaces = () => {
 }
 
 const devicesTable = new Tabulator('#vc-devices-tabulator', {
-  data: deviceConfigurationNodeInfosForCurrentFlow,
+  data: devices,
   layout: 'fitColumns',
   columns: [
     { title: 'Device Unit Id', field: 'unitId' },
-    { title: 'Driver', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
-    { title: 'Interface', editor: 'select', editorParams: (cell) => devicesTableGetCommInterfaces() }
+    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
+    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => devicesTableGetCommInterfaces() },
+    { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]
 });
 
@@ -122,7 +129,16 @@ const init = () => {
     session = viewInfo.session;
     sections = viewInfo.sections;
     deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-    devicesTable.setData(deviceConfigurationNodeInfosForCurrentFlow);
+    deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+      devices.push({
+        configNodeId: deviceInfo.configNodeId,
+        driverDisplayName: '',
+        gpibAddress: 1,
+        interfaceName: '',
+        unitId: deviceInfo.unitId
+      });
+    });
+    devicesTable.setData(devices);
     sectionsTable.setData(sections);
     if (sections.length > 0) {
       const firstSection = sections[0];
