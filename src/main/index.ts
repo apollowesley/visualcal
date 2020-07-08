@@ -10,6 +10,7 @@ import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import fs, { promises as fsPromises } from 'fs';
+import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 
 const nodeRedApp = express();
@@ -25,11 +26,18 @@ async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
   }
 }
 
+function copyDemo(userHomeDataDirPath: string) {
+  const demoDirPath = path.join(global.visualCal.dirs.base, 'demo');
+  if (!fs.existsSync(userHomeDataDirPath)) fs.mkdirSync(userHomeDataDirPath, { recursive: true });
+  fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
+}
+
 async function load() {
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
+  copyDemo(userHomeDataDirPath);
   // initMainMenu();
   const fileManager = new FileManager(appBaseDirPath, userHomeDataDirPath);
   await fileManager.ensureInitizilied();
