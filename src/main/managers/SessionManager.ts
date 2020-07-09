@@ -31,9 +31,13 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
       try {
         const retVal = await this.createCommunicationInterface(sessionName, iface);
-        event.reply(IpcChannels.sessions.createCommunicationInterface.response, retVal);
+        event.reply(IpcChannels.sessions.createCommunicationInterface.response, { sessionName, retVal });
+        // next line need to target mainWindow, since original request from from create-comm-iface script file
+        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.sessions.createCommunicationInterface.response, { sessionName, iface: retVal });
       } catch (error) {
         event.reply(IpcChannels.sessions.createCommunicationInterface.error, error);
+        // next line need to target mainWindow, since original request from from create-comm-iface script file
+        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.sessions.createCommunicationInterface.error, error);
       }
     });
 

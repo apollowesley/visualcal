@@ -120,6 +120,8 @@ interface SessionCommunicationInterfaceInfo extends CommunicationInterfaceInfo {
   sessionName: string;
 }
 
+const commsInterfacesSelectedSessionNameHeading: HTMLHeadingElement = document.getElementById('vc-session-name-comm-ifaces') as HTMLHeadingElement;
+
 let createSessionButton: HTMLButtonElement;
 let sessions: Session[] = [];
 let selectedSession: Session | null = null;
@@ -151,8 +153,10 @@ const initSessionListeners = () => {
     loadSessions();
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, sessionName: string, iface: CommunicationInterfaceInfo) => {
+  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, response: { sessionName: string, iface: CommunicationInterfaceInfo }) => {
+    console.info('createCommuniationInterface', response);
     loadSessions();
+    refreshSessionCommIfaces(selectedSessionRow);
   });
   ipcRenderer.on(IpcChannels.sessions.removeCommunicationInterface.response, (_, response: { sessionName: string, ifaceName: string }) => {
     const session = sessions.find(s => s.name === response.sessionName);
@@ -213,14 +217,19 @@ const removeSessionCommInterfaceClick = (cell: Tabulator.CellComponent) => {
   window.visualCal.sessionManager.removeCommunicationInterface(ifaceInfo.sessionName, ifaceInfo.name);
 }
 
+let selectedSessionRow: Tabulator.RowComponent | undefined = undefined;
 const refreshSessionCommIfaces = (selectedRow?: Tabulator.RowComponent) => {
   const sessionRows = sessionsTable.getRows();
+  selectedSessionRow = selectedRow;
   if (!selectedRow && sessionRows.length > 0) selectedRow = sessionsTable.getRows()[0];
   if (!selectedRow) {
+    selectedSessionRow = undefined;
     sessionCommIfacesTable.setData([]);
+    commsInterfacesSelectedSessionNameHeading.innerText = '[ No session selected ]';
     return;
   };
   selectedSession = selectedRow.getData() as Session;
+  commsInterfacesSelectedSessionNameHeading.innerText = ` - Selected session ${selectedSession.name}`;
   const sessionIfaces: SessionCommunicationInterfaceInfo[] = [];
   selectedSession.configuration.interfaces.forEach(iface => {
     if (selectedSession) {
@@ -284,6 +293,8 @@ const refreshSessions = (newSessions: Session[]) => {
 // ***** INIT *****
 
 const init = () => {
+  commsInterfacesSelectedSessionNameHeading.innerText = '[ No session selected ]';
+
   initProcedureListeners();
   initSessionListeners();
 
