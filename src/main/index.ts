@@ -12,6 +12,7 @@ import { init as nodeRedUtilsInit } from './node-red/utils';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
+import electronManager, { logger } from '@hashedin/electron-manager';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -33,6 +34,9 @@ function copyDemo(userHomeDataDirPath: string) {
 }
 
 async function load() {
+  electronManager.init();
+  logger.init();
+  logger.log('Testing!!!');
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);

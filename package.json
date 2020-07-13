@@ -29,6 +29,7 @@
     "url": "https://indysoftdev@dev.azure.com/indysoftdev/VisualCal/_git/visualcal"
   },
   "dependencies": {
+    "@hashedin/electron-manager": "^2.0.0",
     "@node-red-contrib-themes/midnight-red": "^1.4.1",
     "@schemastore/package": "0.0.5",
     "axios": "^0.19.2",
