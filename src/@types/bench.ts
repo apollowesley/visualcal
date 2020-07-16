@@ -1,6 +1,4 @@
-import { config } from 'winston';
-
-export interface CommunicationConfig {
+interface CommunicationConfig {
   interfaces: CommunicationInterfaceInfo[];
 }
 

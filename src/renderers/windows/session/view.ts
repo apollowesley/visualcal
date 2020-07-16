@@ -30,10 +30,10 @@ const sectionsTable = new Tabulator('#vc-sections-tabulator', {
 });
 
 const onActionRowSelected = (selectedRow: Tabulator.RowComponent) => {
-  const action = selectedRow.getData() as ActionInfo;
+  // const action = selectedRow.getData() as ActionInfo;
 }
 
-const startStopActionIcon = (cell: Tabulator.CellComponent, formatterParams: Tabulator.FormatterParams, onRendered: any) => {
+const startStopActionIcon = () => {
   if (session.lastSectionName && session.lastActionName) return '<button>Stop</button>'; // Already triggered
   return '<button>Start</button>';
 }
