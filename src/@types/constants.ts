@@ -49,6 +49,7 @@ export const IpcChannels = {
     showCreateCommIface: 'show-create-comm-iface-window'
   },
   log: {
+    all: 'log-all',
     result: 'log-result',
     info: 'log-info',
     warn: 'log-warn',

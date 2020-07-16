@@ -1,4 +1,5 @@
 import Transport from 'winston-transport';
+import { IpcChannels } from '../../@types/constants';
 
 export class ConsoleWindowTransport extends Transport {
 
@@ -10,6 +11,8 @@ export class ConsoleWindowTransport extends Transport {
     try {
       const consoleWindow = global.visualCal.windowManager.consoleWindow;
       if (consoleWindow) consoleWindow.webContents.send('result', info);
+      const viewSessionWindow = global.visualCal.windowManager.viewSessionWindow;
+      if (viewSessionWindow) viewSessionWindow.webContents.send(IpcChannels.log.all, info);
       this.emit('logged', info);
     } catch (error) {
       console.error(error);

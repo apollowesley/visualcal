@@ -5,6 +5,30 @@ import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererRe
 import { TriggerOptions } from '../../../main/node-red/utils/actions';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
 
+// ***** LOG *****
+
+const logEntries: any[] = [];
+let sessionLogTable = new Tabulator('#vc-session-log', {
+  data: logEntries,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Type', field: 'type' },
+    { title: 'Session', field: 'sessionId' },
+    { title: 'Run', field: 'runId' },
+    { title: 'Section', field: 'section' },
+    { title: 'Action', field: 'action' },
+    { title: 'State', field: 'state' },
+    { title: 'Message', field: 'message' }
+  ]
+});
+
+ipcRenderer.on(IpcChannels.log.all, (_, entry: any) => {
+  logEntries.push(entry);
+  sessionLogTable.setData(logEntries);
+});
+
+// ***** END LOG *****
+
 let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
 let sections: SectionInfo[] = [];

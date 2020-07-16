@@ -30,6 +30,7 @@ const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = []
 
 export const onActionStateChange = (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => {
   global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { type: 'action', state: options.state, section: options.section, action: options.action } });
+  global.visualCal.log.info('Action state changed', options);
   console.debug(`[global.visualCal.nodeRed.app.settings.onActionStateChange] [${node.type}] [${node.id}] [action] [section: ${options.section}] [action: ${options.action}] [state: ${options.state}]`);
 };
 

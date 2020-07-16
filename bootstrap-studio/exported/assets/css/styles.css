@@ -2,10 +2,8 @@ body {
   height: calc(100vh - 60px);
   width: calc(100vw);
   overflow: hidden;
-  -webkit-scrollbar {display: none;
   margin-top: 30px !important;
-  margin-bottom: 30px;
-  border: dotted;
+  margin-bottom: 30px !important;
 }
 
 .container {
@@ -28,10 +26,6 @@ button {
 textarea {
   resize: both;
   min-width: 250px;
-}
-
-.tabulator {
-  min-height: 300px;
 }
 
 .active-procedure {
