@@ -108,6 +108,7 @@ export const ViewSessionWindowConfig = (parent: BrowserWindow): CreateWindowOpti
     config: {
       title: 'VisualCal - View Session',
       parent: parent,
+      modal: true,
       webPreferences: {
         nodeIntegration: true
       }

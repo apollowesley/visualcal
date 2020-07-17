@@ -29,8 +29,7 @@ interface VisualCalAugmentDirs {
     bootstrapStudio: string;
     procedure: VisualCalCRUDDir;
     session: VisualCalCRUDDir;
-    userInstruction: string;
-    userInput: string;
+    userAction: string;
     createCommIface: string;
   },
   renderers: {

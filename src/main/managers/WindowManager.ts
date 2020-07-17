@@ -252,6 +252,7 @@ export class WindowManager {
     window = global.visualCal.windowManager.create(MainWindowConfig());
     if (!window) throw new Error('Window must be defined');
     WindowUtils.centerWindowOnNearestCurorScreen(window, true);
+    window.maximize();
     window.once('close', (e) => {
       global.visualCal.windowManager.closeAll();
     });
@@ -336,7 +337,7 @@ export class WindowManager {
     sections.forEach(s => {
       s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name } });
     });
-    WindowUtils.centerWindowOnNearestCurorScreen(window);
+    window.maximize();
     await window.loadFile(global.visualCal.dirs.html.session.view);
     const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
@@ -357,7 +358,7 @@ export class WindowManager {
     }
     if (!this.viewSessionWindow) throw new Error('View session window must be defined');
     window = this.create(UserInstructionWindowConfig(this.viewSessionWindow));
-    await window.loadFile(global.visualCal.dirs.html.userInstruction);
+    await window.loadFile(global.visualCal.dirs.html.userAction);
     window.webContents.send('user-instruction-request', request);
     return window;
   }
@@ -371,7 +372,7 @@ export class WindowManager {
     }
     if (!this.viewSessionWindow) throw new Error('View session window must be defined');
     window = this.create(UserInputWindowConfig(this.viewSessionWindow));
-    await window.loadFile(global.visualCal.dirs.html.userInput);
+    await window.loadFile(global.visualCal.dirs.html.userAction);
     window.webContents.send('user-input-request', request);
     return window;
   }

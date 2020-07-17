@@ -1,6 +1,4 @@
-import fs from 'fs';
 import * as RED from 'node-red';
-import path from 'path';
 import { create as createLogger } from './logging/CreateLogger';
 import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';

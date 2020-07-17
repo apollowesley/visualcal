@@ -6,21 +6,12 @@ body {
   margin-bottom: 30px !important;
 }
 
-.container {
-  margin: 10px;
+.row {
+  padding: 10px;
 }
 
-.container-fluid {
-  margin: 10px;
-}
-
-.form-group {
-  margin: 10px;
-}
-
-button {
-  margin-right: 10px;
-  margin-top: 10px;
+.btn {
+  min-width: 75px;
 }
 
 textarea {

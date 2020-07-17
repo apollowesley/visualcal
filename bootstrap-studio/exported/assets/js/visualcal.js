@@ -1,6 +1,6 @@
 /*
     This script must be included in each VisualCal renderer.
-    I's included here to support loading the renderers dynamically,
+    It's included here to support loading the renderers dynamically,
     since Bootstrap Studio doesn't allow for inserting handlebar templates.
 */
 
@@ -27,10 +27,10 @@ if (window.require) {
                 require('../../dist/renderers/windows/session/view.js');
                 break;
             case 8: // user instruction
-                require('../../dist/renderers/windows/user/instruction.js');
+                require('../../dist/renderers/windows/user/action.js');
                 break;
             case 9: // user input
-                require('../../dist/renderers/windows/user/input.js');
+                require('../../dist/renderers/windows/user/action.js');
                 break;
             case 10: // Create communication interface
                 require('../../dist/renderers/windows/session/create-comm-iface.js');

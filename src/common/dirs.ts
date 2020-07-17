@@ -41,8 +41,7 @@ export const init = (appBase: string, userHomeBase: string) => {
       js: path.join(publicPath, 'js'),
       procedure: getCRUDDir(bootstrapStudioHtmlPath, 'html','procedure'),
       session: getCRUDDir(bootstrapStudioHtmlPath, 'html','session'),
-      userInput: path.join(bootstrapStudioHtmlPath, 'action-user-input.html'),
-      userInstruction: path.join(bootstrapStudioHtmlPath, 'action-user-instruction.html'),
+      userAction: path.join(bootstrapStudioHtmlPath, 'user-action.html'),
       views: path.join(publicPath, 'views'),
       windows: path.join(publicPath, 'windows'),
       createCommIface: path.join(bootstrapStudioHtmlPath, 'create-comm-iface.html')
