@@ -2,6 +2,7 @@ import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { Fluke45 } from '../drivers/devices/digital-multimeters/Fluke45';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
+import { getDeviceConfig } from '../main/node-red/utils';
 
 export const NODE_TYPE = 'indysoft-device-fluke45';
 
@@ -102,6 +103,7 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
+        const devConfig = getDeviceConfig(this.deviceConfigNode.unitId);
         this.device.setCommunicationInterface(this.communicationInterface);
         if (!this.communicationInterface.isConnected) {
           this.status({ fill: 'blue', shape: 'ring', text: 'Connecting' });
@@ -114,6 +116,12 @@ module.exports = (RED: NodeRed) => {
           }
         }
         try {
+          const ibd = this.device as IControllableDevice;
+          if (devConfig?.isGpib) {
+            ibd.isGpib = true;
+            ibd.gpibPrimaryAddress = devConfig.gpibAddress;
+            this.communicationInterface.setDeviceAddress(devConfig.gpibAddress);
+          }
           if (this.measure) {
             this.status({ fill: 'blue', shape: 'ring', text: 'Taking measurement' });
             const measurement = await this.device.getMeasurement({

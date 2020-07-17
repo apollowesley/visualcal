@@ -4,7 +4,7 @@ import { TextEncoder, TextDecoder } from 'util';
 export abstract class PrologixGpibInterface extends CommunicationInterface implements GpibInterface {
   
   async setDeviceAddress(address: number): Promise<void> {
-    return this.writeString(`++addr ${address}`);
+    await this.writeString(`++addr ${address}`);
   }
 
   async onConnected() {

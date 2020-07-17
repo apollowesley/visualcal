@@ -22,6 +22,8 @@ export interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
   communicationInterfaceName: string;
   deviceDriver?: DeviceDriverInfo;
+  isGpib?: boolean;
+  gpibAddress: number;
 }
 
 let driversPackagejson: DriversPackageJson;
@@ -359,9 +361,9 @@ export const loadCommuniationInterfaces = (session: Session) => {
         break;
       case 'Prologix GPIB USB':
         iface = new PrologixGpibUsbInterface();
-        const prologixUcbIface = iface as PrologixGpibUsbInterface;
+        const prologixUsbIface = iface as PrologixGpibUsbInterface;
         if (!ifaceInfo.serial) throw new Error('Serial communiation interface configuration is missing');
-        prologixUcbIface.configure({
+        prologixUsbIface.configure({
           id: ifaceInfo.name,
           portName: ifaceInfo.serial.port
         });
@@ -384,6 +386,8 @@ export const loadDevices = (session: Session) => {
     deviceCommunicationInterfaces.push({
       communicationInterfaceName: deviceConfig.interfaceName,
       deviceName: deviceConfig.unitId,
+      isGpib: deviceConfig.gpib !== undefined,
+      gpibAddress: deviceConfig.gpibAddress,
       deviceDriver: {
         categories: driver.categories,
         deviceModel: driver.model,
@@ -404,3 +408,7 @@ export const init = () => {
   const driversPackagejsonPath = path.join(global.visualCal.dirs.drivers.base, 'package.json');
   driversPackagejson = fs.readJSONSync(driversPackagejsonPath);
 };
+
+export const getDeviceConfig = (unitId: string) => {
+  return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
+}

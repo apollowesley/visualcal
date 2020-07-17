@@ -9,6 +9,10 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
   protected fEventEmitter = new EventEmitter();
 
+  async setDeviceAddress(address: number): Promise<void> {
+    await Promise.resolve();
+  }
+
   enable() {
     this.isEnabled = true;
   }
@@ -98,7 +102,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     if (!this.isEnabled) return;
     if (readHandler) this.enqueue(readHandler);
     this.fEventEmitter.emit('write', data);
-    return this.write(data);
+    await this.write(data);
   }
 
   protected abstract async write(data: ArrayBuffer): Promise<void>;
@@ -191,9 +195,10 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
   async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
     return new Promise((resolve, reject) => {
         const handler = (data: ArrayBuffer) => {
-          console.debug('Communication interface received data');
+          const dataString = new TextDecoder().decode(data);
+          console.debug('Communication interface received data', dataString);
           if (data) console.debug(`Received data length: ${data.byteLength}`);
-          return resolve(new TextDecoder().decode(data));
+          return resolve(dataString);
         };
         const response: ReadQueueItem = {
           callback: handler

@@ -5,6 +5,7 @@ interface CommunicationInterfaceConfigurationOptions {
 }
 
 interface ICommunicationInterface {
+  setDeviceAddress(address: number): Promise<void>; // GPIB
   enable(): void;
   disable(): void;
   on(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void): void;
@@ -37,6 +38,8 @@ interface ICommunicationInterface {
 interface IControllableDevice {
   getCommunicationInterface(): ICommunicationInterface | null;
   setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
+  isGpib?: boolean;
+  gpibPrimaryAddress?: number;
 }
 
 interface DeviceInfo {
@@ -109,9 +112,8 @@ declare const enum EventStatusRegisterValues {
   PoweredOn = 1 << 7
 }
 
-interface GpibInterface {
+interface GpibInterface extends ICommunicationInterface {
   address: number;
-  setDeviceAddress(address: number): Promise<void>;
   selectedDeviceClear(address?: number): Promise<void>;
   getEndOfInstruction(): Promise<boolean>;
   setEndOfInstruction(enable: boolean): Promise<void>;
