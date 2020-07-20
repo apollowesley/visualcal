@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>IndySoft VisualCal</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/superhero.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/tabulator.min.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Interactive Device Control</h5>
+            </div>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Communication Interface</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-3">
+                                    <div class="form-group"><label for="vc-interface-type">Type</label><select class="form-control" id="vc-interface-type"></select></div>
+                                </div>
+                            </div>
+                            <div class="form-row" id="vc-interface-gpib-row">
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">GPIB Options</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="col-auto form-col">
+                                                    <div class="form-group"><label for="vc-interface-gpib-primary-address">GPIB Primary Address *</label><input class="form-control-range" type="range" id="vc-interface-gpib-primary-address" min="0" max="30" value="0" step="1"></div>
+                                                </div>
+                                                <div class="col-auto form-col">
+                                                    <div class="form-group"><label for="vc-interface-gpib-primary-address">GPIB Secondary Address *</label><input class="form-control-range" type="range" id="vc-interface-gpib-secondary-address" min="96" max="126" value="96" step="1"></div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="form-group"><label class="d-block" for="vc-interface-gpib-secondary-address-use">Use Secondary GPIB Address</label><input type="checkbox" id="vc-interface-gpib-secondary-address-use" min="96" max="126" value="96"
+                                                            step="1"></div>
+                                                </div>
+                                            </div><em style="font-size: 13px;">* Some GPIB interfaces don't use a primary or secondary address (i.e. Prologix GPIB controllers)</em></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/visualcal.js"></script>
+</body>
+
+</html>

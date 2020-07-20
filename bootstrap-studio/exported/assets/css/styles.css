@@ -6,7 +6,7 @@ body {
   margin-bottom: 30px !important;
 }
 
-.row {
+.main-row {
   padding: 10px;
 }
 
@@ -19,7 +19,7 @@ textarea {
   min-width: 250px;
 }
 
-.active-procedure {
-  background-color: green;
+.form-col {
+  margin-right: 10px;
 }
 
