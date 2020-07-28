@@ -122,6 +122,7 @@ export const UserInstructionWindowConfig = (parent: BrowserWindow): CreateWindow
     config: {
       title: 'VisualCal - User Instruction',
       fullscreenable: false,
+      frame: false,
       modal: true,
       parent: parent,
       width: 1000,
@@ -139,6 +140,7 @@ export const UserInputWindowConfig = (parent: BrowserWindow): CreateWindowOption
     config: {
       title: 'VisualCal - User Input',
       fullscreenable: false,
+      frame: false,
       modal: true,
       parent: parent,
       width: 1000,

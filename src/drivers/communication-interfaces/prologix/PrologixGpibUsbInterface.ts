@@ -25,6 +25,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
       throw new Error('Already connecting');
     }
     return new Promise((resolve, reject) => {
+      this.onConnecting();
       this.fConnecting = true;
       try {
         if (!this.fClientOptions) throw 'Not configured';

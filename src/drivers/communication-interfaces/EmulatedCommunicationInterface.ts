@@ -4,8 +4,10 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
 
   private isConnectedInternal: boolean = false;
 
-  connect(): Promise<void> {
+  async connect(): Promise<void> {
+    this.onConnecting();
     this.isConnectedInternal = true;
+    await this.onConnected();
     return Promise.resolve();
   }
 

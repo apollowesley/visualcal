@@ -2,6 +2,9 @@ declare type CommunicationInterfaceEvents = 'connected' | 'disconnected' | 'data
 
 interface CommunicationInterfaceConfigurationOptions {
   id: string;
+  connectTimeout?: number;
+  readTimeout?: number;
+  writeTimeout?: number
 }
 
 interface ICommunicationInterface {
@@ -16,7 +19,7 @@ interface ICommunicationInterface {
   removeDisconnectedHandler(handler: DisconnectedEventHandler): void;
   addErrorHandler(handler: ErrorEventHandler): void;
   removeErrorHandler(handler: ErrorEventHandler): void;
-  connect(): Promise<void>;
+  connect(options?: ICommunicationInterfaceConnectOptions): Promise<void>;
   disconnect(): void;
   isConnected: boolean;
   configure(options: CommunicationInterfaceConfigurationOptions): void;
@@ -134,6 +137,10 @@ interface GpibInterface extends ICommunicationInterface {
   setEventStatusEnable(values: EventStatusRegisterValues): Promise<void>;
   clearEventStatusEnable(): Promise<void>;
   trigger(addresses: number | number[]): Promise<void>;
+}
+
+interface ConnectingEventHandler {
+  (): void;
 }
 
 interface ConnectedEventHandler {

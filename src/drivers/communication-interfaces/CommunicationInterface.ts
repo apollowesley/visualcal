@@ -34,6 +34,14 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
 
   abstract async connect(): Promise<void>;
 
+  addConnectingHandler(handler: ConnectingEventHandler) {
+    this.fEventEmitter.on('connecting', handler);
+  }
+
+  removeConnectingHandler(handler: ConnectingEventHandler) {
+    this.fEventEmitter.off('connecting', handler);
+  }
+
   addConnectedHandler(handler: ConnectedEventHandler) {
     this.fEventEmitter.on('connected', handler);
   }
@@ -42,8 +50,13 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     this.fEventEmitter.off('connected', handler);
   }
 
-  protected onConnected() {
+  protected onConnecting() {
+    this.fEventEmitter.emit('connecting');
+  }
+
+  protected async onConnected() {
     this.fEventEmitter.emit('connected');
+    return await Promise.resolve();
   }
 
   abstract disconnect(): void;

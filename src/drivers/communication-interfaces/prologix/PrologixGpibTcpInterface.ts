@@ -20,6 +20,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
     }
     return new Promise((resolve, reject) => {
       this.fConnecting = true;
+      this.onConnecting();
       try {
         if (!this.fClientOptions) throw 'Not configured';
         this.fClient = new Socket();
