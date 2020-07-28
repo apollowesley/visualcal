@@ -211,6 +211,11 @@ export const IpcChannels = {
     }
   },
   user: {
+    login: {
+      request: 'login-request',
+      response: 'login-response',
+      error: 'login-error'
+    },
     showInstruction: {
       request: 'show-instruction-request',
       response: 'show-instruction-response',
