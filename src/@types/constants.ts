@@ -211,20 +211,26 @@ export const IpcChannels = {
     }
   },
   user: {
+    active: {
+      request: 'user-active-request',
+      response: 'user-active-response',
+      error: 'user-active-error',
+      changed: 'user-active-changed',
+    },
     login: {
-      request: 'login-request',
-      response: 'login-response',
-      error: 'login-error'
+      request: 'user-login-request',
+      response: 'user=login-response',
+      error: 'user-login-error',
     },
     showInstruction: {
-      request: 'show-instruction-request',
-      response: 'show-instruction-response',
-      error: 'show-instruction-error'
+      request: 'user-show-instruction-request',
+      response: 'user-show-instruction-response',
+      error: 'user-show-instruction-error'
     },
     showInput: {
-      request: 'show-input-request',
-      response: 'show-input-response',
-      error: 'show-input-error'
+      request: 'user-show-input-request',
+      response: 'user-show-input-response',
+      error: 'user-show-input-error'
     }
   },
   benchConfig: {

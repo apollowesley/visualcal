@@ -1,4 +1,4 @@
-import { serverListenPort, dirs } from '../common/global-window-info';
+import { serverListenPort } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
@@ -8,12 +8,21 @@ import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
 import { RendererAssetManager } from './managers/RendererAssetManager';
+import { RendererUserManager } from './managers/RendererUserManager';
+import electronIpcLog from 'electron-ipc-log';
+
+electronIpcLog((event: ElectronIpcLogEvent) => {
+  var { channel, data, sent, sync } = event;
+  var args = [sent ? '⬆️' : '⬇️', channel, ...data];
+  if (sync) args.unshift('ipc:sync');
+  else args.unshift('ipc');
+  console.info(...args);
+});
 
 window.visualCal = {
   browserUtils: browserUtils,
   isMac: process.platform === 'darwin',
   isDev: isDev(),
-  user: DemoUser,
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
@@ -37,5 +46,6 @@ window.visualCal = {
   sessionManager: new RendererSessionManager(),
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
-  assetManager: new RendererAssetManager()
+  assetManager: new RendererAssetManager(),
+  userManager: new RendererUserManager()
 };

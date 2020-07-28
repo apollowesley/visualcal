@@ -13,9 +13,18 @@ import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronManager, { logger } from '@hashedin/electron-manager';
+import electronIpcLog from 'electron-ipc-log';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
+
+electronIpcLog((event: ElectronIpcLogEvent) => {
+  var { channel, data, sent, sync } = event;
+  var args = [sent ? '⬆️' : '⬇️', channel, ...data];
+  if (sync) args.unshift('ipc:sync');
+  else args.unshift('ipc');
+  console.info(...args);
+});
 
 async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
   const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
@@ -74,7 +83,14 @@ app.on('ready', async () => {
     initMainMenu();
     await load();
     await global.visualCal.windowManager.ShowLoading(async () => {
-      await global.visualCal.windowManager.ShowMain();
+      await global.visualCal.windowManager.ShowLogin();
+      if (global.visualCal.windowManager.loginWindow) global.visualCal.windowManager.loginWindow.once('maximize', () => {
+        global.visualCal.userManager.active = {
+          email: 'test@test.com',
+          nameFirst: 'User',
+          nameLast: 'App'
+        };
+      });
       if (isDev()) testingOnly();
     });
   } catch (error) {

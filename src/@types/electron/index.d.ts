@@ -9,3 +9,12 @@ declare module Electron {
   }
 
 }
+
+interface ElectronIpcLogEvent {
+  channel: string;
+  data: any;
+  sent: boolean;
+  sync: boolean;
+}
+
+declare module 'electron-ipc-log';

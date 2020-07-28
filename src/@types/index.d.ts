@@ -67,7 +67,6 @@ interface VisualCalAugment {
     warn(msg: any, ...args: any[]): void;
     error(msg: any, ...args: any[]): void;
   };
-  user?: User;
 }
 
 interface NodeRedUtils {
@@ -91,6 +90,8 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   actionManager: import('../main/managers/ActionManager').ActionManager;
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
   assetManager: import('../main/managers/AssetManager').AssetManager;
+  loginManager: import('../main/managers/LoginManager').LoginManager;
+  userManager: import('../main/managers/UserManager').UserManager;
   dirs: VisualCalAugmentDirs;
   files: VisualCalAugmentFiles;
   nodeRed: {
@@ -113,6 +114,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
   actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
   procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;
   assetManager: import('../renderers/managers/RendererAssetManager').RendererAssetManager;
+  userManager: import('../renderers/managers/RendererUserManager').RendererUserManager;
 }
 
 interface NamedType {

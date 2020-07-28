@@ -6,13 +6,14 @@ import { isDev } from './utils/is-dev-mode';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
-import { DemoUser } from '../@types/constants';
 import { NodeRed } from '../@types/logic-server';
 import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
 import { ResultManager } from './managers/ResultManager';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
+import { LoginManager } from './managers/LoginManager';
+import { UserManager } from './managers/UserManager';
 
 export let visualCal: VisualCalGlobalAugment;
 const windowManager = new WindowManager();
@@ -25,7 +26,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     logger: createLogger(),
     isMac: process.platform === 'darwin',
     isDev: isDev(),
-    user: DemoUser,
     nodeRed: {
       app: RED as NodeRed
     },
@@ -49,7 +49,9 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
-    assetManager: new AssetManager()
+    assetManager: new AssetManager(),
+    loginManager: new LoginManager(),
+    userManager: new UserManager()
   };
 
   global.visualCal = visualCal;

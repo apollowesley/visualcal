@@ -17,6 +17,9 @@ if (window.require) {
             case 0: // main
                 require('../../dist/renderers/windows/main.js');
                 break;
+            case 2: // Login
+                require('../../dist/renderers/windows/login.js');
+                break;
             case 5: // create procedure
                 require('../../dist/renderers/windows/procedure/create.js');
                 break;

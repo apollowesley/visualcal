@@ -61,11 +61,11 @@ const init = () => {
     const name = nameField.value;
     const selectedProc = procedureSelect.value;
     try {
-      if (!window.visualCal.user) throw new Error('User must be logged in');
+      if (!window.visualCal.userManager.active) throw new Error('User must be logged in');
       window.visualCal.sessionManager.create({
         name: name,
         procedureName: selectedProc,
-        username: window.visualCal.user.email,
+        username: window.visualCal.userManager.active.email,
         configuration: {
           devices: [],
           interfaces: []

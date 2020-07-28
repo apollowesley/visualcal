@@ -238,7 +238,7 @@ export class WindowManager {
       }
       window = this.create(LoginWindowConfig());
       WindowUtils.centerWindowOnNearestCurorScreen(window, false);
-      await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'login.html'));
+      await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'login.html'));
       return window;
     }
 
