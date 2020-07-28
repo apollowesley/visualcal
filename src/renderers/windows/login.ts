@@ -1,27 +1,26 @@
 import { ipcRenderer } from 'electron';
+import { IpcChannels } from '../../@types/constants';
 
-const form = document.getElementById('form');
-const btnLogin = document.getElementById('btn-login');
-const usernameInput = document.getElementById('input-username') as HTMLInputElement;
-const passwordInput = document.getElementById('input-password') as HTMLInputElement;
-const lblError = document.getElementById('lbl');
+const form = document.getElementById('vc-form');
+const btnLogin = document.getElementById('vc-button-login');
+const usernameInput = document.getElementById('vc-email') as HTMLInputElement;
+const passwordInput = document.getElementById('vc-password') as HTMLInputElement;
+const errorAlert = $<HTMLDivElement>('#vc-error-alert');
+const errorAlertText = document.getElementById('vc-error-text') as HTMLElement;
 
-if (!form || ! btnLogin || !usernameInput || !passwordInput || !lblError) throw new Error('Missing required HTML elements');
+if (!form || ! btnLogin || !usernameInput || !passwordInput || !errorAlert) throw new Error('Missing required HTML elements');
 
-const doLogin = async (credentials: LoginCredentials) => {
-  ipcRenderer.send('login', credentials);
-}
-
-const onBtnLoginClicked = async (e: MouseEvent) => {
+const onBtnLoginClicked = (e: MouseEvent) => {
   const credentials: LoginCredentials = {
     username: usernameInput.value,
     password: passwordInput.value
   };
-  await doLogin(credentials);
+  ipcRenderer.send(IpcChannels.user.login.request, credentials);
 }
 
-ipcRenderer.on('login-error', (event, args) => {
-  lblError.innerText = args;
+ipcRenderer.on(IpcChannels.user.login.error, (_, err: string) => {
+  errorAlertText.innerText = err;
+  errorAlert.alert();
 });
 
 form.addEventListener('submit', (e) => e.preventDefault());

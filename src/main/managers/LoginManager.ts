@@ -6,9 +6,9 @@ export class LoginManager extends EventEmitter {
 
   constructor() {
     super();
-    ipcMain.on(IpcChannels.user.login.request, (event, credentials: UserForLogin) => {
+    ipcMain.on(IpcChannels.user.login.request, (event, credentials: LoginCredentials) => {
       // TODO: Perform actual login
-      event.reply(credentials);
+      event.reply(IpcChannels.user.login.response, credentials);
     });
   }
 
