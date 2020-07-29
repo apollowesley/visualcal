@@ -36,7 +36,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
     communicationInterface.on('error', this.onInterfaceError);
     this.emit('interfaceAdded', communicationInterface);
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.added, communicationInterface.name);
+    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.added, { name: communicationInterface.name });
   }
 
   remove(name: string) {
@@ -49,7 +49,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('disconnected');
     communicationInterface.removeAllListeners('error');
     this.emit('interfaceRemoved', communicationInterface.name);
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.removed, communicationInterface.name);
+    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.removed, { name: communicationInterface.name });
   }
 
   exists(name: string) {
@@ -136,42 +136,42 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
   private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceConnected', communicationInterface, err);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connected, communicationInterface.name, err);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connected, { name: communicationInterface.name, err: err });
     });
   }
 
   private onInterfaceConnecting(communicationInterface: ICommunicationInterface) {
     this.emit('interfaceConnecting', communicationInterface);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connecting, communicationInterface.name);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connecting, { name: communicationInterface.name });
     });
   }
 
   private onInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceDataReceived', communicationInterface, data);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.dataReceived, communicationInterface.name, data);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.dataReceived, { name: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceStringReceived(communicationInterface: ICommunicationInterface, data: string) {
     this.emit('interfaceStringReceived', communicationInterface, data);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.stringReceived, communicationInterface.name, data);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.stringReceived, { name: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceDisconnected(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceDisconnected', communicationInterface, err);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.disconnected, communicationInterface.name, err);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.disconnected, { name: communicationInterface.name, err: err });
     });
   }
 
   private onInterfaceError(communicationInterface: ICommunicationInterface, err: Error) {
     this.emit('interfaceDisconnected', communicationInterface, err);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.error, communicationInterface.name, err);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.error, { name: communicationInterface.name, err: err});
     });
   }
 

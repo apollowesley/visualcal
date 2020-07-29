@@ -27,6 +27,33 @@ ipcRenderer.on(IpcChannels.log.all, (_, entry: any) => {
   sessionLogTable.setData(logEntries);
 });
 
+interface CommInterfaceLogEntry {
+  name: string;
+  message: string;
+}
+
+const commInterfaceLogEntries: CommInterfaceLogEntry[] = [];
+let commInterfacesLogTable = new Tabulator('#vc-comm-interface-log', {
+  data: commInterfaceLogEntries,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Interface Name', field: 'name' },
+    { title: 'Message', field: 'message' }
+  ]
+});
+
+const addCommInterfaceLogEntry = (entry: CommInterfaceLogEntry) => {
+  console.info(entry);
+  commInterfaceLogEntries.push(entry);
+  commInterfacesLogTable.setData(commInterfaceLogEntries);
+}
+
+window.visualCal.communicationInterfaceManager.on('interfaceConnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connected'}));
+window.visualCal.communicationInterfaceManager.on('interfaceConnecting', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connecting' }));
+window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Disconnected' }));
+window.visualCal.communicationInterfaceManager.on('interfaceError', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Error:  ${info.err.message}` }));
+window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Data received: ${info.data}` }));
+
 // ***** END LOG *****
 
 let sessionName: string = '';

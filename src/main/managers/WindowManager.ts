@@ -38,7 +38,7 @@ export class WindowManager {
   // Sends an IPC message to all BrowserWindows
   sendToAll(channel: string, ...args: any[]) {
     BrowserWindow.getAllWindows().forEach(w => {
-      if (!w.isDestroyed()) w.webContents.send(channel, args);
+      if (!w.isDestroyed()) w.webContents.send(channel, ...args);
     });
   }
 
