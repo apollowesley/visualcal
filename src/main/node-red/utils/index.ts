@@ -132,7 +132,7 @@ export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
       const configNode = node as DeviceConfigurationNode;
       const deviceNodes = findDeviceConfigurationNodeOwners(node.id);
       if (deviceNodes && deviceNodes.length > 0) {
-        const firstDeviceNodeDefId = deviceNodes[0].id; // Only need the first since all device nodes are assumed to use a single device
+        const firstDeviceNodeDefId = deviceNodes[0].deviceConfigId; // Only need the first since all device nodes are assumed to use a single device
         const firstDeviceNode = global.visualCal.nodeRed.app.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
         if (!firstDeviceNode) throw new Error(`Unable to locate node runtime for node id ${firstDeviceNodeDefId}`);
         const availableDrivers = getDriverInfosForDevice(configNode.unitId);

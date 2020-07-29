@@ -6,7 +6,6 @@ import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
-import { IpcChannel } from '../IPC/IpcChannel';
 
 export class WindowManager {
 

@@ -50,7 +50,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
       }
     });
 
-    ipcMain.on(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.request, async (event, sessionName: string, ifaceName: string) => {
+    ipcMain.on(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.request, async (event) => {
       try {
         const retVal = getDeviceConfigurationNodeInfosForCurrentFlow();
         event.reply(IpcChannels.sessions.getDeviceConfigurationNodeInfosForCurrentFlow.response, retVal);
