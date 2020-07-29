@@ -18,7 +18,6 @@
       "indysoft-device-read-handler": "indysoft-device-read-handler.js",
       "indysoft-scalar-result": "indysoft-scalar-result.js",
       "indysoft-mqtt-dynamic-topic-in": "indysoft-mqtt-dynamic-topic-in.js",
-      "indysoft-user-instruction": "indysoft-user-instruction.js",
       "indysoft-user-input": "indysoft-user-input.js",
       "indysoft-testpoint": "indysoft-testpoint.js",
       "prologix-gpib-tcp": "prologix-gpib-tcp.js",

@@ -55,8 +55,12 @@ function nodeRedUploadAssetOnEditPrepare(this: nodeRedUploadAssetOnEditPrepareTh
     const showImageChecked = !!$(this).prop('checked');
     if (showImageChecked) {
       imageSourceRow.show();
+      urlRow.show();
+      assetRow.show();
     } else {
       imageSourceRow.hide();
+      urlRow.hide();
+      assetRow.hide();
     }
   }).trigger('change');
 
