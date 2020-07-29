@@ -7,8 +7,22 @@ interface CommunicationInterfaceConfigurationOptions {
   writeTimeout?: number
 }
 
+interface ManufacturerModel {
+  manufacturer: string;
+  model: string;
+}
+
+interface DeviceInfo extends ManufacturerModel {
+  nomenclature: string;
+}
+
+interface CommunicationInterfaceManufacturerModelType extends ManufacturerModel {
+  type: import('./constants').CommunicationInterfaceType;
+}
+
 interface ICommunicationInterface {
   name: string;
+  manufacturerModelType: CommunicationInterfaceManufacturerModelType;
   setDeviceAddress(address: number): Promise<void>; // GPIB
   enable(): void;
   disable(): void;
@@ -40,12 +54,6 @@ interface IControllableDevice extends IDevice {
   setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
   isGpib?: boolean;
   gpibPrimaryAddress?: number;
-}
-
-interface DeviceInfo {
-  manufacturer: string;
-  model: string;
-  nomenclature: string;
 }
 
 interface InterfaceOperation {

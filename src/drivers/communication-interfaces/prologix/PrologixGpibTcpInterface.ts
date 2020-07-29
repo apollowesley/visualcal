@@ -12,6 +12,14 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
   private fClientOptions?: ConfigurationOptions = undefined;
   private fConnecting: boolean = false;
 
+  get manufacturerModelType(): CommunicationInterfaceManufacturerModelType {
+    return {
+      manufacturer: 'Prologix',
+      model: 'GPIB TCP',
+      type: 'Prologix GPIB TCP'
+    }
+  }
+
   async connect(): Promise<void> {
     if (this.fConnecting) {
       this.fConnecting = false;

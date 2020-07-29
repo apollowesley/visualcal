@@ -15,6 +15,14 @@ export class SerialInterface extends CommunicationInterface {
   private fPort?: SerialPort = undefined;
   private fPortOptions?: ConfigurationOptions = undefined;
 
+  get manufacturerModelType(): CommunicationInterfaceManufacturerModelType {
+    return {
+      manufacturer: 'Generic',
+      model: 'Serial Interface',
+      type: 'Serial Port'
+    }
+  }
+
   get isConnected(): boolean {
     if (!this.fPort) return false;
     return this.fPort.isOpen;

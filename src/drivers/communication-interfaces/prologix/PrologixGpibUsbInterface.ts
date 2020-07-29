@@ -13,6 +13,14 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   private fClientOptions?: ConfigurationOptions = undefined;
   private fConnecting: boolean = false;
 
+  get manufacturerModelType(): CommunicationInterfaceManufacturerModelType {
+    return {
+      manufacturer: 'Prologix',
+      model: 'GPIB USB',
+      type: 'Prologix GPIB USB'
+    }
+  }
+
   configure(options: ConfigurationOptions) {
     super.configure(options);
     this.fClientOptions = options;
