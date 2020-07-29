@@ -12,6 +12,8 @@ interface Events {
   interfaceDataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   interfaceStringReceived: (iface: ICommunicationInterface, data: string) => void;
   interfaceError: (iface: ICommunicationInterface, err: Error) => void;
+  interfaceAdded: (iface: ICommunicationInterface) => void;
+  interfaceRemoved: (name: string) => void;
 }
 
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
@@ -33,6 +35,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
     communicationInterface.on('error', this.onInterfaceError);
+    this.emit('interfaceAdded', communicationInterface);
   }
 
   remove(name: string) {
@@ -44,6 +47,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('stringReceived');
     communicationInterface.removeAllListeners('disconnected');
     communicationInterface.removeAllListeners('error');
+    this.emit('interfaceRemoved', communicationInterface.name);
   }
 
   exists(name: string) {
@@ -144,14 +148,14 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
   private onInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceDataReceived', communicationInterface, data);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.data, communicationInterface.name, data);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.dataReceived, communicationInterface.name, data);
     });
   }
 
   private onInterfaceStringReceived(communicationInterface: ICommunicationInterface, data: string) {
     this.emit('interfaceStringReceived', communicationInterface, data);
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.data, communicationInterface.name, data);
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.stringReceived, communicationInterface.name, data);
     });
   }
 
