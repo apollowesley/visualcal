@@ -36,6 +36,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
     communicationInterface.on('error', this.onInterfaceError);
     this.emit('interfaceAdded', communicationInterface);
+    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.added, communicationInterface.name);
   }
 
   remove(name: string) {
@@ -48,6 +49,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('disconnected');
     communicationInterface.removeAllListeners('error');
     this.emit('interfaceRemoved', communicationInterface.name);
+    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.removed, communicationInterface.name);
   }
 
   exists(name: string) {
