@@ -1,54 +1,51 @@
-import { EventEmitter } from 'events';
 import { IpcChannels } from '../../@types/constants';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { EmulatedCommunicationInterface } from '../../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
 import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
+import { TypedEmitter } from 'tiny-typed-emitter';
+
+interface Events {
+  interfaceConnecting: (iface: ICommunicationInterface) => void;
+  interfaceConnected: (iface: ICommunicationInterface, err?: Error) => void;
+  interfaceDisconnected: (iface: ICommunicationInterface, err?: Error) => void;
+  interfaceDataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  interfaceStringReceived: (iface: ICommunicationInterface, data: string) => void;
+  interfaceError: (iface: ICommunicationInterface, err: Error) => void;
+}
 
 export type EventName = 'interface-connecting' | 'interface-connected' | 'interface-disconnected' | 'interface-error' | 'interface-data';
 
-export class CommunicationInterfaceManager extends EventEmitter {
+export class CommunicationInterfaceManager extends TypedEmitter<Events> {
 
-  private fInterfaces: ICommunicationInterface[];
+  private fInterfaces: CommunicationInterface[];
 
   constructor() {
     super();
     this.fInterfaces = [];
   }
 
-  on(event: EventName, listener: (...args: any[]) => void): this {
-    const that = this.on.bind(super.on);
-    return that(event, listener);
-  }
-
-  off(event: EventName, listener: (...args: any[]) => void): this {
-    const that = this.on.bind(super.off);
-    return that(event, listener);
-  }
-
-  emit(event: EventName, ...args: any[]): boolean {
-    return super.emit(event, args);
-  }
-
-  add(communicationInterface: ICommunicationInterface) {
+  add(communicationInterface: CommunicationInterface) {
     const ifaceExists = this.exists(communicationInterface.name);
     if (ifaceExists) throw new Error(`Interface, ${name}, already exists in the collection`);
     this.fInterfaces.push(communicationInterface);
-    communicationInterface.addConnectedHandler(this.onCommunicationInterfaceConnected);
-    communicationInterface.addConnectingHandler(this.onCommunicationInterfaceConnecting);
-    communicationInterface.addDataHandler(this.onCommunicationInterfaceDataReceived);
-    communicationInterface.addDisconnectedHandler(this.onCommunicationInterfaceDisconnected);
-    communicationInterface.addErrorHandler(this.onCommunicationInterfaceError);
+    communicationInterface.on('connected', this.onInterfaceConnected);
+    communicationInterface.on('connecting', this.onInterfaceConnecting);
+    communicationInterface.on('dataReceived', this.onInterfaceDataReceived);
+    communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
+    communicationInterface.on('disconnected', this.onInterfaceDisconnected);
+    communicationInterface.on('error', this.onInterfaceError);
   }
 
   remove(name: string) {
     const existingIndex = this.fInterfaces.findIndex(i => i.name.toLocaleUpperCase() === name.toLocaleUpperCase());
     const communicationInterface = this.fInterfaces.splice(existingIndex, 1)[0];
-    communicationInterface.removeConnectedHandler(this.onCommunicationInterfaceConnected);
-    communicationInterface.removeConnectingHandler(this.onCommunicationInterfaceConnecting);
-    communicationInterface.removeDataHandler(this.onCommunicationInterfaceDataReceived);
-    communicationInterface.removeDisconnectedHandler(this.onCommunicationInterfaceDisconnected);
-    communicationInterface.removeErrorHandler(this.onCommunicationInterfaceError);
+    communicationInterface.removeAllListeners('connected');
+    communicationInterface.removeAllListeners('connecting');
+    communicationInterface.removeAllListeners('dataReceived');
+    communicationInterface.removeAllListeners('stringReceived');
+    communicationInterface.removeAllListeners('disconnected');
+    communicationInterface.removeAllListeners('error');
   }
 
   exists(name: string) {
@@ -70,7 +67,7 @@ export class CommunicationInterfaceManager extends EventEmitter {
     }
   }
 
-  createFromInfo(info: CommunicationInterfaceInfo) {
+  createFromInfo(info: CommunicationInterfaceConfigurationInfo) {
     let iface: CommunicationInterface | null = null;
     switch (info.type) {
       case 'Emulated':
@@ -132,29 +129,46 @@ export class CommunicationInterfaceManager extends EventEmitter {
     this.fInterfaces.forEach(i => i.disable());
   }
 
-  private onCommunicationInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connected, communicationInterface.name, err);
-    this.emit('interface-connected', communicationInterface, err);
+  private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
+    this.emit('interfaceConnected', communicationInterface, err);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connected, communicationInterface.name, err);
+    });
   }
 
-  private onCommunicationInterfaceConnecting(communicationInterface: ICommunicationInterface) {
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connecting, communicationInterface.name);
-    this.emit('interface-connecting', communicationInterface);
+  private onInterfaceConnecting(communicationInterface: ICommunicationInterface) {
+    this.emit('interfaceConnecting', communicationInterface);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.connecting, communicationInterface.name);
+    });
   }
 
-  private onCommunicationInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.data, communicationInterface.name, data);
-    this.emit('interface-data', communicationInterface, data);
+  private onInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
+    this.emit('interfaceDataReceived', communicationInterface, data);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.data, communicationInterface.name, data);
+    });
   }
 
-  private onCommunicationInterfaceDisconnected(communicationInterface: ICommunicationInterface, err?: Error) {
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.disconnected, communicationInterface.name, err);
-    this.emit('interface-disconnected', communicationInterface, err);
+  private onInterfaceStringReceived(communicationInterface: ICommunicationInterface, data: string) {
+    this.emit('interfaceStringReceived', communicationInterface, data);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.data, communicationInterface.name, data);
+    });
   }
 
-  private onCommunicationInterfaceError(communicationInterface: ICommunicationInterface, err: Error) {
-    global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.error, communicationInterface.name, err);
-    this.emit('interface-error', communicationInterface, err);
+  private onInterfaceDisconnected(communicationInterface: ICommunicationInterface, err?: Error) {
+    this.emit('interfaceDisconnected', communicationInterface, err);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.disconnected, communicationInterface.name, err);
+    });
+  }
+
+  private onInterfaceError(communicationInterface: ICommunicationInterface, err: Error) {
+    this.emit('interfaceDisconnected', communicationInterface, err);
+    setImmediate(() => {
+      global.visualCal.windowManager.sendToAll(IpcChannels.communicationInterface.error, communicationInterface.name, err);
+    });
   }
 
 }

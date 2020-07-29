@@ -56,7 +56,7 @@ export interface UpdateResponseArgs<TItem> extends ResponseArgs {
 }
 
 export interface GetAllCommunicationInterfacesResponse extends ResponseArgs {
-  iface: CommunicationInterfaceInfo;
+  iface: CommunicationInterfaceConfigurationInfo;
 }
 
 export interface Response<T extends ResponseArgs> {

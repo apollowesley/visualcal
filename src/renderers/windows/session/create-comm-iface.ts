@@ -82,7 +82,7 @@ const init = () => {
   });
 
   createButton.addEventListener('click', () => {
-    const iface: CommunicationInterfaceInfo = {
+    const iface: CommunicationInterfaceConfigurationInfo = {
       name: interfaceNameElement.value,
       type: interfaceTypeElement.selectedOptions[0].value as CommunicationInterfaceType
     };

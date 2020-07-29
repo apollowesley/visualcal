@@ -1,5 +1,5 @@
 interface CommunicationConfig {
-  interfaces: CommunicationInterfaceInfo[];
+  interfaces: CommunicationInterfaceConfigurationInfo[];
 }
 
 export interface Config {

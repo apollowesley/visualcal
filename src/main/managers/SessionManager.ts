@@ -28,7 +28,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
       }
     });
 
-    ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceInfo) => {
+    ipcMain.on(IpcChannels.sessions.createCommunicationInterface.request, async (event, sessionName: string, iface: CommunicationInterfaceConfigurationInfo) => {
       try {
         const retVal = await this.createCommunicationInterface(sessionName, iface);
         event.reply(IpcChannels.sessions.createCommunicationInterface.response, { sessionName, retVal });
@@ -108,7 +108,7 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
     return [];
   }
 
-  async createCommunicationInterface(sessionName: string, iface: CommunicationInterfaceInfo) {
+  async createCommunicationInterface(sessionName: string, iface: CommunicationInterfaceConfigurationInfo) {
     const session = await this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
     const existingIfaceWithSameName = session.configuration.interfaces.find(i => i.name.toLocaleUpperCase() === iface.name.toLocaleUpperCase());

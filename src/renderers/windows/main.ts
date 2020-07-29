@@ -116,7 +116,7 @@ const refreshProcedures = (newProcedures: Procedure[]) => {
 
 // ***** SESSIONS *****
 
-interface SessionCommunicationInterfaceInfo extends CommunicationInterfaceInfo {
+interface SessionCommunicationInterfaceInfo extends CommunicationInterfaceConfigurationInfo {
   sessionName: string;
 }
 
@@ -153,7 +153,7 @@ const initSessionListeners = () => {
     loadSessions();
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, response: { sessionName: string, iface: CommunicationInterfaceInfo }) => {
+  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, response: { sessionName: string, iface: CommunicationInterfaceConfigurationInfo }) => {
     console.info('createCommuniationInterface', response);
     loadSessions();
     refreshSessionCommIfaces(selectedSessionRow);

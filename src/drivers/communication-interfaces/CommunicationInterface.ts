@@ -1,15 +1,25 @@
 import Denque from 'denque';
 import { EventEmitter } from 'events';
-import { v4 as uuid, v4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
+import { TypedEmitter } from 'tiny-typed-emitter';
 
-export abstract class CommunicationInterface implements ICommunicationInterface {
+interface Events {
+  connecting: (iface: ICommunicationInterface) => void;
+  connected: (iface: ICommunicationInterface, err?: Error) => void;
+  disconnected: (iface: ICommunicationInterface, err?: Error) => void;
+  dataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  write: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  stringReceived: (iface: ICommunicationInterface, data: string) => void;
+  error: (iface: ICommunicationInterface, err: Error) => void;
+}
+
+export abstract class CommunicationInterface extends TypedEmitter<Events> implements ICommunicationInterface {
 
   private fName: string = uuid();
   private isEnabled = false;
   protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
-  protected fEventEmitter = new EventEmitter();
 
   get name() { return this.fName; }
   set name(value: string) { this.fName = value; }
@@ -27,73 +37,39 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     this.disconnect();
   }
 
-  // eslint-disable-next-line
-  on(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void) {
-    this.fEventEmitter.on(event, listener);
-  }
-
-  // eslint-disable-next-line
-  off(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void) {
-    this.fEventEmitter.off(event, listener);
-  }
-
   abstract async connect(): Promise<void>;
 
-  addConnectingHandler(handler: ConnectingEventHandler) {
-    this.fEventEmitter.on('connecting', handler);
-  }
-
-  removeConnectingHandler(handler: ConnectingEventHandler) {
-    this.fEventEmitter.off('connecting', handler);
-  }
-
-  addConnectedHandler(handler: ConnectedEventHandler) {
-    this.fEventEmitter.on('connected', handler);
-  }
-
-  removeConnectedHandler(handler: ConnectedEventHandler) {
-    this.fEventEmitter.off('connected', handler);
-  }
-
   protected onConnecting() {
-    this.fEventEmitter.emit('connecting', this);
+    this.emit('connecting', this);
   }
 
   protected async onConnected() {
-    this.fEventEmitter.emit('connected', this);
+    this.emit('connected', this);
     return await Promise.resolve();
   }
 
   abstract disconnect(): void;
-
-  addDisconnectedHandler(handler: DisconnectedEventHandler) {
-    this.fEventEmitter.on('disconnected', handler);
-  }
-
-  removeDisconnectedHandler(handler: DisconnectedEventHandler) {
-    this.fEventEmitter.off('disconnected', handler);
-  }
 
   protected onDisconnected() {
     if (this.fReadQueue) {
       this.fReadQueue.clear();
       this.fReadQueue = undefined;
     }
-    this.fEventEmitter.emit('disconnected', this);
+    this.emit('disconnected', this);
   }
 
   abstract get isConnected(): boolean;
 
   addErrorHandler(handler: ErrorEventHandler) {
-    this.fEventEmitter.on('error', handler);
+    this.on('error', handler);
   }
 
   removeErrorHandler(handler: ErrorEventHandler) {
-    this.fEventEmitter.off('error', handler);
+    this.off('error', handler);
   }
 
   protected onError(error: Error) {
-    this.fEventEmitter.emit('error', this, error);
+    this.emit('error', this, error);
   }
 
   configure(options: CommunicationInterfaceConfigurationOptions) {
@@ -119,19 +95,11 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     // do not allow writes if we are disabled
     if (!this.isEnabled) return;
     if (readHandler) this.enqueue(readHandler);
-    this.fEventEmitter.emit('write', data);
+    this.emit('write', this, data);
     await this.write(data);
   }
 
   protected abstract async write(data: ArrayBuffer): Promise<void>;
-
-  addDataHandler(handler: DataEventHandler) {
-    this.fEventEmitter.on('data', handler);
-  }
-
-  removeDataHandler(handler: DataEventHandler) {
-    this.fEventEmitter.off('data', handler);
-  }
 
   protected onData(data: ArrayBuffer) {
     if (this.fReadQueue && !this.fReadQueue.isEmpty()) {
@@ -140,7 +108,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     } else if (this.fReadQueue && this.fReadQueue.isEmpty()) {
       throw 'Received data without a handler in the queue: ' + data;
     }
-    this.fEventEmitter.emit('data', this, data);
+    this.emit('dataReceived', this, data);
   }
 
   async writeInt8(data: number, readHandler?: ReadQueueItem): Promise<void> {
@@ -222,8 +190,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     return new Promise((resolve, reject) => {
         const handler = (data: ArrayBuffer) => {
           const dataString = new TextDecoder().decode(data);
-          console.debug('Communication interface received data', dataString);
-          if (data) console.debug(`Received data length: ${data.byteLength}`);
+          this.emit('stringReceived', this, dataString);
           return resolve(dataString);
         };
         const response: ReadQueueItem = {

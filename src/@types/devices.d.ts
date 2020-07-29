@@ -12,18 +12,6 @@ interface ICommunicationInterface {
   setDeviceAddress(address: number): Promise<void>; // GPIB
   enable(): void;
   disable(): void;
-  on(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void): void;
-  off(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void): void;
-  addConnectingHandler(handler: ConnectingEventHandler): void;
-  removeConnectingHandler(handler: ConnectingEventHandler): void;
-  addConnectedHandler(handler: ConnectedEventHandler): void;
-  removeConnectedHandler(handler: ConnectedEventHandler): void;
-  addDisconnectedHandler(handler: DisconnectedEventHandler): void;
-  removeDisconnectedHandler(handler: DisconnectedEventHandler): void;
-  addErrorHandler(handler: ErrorEventHandler): void;
-  removeErrorHandler(handler: ErrorEventHandler): void;
-  addDataHandler(handler: DataEventHandler): void;
-  removeDataHandler(handler: DataEventHandler): void;
   connect(options?: ICommunicationInterfaceConnectOptions): Promise<void>;
   disconnect(): void;
   isConnected: boolean;
@@ -190,7 +178,7 @@ interface SerialPortConfiguration {
   baudRate: number;
 }
 
-interface CommunicationInterfaceInfo {
+interface CommunicationInterfaceConfigurationInfo {
   name: string;
   type: import('./constants').CommunicationInterfaceType;
   nationalInstrumentsGpib?: NationalInstrumentsGpibConfiguration;
@@ -225,6 +213,6 @@ interface CommunicationInterfaceDeviceNodeConfiguration {
 }
 
 interface CommunicationConfiguration {
-  interfaces: CommunicationInterfaceInfo[];
+  interfaces: CommunicationInterfaceConfigurationInfo[];
   devices: CommunicationInterfaceDeviceNodeConfiguration[];
 }
