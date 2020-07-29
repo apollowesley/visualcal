@@ -43,7 +43,11 @@ interface ICommunicationInterface {
   queryString(data: string, encoding?: BufferEncoding): Promise<string>;
 }
 
-interface IControllableDevice {
+interface IDevice {
+  name: string;
+}
+
+interface IControllableDevice extends IDevice {
   getCommunicationInterface(): ICommunicationInterface | null;
   setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
   isGpib?: boolean;

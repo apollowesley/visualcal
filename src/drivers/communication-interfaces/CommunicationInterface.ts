@@ -1,11 +1,11 @@
 import Denque from 'denque';
 import { EventEmitter } from 'events';
-import { uniqueId } from 'lodash';
+import { v4 as uuid, v4 } from 'uuid';
 import { TextDecoder } from 'util';
 
 export abstract class CommunicationInterface implements ICommunicationInterface {
 
-  private fName: string = uniqueId();
+  private fName: string = uuid();
   private isEnabled = false;
   protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
