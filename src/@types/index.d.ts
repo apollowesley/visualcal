@@ -92,6 +92,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   assetManager: import('../main/managers/AssetManager').AssetManager;
   loginManager: import('../main/managers/LoginManager').LoginManager;
   userManager: import('../main/managers/UserManager').UserManager;
+  communicationInterfaceManager: import('../main/managers/CommunicationInterfaceManager').CommunicationInterfaceManager;
   dirs: VisualCalAugmentDirs;
   files: VisualCalAugmentFiles;
   nodeRed: {

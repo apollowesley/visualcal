@@ -14,6 +14,7 @@ import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
 import { LoginManager } from './managers/LoginManager';
 import { UserManager } from './managers/UserManager';
+import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 
 export let visualCal: VisualCalGlobalAugment;
 const windowManager = new WindowManager();
@@ -51,7 +52,8 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     userInteractionManager: new UserInteractionManager(),
     assetManager: new AssetManager(),
     loginManager: new LoginManager(),
-    userManager: new UserManager()
+    userManager: new UserManager(),
+    communicationInterfaceManager: new CommunicationInterfaceManager()
   };
 
   global.visualCal = visualCal;
