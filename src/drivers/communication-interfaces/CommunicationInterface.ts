@@ -51,11 +51,11 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
   }
 
   protected onConnecting() {
-    this.fEventEmitter.emit('connecting');
+    this.fEventEmitter.emit('connecting', this);
   }
 
   protected async onConnected() {
-    this.fEventEmitter.emit('connected');
+    this.fEventEmitter.emit('connected', this);
     return await Promise.resolve();
   }
 
@@ -74,7 +74,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
       this.fReadQueue.clear();
       this.fReadQueue = undefined;
     }
-    this.fEventEmitter.emit('disconnected');
+    this.fEventEmitter.emit('disconnected', this);
   }
 
   abstract get isConnected(): boolean;
@@ -88,7 +88,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
   }
 
   protected onError(error: Error) {
-    this.fEventEmitter.emit('error', error);
+    this.fEventEmitter.emit('error', this, error);
   }
 
   configure(options: CommunicationInterfaceConfigurationOptions) {
@@ -120,6 +120,14 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
 
   protected abstract async write(data: ArrayBuffer): Promise<void>;
 
+  addDataHandler(handler: DataEventHandler) {
+    this.fEventEmitter.on('data', handler);
+  }
+
+  removeDataHandler(handler: DataEventHandler) {
+    this.fEventEmitter.off('data', handler);
+  }
+
   protected onData(data: ArrayBuffer) {
     if (this.fReadQueue && !this.fReadQueue.isEmpty()) {
       const handler = this.fReadQueue.shift();
@@ -127,7 +135,7 @@ export abstract class CommunicationInterface implements ICommunicationInterface 
     } else if (this.fReadQueue && this.fReadQueue.isEmpty()) {
       throw 'Received data without a handler in the queue: ' + data;
     }
-    this.fEventEmitter.emit('data', data);
+    this.fEventEmitter.emit('data', this, data);
   }
 
   async writeInt8(data: number, readHandler?: ReadQueueItem): Promise<void> {

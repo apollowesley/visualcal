@@ -70,6 +70,11 @@ export const addCommunicationInterface = (options: { name: string; communication
   const existingIface = getCommunicationInterface(options.name);
   if (existingIface) return false;
   communicationInterfaces.push(options);
+  options.communicationInterface.addConnectedHandler((iface) => { console.info(iface) });
+  options.communicationInterface.addConnectingHandler((iface) => { console.info(iface) });
+  options.communicationInterface.addDisconnectedHandler((iface) => { console.info(iface) });
+  options.communicationInterface.addErrorHandler((iface, err?) => { console.info(iface, err) });
+  options.communicationInterface.addDataHandler((iface, data) => { console.info(iface, data) });
   return true;
 };
 

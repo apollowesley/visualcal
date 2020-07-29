@@ -140,23 +140,23 @@ interface GpibInterface extends ICommunicationInterface {
 }
 
 interface ConnectingEventHandler {
-  (): void;
+  (iface: ICommunicationInterface): void;
 }
 
 interface ConnectedEventHandler {
-  (err?: Error): void;
+  (iface: ICommunicationInterface, err?: Error): void;
 }
 
 interface ErrorEventHandler {
-  (err: Error): void;
+  (iface: ICommunicationInterface, err: Error): void;
 }
 
 interface DisconnectedEventHandler {
-  (err?: Error): void;
+  (iface: ICommunicationInterface, err?: Error): void;
 }
 
 interface DataEventHandler {
-  (data: ArrayBuffer): void;
+  (iface: ICommunicationInterface, data: ArrayBuffer): void;
 }
 
 interface TcpConfiguration {
