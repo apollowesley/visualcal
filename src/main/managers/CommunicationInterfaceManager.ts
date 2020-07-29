@@ -14,8 +14,6 @@ interface Events {
   interfaceError: (iface: ICommunicationInterface, err: Error) => void;
 }
 
-export type EventName = 'interface-connecting' | 'interface-connected' | 'interface-disconnected' | 'interface-error' | 'interface-data';
-
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
 
   private fInterfaces: CommunicationInterface[];
