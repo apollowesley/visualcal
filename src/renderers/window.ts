@@ -9,6 +9,7 @@ import { RendererResultManager } from './managers/RendererResultManager';
 import { RendererActionManager } from './managers/RendererActionManager';
 import { RendererAssetManager } from './managers/RendererAssetManager';
 import { RendererUserManager } from './managers/RendererUserManager';
+import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronIpcLog from 'electron-ipc-log';
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
@@ -47,5 +48,6 @@ window.visualCal = {
   resultsManager: new RendererResultManager(),
   actionManager: new RendererActionManager(),
   assetManager: new RendererAssetManager(),
-  userManager: new RendererUserManager()
+  userManager: new RendererUserManager(),
+  communicationInterfaceManager: new CommunicationInterfaceManager()
 };
