@@ -1,4 +1,4 @@
-declare type CommunicationInterfaceEvents = 'connected' | 'disconnected' | 'data' | 'error' | 'write';
+declare type CommunicationInterfaceEvents = 'connected' | 'connecting' | 'disconnected' | 'data' | 'error' | 'write';
 
 interface CommunicationInterfaceConfigurationOptions {
   id: string;
@@ -8,17 +8,22 @@ interface CommunicationInterfaceConfigurationOptions {
 }
 
 interface ICommunicationInterface {
+  name: string;
   setDeviceAddress(address: number): Promise<void>; // GPIB
   enable(): void;
   disable(): void;
   on(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void): void;
   off(event: CommunicationInterfaceEvents, listener: (...args: any[]) => void): void;
+  addConnectingHandler(handler: ConnectingEventHandler): void;
+  removeConnectingHandler(handler: ConnectingEventHandler): void;
   addConnectedHandler(handler: ConnectedEventHandler): void;
   removeConnectedHandler(handler: ConnectedEventHandler): void;
   addDisconnectedHandler(handler: DisconnectedEventHandler): void;
   removeDisconnectedHandler(handler: DisconnectedEventHandler): void;
   addErrorHandler(handler: ErrorEventHandler): void;
   removeErrorHandler(handler: ErrorEventHandler): void;
+  addDataHandler(handler: DataEventHandler): void;
+  removeDataHandler(handler: DataEventHandler): void;
   connect(options?: ICommunicationInterfaceConnectOptions): Promise<void>;
   disconnect(): void;
   isConnected: boolean;

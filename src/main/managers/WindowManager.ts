@@ -6,6 +6,7 @@ import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
+import { IpcChannel } from '../IPC/IpcChannel';
 
 export class WindowManager {
 
@@ -32,6 +33,13 @@ export class WindowManager {
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
     ipcMain.on(IpcChannels.windows.show, async (_, windowId: VisualCalWindow) => {
       await this.show(windowId);
+    });
+  }
+
+  // Sends an IPC message to all BrowserWindows
+  sendToAll(channel: string, ...args: any[]) {
+    this.fWindows.forEach(w => {
+      if (!w.isDestroyed) w.webContents.send(channel, args);
     });
   }
 

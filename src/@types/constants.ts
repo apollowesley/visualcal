@@ -55,6 +55,15 @@ export const IpcChannels = {
     warn: 'log-warn',
     error: 'log-error'
   },
+  communicationInterface: {
+    connected: 'communication-interface-connected',
+    connecting: 'communication-interface-connecting',
+    disconnected: 'communication-interface-disconnected',
+    error: 'communication-interface-error',
+    data: 'communication-interface-data',
+    added: 'communication-interface-added',
+    removed: 'communication-interface-removed',
+  },
   procedures: {
     getAll: {
       request: 'getAll-procedures-request',

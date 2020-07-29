@@ -1,13 +1,18 @@
 import Denque from 'denque';
 import { EventEmitter } from 'events';
+import { uniqueId } from 'lodash';
 import { TextDecoder } from 'util';
 
 export abstract class CommunicationInterface implements ICommunicationInterface {
 
+  private fName: string = uniqueId();
   private isEnabled = false;
   protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
   protected fEventEmitter = new EventEmitter();
+
+  get name() { return this.fName; }
+  set name(value: string) { this.fName = value; }
 
   async setDeviceAddress(address: number): Promise<void> {
     await Promise.resolve();
