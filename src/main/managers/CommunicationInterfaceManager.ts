@@ -1,5 +1,9 @@
 import { EventEmitter } from 'events';
 import { IpcChannels } from '../../@types/constants';
+import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
+import { EmulatedCommunicationInterface } from '../../drivers/communication-interfaces/EmulatedCommunicationInterface';
+import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
+import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
 
 export type EventName = 'interface-connecting' | 'interface-connected' | 'interface-disconnected' | 'interface-error' | 'interface-data';
 
@@ -48,7 +52,56 @@ export class CommunicationInterfaceManager extends EventEmitter {
   }
 
   exists(name: string) {
-    return this.fInterfaces.find(i => i.name.toLocaleUpperCase() === name.toLocaleUpperCase()) !== undefined;
+    return this.find(name) !== undefined;
+  }
+
+  find(name: string) {
+    return this.fInterfaces.find(i => i.name.toLocaleUpperCase() === name.toLocaleUpperCase());
+  }
+
+  clear() {
+    try {
+      this.disableAll();
+      this.disconnectAll();
+    } catch (error) {
+      throw error;
+    } finally {
+      this.fInterfaces = [];
+    }
+  }
+
+  loadFromSession(session: Session) {
+    this.clear();
+    session.configuration.interfaces.forEach(ifaceInfo => {
+      let iface: CommunicationInterface | null = null;
+      switch (ifaceInfo.type) {
+        case 'Emulated':
+          iface = new EmulatedCommunicationInterface();
+          break;
+        case 'Prologix GPIB TCP':
+          iface = new PrologixGpibTcpInterface();
+          const prologixTcpIface = iface as PrologixGpibTcpInterface;
+          if (!ifaceInfo.tcp) throw new Error('TCP communiation interface configuration is missing');
+          prologixTcpIface.configure({
+            id: ifaceInfo.name,
+            host: ifaceInfo.tcp.host,
+            port: ifaceInfo.tcp.port
+          });
+          break;
+        case 'Prologix GPIB USB':
+          iface = new PrologixGpibUsbInterface();
+          const prologixUsbIface = iface as PrologixGpibUsbInterface;
+          if (!ifaceInfo.serial) throw new Error('Serial communiation interface configuration is missing');
+          prologixUsbIface.configure({
+            id: ifaceInfo.name,
+            portName: ifaceInfo.serial.port
+          });
+          break;
+      }
+      if (!iface) throw new Error('Communication interface cannot be null');
+      iface.name = ifaceInfo.name;
+      this.add(iface);
+    });
   }
 
   async connectAll() {

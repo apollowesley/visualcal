@@ -1,19 +1,16 @@
 import * as path from 'path';
 import * as os from 'os';
 import type { Settings } from '../@types/logic-server';
-import { disableAllCommunicationInterfaces, enableAllCommunicationInterfaces, findNodeById, findNodesByType, getActionNodesForSection, getAllNodes, getCommunicationInterface, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, getSectionNodes, onActionResult, onActionStateChange, onComment, onGetUserInput, onShowInstruction, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
+import { findNodeById, findNodesByType, getActionNodesForSection, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, getSectionNodes, onActionResult, onActionStateChange, onComment, onGetUserInput, onShowInstruction, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
 const settings: Settings = {
-  disableAllCommunicationInterfaces: disableAllCommunicationInterfaces,
   driversRoot: '',
-  enableAllCommunicationInterfaces: enableAllCommunicationInterfaces,
   findNodeById: findNodeById,
   findNodesByType: findNodesByType,
   getActionNodesForSection: getActionNodesForSection,
   getAllNodes: getAllNodes,
-  getCommunicationInterface: getCommunicationInterface,
   getCommunicationInterfaceForDevice: getCommunicationInterfaceForDevice,
   getDriverForDevice: getDriverForDevice,
   getNodeConfig: getNodeConfig,

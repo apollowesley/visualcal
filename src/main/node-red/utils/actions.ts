@@ -1,5 +1,5 @@
 import { ActionStartRuntimeNode } from '../../../@types/logic-server';
-import { resetAllNodes, clearCommunicationInterfaces, loadCommunicationConfiguration } from '.';
+import { resetAllNodes, loadCommunicationConfiguration } from '.';
 
 export type TriggerType = 'start' | 'stop' | 'reset';
 

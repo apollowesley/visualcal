@@ -45,7 +45,6 @@ export interface Settings {
   onShowInstruction: (node: NodeRedNode, options: InstructionRequest) => void;
   onGetUserInput: (node: NodeRedNode, options: UserInputRequest) => void;
   onComment: (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => void;
-  getCommunicationInterface: (name: string) => ICommunicationInterface | undefined;
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
   getDriverForDevice: (deviceName: string) => Promise<IControllableDevice | null>;
   getAllNodes(): NodeRedRuntimeNode[];
@@ -54,8 +53,6 @@ export interface Settings {
   getNodeConfig(id: string, configName: string): NodeRedRuntimeNode | undefined;
   resetAllConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions): void;
   resetAllConnectedInstructionNodes(startFrom: NodeRedRuntimeNode): void;
-  enableAllCommunicationInterfaces(): void;
-  disableAllCommunicationInterfaces(): void;
   getProcedureStatus(): ProcedureStatus | null;
   getSectionNodes(): SectionRuntimeNode[];
   getActionNodesForSection(sectionShortName: string): ActionStartRuntimeNode[];

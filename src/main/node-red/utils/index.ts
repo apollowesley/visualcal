@@ -1,5 +1,4 @@
 import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, ProcedureRuntimeNode, SectionRuntimeNode, ActionStartRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
-import { CommunicationInterface } from '../../../drivers/communication-interfaces/CommunicationInterface';
 import { Node as NodeRedNode } from 'node-red';
 import fs from 'fs-extra';
 import path from 'path';
@@ -9,14 +8,6 @@ import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
 import { dialog } from 'electron';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
-import { EmulatedCommunicationInterface } from '../../../drivers/communication-interfaces/EmulatedCommunicationInterface';
-import { PrologixGpibTcpInterface } from '../../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
-import { PrologixGpibUsbInterface } from '../../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
-
-export interface CommunicationInterfaceNamePair {
-  name: string;
-  communicationInterface: CommunicationInterface;
-}
 
 export interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -27,7 +18,6 @@ export interface DeviceCommunicationInterfaceNamePair {
 }
 
 let driversPackagejson: DriversPackageJson;
-const communicationInterfaces: CommunicationInterfaceNamePair[] = [];
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
 export const onActionStateChange = (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => {
@@ -60,40 +50,10 @@ export const onComment = (source: NotificationSource, node: NodeRedNode, type: N
   }
 };
 
-export const getCommunicationInterface = (name: string) => {
-  const pair = communicationInterfaces.find(ci => ci.name.toLowerCase() === name.toLowerCase());
-  if (pair) return pair.communicationInterface;
-  return undefined;
-};
-
-export const addCommunicationInterface = (options: { name: string; communicationInterface: CommunicationInterface; }) => {
-  const existingIface = getCommunicationInterface(options.name);
-  if (existingIface) return false;
-  communicationInterfaces.push(options);
-  options.communicationInterface.addConnectedHandler((iface) => { console.info(iface) });
-  options.communicationInterface.addConnectingHandler((iface) => { console.info(iface) });
-  options.communicationInterface.addDisconnectedHandler((iface) => { console.info(iface) });
-  options.communicationInterface.addErrorHandler((iface, err?) => { console.info(iface, err) });
-  options.communicationInterface.addDataHandler((iface, data) => { console.info(iface, data) });
-  return true;
-};
-
-export const clearCommunicationInterfaces = () => {
-  communicationInterfaces.forEach(ci => {
-    try {
-      ci.communicationInterface.disconnect();
-      // TODO: Add removeAllListeners and destroy methods to CommunicationInterface
-    } catch (error) {
-      console.error(error);
-    }
-  });
-  communicationInterfaces.splice(0, communicationInterfaces.length);
-};
-
 export const getCommunicationInterfaceForDevice = (deviceName: string) => {
   const pair = deviceCommunicationInterfaces.find(dci => dci.deviceName.toLowerCase() === deviceName.toLowerCase());
   if (!pair) return undefined;
-  const ci = getCommunicationInterface(pair.communicationInterfaceName);
+  const ci = global.visualCal.communicationInterfaceManager.find(pair.communicationInterfaceName);
   return ci;
 };
 
@@ -338,50 +298,6 @@ export const getProcedureStatus = () => {
   return status;
 };
 
-export const enableAllCommunicationInterfaces = () => {
-  communicationInterfaces.forEach(ci => ci.communicationInterface.enable());
-};
-
-export const disableAllCommunicationInterfaces = () => {
-  communicationInterfaces.forEach(ci => ci.communicationInterface.disable());
-};
-
-export const loadCommuniationInterfaces = (session: Session) => {
-  clearCommunicationInterfaces();
-  session.configuration.interfaces.forEach(ifaceInfo => {
-    let iface: CommunicationInterface | null = null;
-    switch (ifaceInfo.type) {
-      case 'Emulated':
-        iface = new EmulatedCommunicationInterface();
-        break;
-      case 'Prologix GPIB TCP':
-        iface = new PrologixGpibTcpInterface();
-        const prologixTcpIface = iface as PrologixGpibTcpInterface;
-        if (!ifaceInfo.tcp) throw new Error('TCP communiation interface configuration is missing');
-        prologixTcpIface.configure({
-          id: ifaceInfo.name,
-          host: ifaceInfo.tcp.host,
-          port: ifaceInfo.tcp.port
-        });
-        break;
-      case 'Prologix GPIB USB':
-        iface = new PrologixGpibUsbInterface();
-        const prologixUsbIface = iface as PrologixGpibUsbInterface;
-        if (!ifaceInfo.serial) throw new Error('Serial communiation interface configuration is missing');
-        prologixUsbIface.configure({
-          id: ifaceInfo.name,
-          portName: ifaceInfo.serial.port
-        });
-        break;
-    }
-    if (!iface) throw new Error('Communication interface cannot be null');
-    addCommunicationInterface({
-      name: ifaceInfo.name,
-      communicationInterface: iface
-    });
-  });
-};
-
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   session.configuration.devices.forEach(deviceConfig => {
@@ -405,7 +321,7 @@ export const loadDevices = (session: Session) => {
 }
 
 export const loadCommunicationConfiguration = (session: Session) => {
-  loadCommuniationInterfaces(session);
+  global.visualCal.communicationInterfaceManager.loadFromSession(session);
   loadDevices(session);
 }
 

@@ -23,7 +23,7 @@ module.exports = (RED: NodeRed) => {
         return;
       }
       RED.settings.resetAllConnectedNodes(this);
-      RED.settings.enableAllCommunicationInterfaces();
+      global.visualCal.communicationInterfaceManager.enableAll();
       this.status({
         fill: 'green',
         shape: 'dot',
@@ -48,7 +48,7 @@ module.exports = (RED: NodeRed) => {
         return;
       }
       resetStatus();
-      RED.settings.disableAllCommunicationInterfaces();
+      global.visualCal.communicationInterfaceManager.disableAll();
       RED.settings.resetAllConnectedInstructionNodes(this);
       RED.settings.onActionStateChange(this, { type: 'action', state: 'stopped', sessionId: this.sessionId, runId: this.runId, section: this.section.shortName, action: this.name });
     });
