@@ -128,7 +128,7 @@
 		"topic": "",
 		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
 		"payloadType": "json",
-		"x": 350,
+		"x": 250,
 		"y": 940,
 		"wires": [
 			[
@@ -147,7 +147,7 @@
 		"tostatus": false,
 		"complete": "true",
 		"targetType": "full",
-		"x": 930,
+		"x": 1010,
 		"y": 940,
 		"wires": []
 	},
@@ -2553,12 +2553,14 @@
 	},
 	{
 		"id": "ba790645.f952f8",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"description": "",
 		"title": "Connection",
 		"text": "Connect a short",
+		"append": "mV",
+		"dataType": "integer",
 		"showImage": true,
 		"imageSourceType": "asset",
 		"url": "/api/v1/procedure/assets?procedure=fluke45calibration&filename=1280theoffice_getty.jpg",
@@ -3046,7 +3048,7 @@
 		"min": "-10",
 		"max": "110",
 		"inputLevel": "50",
-		"x": 730,
+		"x": 810,
 		"y": 940,
 		"wires": [
 			[

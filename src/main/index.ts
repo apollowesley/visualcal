@@ -2,7 +2,6 @@ import { app, BrowserWindow, dialog } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
-import { FileManager } from '../common/managers/FileManager';
 import { init as initGlobal } from './InitGlobal';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
@@ -38,7 +37,9 @@ async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
 
 function copyDemo(userHomeDataDirPath: string) {
   const demoDirPath = path.join(global.visualCal.dirs.base, 'demo');
-  if (!fs.existsSync(userHomeDataDirPath)) fs.mkdirSync(userHomeDataDirPath, { recursive: true });
+  const demoDirExists = fs.existsSync(userHomeDataDirPath);
+  if (demoDirExists) return;
+  fs.mkdirSync(userHomeDataDirPath, { recursive: true });
   fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
 }
 
@@ -51,8 +52,6 @@ async function load() {
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   copyDemo(userHomeDataDirPath);
   // initMainMenu();
-  const fileManager = new FileManager(appBaseDirPath, userHomeDataDirPath);
-  await fileManager.ensureInitizilied();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
