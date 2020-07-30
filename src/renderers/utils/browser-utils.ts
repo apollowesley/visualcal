@@ -1,4 +1,5 @@
 import { Red, Nodes, NodeProperties } from 'node-red';
+import { IpcChannels } from '../../@types/constants';
 
 interface NodesModule extends Nodes {
   eachConfig: (cb: (nodeConfig: NodeProperties) => void) => void;
@@ -103,25 +104,17 @@ function nodeRedUploadAssetOnEditPrepare(this: nodeRedUploadAssetOnEditPrepareTh
   refDocForm.append(refDocInput);
   opts.parent.append(refDocInputDiv);
 
-  refDocInput.on('change', function () {
-    const refDockInputHTMLElement = refDocInput ? (refDocInput as any)[0] : undefined;
-    if (!refDockInputHTMLElement || !(refDockInputHTMLElement as any).files) return;
-    const file = (refDockInputHTMLElement as any).files[0];
-    refDocForm.attr('action', opts.action);
-    const formData = new FormData();
-    formData.append('asset', file);
-    jQuery.ajax({
-      type: 'POST',
-      method: 'POST',
-      url: refDocForm.attr('action'),
-      data: formData,
-      processData: false,
-      contentType: false,
-      cache: false,
-      success: () => {
-        if (onUploaded) onUploaded(file.name);
-      }
-    });
+  refDocInput.on('change', async function () {
+    const refDockInputHtmlElementNotJQuery = document.getElementById(opts.inputId) as HTMLInputElement;
+    if (!refDockInputHtmlElementNotJQuery.files) {
+      alert('Unable to locate the selected file in the browser');
+      return;
+    }
+    const file = refDockInputHtmlElementNotJQuery.files[0];
+    const fileArrayBuffer = await file.arrayBuffer();
+    window.visualCal.electron.ipc.once(IpcChannels.assets.saveToCurrentProcedure.error, (_, info: { err: Error }) => { alert(`An error occured saving the file:  ${info.err.message}`); });
+    window.visualCal.electron.ipc.once(IpcChannels.assets.saveToCurrentProcedure.response, (_, info: { name: string }) => { if (onUploaded) onUploaded(info.name); });
+    window.visualCal.electron.ipc.send(IpcChannels.assets.saveToCurrentProcedure.request, { name: file.name, contents: fileArrayBuffer });
   });
   return {
     label: refDocInputLabel,

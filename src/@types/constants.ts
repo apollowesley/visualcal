@@ -43,6 +43,13 @@ export interface IpcChannelCRUD {
 export const IpcChannels = {
   getDirs: 'get-dirs-request',
   getFiles: 'get-files-request',
+  assets: {
+    saveToCurrentProcedure: {
+      request: 'assets-save-to-current-procedure-request',
+      response: 'assets-save-to-current-procedure-response',
+      error: 'assets-save-to-current-procedure-error'
+    }
+  },
   windows: {
     show: 'show-window',
     showErrorDialog: 'show-error-dialog',
