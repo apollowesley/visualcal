@@ -10,6 +10,10 @@ body {
   padding: 10px;
 }
 
+.status-label {
+  margin-right: 10px;
+}
+
 .btn {
   min-width: 75px;
 }
