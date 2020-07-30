@@ -89,6 +89,30 @@ const startStopActionIcon = () => {
   return '<button>Start</button>';
 }
 
+const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
+const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
+const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
+
+window.visualCal.actionManager.on('stateChanged', (info) => {
+  runningSectionElement.innerHTML = info.section;
+  runningActionElement.innerHTML = info.section;
+  switch (info.state) {
+    case 'completed':
+      procedureStatusElement.innerText = 'Ready';
+      runningSectionElement.innerHTML = 'None';
+      runningActionElement.innerHTML = 'Completed';
+      break;
+    case 'started':
+      procedureStatusElement.innerText = 'Running';
+      break;
+    case 'stopped':
+      procedureStatusElement.innerText = 'Stopped';
+      runningSectionElement.innerHTML = 'None';
+      runningActionElement.innerHTML = 'None';
+      break;
+  }
+});
+
 const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const section = sectionsTable.getSelectedRows()[0].getData() as SectionInfo;
   const action = cell.getRow().getData() as ActionInfo;
@@ -213,8 +237,8 @@ const init = () => {
     resultsTable.setData(results);
   });
 
-  window.visualCal.resultsManager.on(IpcChannels.results.saveOne.response, (response: SaveOneResponseArgs) => {
-    results.push(response.result);
+  window.visualCal.actionManager.on('resultAcquired', (info) => {
+    results.push(info.result);
     resultsTable.setData(results);
   });
 

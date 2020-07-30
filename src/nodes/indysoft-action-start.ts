@@ -40,7 +40,7 @@ module.exports = (RED: NodeRed) => {
           action: this.name
         }
       });
-      RED.settings.onActionStateChange(this, { type: 'action', state: 'started', sessionId: options.sessionId, runId: options.runId, section: this.section.shortName, action: this.name });
+      global.visualCal.actionManager.stateChanged(this, 'started');
     });
     this.on('stop', () => {
       if (!this.section || !this.sessionId || !this.runId) {
@@ -50,7 +50,7 @@ module.exports = (RED: NodeRed) => {
       resetStatus();
       global.visualCal.communicationInterfaceManager.disableAll();
       RED.settings.resetAllConnectedInstructionNodes(this);
-      RED.settings.onActionStateChange(this, { type: 'action', state: 'stopped', sessionId: this.sessionId, runId: this.runId, section: this.section.shortName, action: this.name });
+      global.visualCal.actionManager.stateChanged(this, 'stopped');
     });
     this.on('reset', (options?: NodeResetOptions) => {
       resetStatus();

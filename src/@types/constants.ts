@@ -225,7 +225,9 @@ export const IpcChannels = {
       request: 'start-action-request',
       response: 'start-action-response',
       error: 'start-action-error'
-    }
+    },
+    stateChanged: 'start-action-state-changed',
+    resultAcquired: 'action-result-acquired'
   },
   user: {
     active: {

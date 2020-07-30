@@ -1,11 +1,10 @@
 import { NodeProperties } from 'node-red';
 import { resetProcedureActionStatus } from './utils';
-import { Red } from 'node-red';
-import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, ActionStartRuntimeNode, NodeResetOptions } from '../@types/logic-server';
+import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, ActionStartRuntimeNode, NodeResetOptions, NodeRed } from '../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-action-completed';
 
-module.exports = (RED: Red) => {
+module.exports = (RED: NodeRed) => {
   function nodeConstructor(this: NodeRedRuntimeNode, config: NodeProperties) {
     RED.nodes.createNode(this, config);
     const reset = () => {
@@ -27,7 +26,7 @@ module.exports = (RED: Red) => {
       }
       startNode.emit('stop');
       resetProcedureActionStatus(this);
-      RED.settings.onActionStateChange(this, { type: 'action', state: 'completed', sessionId: msg.payload.sessionId, runId: msg.payload.runId, section: msg.payload.section, action: msg.payload.action });
+      global.visualCal.actionManager.stateChanged(startNode, 'completed');
       this.status({
         fill: 'blue',
         shape: 'dot',

@@ -13,11 +13,6 @@ export interface ResetResult extends ResetOptions {
   message?: string;
 }
 
-export interface TriggerResult extends TriggerOptions {
-  error?: string;
-  message?: string;
-}
-
 export interface TriggerOptions {
   type: TriggerType;
   sessionId: string;
@@ -25,6 +20,11 @@ export interface TriggerOptions {
   section: string;
   action: string;
   session?: Session;
+}
+
+export interface TriggerResult extends TriggerOptions {
+  error?: string;
+  message?: string;
 }
 
 export const trigger = (options: TriggerOptions): TriggerResult => {

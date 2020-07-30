@@ -40,9 +40,6 @@ export interface Settings {
   tcpMsgQueueSize?: number;
   currentProcedureShortName?: string;
   paletteCategories?: string[];
-  onActionStateChange: (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => void;
-  onActionResult: (options: NotifyFrontendActionResultOptions) => void;
-  onGetUserInput: (node: NodeRedNode, options: UserInputRequest) => void;
   onComment: (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => void;
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
   getDriverForDevice: (deviceName: string) => Promise<IControllableDevice | null>;

@@ -79,14 +79,7 @@ module.exports = (RED: NodeRed) => {
         measuredValue: measuredValue,
         passed: (measuredValue >= this.min) && (this.max >= measuredValue)
       };
-      RED.settings.onActionResult({
-        type: 'result',
-        sessionId: msg.payload.sessionId,
-        runId: msg.payload.runId,
-        section: msg.payload.section,
-        action: msg.payload.action,
-        result: result
-      });
+      global.visualCal.actionManager.handleResult(result);
       send({ payload: { section: msg.payload.section, action: msg.payload.action }});
       if (done) done();
     });

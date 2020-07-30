@@ -34,11 +34,11 @@ module.exports = (RED: NodeRed) => {
     const resetStatus = () => {
       this.status({});
     };
-    this.on('input', (msg: VisualCalNodeRedNodeInputMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+    this.on('input', async (msg: VisualCalNodeRedNodeInputMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       if (!msg.payload || !msg.payload.section || !msg.payload.action) return;
       // We got an input directly from the previous node, so we need to send our info to the frontend and wait for a response
       this.currentMessage = msg;
-      RED.settings.onGetUserInput(this, {
+      await global.visualCal.userInteractionManager.showInput({
         type: 'input',
         nodeId: this.id,
         section: msg.payload.section,

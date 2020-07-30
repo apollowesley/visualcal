@@ -20,22 +20,6 @@ export interface DeviceCommunicationInterfaceNamePair {
 let driversPackagejson: DriversPackageJson;
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
-export const onActionStateChange = (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => {
-  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { type: 'action', state: options.state, section: options.section, action: options.action } });
-  global.visualCal.log.info('Action state changed', options);
-  console.debug(`[global.visualCal.nodeRed.app.settings.onActionStateChange] [${node.type}] [${node.id}] [action] [section: ${options.section}] [action: ${options.action}] [state: ${options.state}]`);
-};
-
-export const onActionResult = async (options: NotifyFrontendActionResultOptions) => {
-  global.visualCal.resultManager.saveOne(options.result.sessionId, options.result);
-};
-
-export const onGetUserInput = (node: NodeRedNode, options: UserInputRequest) => {
-  global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: options });
-  global.visualCal.userInteractionManager.showInput(options);
-  console.debug(`[global.visualCal.nodeRed.app.settings.onShowTextDialog] [${node.type}] [${node.id}] [section: ${options.section}] [action: ${options.action}] [dataType: ${options.dataType}]`);
-};
-
 export const onComment = (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
   global.visualCal.nodeRed.app.events.emit('comms', { topic: 'visualcal', data: { source: source, type: 'comment', nodeId: node.id, nodeType: node.type, commentType: type, comment: comment } });
   console.debug(`[global.visualCal.nodeRed.app.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
