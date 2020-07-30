@@ -93,6 +93,8 @@ const procedureStatusElement = document.getElementById('vc-procedure-status') as
 const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
 const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
 
+let isRunning = false;
+
 window.visualCal.actionManager.on('stateChanged', (info) => {
   runningSectionElement.innerHTML = info.section;
   runningActionElement.innerHTML = info.section;
@@ -101,17 +103,28 @@ window.visualCal.actionManager.on('stateChanged', (info) => {
       procedureStatusElement.innerText = 'Ready';
       runningSectionElement.innerHTML = 'None';
       runningActionElement.innerHTML = 'Completed';
+      session.lastSectionName = undefined;
+      session.lastActionName = undefined;
+      if (lastActionCell) lastActionCell.getRow().reformat();
+      isRunning = false;
       break;
     case 'started':
       procedureStatusElement.innerText = 'Running';
+      isRunning = true;
       break;
     case 'stopped':
       procedureStatusElement.innerText = 'Stopped';
       runningSectionElement.innerHTML = 'None';
       runningActionElement.innerHTML = 'None';
+      isRunning = false;
+      session.lastSectionName = undefined;
+      session.lastActionName = undefined;
+      if (lastActionCell) lastActionCell.getRow().reformat();6
       break;
   }
 });
+
+let lastActionCell: Tabulator.CellComponent | undefined = undefined;
 
 const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const section = sectionsTable.getSelectedRows()[0].getData() as SectionInfo;
@@ -136,6 +149,7 @@ const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   }
   window.visualCal.actionManager.trigger(opts);
   cell.getRow().reformat();
+  lastActionCell = cell;
 }
 
 const actionsTable = new Tabulator('#vc-actions-tabulator', {
