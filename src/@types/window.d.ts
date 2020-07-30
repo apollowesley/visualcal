@@ -35,7 +35,6 @@ interface VisualCalBrowserUtilsFileUploadOptions {
   inputId: string;
   formId: string;
   labelText: string;
-  action: string;
   labelClass?: string;
   labelStyle?: string;
   inputClass?: string;
