@@ -116,24 +116,6 @@ export const ViewSessionWindowConfig = (parent: BrowserWindow): CreateWindowOpti
   }
 }
 
-export const UserInstructionWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
-  return {
-    id: VisualCalWindow.UserInstruction ,
-    config: {
-      title: 'VisualCal - User Instruction',
-      fullscreenable: false,
-      frame: false,
-      modal: true,
-      parent: parent,
-      width: 1000,
-      height: 750,
-      webPreferences: {
-        nodeIntegration: true
-      }
-    }
-  }
-}
-
 export const UserInputWindowConfig = (parent: BrowserWindow): CreateWindowOptions => {
   return {
     id: VisualCalWindow.UserInput,

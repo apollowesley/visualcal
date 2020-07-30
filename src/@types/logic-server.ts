@@ -42,7 +42,6 @@ export interface Settings {
   paletteCategories?: string[];
   onActionStateChange: (node: NodeRedNode, options: NotifiyFrontendActionStateChangeOptions) => void;
   onActionResult: (options: NotifyFrontendActionResultOptions) => void;
-  onShowInstruction: (node: NodeRedNode, options: InstructionRequest) => void;
   onGetUserInput: (node: NodeRedNode, options: UserInputRequest) => void;
   onComment: (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => void;
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;

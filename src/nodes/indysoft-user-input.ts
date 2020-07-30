@@ -9,9 +9,7 @@ export interface RuntimeProperties extends NodeProperties {
   append?: string;
   dataType: 'string' | 'float' | 'integer' | 'boolean';
   showImage: string;
-  imageSourceType?: 'asset' | 'url';
   assetFilename?: string;
-  url?: string;
 }
 
 export interface RuntimeNode extends NodeRedRuntimeNode {
@@ -20,9 +18,7 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   append?: string;
   dataType: 'string' | 'float' | 'integer' | 'boolean';
   showImage: boolean;
-  imageSourceType?: 'asset' | 'url';
   assetFilename?: string;
-  url?: string;
   currentMessage?: VisualCalNodeRedNodeInputMessage;
 }
 
@@ -34,8 +30,6 @@ module.exports = (RED: NodeRed) => {
     this.append = config.append;
     this.dataType = config.dataType;
     this.showImage = !!config.showImage;
-    this.imageSourceType = config.imageSourceType;
-    this.url = config.url;
     this.assetFilename = config.assetFilename;
     const resetStatus = () => {
       this.status({});
@@ -56,9 +50,7 @@ module.exports = (RED: NodeRed) => {
         ok: true,
         cancel: true,
         showImage: this.showImage,
-        imageSource: this.imageSourceType,
-        assetFilename: this.showImage && this.imageSourceType === 'asset' ? this.assetFilename : undefined,
-        imageUrl: this.showImage && this.imageSourceType === 'url' ? this.url : undefined
+        assetFilename: this.showImage ? this.assetFilename : undefined
       });
       this.status({
         fill: 'yellow',

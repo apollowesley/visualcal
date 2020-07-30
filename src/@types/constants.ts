@@ -239,10 +239,9 @@ export const IpcChannels = {
       response: 'user=login-response',
       error: 'user-login-error',
     },
-    showInstruction: {
-      request: 'user-show-instruction-request',
-      response: 'user-show-instruction-response',
-      error: 'user-show-instruction-error'
+    input: {
+      request: 'user-input-request',
+      result: 'user-input-result'
     },
     showInput: {
       request: 'user-show-input-request',

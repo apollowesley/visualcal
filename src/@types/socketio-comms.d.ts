@@ -24,30 +24,6 @@ interface ServerStatus {
   procedure: ProcedureStatus | null;
 }
 
-interface InstructionRequest {
-  nodeId: string;
-  type: string;
-  section: string;
-  action: string;
-  ok: boolean;
-  cancel: boolean;
-  title?: string;
-  text?: string;
-  showImage: boolean;
-  imageSource?: 'asset' | 'url';
-  assetFilename?: string;
-  imageUrl?: string;
-}
-
-interface InstructionResponse {
-  nodeId: string;
-  section: string;
-  action: string;
-  cancel?: boolean;
-  // eslint-disable-next-line
-  result?: any;
-}
-
 interface UserInputRequest {
   nodeId: string;
   type: string;
@@ -60,9 +36,8 @@ interface UserInputRequest {
   append?: string;
   dataType: 'string' | 'float' | 'integer' | 'boolean';
   showImage: boolean;
-  imageSource?: 'asset' | 'url';
   assetFilename?: string;
-  imageUrl?: string;
+  fileBase64Contents?: string;
 }
 
 interface UserInputResponse {

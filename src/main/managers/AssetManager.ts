@@ -24,6 +24,20 @@ export class AssetManager extends EventEmitter {
     return assetsDirPath;
   }
 
+  async loadFromProcedure(procedureName: string, filename: string) {
+    const assetsDirPath = this.getDirPathForProcedure(procedureName);
+    const filePath = path.join(assetsDirPath, filename);
+    const fileBuffer = await fsPromises.readFile(filePath);
+    const fileContents = 'data:image/png;base64,' + fileBuffer.toString('base64');
+    return fileContents;
+  }
+
+  async loadFromCurrentProcedure(filename: string) {
+    const currentProcedureName = await global.visualCal.procedureManager.getActive();
+    if (!currentProcedureName) throw new Error('Current procedure is not set, unable to load asset');
+    return await this.loadFromProcedure(currentProcedureName, filename);
+  }
+
   async allFromProcedure(procedureName: string) {
     const assetsDirPath = this.getDirPathForProcedure(procedureName);
     const assets = await fsPromises.readdir(assetsDirPath, { withFileTypes: true });

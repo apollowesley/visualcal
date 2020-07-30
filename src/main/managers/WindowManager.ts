@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInstructionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
@@ -90,12 +90,6 @@ export class WindowManager {
 
   get viewSessionWindow() {
     const window = this.get(VisualCalWindow.ViewSession);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get userInstructionWindow() {
-    const window = this.get(VisualCalWindow.UserInstruction);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -353,20 +347,6 @@ export class WindowManager {
       deviceConfigurationNodeInfosForCurrentFlow: deviceConfigurationNodeInfosForCurrentFlow
     };
     window.webContents.send(IpcChannels.sessions.viewInfo, viewInfo);
-    return window;
-  }
-
-  // User instruction window 
-  async ShowUserInstructionWindow(request: InstructionRequest) {
-    let window = this.userInstructionWindow;
-    if (window) {
-      window.show();
-      return window;
-    }
-    if (!this.viewSessionWindow) throw new Error('View session window must be defined');
-    window = this.create(UserInstructionWindowConfig(this.viewSessionWindow));
-    await window.loadFile(global.visualCal.dirs.html.userAction);
-    window.webContents.send('user-instruction-request', request);
     return window;
   }
 

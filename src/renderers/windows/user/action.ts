@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron';
+import { IpcChannels } from '../../../@types/constants';
 
 const titleElement = document.getElementById('vc-title') as HTMLHeadingElement;
 
@@ -8,12 +9,13 @@ const imageRowElement = document.getElementById('vc-input-row') as HTMLDivElemen
 const imageElement = document.getElementById('vc-image') as HTMLImageElement;
 
 const inputRowElement = document.getElementById('vc-input-row') as HTMLDivElement;
+const inputPrefixLabel = document.getElementById('vc-input-prefix-text') as HTMLLabelElement;
 const inputElement = document.getElementById('vc-input') as HTMLInputElement;
+const inputAppendLabel = document.getElementById('vc-input-append-text')  as HTMLLabelElement;
 
 const okButton = document.getElementById('vc-btn-ok') as HTMLButtonElement;
 const cancelButton = document.getElementById('vc-btn-cancel') as HTMLButtonElement;
 
-let initialInstructionRequest: InstructionRequest;
 let initialInputRequest: UserInputRequest;
 
 function handleInputOkResponse() {
@@ -37,59 +39,35 @@ function handleInputOkResponse() {
       response.result = inputElement.value;
       break;
   }
-  ipcRenderer.send('user-input-result', response);
-}
-
-function handleInstructionOkResponse() {
-  const response: InstructionResponse = {
-    action: initialInstructionRequest.action,
-    nodeId: initialInstructionRequest.nodeId,
-    section: initialInstructionRequest.section,
-    cancel: false,
-    result: true
-  };
-  ipcRenderer.send('user-instruction-result', response);
+  ipcRenderer.send(IpcChannels.user.input.result, response);
 }
 
 okButton.addEventListener('click', () => {
   if (initialInputRequest) handleInputOkResponse();
-  else if (initialInstructionRequest) handleInstructionOkResponse();
+  else if (initialInputRequest) handleInputOkResponse();
   close();
 });
 
 function handleInputCancelResponse() {
   const response: UserInputResponse = {
-    action: initialInstructionRequest.action,
-    nodeId: initialInstructionRequest.nodeId,
-    section: initialInstructionRequest.section,
+    action: initialInputRequest.action,
+    nodeId: initialInputRequest.nodeId,
+    section: initialInputRequest.section,
     cancel: true,
     result: false
   };
-  ipcRenderer.send('user-instruction-result', response);
-}
-
-function handleInstructionCancelResponse() {
-  const response: InstructionResponse = {
-    action: initialInstructionRequest.action,
-    nodeId: initialInstructionRequest.nodeId,
-    section: initialInstructionRequest.section,
-    cancel: true,
-    result: false
-  };
-  ipcRenderer.send('user-input-result', response);
+  ipcRenderer.send(IpcChannels.user.input.result, response);
 }
 
 cancelButton.addEventListener('click', () => {
   if (initialInputRequest) handleInputCancelResponse();
-  else if (initialInstructionRequest) handleInstructionCancelResponse();
   close();
 });
 
-function handleImage(options: { showImage: boolean, imageSource?: string, imageUrl?: string }) {
-  if (options.showImage) {
+function handleImage(request: UserInputRequest) {
+  if (request.showImage && request.fileBase64Contents) {
+    imageElement.src = request.fileBase64Contents;
     imageRowElement.classList.remove('collapse');
-    if (options.imageSource) imageElement.src = options.imageSource;
-    else if (options.imageUrl) imageElement.src = options.imageUrl;
   } else {
     imageRowElement.classList.add('collapse');
   }
@@ -97,17 +75,8 @@ function handleImage(options: { showImage: boolean, imageSource?: string, imageU
 
 const init = () => {
 
-  // Instruction
-  ipcRenderer.on('user-instruction-request', (_, request: InstructionRequest) => {
-    titleElement.innerText = request.title ? request.title : 'Missing title';
-    instructionElement.innerText = request.text ? request.text : 'Missing text';
-    handleImage(request);
-    inputRowElement.classList.add('collapse');
-    initialInstructionRequest = request;
-  });
-
   // Input
-  ipcRenderer.on('user-input-request', (_, request: UserInputRequest) => {
+  ipcRenderer.on(IpcChannels.user.input.request, (_, request: UserInputRequest) => {
     titleElement.innerText = request.title ? request.title : 'Missing title';
     instructionElement.innerText = request.text ? request.text : 'Missing text';
     handleImage(request);
@@ -125,6 +94,13 @@ const init = () => {
       case 'string':
         inputElement.type = 'text';
         break;
+    }
+    inputPrefixLabel.innerText = `${inputPrefixLabel.innerText} (Data type: ${request.dataType})`;
+    if (request.append) {
+      inputAppendLabel.innerText = request.append;
+      inputAppendLabel.classList.remove('collapse');
+    } else {
+      inputAppendLabel.classList.add('collapse');
     }
     initialInputRequest = request;
   });
