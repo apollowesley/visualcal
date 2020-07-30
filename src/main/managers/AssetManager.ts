@@ -11,7 +11,7 @@ export class AssetManager extends EventEmitter {
     ipcMain.on(IpcChannels.assets.saveToCurrentProcedure.request, async (event, info: { name: string, contents: ArrayBuffer }) => {
       try {
         await this.saveToCurrentProcedure(info.name, info.contents);
-        event.reply(IpcChannels.assets.saveToCurrentProcedure.response, info.name);
+        event.reply(IpcChannels.assets.saveToCurrentProcedure.response, { name: info.name });
       } catch (error) {
         event.reply(IpcChannels.assets.saveToCurrentProcedure.error, { err: error });
       }

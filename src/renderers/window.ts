@@ -2,7 +2,7 @@ import { serverListenPort } from '../common/global-window-info';
 import { ipcRenderer } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
-import { IpcChannels, DemoUser } from '../@types/constants';
+import { IpcChannels } from '../@types/constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
 import { RendererResultManager } from './managers/RendererResultManager';

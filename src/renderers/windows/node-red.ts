@@ -104,7 +104,6 @@ function nodeRedUploadAssetOnEditPrepare(this: nodeRedUploadAssetOnEditPrepareTh
     const refDockInputHTMLElement = refDocInput ? (refDocInput as any)[0] : undefined;
     if (!refDockInputHTMLElement || !(refDockInputHTMLElement as any).files) return;
     const file = (refDockInputHTMLElement as any).files[0];
-    refDocForm.attr('action', opts.action);
     const formData = new FormData();
     formData.append('asset', file);
     jQuery.ajax({
