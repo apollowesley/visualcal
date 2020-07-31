@@ -9,7 +9,7 @@
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
     "release": "electron-builder build -p never",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && patch-package",
     "build": "tsc",
     "watch": "tsc -w",
     "clean:dist": "rm -rf dist",
@@ -93,6 +93,7 @@
     "electron-builder": "^22.7.0",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^1.11.0",
+    "patch-package": "^6.2.2",
     "ts-loader": "^8.0.0",
     "typescript": "^3.9.6"
   },
