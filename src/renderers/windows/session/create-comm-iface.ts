@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { IpcChannels, CommunicationInterfaceTypesEnum, CommunicationInterfaceType } from '../../../@types/constants';
+import { IpcChannels, CommunicationInterfaceTypesEnum, CommunicationInterfaceType } from '../../../constants';
 
 let selectedSessionNameElement: HTMLHeadingElement;
 let interfaceNameElement: HTMLInputElement;

@@ -1,4 +1,4 @@
-import { IpcChannels } from '../../../@types/constants';
+import { IpcChannels } from '../../../constants';
 import { ErrorResponseArgs } from '../../managers/RendererCRUDManager';
 
 let nameField: HTMLInputElement;

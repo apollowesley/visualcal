@@ -1,4 +1,4 @@
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { RendererCRUDManager } from './RendererCRUDManager';
 import { ipcRenderer } from 'electron';
 

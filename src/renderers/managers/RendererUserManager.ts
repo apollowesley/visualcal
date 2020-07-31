@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import { EventEmitter } from 'events';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export interface ActiveChangedCallback {
   (user: User | null): void;

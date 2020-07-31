@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 interface ProcedureCreatedCallback {
   (procedure: Procedure): void;

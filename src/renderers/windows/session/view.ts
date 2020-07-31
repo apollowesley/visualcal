@@ -1,6 +1,6 @@
 import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
-import { IpcChannels } from '../../../@types/constants';
+import { IpcChannels } from '../../../constants';
 import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
 import { TriggerOptions } from '../../../main/node-red/utils/actions';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';

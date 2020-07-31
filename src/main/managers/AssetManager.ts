@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 import { ipcMain } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export class AssetManager extends EventEmitter {
 

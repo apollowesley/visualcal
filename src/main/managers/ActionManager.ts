@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { trigger, TriggerOptions } from '../node-red/utils/actions';
 import { ipcMain } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { ActionStartRuntimeNode } from '../../@types/logic-server';
 
 export class ActionManager extends EventEmitter {

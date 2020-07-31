@@ -1,4 +1,4 @@
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { GetAllResponseArgs, RenameResponseArgs, CreateResponseArgs, RemoveResponseArgs, UpdateResponseArgs, SetActiveResponseArgs, GetAllCommunicationInterfacesResponse } from '../managers/RendererCRUDManager';
 import { ipcRenderer } from 'electron';
 import moment from 'moment';

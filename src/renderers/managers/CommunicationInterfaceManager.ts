@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 interface Events {
   interfaceConnecting: (info: { name: string }) => void;

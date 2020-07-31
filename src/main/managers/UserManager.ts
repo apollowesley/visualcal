@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron';
 import { EventEmitter } from 'events';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export class UserManager extends EventEmitter {
 

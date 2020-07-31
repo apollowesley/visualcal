@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
-import { IpcChannelCRUD } from '../../@types/constants';
+import { IpcChannelCRUD } from '../../constants';
 
 export interface RendererCRUDManagerType<TCreate extends NamedType, TItem extends NamedType> extends EventEmitter {
   getAll(): void;

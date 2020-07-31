@@ -3,7 +3,7 @@ import { Config as BenchConfig } from '../../@types/bench';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { ipcMain } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export class BenchConfigManager extends EventEmitter {
   

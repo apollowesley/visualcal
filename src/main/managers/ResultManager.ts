@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { ipcMain } from 'electron';
 
 export class ResultManager extends EventEmitter {

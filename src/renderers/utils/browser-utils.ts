@@ -1,5 +1,5 @@
 import { Red, Nodes, NodeProperties } from 'node-red';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 interface NodesModule extends Nodes {
   eachConfig: (cb: (nodeConfig: NodeProperties) => void) => void;

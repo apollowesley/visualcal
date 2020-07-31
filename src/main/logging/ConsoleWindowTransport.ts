@@ -1,5 +1,5 @@
 import Transport from 'winston-transport';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export class ConsoleWindowTransport extends Transport {
 

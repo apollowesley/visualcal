@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { ipcMain } from 'electron';
-import { IpcChannelCRUD } from '../../@types/constants';
+import { IpcChannelCRUD } from '../../constants';
 import path from 'path';
 import fs, { promises as fsPromises } from 'fs';
 import sanitizeFilename from 'sanitize-filename';

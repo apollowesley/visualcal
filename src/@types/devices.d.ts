@@ -17,7 +17,7 @@ interface DeviceInfo extends ManufacturerModel {
 }
 
 interface CommunicationInterfaceManufacturerModelType extends ManufacturerModel {
-  type: import('./constants').CommunicationInterfaceType;
+  type: import('../constants').CommunicationInterfaceType;
 }
 
 interface ICommunicationInterface {
@@ -188,7 +188,7 @@ interface SerialPortConfiguration {
 
 interface CommunicationInterfaceConfigurationInfo {
   name: string;
-  type: import('./constants').CommunicationInterfaceType;
+  type: import('../constants').CommunicationInterfaceType;
   nationalInstrumentsGpib?: NationalInstrumentsGpibConfiguration;
   tcp?: TcpConfiguration;
   serial?: SerialPortConfiguration;

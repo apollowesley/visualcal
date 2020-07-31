@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { NodeRedFlowNode } from '../../../@types/node-red-info';
 import sanitizeDirectory from 'sanitize-filename';
 import { SectionRuntimeProperties, ActionStartRuntimeProperties } from '../../../@types/logic-server';
-import { IndySoftNodeTypeNames } from '../../../@types/constants';
+import { IndySoftNodeTypeNames } from '../../../constants';
 
 export default class FlowFileHelper {
 

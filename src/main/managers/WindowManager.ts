@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
-import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
+import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';

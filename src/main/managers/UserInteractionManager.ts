@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { ipcMain, dialog } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 export class UserInteractionManager extends EventEmitter {
 

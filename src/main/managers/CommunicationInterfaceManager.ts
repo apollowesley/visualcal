@@ -1,4 +1,4 @@
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { EmulatedCommunicationInterface } from '../../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';

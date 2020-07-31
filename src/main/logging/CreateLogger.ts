@@ -3,7 +3,7 @@ import { ConsoleWindowTransport } from './ConsoleWindowTransport';
 const { combine, timestamp, label, colorize } = format;
 import { isDev } from '../utils/is-dev-mode';
 import { ipcMain, IpcMainEvent, BrowserWindow } from 'electron';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 
 let logger: Logger;
 

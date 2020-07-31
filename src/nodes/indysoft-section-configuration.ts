@@ -1,5 +1,5 @@
 import { NodeRed, SectionRuntimeNode, SectionRuntimeProperties } from '../@types/logic-server';
-import { IndySoftNodeTypeNames } from '../@types/constants';
+import { IndySoftNodeTypeNames } from '../constants';
 
 module.exports = (RED: NodeRed) => {
   function nodeConstructor(this: SectionRuntimeNode, config: SectionRuntimeProperties) {

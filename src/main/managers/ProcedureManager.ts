@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels } from '../../@types/constants';
+import { IpcChannels } from '../../constants';
 import { CrudManager } from './CrudManager';
 
 export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedProcedureInfo, ProcedureFile, Procedure> {

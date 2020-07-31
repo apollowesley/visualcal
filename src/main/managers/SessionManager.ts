@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels, CommunicationInterfaceTypes } from '../../@types/constants';
+import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import { CrudManager } from './CrudManager';
 import { ipcMain } from 'electron';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
