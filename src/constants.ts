@@ -1,3 +1,9 @@
+import { UserConfig } from './UserConfig';
+
+export const UserConfigDefaults: UserConfig = {
+  showSplash: true
+}
+
 export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
 
 export const CommunicationInterfaceTypes = [

@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { UserConfig } from '../../types/UserConfig';
+import { UserConfig } from '../../UserConfig';
 
 const getConfigFilePath = () => {
   return path.join(global.visualCal.dirs.userHomeData.base, 'config.json');
