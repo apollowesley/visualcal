@@ -11,7 +11,6 @@ import { RendererAssetManager } from './managers/RendererAssetManager';
 import { RendererUserManager } from './managers/RendererUserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronIpcLog from 'electron-ipc-log';
-import 'jquery';
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
