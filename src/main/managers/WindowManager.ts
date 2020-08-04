@@ -116,6 +116,12 @@ export class WindowManager {
     if (!window.visualCal) throw new Error(`Window with id (non-VisualCal id) ${window.id} is missing the visualCal property!`);
     this.checkWindowExists({ id: window.visualCal.id });
     this.fWindows.add(window);
+    window.once('close', (e) => {
+      if ((e as any).sender instanceof BrowserWindow) {
+        const window = (e as any).sender as BrowserWindow;
+        if (window.id === VisualCalWindow.NodeRedEditor) window.destroy(); // Force destruction of node-red editor, since it can prevent closing when dirty and not deployed
+      }
+    });
     window.once('closed', () => {
       global.visualCal.logger.info('Window closed', { windowId: window.visualCal.id });
       this.remove(window.visualCal.id);
