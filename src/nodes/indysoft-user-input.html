@@ -12,10 +12,6 @@
     <input type="text" id="node-input-text">
   </div>
   <div class="form-row">
-    <label for="node-input-append"><i class="fa fa-tag"></i> Append</label>
-    <input type="text" id="node-input-append">
-  </div>
-  <div class="form-row">
     <label for="node-input-showImage"><i class="fa fa-tag"></i> Image?</label>
     <input type="checkbox" id="node-input-showImage" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
@@ -37,6 +33,10 @@
       <option value="integer">Integer</option>
       <option value="boolean">Boolean</option>
     </select>
+  </div>
+  <div class="form-row" id="input-append-row">
+    <label for="node-input-append"><i class="fa fa-tag"></i> Append to Input</label>
+    <input type="text" id="node-input-append">
   </div>
 </script>
 
@@ -73,8 +73,19 @@
     },
     paletteLabel: 'User Input',
     oneditprepare: function() {
+      const inputDataType = document.getElementById('node-input-dataType');
+      const inputAppendInputRow = document.getElementById('input-append-row');
+      let inputAppendInputRowDisplay = inputAppendInputRow.style.display;
       const assetFilenameInput = document.getElementById('node-input-assetFilename');
       const imageInput = document.getElementById('image-input');
+      inputDataType.onchange = () => {
+        if (inputDataType.value === 'none') {
+          inputAppendInputRow.style.display = 'none';
+        } else {
+          inputAppendInputRow.style.display = inputAppendInputRowDisplay;
+        }
+      };
+      inputDataType.dispatchEvent(new Event('change'));
       imageInput.addEventListener('input', async (ev) => {
         const file = imageInput.files[0];
         if (!file) return;
