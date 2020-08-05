@@ -30,6 +30,10 @@ const settings: Settings = {
     page: {
       title: 'VisualCal Logic Editor',
       css: path.resolve(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'midnight-red', 'theme.css')
+    },
+    header: {
+      title: 'VisualCal - Logic Editor',
+      url: 'https://www.indysoft.com/assets/img/indysoft-logo_wht.svg'
     }
   },
   nodesDir: path.resolve(__dirname, '..', 'nodes'),

@@ -108,7 +108,7 @@ export const ViewSessionWindowConfig = (parent: BrowserWindow): CreateWindowOpti
     config: {
       title: 'VisualCal - View Session',
       parent: parent,
-      modal: true,
+      modal: false,
       webPreferences: {
         nodeIntegration: true
       }
@@ -141,6 +141,23 @@ export const CreateCommIfaceWindow = (parent: BrowserWindow): CreateWindowOption
       title: 'VisualCal - Add Communication Interface to session',
       fullscreenable: false,
       modal: true,
+      parent: parent,
+      width: 1000,
+      height: 750,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}
+
+export const InteractiveDeviceControlWindow = (parent: BrowserWindow): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.CreateCommIface,
+    config: {
+      title: 'VisualCal - Interactive Device Control',
+      fullscreenable: false,
+      modal: false,
       parent: parent,
       width: 1000,
       height: 750,

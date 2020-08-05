@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow } from './WindowConfigs';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
@@ -102,6 +102,12 @@ export class WindowManager {
 
   get createCommIfaceWindow() {
     const window = this.get(VisualCalWindow.CreateCommIface);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
+  get interactiveDeviceControlWindow() {
+    const window = this.get(VisualCalWindow.InteractiveDeviceControl);
     if (window && !window.isDestroyed()) return window;
     return undefined;
   }
@@ -387,6 +393,19 @@ export class WindowManager {
       serialPortNames: serialPortNames
     }
     window.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
+    return window;
+  }
+
+  // Create interactive device control window
+  async showInteractiveDeviceControlWindow() {
+    let window = this.interactiveDeviceControlWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    window = this.create(InteractiveDeviceControlWindow(this.mainWindow));
+    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'interactive-device-control.html'));
     return window;
   }
 

@@ -9,7 +9,8 @@ declare const enum VisualCalWindow {
   ViewSession,
   UserInstruction,
   UserInput,
-  CreateCommIface
+  CreateCommIface,
+  InteractiveDeviceControl
 }
 
 declare const enum WindowPathType {

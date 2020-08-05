@@ -62,6 +62,13 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
         }
       },
       {
+        label: 'Interactive Device Control',
+        accelerator: 'Shift+CmdOrCtrl+I',
+        click: async () => {
+          await global.visualCal.windowManager.showInteractiveDeviceControlWindow();
+        }
+      },
+      {
         label: 'Worldmap',
         accelerator: "Shift+CmdOrCtrl+M",
         click: async () => { if (global.visualCal.windowManager.mainWindow) await global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
