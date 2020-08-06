@@ -2,7 +2,7 @@
 	"nodes": {
 		"node-red": {
 			"name": "node-red",
-			"version": "1.1.0-git",
+			"version": "1.1.2-git",
 			"local": false,
 			"nodes": {
 				"inject": {
@@ -13,7 +13,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\20-inject.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/20-inject.js"
 				},
 				"debug": {
 					"name": "debug",
@@ -23,7 +23,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\21-debug.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/21-debug.js"
 				},
 				"complete": {
 					"name": "complete",
@@ -33,7 +33,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\24-complete.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/24-complete.js"
 				},
 				"catch": {
 					"name": "catch",
@@ -43,7 +43,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\25-catch.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/25-catch.js"
 				},
 				"status": {
 					"name": "status",
@@ -53,7 +53,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\25-status.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/25-status.js"
 				},
 				"link": {
 					"name": "link",
@@ -64,7 +64,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\60-link.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/60-link.js"
 				},
 				"comment": {
 					"name": "comment",
@@ -74,7 +74,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\90-comment.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/90-comment.js"
 				},
 				"unknown": {
 					"name": "unknown",
@@ -84,7 +84,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\common\\98-unknown.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/common/98-unknown.js"
 				},
 				"function": {
 					"name": "function",
@@ -94,7 +94,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\10-function.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/10-function.js"
 				},
 				"switch": {
 					"name": "switch",
@@ -104,7 +104,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\10-switch.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/10-switch.js"
 				},
 				"change": {
 					"name": "change",
@@ -114,7 +114,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\15-change.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/15-change.js"
 				},
 				"range": {
 					"name": "range",
@@ -124,7 +124,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\16-range.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/16-range.js"
 				},
 				"template": {
 					"name": "template",
@@ -134,7 +134,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\80-template.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/80-template.js"
 				},
 				"delay": {
 					"name": "delay",
@@ -144,7 +144,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\89-delay.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/89-delay.js"
 				},
 				"trigger": {
 					"name": "trigger",
@@ -154,7 +154,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\89-trigger.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/89-trigger.js"
 				},
 				"exec": {
 					"name": "exec",
@@ -164,7 +164,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\function\\90-exec.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/function/90-exec.js"
 				},
 				"tls": {
 					"name": "tls",
@@ -174,7 +174,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\05-tls.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/05-tls.js"
 				},
 				"httpproxy": {
 					"name": "httpproxy",
@@ -184,7 +184,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\06-httpproxy.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/06-httpproxy.js"
 				},
 				"mqtt": {
 					"name": "mqtt",
@@ -196,7 +196,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\10-mqtt.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/10-mqtt.js"
 				},
 				"httpin": {
 					"name": "httpin",
@@ -207,7 +207,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\21-httpin.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/21-httpin.js"
 				},
 				"httprequest": {
 					"name": "httprequest",
@@ -217,7 +217,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\21-httprequest.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/21-httprequest.js"
 				},
 				"websocket": {
 					"name": "websocket",
@@ -230,7 +230,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\22-websocket.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/22-websocket.js"
 				},
 				"tcpin": {
 					"name": "tcpin",
@@ -242,7 +242,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\31-tcpin.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/31-tcpin.js"
 				},
 				"udp": {
 					"name": "udp",
@@ -253,7 +253,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\network\\32-udp.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/network/32-udp.js"
 				},
 				"CSV": {
 					"name": "CSV",
@@ -263,7 +263,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\parsers\\70-CSV.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/parsers/70-CSV.js"
 				},
 				"HTML": {
 					"name": "HTML",
@@ -273,7 +273,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\parsers\\70-HTML.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/parsers/70-HTML.js"
 				},
 				"JSON": {
 					"name": "JSON",
@@ -283,7 +283,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\parsers\\70-JSON.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/parsers/70-JSON.js"
 				},
 				"XML": {
 					"name": "XML",
@@ -293,7 +293,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\parsers\\70-XML.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/parsers/70-XML.js"
 				},
 				"YAML": {
 					"name": "YAML",
@@ -303,7 +303,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\parsers\\70-YAML.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/parsers/70-YAML.js"
 				},
 				"split": {
 					"name": "split",
@@ -314,7 +314,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\sequence\\17-split.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/sequence/17-split.js"
 				},
 				"sort": {
 					"name": "sort",
@@ -324,7 +324,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\sequence\\18-sort.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/sequence/18-sort.js"
 				},
 				"batch": {
 					"name": "batch",
@@ -334,7 +334,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\sequence\\19-batch.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/sequence/19-batch.js"
 				},
 				"file": {
 					"name": "file",
@@ -345,7 +345,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\storage\\10-file.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/storage/10-file.js"
 				},
 				"watch": {
 					"name": "watch",
@@ -355,7 +355,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\@node-red\\nodes\\core\\storage\\23-watch.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/storage/23-watch.js"
 				},
 				"indysoft-action-completed": {
 					"name": "indysoft-action-completed",
@@ -365,7 +365,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-action-completed.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-completed.js"
 				},
 				"indysoft-action-start": {
 					"name": "indysoft-action-start",
@@ -375,7 +375,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-action-start.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
 				"indysoft-command-sequence-builder": {
 					"name": "indysoft-command-sequence-builder",
@@ -385,7 +385,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-command-sequence-builder.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-command-sequence-builder.js"
 				},
 				"indysoft-communication-interface": {
 					"name": "indysoft-communication-interface",
@@ -395,7 +395,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-communication-interface.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-communication-interface.js"
 				},
 				"indysoft-device-configuration": {
 					"name": "indysoft-device-configuration",
@@ -405,7 +405,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-configuration.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-configuration.js"
 				},
 				"indysoft-device-digital-multimeter": {
 					"name": "indysoft-device-digital-multimeter",
@@ -415,7 +415,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-digital-multimeter.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-digital-multimeter.js"
 				},
 				"indysoft-device-fluke45": {
 					"name": "indysoft-device-fluke45",
@@ -425,7 +425,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-fluke45.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-fluke45.js"
 				},
 				"indysoft-device-keysight34401a": {
 					"name": "indysoft-device-keysight34401a",
@@ -435,7 +435,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-keysight34401a.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-keysight34401a.js"
 				},
 				"indysoft-device-multi-product-calibrator": {
 					"name": "indysoft-device-multi-product-calibrator",
@@ -445,7 +445,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-multi-product-calibrator.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-multi-product-calibrator.js"
 				},
 				"indysoft-device-read-handler": {
 					"name": "indysoft-device-read-handler",
@@ -455,7 +455,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-read-handler.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-read-handler.js"
 				},
 				"indysoft-device-result": {
 					"name": "indysoft-device-result",
@@ -465,7 +465,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-device-result.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-result.js"
 				},
 				"indysoft-mqtt-dynamic-topic-in": {
 					"name": "indysoft-mqtt-dynamic-topic-in",
@@ -475,7 +475,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-mqtt-dynamic-topic-in.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-mqtt-dynamic-topic-in.js"
 				},
 				"indysoft-scalar-result": {
 					"name": "indysoft-scalar-result",
@@ -485,7 +485,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-scalar-result.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-scalar-result.js"
 				},
 				"indysoft-section-configuration": {
 					"name": "indysoft-section-configuration",
@@ -495,7 +495,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-section-configuration.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-section-configuration.js"
 				},
 				"indysoft-testpoint": {
 					"name": "indysoft-testpoint",
@@ -505,7 +505,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-testpoint.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-testpoint.js"
 				},
 				"indysoft-user-input": {
 					"name": "indysoft-user-input",
@@ -515,17 +515,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-user-input.js"
-				},
-				"indysoft-user-instruction": {
-					"name": "indysoft-user-instruction",
-					"types": [
-						"indysoft-user-instruction"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\indysoft-user-instruction.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-user-input.js"
 				},
 				"procedure-sidebar": {
 					"name": "procedure-sidebar",
@@ -535,7 +525,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\procedure-sidebar.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/procedure-sidebar.js"
 				},
 				"prologix-gpib-tcp-config": {
 					"name": "prologix-gpib-tcp-config",
@@ -545,7 +535,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\prologix-gpib-tcp-config.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp-config.js"
 				},
 				"prologix-gpib-tcp": {
 					"name": "prologix-gpib-tcp",
@@ -555,7 +545,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\dist\\nodes\\prologix-gpib-tcp.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp.js"
 				}
 			}
 		},
@@ -572,13 +562,13 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-contrib-play-audio",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-contrib-play-audio\\play-audio.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-contrib-play-audio/play-audio.js"
 				}
 			}
 		},
 		"node-red-contrib-web-worldmap": {
 			"name": "node-red-contrib-web-worldmap",
-			"version": "2.3.15",
+			"version": "2.4.2",
 			"local": false,
 			"nodes": {
 				"worldmap": {
@@ -587,18 +577,19 @@
 						"worldmap",
 						"ui_worldmap",
 						"worldmap in",
-						"worldmap-tracks"
+						"worldmap-tracks",
+						"worldmap-hull"
 					],
 					"enabled": true,
 					"local": false,
 					"module": "node-red-contrib-web-worldmap",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-contrib-web-worldmap\\worldmap.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-contrib-web-worldmap/worldmap.js"
 				}
 			}
 		},
 		"node-red-dashboard": {
 			"name": "node-red-dashboard",
-			"version": "2.22.1",
+			"version": "2.23.0",
 			"local": false,
 			"nodes": {
 				"ui_base": {
@@ -609,7 +600,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_base.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_base.js"
 				},
 				"ui_button": {
 					"name": "ui_button",
@@ -619,7 +610,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_button.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_button.js"
 				},
 				"ui_dropdown": {
 					"name": "ui_dropdown",
@@ -629,7 +620,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_dropdown.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_dropdown.js"
 				},
 				"ui_switch": {
 					"name": "ui_switch",
@@ -639,7 +630,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_switch.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_switch.js"
 				},
 				"ui_slider": {
 					"name": "ui_slider",
@@ -649,7 +640,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_slider.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_slider.js"
 				},
 				"ui_numeric": {
 					"name": "ui_numeric",
@@ -659,7 +650,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_numeric.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_numeric.js"
 				},
 				"ui_text_input": {
 					"name": "ui_text_input",
@@ -669,7 +660,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_text_input.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_text_input.js"
 				},
 				"ui_date_picker": {
 					"name": "ui_date_picker",
@@ -679,7 +670,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_date_picker.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_date_picker.js"
 				},
 				"ui_colour_picker": {
 					"name": "ui_colour_picker",
@@ -689,7 +680,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_colour_picker.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_colour_picker.js"
 				},
 				"ui_form": {
 					"name": "ui_form",
@@ -699,7 +690,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_form.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_form.js"
 				},
 				"ui_text": {
 					"name": "ui_text",
@@ -709,7 +700,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_text.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_text.js"
 				},
 				"ui_gauge": {
 					"name": "ui_gauge",
@@ -719,7 +710,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_gauge.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_gauge.js"
 				},
 				"ui_chart": {
 					"name": "ui_chart",
@@ -729,7 +720,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_chart.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_chart.js"
 				},
 				"ui_audio": {
 					"name": "ui_audio",
@@ -739,7 +730,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_audio.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_audio.js"
 				},
 				"ui_toast": {
 					"name": "ui_toast",
@@ -749,7 +740,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_toast.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_toast.js"
 				},
 				"ui_ui_control": {
 					"name": "ui_ui_control",
@@ -759,7 +750,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_ui_control.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_ui_control.js"
 				},
 				"ui_template": {
 					"name": "ui_template",
@@ -769,7 +760,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_template.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_template.js"
 				},
 				"ui_link": {
 					"name": "ui_link",
@@ -779,7 +770,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_link.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_link.js"
 				},
 				"ui_tab": {
 					"name": "ui_tab",
@@ -789,7 +780,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_tab.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_tab.js"
 				},
 				"ui_group": {
 					"name": "ui_group",
@@ -799,7 +790,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_group.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_group.js"
 				},
 				"ui_spacer": {
 					"name": "ui_spacer",
@@ -809,7 +800,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-dashboard",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-dashboard\\nodes\\ui_spacer.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-dashboard/nodes/ui_spacer.js"
 				}
 			}
 		},
@@ -826,7 +817,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-base64",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-base64\\70-base64.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-base64/70-base64.js"
 				}
 			}
 		},
@@ -843,7 +834,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-geofence",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-geofence\\geofence.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-geofence/geofence.js"
 				}
 			}
 		},
@@ -860,7 +851,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-random",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-random\\random.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-random/random.js"
 				}
 			}
 		},
@@ -877,7 +868,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-rbe",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-rbe\\rbe.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-rbe/rbe.js"
 				}
 			}
 		},
@@ -897,7 +888,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-serialport",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-serialport\\25-serial.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-serialport/25-serial.js"
 				}
 			}
 		},
@@ -914,7 +905,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-smooth",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-smooth\\17-smooth.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-smooth/17-smooth.js"
 				}
 			}
 		},
@@ -931,7 +922,7 @@
 					"enabled": true,
 					"local": false,
 					"module": "node-red-node-tail",
-					"file": "c:\\Users\\scottpage\\Desktop\\projects\\visualcal\\node_modules\\node-red-node-tail\\28-tail.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-tail/28-tail.js"
 				}
 			}
 		}

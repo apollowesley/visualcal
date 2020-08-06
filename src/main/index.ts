@@ -26,6 +26,7 @@ electronIpcLog((event: ElectronIpcLogEvent) => {
 });
 
 async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
+  if (isDev()) return; // We use the demo directory, in this repo, during dev.  So, prevent copying over the same directory/files.
   const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
   if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
     console.info('node-red nodes examples directory does not exist, creating');
@@ -47,7 +48,8 @@ async function load() {
   electronManager.init();
   logger.init();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
-  const userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+  let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+  if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   copyDemo(userHomeDataDirPath);
