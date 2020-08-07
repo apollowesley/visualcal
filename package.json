@@ -32,6 +32,7 @@
     "@hashedin/electron-manager": "^2.0.1",
     "@node-red-contrib-themes/midnight-red": "^1.4.4",
     "@schemastore/package": "0.0.6",
+    "@types/mongodb": "^3.5.25",
     "aedes": "^0.42.5",
     "axios": "^0.19.2",
     "azure-devops-node-api": "^10.1.1",
