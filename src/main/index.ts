@@ -13,7 +13,8 @@ import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronManager, { logger } from '@hashedin/electron-manager';
 import electronIpcLog from 'electron-ipc-log';
-import { Server as DbServer } from './servers/tindodb';6
+import { Server as DbServer } from './servers/tindodb';
+import { init as initMqttServer } from './servers/aedes';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -56,6 +57,11 @@ async function load() {
   copyDemo(userHomeDataDirPath);
   let dbServer: DbServer | null = new DbServer(path.join(global.visualCal.dirs.userHomeData.base, 'data'));
   await dbServer.init();
+  try {
+    await initMqttServer(1883);
+  } catch (error) {
+    dialog.showErrorBox('Error starting MQTT server', error.message);
+  }
   try {
     await dbServer.addProcedure({
       name: 'Testing',
