@@ -13,6 +13,7 @@ import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronManager, { logger } from '@hashedin/electron-manager';
 import electronIpcLog from 'electron-ipc-log';
+import { init as initUdpDiscovery } from './servers/udp-discovery';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -53,6 +54,7 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   copyDemo(userHomeDataDirPath);
+  initUdpDiscovery();
   // initMainMenu();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
