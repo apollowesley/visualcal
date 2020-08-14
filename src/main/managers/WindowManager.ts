@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow, SelectProcedureWindowOptions } from './WindowConfigs';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
@@ -112,6 +112,12 @@ export class WindowManager {
     return undefined;
   }
 
+  get selectProcedureWindow() {
+    const window = this.get(VisualCalWindow.SelectProcedure);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
   private checkWindowExists(options: { id: VisualCalWindow }) {
     const window = Array.from(this.fWindows).find(w => w.visualCal.id === options.id) !== undefined;
     if (window) throw new Error(`Duplicate window Id, ${options.id}`);
@@ -206,6 +212,8 @@ export class WindowManager {
       case VisualCalWindow.UserInput:
         break;
       case VisualCalWindow.UserInstruction:
+        break;
+      case VisualCalWindow.SelectProcedure:
         break;
       default:
         throw new Error(`Invalid window Id, ${windowId}`);
@@ -406,6 +414,18 @@ export class WindowManager {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     window = this.create(InteractiveDeviceControlWindow(this.mainWindow));
     await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'interactive-device-control.html'));
+    return window;
+  }
+
+  async showSelectProcedureWindow() {
+    let window = this.interactiveDeviceControlWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(SelectProcedureWindowOptions());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'procedure-select.html'));
     return window;
   }
 

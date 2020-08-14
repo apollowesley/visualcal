@@ -167,3 +167,20 @@ export const InteractiveDeviceControlWindow = (parent: BrowserWindow): CreateWin
     }
   }
 }
+
+export const SelectProcedureWindowOptions = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.SelectProcedure,
+    config: {
+      title: 'VisualCal - Select Procedure',
+      fullscreenable: false,
+      frame: false,
+      modal: false,
+      width: 1000,
+      height: 750,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}

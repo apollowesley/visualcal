@@ -6,6 +6,16 @@ body {
   margin-bottom: 30px !important;
 }
 
+.design-visible {
+  border-width: 1px;
+  border: dashed;
+  border-color: grey;
+}
+
+.tabulator-table {
+  min-height: 75px;
+}
+
 .main-row {
   padding: 10px;
 }

@@ -20,7 +20,7 @@ const removeButtonIcon = (cell: Tabulator.CellComponent, formatterParams: Tabula
 
 let activeProcedureHeading: HTMLHeadingElement;
 let createProcedureButton: HTMLButtonElement;
-let procedures: Procedure[] = [];
+let procedures: ProcedureInfo[] = [];
 
 const initProcedureListeners = () => {
   window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, (response: CreateResponseArgs<CreatedProcedureInfo>) => {
@@ -35,11 +35,11 @@ const initProcedureListeners = () => {
     console.info('Removed', response.name);
     loadProcedures();
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, (response: GetAllResponseArgs<Procedure>) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.getAll.response, (response: GetAllResponseArgs<ProcedureInfo>) => {
     console.info('GetAll', response.items);
     refreshProcedures(response.items);
   });
-  window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, (response: UpdateResponseArgs<Procedure>) => {
+  window.visualCal.procedureManager.on(IpcChannels.procedures.update.response, (response: UpdateResponseArgs<ProcedureInfo>) => {
     console.info('Update', response.item);
     loadProcedures();
   });
@@ -71,7 +71,7 @@ const procedureDescriptionCellEdited = (cell: Tabulator.CellComponent) => {
   const procName = cell.getRow().getCell('name').getValue() as string;
   const proc = procedures.find(p => p.name === procName);
   if (!proc) throw new Error('Procedure not found!');
-  ipcRenderer.once(IpcChannels.procedures.update.response, (_, procedure: Procedure) => {
+  ipcRenderer.once(IpcChannels.procedures.update.response, (_, procedure: ProcedureInfo) => {
     alert(`Procedure, ${procedure.name}, updated`);
   });
   proc.description = newDesc;
@@ -103,7 +103,7 @@ const loadProcedures = () => {
   }
 }
 
-const refreshProcedures = (newProcedures: Procedure[]) => {
+const refreshProcedures = (newProcedures: ProcedureInfo[]) => {
   try {
     console.info('Got procedures', newProcedures);
     procedures = newProcedures;

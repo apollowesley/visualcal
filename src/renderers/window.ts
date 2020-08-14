@@ -11,6 +11,10 @@ import { RendererAssetManager } from './managers/RendererAssetManager';
 import { RendererUserManager } from './managers/RendererUserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronIpcLog from 'electron-ipc-log';
+import { removeDesignTimeFromAllElements } from './utils/runtime';
+
+// Removes all design-time helpers
+removeDesignTimeFromAllElements();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
@@ -30,7 +34,8 @@ window.visualCal = {
     showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
     showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName),
     showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error),
-    showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName)
+    showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName),
+    quit: () => ipcRenderer.send(IpcChannels.application.quit.request)
   },
   config: {
     httpServer: {

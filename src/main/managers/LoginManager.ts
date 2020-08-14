@@ -16,7 +16,7 @@ export class LoginManager extends EventEmitter {
       global.visualCal.userManager.active = user;
       event.reply(IpcChannels.user.login.response, credentials);
       if (global.visualCal.windowManager.loginWindow) global.visualCal.windowManager.loginWindow.hide(); // Hide first, so we don't loose the only open BrowserWindow instance
-      await global.visualCal.windowManager.ShowMain(); // Show MainWindow to capture it's instance
+      await global.visualCal.windowManager.showSelectProcedureWindow(); // Show SelectProcedureWindow to capture it's instance
       if (global.visualCal.windowManager.loginWindow) global.visualCal.windowManager.loginWindow.close(); // Finally close the LoginWindow
     });
   }

@@ -35,8 +35,11 @@ if (window.require) {
             case 9: // user input
                 require('../../dist/renderers/windows/user/action.js');
                 break;
-            case 10: // Create communication interface
+            case 10: // create communication interface
                 require('../../dist/renderers/windows/session/create-comm-iface.js');
+                break;
+            case 12: // select procedure
+                require('../../dist/renderers/windows/procedure/select.js');
                 break;
         }
     });

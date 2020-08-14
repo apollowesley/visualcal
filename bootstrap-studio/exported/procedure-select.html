@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>IndySoft VisualCal</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=a89ebf631b7afd3c96ebb0a0da6dd6fa">
+    <link rel="stylesheet" href="assets/css/superhero.min.css?h=12d6bcde84b063e355475b2268462a87">
+    <link rel="stylesheet" href="assets/css/styles.css?h=4c16ae18c58c5a98ad4df4e46d77d150">
+    <link rel="stylesheet" href="assets/css/tabulator.min.css?h=181f44a2e9f63d71102812f4630cdd08">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Procedure Selection</h4>
+                        <h6 class="text-muted card-subtitle mb-2">Select a procedure or create a new one</h6>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Select an existing procedure</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="vc-procedures-tabulator" class="tabulator-table design-visible"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Create a new procedure</h5>
+                            </div>
+                            <div class="card-body"><button class="btn btn-primary" id="vc-procedure-create-button" type="button">Create</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center" style="margin: 40px;">
+            <div class="col">
+                <div><button class="btn btn-primary" id="vc-cancel-button" type="button" style="margin: 10px;">Cancel</button>
+                    <p>Cancelling will close VisualCal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=7c038681746a729e2fff9520a575e78c"></script>
+    <script src="assets/js/visualcal.js?h=279786d3e9813badca98a9485e4dd3b2"></script>
+</body>
+
+</html>

@@ -82,6 +82,7 @@ interface NodeRedUtils {
 
 interface VisualCalGlobalAugment extends VisualCalAugment {
   logger: import('winston').Logger;
+  applicationManager: import('../main/managers/ApplicationManager').ApplicationManager;
   windowManager: import('../main/managers/WindowManager').WindowManager;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
   sessionManager: import('../main/managers/SessionManager').SessionManager;
@@ -109,6 +110,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
     showCreateCommIfaceWindow: (sessionName: string) => void;
+    quit: () => void;
   };
   sessionManager: import('../renderers/managers/RendererSessionManager').RendererSessionManager;
   resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;

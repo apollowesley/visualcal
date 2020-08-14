@@ -15,6 +15,7 @@ import { AssetManager } from './managers/AssetManager';
 import { LoginManager } from './managers/LoginManager';
 import { UserManager } from './managers/UserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
+import { ApplicationManager } from './managers/ApplicationManager';
 
 export let visualCal: VisualCalGlobalAugment;
 const windowManager = new WindowManager();
@@ -43,6 +44,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
       warn: (msg: any) => global.visualCal.logger.warn(msg),
       error: (msg: any) => global.visualCal.logger.error(msg)
     },
+    applicationManager: new ApplicationManager(),
     windowManager: windowManager,
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(localDirs.userHomeData.sessions),

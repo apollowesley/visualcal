@@ -15,4 +15,5 @@ export const centerWindowOnNearestCurorScreen = (window: BrowserWindow, maximize
     workArea.height = window.getBounds().height;
   }
   window.setBounds(workArea);
+  window.center();
 }
