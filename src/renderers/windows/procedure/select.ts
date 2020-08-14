@@ -9,7 +9,9 @@ let procedures: ProcedureInfo[] = [];
 const selectProcedureButtonClicked = (cell: Tabulator.CellComponent) => {
   const row = cell.getRow();
   const nameCell = row.getCell('name');
-  console.info(`Procedure selected: ${nameCell.getValue()}`);
+  const procedureName: string = nameCell.getValue();
+  window.visualCal.procedureManager.setActive(procedureName);
+  // DO NOT CLOSE WINDOW FROM HERE
 }
 
 const selectProcedureButtonTableCellFormatter = () => {

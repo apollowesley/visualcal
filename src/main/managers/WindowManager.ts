@@ -423,6 +423,12 @@ export class WindowManager {
       window.show();
       return window;
     }
+    global.visualCal.procedureManager.once('activeSet', async () => {
+      if (window) {
+        await this.ShowMain();
+        window.close();
+      }
+    });
     window = this.create(SelectProcedureWindowOptions());
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'procedure-select.html'));

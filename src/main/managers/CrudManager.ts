@@ -1,13 +1,19 @@
-import { EventEmitter } from 'events';
 import { ipcMain } from 'electron';
 import { IpcChannelCRUD } from '../../constants';
 import path from 'path';
 import fs, { promises as fsPromises } from 'fs';
 import sanitizeFilename from 'sanitize-filename';
+import { TypedEmitter } from 'tiny-typed-emitter';
 
-export type EventNames = 'created' | 'removed' | 'renamed' | 'set-active';
+interface Events<TCreated extends NamedType, TItem extends NamedType> {
+  created: (item: TCreated) => void;
+  removed: (name: string) => void;
+  renamed: (value: { oldName: string; newName: string; }) => void;
+  updated: (item: TItem) => void;
+  activeSet: (activeName: string) => void;
+}
 
-export interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends EventEmitter {
+export interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends TypedEmitter<Events<TCreated, TItem>> {
   getAll(): Promise<TItem[]>;
   getOne(name: string): Promise<TItem | undefined>;
   create(info: TCreate): Promise<TCreated>;
@@ -20,7 +26,7 @@ export interface CrudManagerType<TCreate extends NamedType, TCreated extends Nam
   update(item: TItem): Promise<TItem>;
 }
 
-export abstract class CrudManager<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends EventEmitter implements CrudManagerType<TCreate, TCreated, TItemsFile, TItem> {
+export abstract class CrudManager<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends TypedEmitter<Events<TCreated, TItem>> implements CrudManagerType<TCreate, TCreated, TItemsFile, TItem> {
 
   private fBasePath: string;
   private fChannelNames: IpcChannelCRUD;
@@ -111,10 +117,6 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
         event.reply(this.fChannelNames.update.error, error);
       }
     });
-  }
-
-  emit(event: EventNames | symbol, ...args: any[]): boolean {
-    return super.emit(event, args);
   }
 
   getItemsJsonFilePath() {
@@ -245,8 +247,8 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     const procsJson = await this.getItemsJson();
     procsJson.active = name;
     await this.saveItemsJson(procsJson);
-    this.emit('set-active', name);
     await this.onSetActive(name);
+    this.emit('activeSet', name);
     if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.setActive.response, name);
   }
   
@@ -258,6 +260,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   async update(item: TItem) {
     this.checkExists(item.name);
     await this.saveItemJson(item.name, item);
+    this.emit('updated', item);
     return item;
   }
 
