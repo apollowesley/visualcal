@@ -8,17 +8,25 @@
 				"$tsc"
 			],
 			"group": "build",
-			"label": "tsc: build - tsconfig.json"
+			"label": "tsc: build - tsconfig.json",
+			"dependsOn": [
+				"npm: copynodes",
+				"npm: copydrivers:packagejson"
+			]
 		},
 		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
-			"problemMatcher": [
-				"$tsc-watch"
-			],
-			"group": "build",
-			"label": "tsc: watch - tsconfig.json",
-			"option": "watch"
+			"type": "npm",
+			"script": "copynodes",
+			"problemMatcher": [],
+			"label": "npm: copynodes",
+			"detail": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales"
+		},
+		{
+			"type": "npm",
+			"script": "copydrivers:packagejson",
+			"problemMatcher": [],
+			"label": "npm: copydrivers:packagejson",
+			"detail": "cp src/drivers/package.json dist/drivers"
 		}
 	]
 }
