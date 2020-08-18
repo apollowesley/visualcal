@@ -29,7 +29,6 @@
     "url": "https://indysoftdev@dev.azure.com/indysoftdev/VisualCal/_git/visualcal"
   },
   "dependencies": {
-    "@hashedin/electron-manager": "^2.0.1",
     "@node-red-contrib-themes/midnight-red": "^1.4.4",
     "@schemastore/package": "0.0.6",
     "@types/mongodb": "^3.5.25",
@@ -92,8 +91,9 @@
     "@types/serialport": "^8.0.1",
     "@types/tabulator-tables": "^4.7.2",
     "@types/toastr": "^2.1.38",
+    "@types/uuid": "^8.3.0",
     "@types/when": "^2.4.33",
-    "electron": "^9.1.2",
+    "electron": "^10.0.0-beta.23",
     "electron-builder": "^22.8.0",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^1.11.0",

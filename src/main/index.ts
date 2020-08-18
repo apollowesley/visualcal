@@ -11,7 +11,6 @@ import { init as nodeRedUtilsInit } from './node-red/utils';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
-import electronManager, { logger } from '@hashedin/electron-manager';
 import electronIpcLog from 'electron-ipc-log';
 import { init as initUdpDiscovery } from './servers/udp-discovery';
 
@@ -46,8 +45,6 @@ function copyDemo(userHomeDataDirPath: string) {
 }
 
 async function load() {
-  electronManager.init();
-  logger.init();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
