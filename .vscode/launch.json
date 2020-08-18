@@ -13,7 +13,7 @@
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
       "program": "${workspaceFolder}/src/main/index.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json",
+      "preLaunchTask": "npm: copydrivers:packagejson",
       "sourceMaps": true,
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "outputCapture": "std"
