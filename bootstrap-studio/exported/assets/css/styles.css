@@ -6,6 +6,11 @@ body {
   margin-bottom: 30px !important;
 }
 
+.custom-checkbox-x2 {
+  transform: scale(2);
+  -webkit-transform: scale(2);
+}
+
 .design-visible {
   border-width: 1px;
   border: dashed;

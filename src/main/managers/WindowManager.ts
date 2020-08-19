@@ -215,6 +215,8 @@ export class WindowManager {
         break;
       case VisualCalWindow.SelectProcedure:
         break;
+      case VisualCalWindow.InteractiveDeviceControl:
+        break;
       default:
         throw new Error(`Invalid window Id, ${windowId}`);
     }
