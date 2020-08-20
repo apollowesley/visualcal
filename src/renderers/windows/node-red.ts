@@ -15,6 +15,12 @@ interface ProcedureRuntimeProperties extends NodeProperties {
 
 declare const RED: NodeRed;
 
+window.addEventListener('beforeunload', (ev) => {
+  ev.stopImmediatePropagation();
+  ev.stopPropagation();
+  ev.preventDefault();
+});
+
 const getProcedureConfigNode = (): ProcedureRuntimeProperties | undefined => {
   let retVal: ProcedureRuntimeProperties | undefined = undefined;
   RED.nodes.eachConfig(nodeConfig => {
