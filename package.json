@@ -146,15 +146,15 @@
           "releaseType": "release",
           "publishAutoUpdate": true
         }
-      ],
-      "nsis": {
-        "artifactName": "${productName}-Setup-${version}.${ext}",
-        "oneClick": true,
-        "perMachine": false,
-        "allowToChangeInstallationDirectory": false,
-        "runAfterFinish": true,
-        "deleteAppDataOnUninstall": true
-      }
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": true
     }
   },
   "visualcal": {
