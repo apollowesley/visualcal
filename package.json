@@ -39,6 +39,7 @@
     "directory-tree": "^2.2.4",
     "electron-ipc-log": "^3.0.1",
     "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.2.4",
     "electron-store": "^6.0.0",
     "electron-updater": "^4.3.4",
     "express": "^4.17.1",

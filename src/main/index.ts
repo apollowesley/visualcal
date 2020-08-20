@@ -13,6 +13,7 @@ import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronIpcLog from 'electron-ipc-log';
 import { init as initUdpDiscovery } from './servers/udp-discovery';
+import autoUpdate from './auto-update';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
@@ -51,6 +52,7 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   copyDemo(userHomeDataDirPath);
+  await autoUpdate();
   initUdpDiscovery();
   // initMainMenu();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
