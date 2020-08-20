@@ -20,17 +20,10 @@ steps:
   inputs:
     versionSpec: '14.x'
 
-# - task: DownloadSecureFile@1
-#   name: 'Certificates'
-#   inputs:
-#     secureFile: 'Certificates.p12'
-
 - bash: './release-publish.sh'
   displayName: 'Build release and publish to GitHub'
-  # env:
-  #   APPLEID: $(APPLEID)
-  #   APPLEIDPASS: $(APPLEIDPASS)
-  #   CSC_LINK: $(Certificates.secureFilePath)
+  env:
+    GH_TOKEN: $(GH_TOKEN)
 
 - task: PublishCodeCoverageResults@1
   inputs: 
@@ -38,12 +31,12 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
-- task: CopyFiles@2
-  displayName: 'Copy Windows exe files to: $(Build.ArtifactStagingDirectory)'
-  inputs:
-    Contents: |
-      dist/*.exe
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+# - task: CopyFiles@2
+#   displayName: 'Copy Windows exe files to: $(Build.ArtifactStagingDirectory)'
+#   inputs:
+#     Contents: |
+#       dist/*.exe
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: CopyFiles@2
   displayName: 'Copy Windows zip files to: $(Build.ArtifactStagingDirectory)'
@@ -51,22 +44,6 @@ steps:
     Contents: |
       dist/*.zip
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-# - task: CopyFiles@2
-#   displayName: 'Copy Linux files to: $(Build.ArtifactStagingDirectory)'
-#   inputs:
-#     Contents: |
-#       dist/*.snap
-#       dist/*.AppImage
-#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-# - task: CopyFiles@2
-#   displayName: 'Copy Mac files to: $(Build.ArtifactStagingDirectory)'
-#   inputs:
-#     Contents: |
-#       dist/*.dmg
-#       dist/*.dmg.blockmap
-#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts to Azure'
