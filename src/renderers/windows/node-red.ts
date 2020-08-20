@@ -15,6 +15,8 @@ interface ProcedureRuntimeProperties extends NodeProperties {
 
 declare const RED: NodeRed;
 
+// Prevent node-red from stopping the BrowserWindow from being closed.
+// TODO: Check if moving this to the main process is a better solution.
 window.addEventListener('beforeunload', (ev) => {
   ev.stopImmediatePropagation();
   ev.stopPropagation();
