@@ -30,7 +30,7 @@ export default async () => {
     log.transports.console.level = 'debug';
     log.transports.file.level = 'debug';
     autoUpdater.logger = log;
-    autoUpdater.setFeedURL('https://github.com/scottpageindysoft/visualcal/releases/latest');
+    // autoUpdater.setFeedURL('https://github.com/scottpageindysoft/visualcal/releases/latest');
     autoUpdater.on('error', onError);
     autoUpdater.on('checking-for-update', onCheckingForUpdate);
     autoUpdater.on('update-available', onUpdateAvailable);

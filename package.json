@@ -117,7 +117,7 @@
   "bugs": {
     "url": "https://dev.azure.com/indysoftdev/VisualCal/_boards/board/t/VisualCal%20Team/Epics/"
   },
-  "homepage": "https://indysoftdev@dev.azure.com/indysoftdev/VisualCal/_git/visualcal",
+  "homepage": "https://github.com/scottpageindysoft/visualcal",
   "build": {
     "appId": "com.indysoft.visualcal",
     "productName": "VisualCal",
