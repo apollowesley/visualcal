@@ -40,6 +40,7 @@
     "electron-ipc-log": "^3.0.1",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^6.0.0",
+    "electron-updater": "^4.3.4",
     "express": "^4.17.1",
     "grapesjs": "^0.16.18",
     "grapesjs-custom-code": "^0.1.3",
