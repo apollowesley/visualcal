@@ -12,6 +12,9 @@ strategy:
     windows:
       imageName: 'windows-latest'
 
+variables:
+  - group: electron-builder-github
+
 pool:
   vmImage: $(imageName)
 
@@ -23,7 +26,8 @@ steps:
 - bash: './release-publish.sh'
   displayName: 'Build release and publish to GitHub'
   env:
-    GH_TOKEN: $(GH_TOKEN)
+    GH_TOKEN: $(GitHubToken)
+    DEBUG: electron-builder
 
 - task: PublishCodeCoverageResults@1
   inputs: 
