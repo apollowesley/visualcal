@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export GH_TOKEN=f6b7c3e2b3640ab7ce711321f797790914a6a51d
+export GH_TOKEN=2855e0db150aaad9af00a770c10876c82251ebfc
 
 pwd
 
