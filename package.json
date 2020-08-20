@@ -9,6 +9,7 @@
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
     "release": "electron-builder build -p never",
+    "release:publish": "electron-builder build -p always",
     "postinstall": "electron-builder install-app-deps && patch-package",
     "build": "tsc",
     "watch": "tsc -w",
@@ -133,6 +134,19 @@
       "target": [
         "portable",
         "zip"
+      ],
+      "publish": [
+        {
+          "provider": "github",
+          "token": "ab046194c97a3c76c45f810ce0cb80aeee5b7f21",
+          "protocol": "https",
+          "repo": "https://github.com/scottpageindysoft/visualcal",
+          "host": "github.com",
+          "private": false,
+          "releaseType": "release",
+          "owner": "scottpageindysoft",
+          "publishAutoUpdate": true
+        }
       ]
     }
   },
