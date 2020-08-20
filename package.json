@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://indysoftdev@dev.azure.com/indysoftdev/VisualCal/_git/visualcal"
+    "url": "https://github.com/scottpageindysoft/visualcal"
   },
   "dependencies": {
     "@node-red-contrib-themes/midnight-red": "^1.4.4",
@@ -132,19 +132,12 @@
     ],
     "win": {
       "target": [
-        "portable",
         "zip"
       ],
       "publish": [
         {
           "provider": "github",
-          "token": "ab046194c97a3c76c45f810ce0cb80aeee5b7f21",
-          "protocol": "https",
-          "repo": "https://github.com/scottpageindysoft/visualcal",
-          "host": "github.com",
-          "private": false,
           "releaseType": "release",
-          "owner": "scottpageindysoft",
           "publishAutoUpdate": true
         }
       ]
