@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, app, ipcMain, WebContents } from 'electron';
+import { BrowserWindow, dialog, ipcMain, WebContents, SaveDialogOptions, OpenDialogOptions } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
 import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow, SelectProcedureWindowOptions } from './WindowConfigs';
@@ -14,24 +14,33 @@ export class WindowManager {
 
   constructor() {
     this.fWindows = new Set<BrowserWindow>();
-    ipcMain.on('get-visualcal-window-id-req', (event) => {
+    ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
       try {
         const window = BrowserWindow.fromWebContents(event.sender);
         if (!window) return;
-        event.reply('get-visualcal-window-id-res', window.visualCal.id);
+        event.reply(IpcChannels.windows.getMyId.response, window.visualCal.id);
       } catch (error) {
-        event.reply('get-visualcal-window-id-err', error);
+        event.reply(IpcChannels.windows.getMyId.error, error);
       }
     });
-    ipcMain.on('show-view-session-window', async (_, sessionName: string) => {
+    ipcMain.on(IpcChannels.windows.showViewSession, async (_, sessionName: string) => {
       const session = await global.visualCal.sessionManager.getOne(sessionName);
       if (!session) throw new Error(`Unable to find session, ${sessionName}`);
       await this.ShowViewSessionWindow(session);
     });
-    ipcMain.on('get-user-visualcal-dir-request', (event) => event.returnValue = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal'));
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
     ipcMain.on(IpcChannels.windows.show, async (_, windowId: VisualCalWindow) => {
       await this.show(windowId);
+    });
+    ipcMain.on(IpcChannels.windows.showOpenFileDialog.request, (event, opts: OpenDialogOptions) => {
+      const window = BrowserWindow.fromId(event.sender.id);
+      const result = dialog.showOpenDialogSync(window, opts);
+      event.reply(IpcChannels.windows.showOpenFileDialog.response, result);
+    });
+    ipcMain.on(IpcChannels.windows.showSaveFileDialog.request, (event, opts: SaveDialogOptions) => {
+      const window = BrowserWindow.fromId(event.sender.id);
+      const result = dialog.showSaveDialogSync(window, opts);
+      event.reply(IpcChannels.windows.showSaveFileDialog.response, result);
     });
   }
 

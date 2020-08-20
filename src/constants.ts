@@ -65,9 +65,25 @@ export const IpcChannels = {
     }
   },
   windows: {
+    getMyId: {
+      request: 'get-visualcal-window-id-request',
+      response: 'get-visualcal-window-id-response',
+      error: 'get-visualcal-window-id-error'
+    },
     show: 'show-window',
     showErrorDialog: 'show-error-dialog',
-    showCreateCommIface: 'show-create-comm-iface-window'
+    showCreateCommIface: 'show-create-comm-iface-window',
+    showSaveFileDialog: {
+      request: 'show-save-file-dialog-request',
+      response: 'show-save-file-dialog-response',
+      error: 'show-save-file-dialog-error'
+    },
+    showOpenFileDialog: {
+      request: 'show-open-file-dialog-request',
+      response: 'show-open-file-dialog-response',
+      error: 'show-open-file-dialog-error'
+    },
+    showViewSession: 'show-view-session-window'
   },
   log: {
     all: 'log-all',

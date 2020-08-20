@@ -1,5 +1,7 @@
 import('../window'); // The script we are in now get's preloaded by the BrowserWindow (because we can't run with nodeIntegration enabled).  So we import window here, whereas normally we would preload window.js.
+import { ipcRenderer, OpenDialogOptions } from 'electron';
 import { Red, Nodes, NodeProperties } from 'node-red';
+import { IpcChannels } from '../../constants';
 
 interface NodesModule extends Nodes {
   eachConfig: (cb: (nodeConfig: NodeProperties) => void) => void;
@@ -14,6 +16,17 @@ interface ProcedureRuntimeProperties extends NodeProperties {
 }
 
 declare const RED: NodeRed;
+
+window.onload = () => {
+  const opts: OpenDialogOptions = {
+    title: 'Testing',
+    message: 'Select a file'
+  }
+  ipcRenderer.once(IpcChannels.windows.showOpenFileDialog.response, (_, response: any) => {
+    console.info(response);
+  });
+  window.visualCal.electron.showOpenFileDialog(opts);
+}
 
 // Prevent node-red from stopping the BrowserWindow from being closed.
 // TODO: Check if moving this to the main process is a better solution.

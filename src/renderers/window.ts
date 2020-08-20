@@ -1,5 +1,5 @@
 import { serverListenPort } from '../common/global-window-info';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, SaveDialogOptions, OpenDialogOptions } from 'electron';
 import { isDev } from '../main/utils/is-dev-mode';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels } from '../constants';
@@ -30,11 +30,13 @@ window.visualCal = {
   isDev: isDev(),
   electron: {
     ipc: ipcRenderer,
-    getVisualCalWindowId: () => ipcRenderer.send('get-visualcal-window-id-req'),
-    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send('show-window', windowId),
-    showViewSessionWindow: (sessionName: string) => ipcRenderer.send('show-view-session-window', sessionName),
+    getVisualCalWindowId: () => ipcRenderer.send(IpcChannels.windows.getMyId.request),
+    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, windowId),
+    showViewSessionWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showViewSession, sessionName),
     showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error),
     showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName),
+    showOpenFileDialog: (opts: OpenDialogOptions) => ipcRenderer.send(IpcChannels.windows.showOpenFileDialog.request, opts),
+    showSaveFileDialog: (opts: SaveDialogOptions) => ipcRenderer.send(IpcChannels.windows.showSaveFileDialog.request, opts),
     quit: () => ipcRenderer.send(IpcChannels.application.quit.request)
   },
   config: {

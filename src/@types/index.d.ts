@@ -110,6 +110,8 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
     showCreateCommIfaceWindow: (sessionName: string) => void;
+    showOpenFileDialog: (opts: import('electron').OpenDialogOptions) => void;
+    showSaveFileDialog: (opts: import('electron').SaveDialogOptions) => void;
     quit: () => void;
   };
   sessionManager: import('../renderers/managers/RendererSessionManager').RendererSessionManager;
