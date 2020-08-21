@@ -1,67 +1,118 @@
-import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { autoUpdater, UpdateInfo, AppUpdater as ElectronAutoUpdater } from 'electron-updater';
 import { ProgressInfo } from 'electron-builder';
 import log from 'electron-log';
-import { BrowserWindow } from 'electron';
 import { isDev } from '../utils/is-dev-mode';
+import { TypedEmitter } from 'tiny-typed-emitter';
+import { IpcChannels } from '../../constants';
 
-let updateWindow: BrowserWindow | null = null;
+interface Events {
+  error: (error: Error) => void;
+  updateError: (error: Error) => void;
+  checkingForUpdatesStarted: () => void;
+  updateAvailable: (info: UpdateInfo) => void;
+  updateNotAvailable: (info: UpdateInfo) => void;
+  downloadProgressChanged: (progress: ProgressInfo) => void;
+  updateDownloaded: (info: UpdateInfo) => void;
+}
 
-const onError = (error: Error) => {
-  console.error('Auto-update error', error);
-  if (!updateWindow) return;
-  updateWindow.webContents.emit('error', error);
-};
+export class AutoUpdater extends TypedEmitter<Events> {
 
-const onCheckingForUpdate = () => {
-  console.info('Auto-update checking for updates');
-  if (!updateWindow) return;
-  updateWindow.webContents.send('checking-for-update');
-};
+  fUpdater: ElectronAutoUpdater | null = null;
+  fAborted = false;
 
-const onUpdateAvailable = async (info: UpdateInfo) => {
-  console.info('Update available', info);
-  const updateAppWindow = await global.visualCal.windowManager.showUpdateAppWindow();
-  if (!updateAppWindow) return;
-  updateWindow = updateAppWindow;
-  updateWindow.on('show', () => {
-    if (!updateWindow) return;
-    updateWindow.webContents.send('update-available', info);
-    updateWindow.webContents.send('update-app-ready', 'Checking for updates...')
-  });
-};
+  constructor() {
+    super();
+  }
 
-const onUpdateNotAvailable = (info: UpdateInfo) => {
-  console.info('No update available', info);
-  if (!updateWindow) return;
-  updateWindow.webContents.send('update-not-available', info);
-};
+  private get windowManager() { return global.visualCal.windowManager; }
+  private get updateWindow() { return this.windowManager.updateAppWindow; }
 
-const onDownloadProgress = (progress: ProgressInfo) => {
-  console.info(`Auto-update download progress ${progress.percent}%`);
-  if (!updateWindow) return;
-  updateWindow.webContents.send('download-progress', progress);
-};
+  private onError(error: Error) {
+    this.emit('error', error);
+  }
 
-const onUpdateDownloaded = (info: UpdateInfo) => {
-  console.info('Update downloaded', info);
-  if (!updateWindow) return;
-  updateWindow.webContents.send('update-downloaded', info);
-};
+  private onUpdateWindowNotShowingError() {
+    this.onError(new Error('Update window is not showing'));
+  }
 
-export default async () => {
-  if (isDev()) return Promise.resolve();
-  log.transports.console.level = 'debug';
-  log.transports.file.level = 'debug';
-  autoUpdater.logger = log;
-  autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.allowDowngrade = false;
-  autoUpdater.allowPrerelease = true;
-  autoUpdater.on('error', onError);
-  autoUpdater.on('checking-for-update', onCheckingForUpdate);
-  autoUpdater.on('update-available', onUpdateAvailable);
-  autoUpdater.on('update-not-available', onUpdateNotAvailable);
-  autoUpdater.on('download-progress', onDownloadProgress);
-  autoUpdater.on('update-downloaded', onUpdateDownloaded);
-  await autoUpdater.checkForUpdates();
-};
+  private sendToUpdateWindow(channel: string, arg?: Error | UpdateInfo | ProgressInfo) {
+    if (this.fAborted) return;
+    if (!this.updateWindow) {
+      this.onUpdateWindowNotShowingError();
+      return false;
+    };
+    this.updateWindow.webContents.send(channel, arg);
+    return true;
+  }
+
+  private onUpdateError(error: Error) {
+    if (this.fAborted) return;
+    this.emit('updateError', error);
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
+    this.onError(error); // Send last so other notifications have a chance to get sent before main process reacts
+  }
+
+  private onCheckingForUpdateStarted() {
+    if (this.fAborted) return;
+    this.emit('checkingForUpdatesStarted');
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
+  }
+
+  private async onUpdateAvailable(info: UpdateInfo) {
+    if (this.fAborted) return;
+    this.emit('updateAvailable', info);
+    await this.windowManager.showUpdateAppWindow();
+    if (this.updateWindow) this.updateWindow.on('show', () => this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info));
+  }
+
+  private onUpdateNotAvailable(info: UpdateInfo) {
+    if (this.fAborted) return;
+    this.emit('updateNotAvailable', info);
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
+  }
+
+  private onDownloadProgressChanged(progress: ProgressInfo) {
+    if (this.fAborted) return;
+    this.emit('downloadProgressChanged', progress);
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
+  }
+
+  private onUpdateDownloaded(info: UpdateInfo) {
+    if (this.fAborted) return;
+    this.emit('updateDownloaded', info);
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
+  }
+
+  public async checkForUpdates() {
+    this.fAborted = false;
+    if (isDev()) throw new Error('Do not check for updates in development mode');
+    log.transports.console.level = 'debug';
+    log.transports.file.level = 'debug';
+    autoUpdater.logger = log;
+    autoUpdater.autoDownload = false;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.allowDowngrade = false;
+    autoUpdater.allowPrerelease = true;
+    autoUpdater.on('error', this.onUpdateError);
+    autoUpdater.on('checking-for-update', this.onCheckingForUpdateStarted);
+    autoUpdater.on('update-available', this.onUpdateAvailable);
+    autoUpdater.on('update-not-available', this.onUpdateNotAvailable);
+    autoUpdater.on('download-progress', this.onDownloadProgressChanged);
+    autoUpdater.on('update-downloaded', this.onUpdateDownloaded);
+    await autoUpdater.checkForUpdates();
+  }
+
+  public abort() {
+    this.fAborted = true;
+    if (this.fUpdater) {
+      this.fUpdater.removeAllListeners();
+      this.fUpdater = null;
+    }
+    try {
+      this.windowManager.close(VisualCalWindow.UpdateApp);
+    } catch (error) {
+      // We're aborting, so it doesn't matter if the window isn't open
+    }
+  }
+
+}

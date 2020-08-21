@@ -1,26 +1,40 @@
-import { BrowserWindow, dialog, ipcMain, WebContents, SaveDialogOptions, OpenDialogOptions } from 'electron';
+import { BrowserWindow, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import path from 'path';
-import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow, SelectProcedureWindowOptions, UpdateAppWindowOptions } from './WindowConfigs';
-import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import SerialPort from 'serialport';
+import { TypedEmitter } from 'tiny-typed-emitter';
+import { Logger } from 'winston';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
+import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
+import * as WindowUtils from '../utils/Window';
+import * as windowConfigs from './WindowConfigs';
 
-export class WindowManager {
+interface Events {
+  windowCreated: (id: VisualCalWindow, browserWindow: BrowserWindow) => void;
+  windowShown: (id: VisualCalWindow, browserWindow: BrowserWindow) => void;
+  windowClosed: (id: VisualCalWindow) => void;
+  windowAdded: (id: VisualCalWindow) => void;
+  windowRemoved: (id: VisualCalWindow) => void;
+  allWindowsClosed: () => void;
+}
+
+export class WindowManager extends TypedEmitter<Events> {
 
   private fWindows: Set<BrowserWindow>;
   private fClosingAll: boolean = false;
+  private fLogger: Logger;
 
-  constructor() {
+  constructor(logger: Logger) {
+    super();
+    this.fLogger = logger;
     this.fWindows = new Set<BrowserWindow>();
     ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
       try {
-        const window = BrowserWindow.fromWebContents(event.sender);
-        if (!window) {
+        const browserWindow = BrowserWindow.fromWebContents(event.sender);
+        if (!browserWindow) {
           event.reply(IpcChannels.windows.getMyId.response, -1);
         } else {
-          event.reply(IpcChannels.windows.getMyId.response, window.visualCal.id);
+          event.reply(IpcChannels.windows.getMyId.response, browserWindow.visualCal.id);
         }
       } catch (error) {
         event.reply(IpcChannels.windows.getMyId.error, error);
@@ -36,13 +50,13 @@ export class WindowManager {
       await this.show(windowId);
     });
     ipcMain.on(IpcChannels.windows.showOpenFileDialog.request, (event, opts: OpenDialogOptions) => {
-      const window = BrowserWindow.fromId(event.sender.id);
-      const result = dialog.showOpenDialogSync(window, opts);
+      const browserWindow = BrowserWindow.fromId(event.sender.id);
+      const result = dialog.showOpenDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showOpenFileDialog.response, result);
     });
     ipcMain.on(IpcChannels.windows.showSaveFileDialog.request, (event, opts: SaveDialogOptions) => {
-      const window = BrowserWindow.fromId(event.sender.id);
-      const result = dialog.showSaveDialogSync(window, opts);
+      const browserWindow = BrowserWindow.fromId(event.sender.id);
+      const result = dialog.showSaveDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showSaveFileDialog.response, result);
     });
   }
@@ -55,120 +69,51 @@ export class WindowManager {
   }
 
   get(id: VisualCalWindow) {
-    return Array.from(this.fWindows).find(w => w.visualCal.id === id);
-  }
-
-  get loadingWindow() {
-    const window = this.get(VisualCalWindow.Loading);
-    if (window && !window.isDestroyed()) return window;
+    const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id);
+    if (browserWindow && !browserWindow.isDestroyed()) return browserWindow;
     return undefined;
   }
 
-  get loginWindow() {
-    const window = this.get(VisualCalWindow.Login);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
+  get loadingWindow() { return this.get(VisualCalWindow.Loading); }
+  get loginWindow() { return this.get(VisualCalWindow.Login); }
+  get mainWindow() { return this.get(VisualCalWindow.Main); }
+  get consoleWindow() { return this.get(VisualCalWindow.Console); }
+  get nodeRedEditorWindow() { return this.get(VisualCalWindow.NodeRedEditor); }
+  get createProcedureWindow() { return this.get(VisualCalWindow.CreateProcedure); }
+  get createSessionWindow() { return this.get(VisualCalWindow.CreateSession); }
+  get viewSessionWindow() { return this.get(VisualCalWindow.ViewSession); }
+  get userInputWindow() { return this.get(VisualCalWindow.UserInput); }
+  get createCommIfaceWindow() { return this.get(VisualCalWindow.CreateCommIface); }
+  get interactiveDeviceControlWindow() { return this.get(VisualCalWindow.InteractiveDeviceControl); }
+  get selectProcedureWindow() { return this.get(VisualCalWindow.SelectProcedure); }
+  get updateAppWindow() { return this.get(VisualCalWindow.UpdateApp); }
+
+  private checkWindowExists(id: VisualCalWindow) {
+    const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
+    if (browserWindow) throw new Error(`Duplicate window Id, ${id}`);
   }
 
-  get mainWindow() {
-    const window = this.get(VisualCalWindow.Main);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get consoleWindow() {
-    const window = this.get(VisualCalWindow.Console);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get nodeRedEditorWindow() {
-    const window = this.get(VisualCalWindow.NodeRedEditor);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get createProcedureWindow() {
-    const window = this.get(VisualCalWindow.CreateProcedure);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get createSessionWindow() {
-    const window = this.get(VisualCalWindow.CreateSession);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get viewSessionWindow() {
-    const window = this.get(VisualCalWindow.ViewSession);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get userInputWindow() {
-    const window = this.get(VisualCalWindow.UserInput);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get createCommIfaceWindow() {
-    const window = this.get(VisualCalWindow.CreateCommIface);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get interactiveDeviceControlWindow() {
-    const window = this.get(VisualCalWindow.InteractiveDeviceControl);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  get selectProcedureWindow() {
-    const window = this.get(VisualCalWindow.SelectProcedure);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  private checkWindowExists(options: { id: VisualCalWindow }) {
-    const window = Array.from(this.fWindows).find(w => w.visualCal.id === options.id) !== undefined;
-    if (window) throw new Error(`Duplicate window Id, ${options.id}`);
-  }
-
-  get updateAppWindow() {
-    const window = this.get(VisualCalWindow.UpdateApp);
-    if (window && !window.isDestroyed()) return window;
-    return undefined;
-  }
-
-  add(window: BrowserWindow) {
-    global.visualCal.logger.info('Adding window', { windowId: window.id });
-    if (!window.visualCal) throw new Error(`Window with id (non-VisualCal id) ${window.id} is missing the visualCal property!`);
-    this.checkWindowExists({ id: window.visualCal.id });
-    this.fWindows.add(window);
-    window.once('close', (e) => {
-      if ((e as any).sender instanceof BrowserWindow) {
-        const window = (e as any).sender as BrowserWindow;
-        if (window.id === VisualCalWindow.NodeRedEditor) window.destroy(); // Force destruction of node-red editor, since it can prevent closing when dirty and not deployed
-      }
-    });
-    window.once('closed', () => {
-      global.visualCal.logger.info('Window closed', { windowId: window.visualCal.id });
-      this.remove(window.visualCal.id);
-    });
+  add(browserWindow: BrowserWindow) {
+    this.fLogger.info('Adding window', { windowId: browserWindow.visualCal.id });
+    if (!browserWindow.visualCal || browserWindow.visualCal.id < 0) throw new Error(`Attempting to add a BrowserWindow without a VisualCal.id or an unused BrowserWindow detected with ID, ${browserWindow.visualCal.id}`);
+    this.checkWindowExists(browserWindow.visualCal.id);
+    this.fWindows.add(browserWindow);
+    browserWindow.once('closed', () => this.onWindowClosed(browserWindow.visualCal.id));
+    this.emit('windowAdded', browserWindow.visualCal.id);
   }
 
   remove(id: VisualCalWindow) {
-    global.visualCal.logger.info('Removing window', { windowId: id });
+    this.fLogger.info('Removing window', { windowId: id });
     const existing = this.get(id);
-    if (!this.fClosingAll && !existing) throw new Error(`Window not found, ${id}`);
-    if (existing) this.fWindows.delete(existing);
-    return existing;
+    if (!existing) return;
+    this.fWindows.delete(existing);
+    this.fLogger.info('Window removed', { windowId: id });
+    this.emit('windowRemoved', id);
   }
 
   create(options: CreateWindowOptions) {
-    global.visualCal.logger.info('Creating window', { windowId: options.id });
-    this.checkWindowExists({ id: options.id });
+    this.fLogger.info('Creating window', { windowId: options.id });
+    this.checkWindowExists(options.id);
     const newWindow = new BrowserWindow(options.config);
     newWindow.visualCal = {
       id: options.id
@@ -177,31 +122,30 @@ export class WindowManager {
     return newWindow;
   }
 
-  close(id: VisualCalWindow) {
-    global.visualCal.logger.info('Closing window', { windowId: id });
-    const window = this.get(id);
-    if (!window) return false;
-    try {
-      window.close();
-    } catch (error) {
-      throw error;
-    }
-    return true;
+  private onWindowClosed(id: VisualCalWindow) {
+    this.fLogger.info('Window closed', { windowId: id });
+    this.emit('windowClosed', id);
+    this.remove(id);
   }
 
+  close(id: VisualCalWindow) {
+    this.fLogger.info('Closing window', { windowId: id });
+    const browserWindow = this.get(id);
+    if (!this.fClosingAll && !browserWindow) throw new Error(`Window with ID, ${id} is not open`);
+    if (browserWindow) browserWindow.close();
+  };
+
   changeVisiblity(id: VisualCalWindow, show: boolean = true) {
-    global.visualCal.logger.info('Changing window visiblity', { windowId: id, show: show });
-    const window = this.get(id);
-    if (!window) throw new Error(`Window not found, ${id}`);
-    if (show) window.show();
-    else window.hide();
+    this.fLogger.info('Changing window visiblity', { windowId: id, show: show });
+    const browserWindow = this.get(id);
+    if (!browserWindow) throw new Error(`Window not found, ${id}`);
+    if (show) browserWindow.show();
+    else browserWindow.hide();
   }
 
   closeAll() {
     this.fClosingAll = true;
-    this.fWindows.forEach(w => {
-      w.close()
-    });
+    this.fWindows.forEach(browserWindow => this.close(browserWindow.visualCal.id));
     this.fWindows.clear();
   }
 
@@ -250,72 +194,72 @@ export class WindowManager {
 
   // Loading window
   async ShowLoading(closedCallback: () => void, duration: number = 5000) {
-    let window = this.loadingWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.loadingWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
-    window = global.visualCal.windowManager.create(LoadingWindowConfig());
-    if (!window) throw new Error('Window must be defined');
-    window.webContents.once('did-finish-load', () => {
-      if (window) window.show();
+    browserWindow = global.visualCal.windowManager.create(windowConfigs.LoadingWindowConfig());
+    if (!browserWindow) throw new Error('Window must be defined');
+    browserWindow.webContents.once('did-finish-load', () => {
+      if (browserWindow) browserWindow.show();
       setTimeout(() => {
         try {
           closedCallback();
-          if (window) window.close();
+          if (browserWindow) browserWindow.close();
         } catch (error) {
           console.error(error);
         }
       }, duration);
     });
-    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'loading.html'));
-    return window;
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'loading.html'));
+    return browserWindow;
   }
 
-    // Login window
-    async ShowLogin() {
-      let window = this.loginWindow;
-      if (window) {
-        window.show();
-        return window;
-      }
-      window = this.create(LoginWindowConfig());
-      WindowUtils.centerWindowOnNearestCurorScreen(window, false);
-      await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'login.html'));
-      return window;
+  // Login window
+  async ShowLogin() {
+    let browserWindow = this.loginWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
+    browserWindow = this.create(windowConfigs.LoginWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow, false);
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'login.html'));
+    return browserWindow;
+  }
 
   // Main window
   async ShowMain() {
-    let window = this.mainWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.mainWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
-    window = global.visualCal.windowManager.create(MainWindowConfig());
-    if (!window) throw new Error('Window must be defined');
-    WindowUtils.centerWindowOnNearestCurorScreen(window, true);
-    window.maximize();
-    window.once('close', (e) => {
+    browserWindow = global.visualCal.windowManager.create(windowConfigs.MainWindowConfig());
+    if (!browserWindow) throw new Error('Window must be defined');
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow, true);
+    browserWindow.maximize();
+    browserWindow.once('close', (e) => {
       global.visualCal.windowManager.closeAll();
     });
-    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
-    return window;
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'index.html'));
+    return browserWindow;
   }
-  
+
   // Console log window
   async ShowConsole() {
-    let window = this.consoleWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.consoleWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
-    window = global.visualCal.windowManager.create(ConsoleWindowConfig());
-    if (!window) throw new Error('Window must be defined');
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
-    window.webContents.on('did-finish-load', () => {
+    browserWindow = global.visualCal.windowManager.create(windowConfigs.ConsoleWindowConfig());
+    if (!browserWindow) throw new Error('Window must be defined');
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow, false);
+    browserWindow.webContents.on('did-finish-load', () => {
       try {
-        global.visualCal.logger.query({ fields: ['message'] }, (err, results) => {
+        this.fLogger.query({ fields: ['message'] }, (err, results) => {
           if (this.consoleWindow && !err && results && Array.isArray(results)) this.consoleWindow.webContents.send('results', [results]);
           else if (err) throw err;
         });
@@ -323,150 +267,150 @@ export class WindowManager {
         dialog.showErrorBox('Error querying log', error.message);
       }
     });
-    await window.loadFile(path.join(global.visualCal.dirs.html.windows, 'console.html'));
-    return window;
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'console.html'));
+    return browserWindow;
   }
 
   // Node-red editor window
   async ShowNodeRedEditor() {
-    let window = this.nodeRedEditorWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.nodeRedEditorWindow;
+    if (browserWindow) {6
+      browserWindow.show();
+      return browserWindow;
     }
-    window = this.create(NodeRedEditorWindowConfig());
-    WindowUtils.centerWindowOnNearestCurorScreen(window);
-    await window.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/red`);
-    return window;
+    browserWindow = this.create(windowConfigs.NodeRedEditorWindowConfig());
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow);
+    await browserWindow.loadURL(`http://localhost:${global.visualCal.config.httpServer.port}/red`);
+    return browserWindow;
   }
 
   // Create procedure window 
   async ShowCreateProcedureWindow() {
-    let window = this.createProcedureWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.createProcedureWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    window = this.create(CreateProcedureWindowConfig(this.mainWindow));
-    await window.loadFile(global.visualCal.dirs.html.procedure.create);
-    return window;
+    browserWindow = this.create(windowConfigs.CreateProcedureWindowConfig(this.mainWindow));
+    await browserWindow.loadFile(global.visualCal.dirs.html.procedure.create);
+    return browserWindow;
   }
 
   // Create session window 
   async ShowCreateSessionWindow() {
-    let window = this.createSessionWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.createSessionWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    window = this.create(CreateSessionWindowConfig(this.mainWindow));
-    await window.loadFile(global.visualCal.dirs.html.session.create);
-    return window;
+    browserWindow = this.create(windowConfigs.CreateSessionWindowConfig(this.mainWindow));
+    await browserWindow.loadFile(global.visualCal.dirs.html.session.create);
+    return browserWindow;
   }
 
   // View session window
   async ShowViewSessionWindow(session: Session) {
-    let window = this.viewSessionWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.viewSessionWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!global.visualCal.dirs.html.session.view) throw new Error('Missing window html file');
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    window = this.create(ViewSessionWindowConfig(this.mainWindow));
-    const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] } });
+    browserWindow = this.create(windowConfigs.ViewSessionWindowConfig(this.mainWindow));
+    const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] }; });
     sections.forEach(s => {
-      s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name } });
+      s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name }; });
     });
-    window.maximize();
-    await window.loadFile(global.visualCal.dirs.html.session.view);
+    browserWindow.maximize();
+    await browserWindow.loadFile(global.visualCal.dirs.html.session.view);
     const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       session: session,
       sections: sections,
       deviceConfigurationNodeInfosForCurrentFlow: deviceConfigurationNodeInfosForCurrentFlow
     };
-    window.webContents.send(IpcChannels.sessions.viewInfo, viewInfo);
-    return window;
+    browserWindow.webContents.send(IpcChannels.sessions.viewInfo, viewInfo);
+    return browserWindow;
   }
 
   // User input window 
   async ShowUserInputWindow(request: UserInputRequest) {
-    let window = this.userInputWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.userInputWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!this.viewSessionWindow) throw new Error('View session window must be defined');
-    window = this.create(UserInputWindowConfig(this.viewSessionWindow));
-    await window.loadFile(global.visualCal.dirs.html.userAction);
-    window.webContents.send('user-input-request', request);
-    return window;
+    browserWindow = this.create(windowConfigs.UserInputWindowConfig(this.viewSessionWindow));
+    await browserWindow.loadFile(global.visualCal.dirs.html.userAction);
+    browserWindow.webContents.send('user-input-request', request);
+    return browserWindow;
   }
 
   // Create communication interface window
   async showCreateCommIfaceWindow(sessionName: string) {
-    let window = this.userInputWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.userInputWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    window = this.create(CreateCommIfaceWindow(this.mainWindow));
-    await window.loadFile(global.visualCal.dirs.html.createCommIface);
+    browserWindow = this.create(windowConfigs.CreateCommIfaceWindow(this.mainWindow));
+    await browserWindow.loadFile(global.visualCal.dirs.html.createCommIface);
     const serialPortNames = (await SerialPort.list()).map(sp => sp.path);
     const data: CreateCommunicationInterfaceInitialData = {
       sessionName: sessionName,
       communicationInterfaceTypes: CommunicationInterfaceTypes,
       serialPortNames: serialPortNames
-    }
-    window.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
-    return window;
+    };
+    browserWindow.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
+    return browserWindow;
   }
 
   // Create interactive device control window
   async showInteractiveDeviceControlWindow() {
-    let window = this.interactiveDeviceControlWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.interactiveDeviceControlWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    window = this.create(InteractiveDeviceControlWindow(this.mainWindow));
-    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'interactive-device-control.html'));
-    return window;
+    browserWindow = this.create(windowConfigs.InteractiveDeviceControlWindow(this.mainWindow));
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'interactive-device-control.html'));
+    return browserWindow;
   }
 
   async showSelectProcedureWindow() {
-    let window = this.interactiveDeviceControlWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.interactiveDeviceControlWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
     global.visualCal.procedureManager.once('activeSet', async () => {
-      if (window) {
+      if (browserWindow) {
         await this.ShowMain();
-        window.close();
+        browserWindow.close();
       }
     });
-    window = this.create(SelectProcedureWindowOptions());
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
-    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'procedure-select.html'));
-    return window;
+    browserWindow = this.create(windowConfigs.SelectProcedureWindowOptions());
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow, false);
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'procedure-select.html'));
+    return browserWindow;
   }
 
   async showUpdateAppWindow() {
-    let window = this.updateAppWindow;
-    if (window) {
-      window.show();
-      return window;
+    let browserWindow = this.updateAppWindow;
+    if (browserWindow) {
+      browserWindow.show();
+      return browserWindow;
     }
-    window = this.create(UpdateAppWindowOptions());
-    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
-    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'update-app.html'));
-    return window;
+    browserWindow = this.create(windowConfigs.UpdateAppWindowOptions());
+    WindowUtils.centerWindowOnNearestCurorScreen(browserWindow, false);
+    await browserWindow.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'update-app.html'));
+    return browserWindow;
   }
 
 }

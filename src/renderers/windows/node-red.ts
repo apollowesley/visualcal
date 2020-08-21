@@ -17,16 +17,17 @@ interface ProcedureRuntimeProperties extends NodeProperties {
 
 declare const RED: NodeRed;
 
-window.onload = () => {
-  const opts: OpenDialogOptions = {
-    title: 'Testing',
-    message: 'Select a file'
-  }
-  ipcRenderer.once(IpcChannels.windows.showOpenFileDialog.response, (_, response: any) => {
-    console.info(response);
-  });
-  window.visualCal.electron.showOpenFileDialog(opts);
-}
+// TODO: Use the following as an example for opening a file on the user's computer.  Later the file can be saved using windows.showSaveFileDialog, or handled in main process
+// window.onload = () => {
+//   const opts: OpenDialogOptions = {
+//     title: 'Testing',
+//     message: 'Select a file'
+//   }
+//   ipcRenderer.once(IpcChannels.windows.showOpenFileDialog.response, (_, response: any) => {
+//     console.info(response);
+//   });
+//   window.visualCal.electron.showOpenFileDialog(opts);
+// }
 
 // Prevent node-red from stopping the BrowserWindow from being closed.
 // TODO: Check if moving this to the main process is a better solution.

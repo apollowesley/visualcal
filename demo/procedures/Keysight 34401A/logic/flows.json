@@ -180,7 +180,7 @@
 	},
 	{
 		"id": "a1ef04c9.b89978",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "7a48f533.0c09ec",
 		"name": "",
 		"description": "",
@@ -1063,7 +1063,7 @@
 	},
 	{
 		"id": "d083c53c.dc60d8",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "8bebab7c.ba2588",
 		"name": "DCV Setup Instruction",
 		"description": "",
@@ -1603,7 +1603,7 @@
 	},
 	{
 		"id": "bfd5e13e.4c253",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "8bebab7c.ba2588",
 		"name": "DCV Finish",
 		"description": "",
@@ -1637,7 +1637,7 @@
 	},
 	{
 		"id": "fd4f3af5.2b41b8",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "baac8dc3.51f7",
 		"name": "ACV Setup Instruction",
 		"description": "",
@@ -2542,7 +2542,7 @@
 	},
 	{
 		"id": "a2d129f6.509568",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "baac8dc3.51f7",
 		"name": "ACV Finish",
 		"description": "",
@@ -2576,7 +2576,7 @@
 	},
 	{
 		"id": "1c0e40d6.fcb1ff",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "bd9b9c09.3dbbe",
 		"name": "Current Setup",
 		"description": "",
@@ -3034,7 +3034,7 @@
 	},
 	{
 		"id": "c44ad293.23b34",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "bd9b9c09.3dbbe",
 		"name": "ACI Finish",
 		"description": "",
@@ -3077,7 +3077,7 @@
 	},
 	{
 		"id": "409ded8c.c531e4",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "6ff6b82a.c7ff68",
 		"name": "Current Setup",
 		"description": "",
@@ -3389,7 +3389,7 @@
 	},
 	{
 		"id": "bdc9cba9.058a38",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "6ff6b82a.c7ff68",
 		"name": "DCI FINISH",
 		"description": "",
@@ -3432,7 +3432,7 @@
 	},
 	{
 		"id": "32bc540d.bb394c",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "3f0f9d4c.22b042",
 		"name": "4 Wire Connection",
 		"description": "",
@@ -3963,7 +3963,7 @@
 	},
 	{
 		"id": "5d08e721.2b7048",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "3f0f9d4c.22b042",
 		"name": "4 Wire Finish",
 		"description": "",
@@ -4517,7 +4517,7 @@
 	},
 	{
 		"id": "959c8603.98d038",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "60b14668.8b76d8",
 		"name": "2 Wire Finish",
 		"description": "",
@@ -4546,7 +4546,7 @@
 	},
 	{
 		"id": "7090267f.420c58",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "60b14668.8b76d8",
 		"name": "2 Wire Connection",
 		"description": "",
@@ -4632,7 +4632,7 @@
 	},
 	{
 		"id": "ebe6c78a.e39e58",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "22e76851.562248",
 		"name": "Frequency Setup",
 		"description": "",
@@ -4848,7 +4848,7 @@
 	},
 	{
 		"id": "229b530d.9973cc",
-		"type": "indysoft-user-instruction",
+		"type": "indysoft-user-input",
 		"z": "22e76851.562248",
 		"name": "Frequency completed",
 		"description": "",

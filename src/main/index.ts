@@ -13,10 +13,11 @@ import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronIpcLog from 'electron-ipc-log';
 import { init as initUdpDiscovery } from './servers/udp-discovery';
-import autoUpdate from './auto-update';
+import { AutoUpdater } from './auto-update';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
+const autoUpdater = new AutoUpdater();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
@@ -46,15 +47,14 @@ function copyDemo(userHomeDataDirPath: string) {
 }
 
 async function load() {
+  initMainMenu();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   copyDemo(userHomeDataDirPath);
-  await autoUpdate();
   initUdpDiscovery();
-  // initMainMenu();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
@@ -73,8 +73,9 @@ async function load() {
   });
 }
 
-function testingOnly() {
+async function testingOnly() {
   // TODO: TESTING ONLY!!!
+  return Promise.resolve();
 }
 
 app.on('ready', async () => {
@@ -82,7 +83,6 @@ app.on('ready', async () => {
     if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
   });
   try {
-    initMainMenu();
     await load();
     await global.visualCal.windowManager.ShowLoading(async () => {
       await global.visualCal.windowManager.ShowLogin();
@@ -93,7 +93,12 @@ app.on('ready', async () => {
           nameLast: 'App'
         };
       });
-      if (isDev()) testingOnly();
+      if (isDev()) {
+        await testingOnly();
+      } else {
+        await autoUpdater.checkForUpdates();
+      }
+      
     });
   } catch (error) {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);
@@ -104,4 +109,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', async () => {
+  autoUpdater.abort();
+  await global.visualCal.nodeRed.app.stop();
+  httpServer.close();
 });

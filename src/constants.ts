@@ -92,6 +92,14 @@ export const IpcChannels = {
     warn: 'log-warn',
     error: 'log-error'
   },
+  autoUpdate: {
+    error: 'auto-update-error',
+    startedChecking: 'auto-update-started-checking',
+    updateAvailable: 'auto-update-available',
+    updateNotAvailable: 'auto-update-not-available',
+    downloadProgressChanged: 'auto-update-download-progress-changed',
+    updateDownloaded: 'auto-update-downloaded'
+  },
   communicationInterface: {
     connected: 'communication-interface-connected',
     connecting: 'communication-interface-connecting',

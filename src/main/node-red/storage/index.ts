@@ -116,7 +116,7 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
       const filePath = getProcedureSettingsFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) {
-        console.error(`${filePath} does not exist`);
+        console.warn(`${filePath} does not exist`);
         return {};
       }
       let contentString = (await fsPromises.readFile(filePath)).toString();

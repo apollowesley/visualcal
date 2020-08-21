@@ -18,14 +18,14 @@ import { CommunicationInterfaceManager } from './managers/CommunicationInterface
 import { ApplicationManager } from './managers/ApplicationManager';
 
 export let visualCal: VisualCalGlobalAugment;
-const windowManager = new WindowManager();
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
   const localDirs = dirs();
   const localFiles = files();
+  const logger = createLogger();
   visualCal = {
-    logger: createLogger(),
+    logger: logger,
     isMac: process.platform === 'darwin',
     isDev: isDev(),
     nodeRed: {
@@ -45,7 +45,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
       error: (msg: any) => global.visualCal.logger.error(msg)
     },
     applicationManager: new ApplicationManager(),
-    windowManager: windowManager,
+    windowManager: new WindowManager(logger),
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(localDirs.userHomeData.sessions),
     nodeRedFlowManager: new NodeRedFlowManager(),
