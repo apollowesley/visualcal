@@ -55,6 +55,8 @@ export default async () => {
   autoUpdater.logger = log;
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.allowDowngrade = false;
+  autoUpdater.allowPrerelease = true;
   autoUpdater.on('error', onError);
   autoUpdater.on('checking-for-update', onCheckingForUpdate);
   autoUpdater.on('update-available', onUpdateAvailable);
