@@ -184,3 +184,18 @@ export const SelectProcedureWindowOptions = (): CreateWindowOptions => {
     }
   }
 }
+
+export const UpdateAppWindowOptions = (): CreateWindowOptions => {
+  return {
+    id: VisualCalWindow.UpdateApp,
+    config: {
+      title: 'VisualCal - Auto-update',
+      fullscreenable: false,
+      width: 1000,
+      height: 750,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+  }
+}

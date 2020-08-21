@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog, ipcMain, WebContents, SaveDialogOptions, OpenDialogOptions } from 'electron';
 import path from 'path';
 import * as WindowUtils from '../utils/Window';
-import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow, SelectProcedureWindowOptions } from './WindowConfigs';
+import { ConsoleWindowConfig, NodeRedEditorWindowConfig, LoginWindowConfig, MainWindowConfig, LoadingWindowConfig, CreateProcedureWindowConfig, CreateSessionWindowConfig, ViewSessionWindowConfig, UserInputWindowConfig, CreateCommIfaceWindow, InteractiveDeviceControlWindow, SelectProcedureWindowOptions, UpdateAppWindowOptions } from './WindowConfigs';
 import { IpcChannels, CommunicationInterfaceTypes } from '../../constants';
 import SerialPort from 'serialport';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
@@ -17,8 +17,11 @@ export class WindowManager {
     ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
       try {
         const window = BrowserWindow.fromWebContents(event.sender);
-        if (!window) return;
-        event.reply(IpcChannels.windows.getMyId.response, window.visualCal.id);
+        if (!window) {
+          event.reply(IpcChannels.windows.getMyId.response, -1);
+        } else {
+          event.reply(IpcChannels.windows.getMyId.response, window.visualCal.id);
+        }
       } catch (error) {
         event.reply(IpcChannels.windows.getMyId.error, error);
       }
@@ -132,6 +135,12 @@ export class WindowManager {
     if (window) throw new Error(`Duplicate window Id, ${options.id}`);
   }
 
+  get updateAppWindow() {
+    const window = this.get(VisualCalWindow.UpdateApp);
+    if (window && !window.isDestroyed()) return window;
+    return undefined;
+  }
+
   add(window: BrowserWindow) {
     global.visualCal.logger.info('Adding window', { windowId: window.id });
     if (!window.visualCal) throw new Error(`Window with id (non-VisualCal id) ${window.id} is missing the visualCal property!`);
@@ -225,6 +234,8 @@ export class WindowManager {
       case VisualCalWindow.SelectProcedure:
         break;
       case VisualCalWindow.InteractiveDeviceControl:
+        break;
+      case VisualCalWindow.UpdateApp:
         break;
       default:
         throw new Error(`Invalid window Id, ${windowId}`);
@@ -443,6 +454,18 @@ export class WindowManager {
     window = this.create(SelectProcedureWindowOptions());
     WindowUtils.centerWindowOnNearestCurorScreen(window, false);
     await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'procedure-select.html'));
+    return window;
+  }
+
+  async showUpdateAppWindow() {
+    let window = this.updateAppWindow;
+    if (window) {
+      window.show();
+      return window;
+    }
+    window = this.create(UpdateAppWindowOptions());
+    WindowUtils.centerWindowOnNearestCurorScreen(window, false);
+    await window.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'update-app.html'));
     return window;
   }
 

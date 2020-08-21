@@ -41,6 +41,9 @@ if (window.require) {
             case 12: // select procedure
                 require('../../dist/renderers/windows/procedure/select.js');
                 break;
+            case 13: // update app
+                require('../../dist/renderers/windows/update-app.js');
+                break;
         }
     });
     window.visualCal.electron.getVisualCalWindowId();
