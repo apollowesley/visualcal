@@ -5,7 +5,7 @@ import '../window';
 
 const yesButton = document.querySelector('#vc-yes-button') as HTMLButtonElement;
 const noButton = document.querySelector('#vc-no-button') as HTMLButtonElement;
-const logList = document.querySelector('#vc-no-button') as HTMLUListElement;
+const logList = document.querySelector('#vc-log-list') as HTMLUListElement;
 
 const log = (comment: any) => {
   const li = document.createElement('li');

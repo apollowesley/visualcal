@@ -27,7 +27,7 @@ steps:
   displayName: 'Build release and publish to GitHub'
   env:
     GH_TOKEN: $(GitHubToken)
-    DEBUG: electron-builder
+#    DEBUG: electron-builder
 
 - task: PublishCodeCoverageResults@1
   inputs: 
