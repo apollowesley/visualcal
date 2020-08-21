@@ -93,12 +93,12 @@ export class AutoUpdater extends TypedEmitter<Events> {
     autoUpdater.autoInstallOnAppQuit = true;
     autoUpdater.allowDowngrade = false;
     autoUpdater.allowPrerelease = true;
-    autoUpdater.on('error', this.onUpdateError);
-    autoUpdater.on('checking-for-update', this.onCheckingForUpdateStarted);
-    autoUpdater.on('update-available', this.onUpdateAvailable);
-    autoUpdater.on('update-not-available', this.onUpdateNotAvailable);
-    autoUpdater.on('download-progress', this.onDownloadProgressChanged);
-    autoUpdater.on('update-downloaded', this.onUpdateDownloaded);
+    autoUpdater.on('error', (error: Error) => this.onUpdateError(error));
+    autoUpdater.on('checking-for-update', () => this.onCheckingForUpdateStarted());
+    autoUpdater.on('update-available', (info: UpdateInfo) => this.onUpdateAvailable(info));
+    autoUpdater.on('update-not-available', (info: UpdateInfo) => this.onUpdateNotAvailable(info));
+    autoUpdater.on('download-progress', (progress: ProgressInfo) => this.onDownloadProgressChanged(progress));
+    autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
     await autoUpdater.checkForUpdates();
   }
 
