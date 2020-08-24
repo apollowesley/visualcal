@@ -196,11 +196,8 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   // Loading window
-  async ShowLoading(timeoutDone: () => void, duration: number = 5000) {
-    const onWebContentsDidFinishLoading = () => setTimeout(() => {
-      timeoutDone();
-    }, duration);
-    const w = await this.createWindow(VisualCalWindow.Loading, undefined, false, undefined, undefined, onWebContentsDidFinishLoading);
+  async ShowLoading() {
+    const w = await this.createWindow(VisualCalWindow.Loading);
     return w;
   }
 

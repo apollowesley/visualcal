@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
@@ -12,7 +12,7 @@ import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
 import electronIpcLog from 'electron-ipc-log';
-import { init as initUdpDiscovery } from './servers/udp-discovery';
+// import { init as initUdpDiscovery } from './servers/udp-discovery';
 import { AutoUpdater } from './auto-update';
 
 const nodeRedApp = express();
@@ -46,25 +46,41 @@ function copyDemo(userHomeDataDirPath: string) {
   fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
 }
 
+const sendToLoadingWindow = (text: string) => {
+  if (!global.visualCal || !global.visualCal.windowManager) return;
+  const loadingWindow = global.visualCal.windowManager.loadingWindow;
+  if (!loadingWindow) return;
+  loadingWindow.webContents.send('update-loading-text', text);
+}
+
 async function load() {
+  sendToLoadingWindow('Initializing main menu ...');
   initMainMenu();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
+  sendToLoadingWindow('Ensuring Logic Server examples folder exists ...');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
+  sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
+  await global.visualCal.windowManager.ShowLoading();
+  sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
-  initUdpDiscovery();
+  // initUdpDiscovery();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
+  sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
+  sendToLoadingWindow('Initializing Logic Server ...');
   global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
   nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
   nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
-  nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js      
+  nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
+  sendToLoadingWindow('Starting Web Server ...');
   httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
     try {
+      sendToLoadingWindow('Starting Logic Server ...');
       await global.visualCal.nodeRed.app.start();
       await ProcedureManager.loadActive();
     } catch (error) {
@@ -84,21 +100,19 @@ app.on('ready', async () => {
   });
   try {
     await load();
-    await global.visualCal.windowManager.ShowLoading(async () => {
-      const loginWindow = await global.visualCal.windowManager.ShowLogin();
-      global.visualCal.windowManager.close(VisualCalWindow.Loading);
-      loginWindow.once('closed', async () => {
-        global.visualCal.userManager.active = {
-          email: 'test@test.com',
-          nameFirst: 'User',
-          nameLast: 'App'
-        };
-        await autoUpdater.checkForUpdates();
-      });
-      if (isDev()) {
-        await testingOnly();
-      }
+    const loginWindow = await global.visualCal.windowManager.ShowLogin();
+    global.visualCal.windowManager.close(VisualCalWindow.Loading);
+    loginWindow.once('closed', async () => {
+      global.visualCal.userManager.active = {
+        email: 'test@test.com',
+        nameFirst: 'User',
+        nameLast: 'App'
+      };
+      await autoUpdater.checkForUpdates();
     });
+    if (isDev()) {
+      await testingOnly();
+    }
   } catch (error) {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);
   }

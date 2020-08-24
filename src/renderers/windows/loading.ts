@@ -1,4 +1,11 @@
 import * as d3 from 'd3';
+import { ipcRenderer } from 'electron';
+
+const loadingText = document.getElementById('#loading-text') as HTMLDivElement;
+
+ipcRenderer.on('update-loading-text', (_, text: string) => {
+  loadingText.innerText = text;
+});
 
 const animate = () => {
 
