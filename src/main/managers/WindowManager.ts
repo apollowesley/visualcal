@@ -198,8 +198,7 @@ export class WindowManager extends TypedEmitter<Events> {
   // Loading window
   async ShowLoading(closedCallback: () => void, duration: number = 5000) {
     const onShow = (bw: BrowserWindow) => setTimeout(() => bw.close(), duration);
-    const onClose = () => closedCallback();
-    const w = await this.createWindow(VisualCalWindow.Loading, undefined, false, onShow, onClose);
+    const w = await this.createWindow(VisualCalWindow.Loading, undefined, false, onShow, closedCallback);
     return w;
   }
 

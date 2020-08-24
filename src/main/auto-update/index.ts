@@ -29,10 +29,12 @@ export class AutoUpdater extends TypedEmitter<Events> {
   private get updateWindow() { return this.windowManager.updateAppWindow; }
 
   private onError(error: Error) {
+    console.error(error);
     this.emit('error', error);
   }
 
   private onUpdateWindowNotShowingError() {
+    console.error('Update window is not showing');
     this.onError(new Error('Update window is not showing'));
   }
 
@@ -47,6 +49,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onUpdateError(error: Error) {
+    console.info('onUpdateError');
     if (this.fAborted) return;
     this.emit('updateError', error);
     this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
@@ -54,12 +57,14 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onCheckingForUpdateStarted() {
+    console.info('onCheckingForUpdateStarted');
     if (this.fAborted) return;
     this.emit('checkingForUpdatesStarted');
     this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
   }
 
   private async onUpdateAvailable(info: UpdateInfo) {
+    console.info('onUpdateAvailable');
     if (this.fAborted) return;
     this.emit('updateAvailable', info);
     await this.windowManager.showUpdateAppWindow();
@@ -76,18 +81,21 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {
+    console.info('onUpdateNotAvailable');
     if (this.fAborted) return;
     this.emit('updateNotAvailable', info);
     this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
+    console.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     this.emit('downloadProgressChanged', progress);
     this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
+    console.info('onUpdateDownloaded');
     if (this.fAborted) return;
     this.emit('updateDownloaded', info);
     this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
@@ -112,7 +120,8 @@ export class AutoUpdater extends TypedEmitter<Events> {
       noop(); // Do nothing, for now
       return false;
     } else {
-      await autoUpdater.checkForUpdatesAndNotify();
+      console.info('Checking for updates');
+      await autoUpdater.checkForUpdates();
       return true;
     }
   }

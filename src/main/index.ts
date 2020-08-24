@@ -97,7 +97,6 @@ app.on('ready', async () => {
       if (isDev()) {
         await testingOnly();
       }
-      
     });
   } catch (error) {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);
