@@ -85,15 +85,15 @@ app.on('ready', async () => {
   try {
     await load();
     await global.visualCal.windowManager.ShowLoading(async () => {
-      await global.visualCal.windowManager.ShowLogin();
-      if (global.visualCal.windowManager.loginWindow) global.visualCal.windowManager.loginWindow.once('maximize', () => {
+      const loginWindow = await global.visualCal.windowManager.ShowLogin();
+      loginWindow.once('closed', async () => {
         global.visualCal.userManager.active = {
           email: 'test@test.com',
           nameFirst: 'User',
           nameLast: 'App'
         };
+        await autoUpdater.checkForUpdates();
       });
-      await autoUpdater.checkForUpdates();
       if (isDev()) {
         await testingOnly();
       }

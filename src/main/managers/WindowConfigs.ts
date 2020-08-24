@@ -14,6 +14,7 @@ interface BrowserWindowOptions {
   model?: boolean;
   frame?: boolean;
   fullscreenable?: boolean;
+  resizable?: boolean;
 }
 
 const createWindowOptions = (id: VisualCalWindow, htmlPath: string, pathType: HtmlPathType, browserWindowOptions: BrowserWindowOptions = {}) => {
@@ -23,13 +24,17 @@ const createWindowOptions = (id: VisualCalWindow, htmlPath: string, pathType: Ht
     htmlPathType: pathType,
     browserWindow: {
       title: browserWindowOptions.subTitle ? `VisualCal - ${browserWindowOptions.subTitle}` : 'VisualCal',
-      frame: false,
+      frame: browserWindowOptions.frame,
       transparent: false,
-      resizable: false,
+      resizable: browserWindowOptions.resizable,
+      fullscreenable: browserWindowOptions.fullscreenable,
+      autoHideMenuBar: browserWindowOptions.autoHideMenuBar,
+      modal: browserWindowOptions.model,
+      parent: browserWindowOptions.parent,
       height: browserWindowOptions.height,
       width: browserWindowOptions.width,
       webPreferences: {
-        nodeIntegration: browserWindowOptions.nodeIntegration || true,
+        nodeIntegration: browserWindowOptions.nodeIntegration === false ? false : true,
         preload: browserWindowOptions.preload
       }
     }
@@ -37,14 +42,14 @@ const createWindowOptions = (id: VisualCalWindow, htmlPath: string, pathType: Ht
   return config;
 }
 
-const mainWindow = () => createWindowOptions(VisualCalWindow.Main, 'index.html', 'bootstrap');
+const mainWindow = () => createWindowOptions(VisualCalWindow.Main, 'index.html', 'bootstrap', { autoHideMenuBar: false, frame: true, fullscreenable: true, model: false, resizable: true });
 const loadingWindow = () => createWindowOptions(VisualCalWindow.Loading, 'loading.html', 'public', { height: 200, width: 400 });
 const loginWindow = () => createWindowOptions(VisualCalWindow.Login, 'login.html', 'bootstrap', { subTitle: 'Login' });
 const consoleWindow = () => createWindowOptions(VisualCalWindow.Console, 'loading.html', 'public', { height: 600, width: 800, autoHideMenuBar: true, subTitle: 'Log' });
-const nodeRedEditorWindow = () => createWindowOptions(VisualCalWindow.NodeRedEditor, `http://localhost:${global.visualCal.config.httpServer.port}/red`, 'url', { subTitle: 'Logic Editor', nodeIntegration: false, preload: path.join(global.visualCal.dirs.renderers.windows, 'node-red.js') });
+const nodeRedEditorWindow = () => createWindowOptions(VisualCalWindow.NodeRedEditor, `http://localhost:${global.visualCal.config.httpServer.port}/red`, 'url', { resizable: true, fullscreenable: true, frame: true, model: false, subTitle: 'Logic Editor', nodeIntegration: false, preload: path.join(global.visualCal.dirs.renderers.windows, 'node-red.js') });
 const createProcedureWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateProcedure, 'procedure-create.html', 'bootstrap', { parent: parent, model: true, subTitle: 'Create Procedure' });
 const createSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateSession, 'session-create.html', 'bootstrap', { parent: parent, model: true, subTitle: 'Create Session' });
-const viewSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.ViewSession, 'session-view.html', 'bootstrap', { parent: parent, model: false, subTitle: 'Session' });
+const viewSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.ViewSession, 'session-view.html', 'bootstrap', { parent: parent, model: false, resizable: true, fullscreenable: true, frame: true, subTitle: 'Session' });
 const userInputWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.UserInput, 'user-action.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'User Input' });
 const createCommIfaceWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateCommInterface, 'create-comm-iface.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'Add Communication Interface to Session' });
 const interactiveDeviceControlWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.InteractiveDeviceControl, 'interactive-device-control.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'Device Control' });

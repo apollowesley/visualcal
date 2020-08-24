@@ -110,8 +110,10 @@ export class AutoUpdater extends TypedEmitter<Events> {
     autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
     if (isDev()) {
       noop(); // Do nothing, for now
+      return false;
     } else {
       await autoUpdater.checkForUpdatesAndNotify();
+      return true;
     }
   }
 

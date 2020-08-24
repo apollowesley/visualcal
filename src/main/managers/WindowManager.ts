@@ -167,7 +167,7 @@ export class WindowManager extends TypedEmitter<Events> {
     return newWindow;
   }
 
-  async createWindow(id: VisualCalWindow, parent?: BrowserWindow, maximize: boolean = false, onShow?: (bw: BrowserWindow) => void, onClosed?: () => void) {
+  async createWindow(id: VisualCalWindow, parent?: BrowserWindow, maximize: boolean = false, onShow?: (bw: BrowserWindow) => void, onClosed?: () => void, onWebContentsDidFinishLoading?: (bw: BrowserWindow) => void) {
     let w = this.get(id);
     if (w) {
       w.show();
@@ -178,6 +178,10 @@ export class WindowManager extends TypedEmitter<Events> {
     w.webContents.once('did-start-loading', () => {
       if (!w) return;
       WindowUtils.centerWindowOnNearestCurorScreen(w, maximize);
+    });
+    w.webContents.once('did-finish-load', () => {
+      if (!w) return;
+      if (onWebContentsDidFinishLoading) onWebContentsDidFinishLoading(w);
     });
     w.once('show', () => {
       if (!w) return;
@@ -231,7 +235,7 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // Node-red editor window
   async ShowNodeRedEditor() {
-    const w = await this.createWindow(VisualCalWindow.NodeRedEditor);
+    const w = await this.createWindow(VisualCalWindow.NodeRedEditor, undefined, true);
     return w;
   }
 
@@ -258,24 +262,22 @@ export class WindowManager extends TypedEmitter<Events> {
   // User input window 
   async ShowUserInputWindow(request: UserInputRequest) {
     if (!this.viewSessionWindow) throw new Error('Main window must be defined');
-    const w = await this.createWindow(VisualCalWindow.UserInput, this.viewSessionWindow);
-    w.on('show', () => w.webContents.send(IpcChannels.user.input.request, request));
-    w.show();
+    const onWebContentsDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.user.input.request, request);
+    const w = await this.createWindow(VisualCalWindow.UserInput, this.viewSessionWindow, false, undefined, undefined, onWebContentsDidFinishLoading);
     return w;
   }
 
   // Create communication interface window
   async showCreateCommIfaceWindow(sessionName: string) {
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    const w = await this.createWindow(VisualCalWindow.CreateCommInterface, this.mainWindow);
+    const onShow = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
+    const w = await this.createWindow(VisualCalWindow.CreateCommInterface, this.mainWindow, false, onShow);
     const serialPortNames = (await SerialPort.list()).map(sp => sp.path);
     const data: CreateCommunicationInterfaceInitialData = {
       sessionName: sessionName,
       communicationInterfaceTypes: CommunicationInterfaceTypes,
       serialPortNames: serialPortNames
     };
-    w.on('show', () => w.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data));
-    w.show();
     return w;
   }
 
@@ -283,7 +285,6 @@ export class WindowManager extends TypedEmitter<Events> {
   async showInteractiveDeviceControlWindow() {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     const w = await this.createWindow(VisualCalWindow.InteractiveDeviceControl, this.mainWindow);
-    w.show();
     return w;
   }
 
@@ -293,13 +294,11 @@ export class WindowManager extends TypedEmitter<Events> {
       await this.ShowMain();
       w.close();
     });
-    w.show();
     return w;
   }
 
   async showUpdateAppWindow() {
     const w = await this.createWindow(VisualCalWindow.UpdateApp);
-    w.show();
     return w;
   }
 

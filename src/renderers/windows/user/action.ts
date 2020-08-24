@@ -16,6 +16,36 @@ const inputAppendLabel = document.getElementById('vc-input-append-text')  as HTM
 const okButton = document.getElementById('vc-btn-ok') as HTMLButtonElement;
 const cancelButton = document.getElementById('vc-btn-cancel') as HTMLButtonElement;
 
+ipcRenderer.on(IpcChannels.user.input.request, (_, request: UserInputRequest) => {
+  alert(request);
+  titleElement.innerText = request.title ? request.title : 'Missing title';
+  instructionElement.innerText = request.text ? request.text : 'Missing text';
+  handleImage(request);
+  inputRowElement.classList.remove('collapse');
+  switch (request.dataType) {
+    case 'boolean':
+      inputElement.type = 'checkbox';
+      break;
+    case 'float':
+      inputElement.type = 'number';
+      break;
+    case 'integer':
+      inputElement.type = 'number';
+      break;
+    case 'string':
+      inputElement.type = 'text';
+      break;
+  }
+  inputPrefixLabel.innerText = `${inputPrefixLabel.innerText} (Data type: ${request.dataType})`;
+  if (request.append) {
+    inputAppendLabel.innerText = request.append;
+    inputAppendLabel.classList.remove('collapse');
+  } else {
+    inputAppendLabel.classList.add('collapse');
+  }
+  initialInputRequest = request;
+});
+
 let initialInputRequest: UserInputRequest;
 
 function handleInputOkResponse() {
@@ -43,8 +73,11 @@ function handleInputOkResponse() {
 }
 
 okButton.addEventListener('click', () => {
-  if (initialInputRequest) handleInputOkResponse();
-  else if (initialInputRequest) handleInputOkResponse();
+  if (initialInputRequest) {
+    handleInputOkResponse();
+  } else {
+    alert('Initial input request is not defined');
+  }
   close();
 });
 
@@ -72,38 +105,3 @@ function handleImage(request: UserInputRequest) {
     imageRowElement.classList.add('collapse');
   }
 }
-
-const init = () => {
-
-  // Input
-  ipcRenderer.on(IpcChannels.user.input.request, (_, request: UserInputRequest) => {
-    titleElement.innerText = request.title ? request.title : 'Missing title';
-    instructionElement.innerText = request.text ? request.text : 'Missing text';
-    handleImage(request);
-    inputRowElement.classList.remove('collapse');
-    switch (request.dataType) {
-      case 'boolean':
-        inputElement.type = 'checkbox';
-        break;
-      case 'float':
-        inputElement.type = 'number';
-        break;
-      case 'integer':
-        inputElement.type = 'number';
-        break;
-      case 'string':
-        inputElement.type = 'text';
-        break;
-    }
-    inputPrefixLabel.innerText = `${inputPrefixLabel.innerText} (Data type: ${request.dataType})`;
-    if (request.append) {
-      inputAppendLabel.innerText = request.append;
-      inputAppendLabel.classList.remove('collapse');
-    } else {
-      inputAppendLabel.classList.add('collapse');
-    }
-    initialInputRequest = request;
-  });
-}
-
-init();
