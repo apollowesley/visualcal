@@ -53,10 +53,8 @@ export class WindowManager extends TypedEmitter<Events> {
       }
     });
 
-    ipcMain.on(IpcChannels.windows.showViewSession, async (_, sessionName: string) => {
-      const session = await global.visualCal.sessionManager.getOne(sessionName);
-      if (!session) throw new Error(`Unable to find session, ${sessionName}`);
-      await this.ShowViewSessionWindow(session);
+    ipcMain.on(IpcChannels.windows.showViewSession, async () => {
+      await this.ShowViewSessionWindow();
     });
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
     ipcMain.on(IpcChannels.windows.showOpenFileDialog.request, (event, opts: OpenDialogOptions) => {
@@ -251,26 +249,16 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   // View session window
-  async ShowViewSessionWindow(session: Session) {
+  async ShowViewSessionWindow() {
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] }; });
-    sections.forEach(s => {
-      s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name }; });
-    });
-    const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
-    const viewInfo: SessionViewWindowOpenIPCInfo = {
-      session: session,
-      sections: sections,
-      deviceConfigurationNodeInfosForCurrentFlow: deviceConfigurationNodeInfosForCurrentFlow
-    };
-    const onShow = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.viewInfo, viewInfo);
-    const w = await this.createWindow(VisualCalWindow.ViewSession, this.mainWindow, true, onShow);
+    const w = await this.createWindow(VisualCalWindow.ViewSession, this.mainWindow, true);
     return w;
   }
 
   // User input window 
   async ShowUserInputWindow(request: UserInputRequest) {
-    const w = await this.createWindow(VisualCalWindow.UserInput);
+    if (!this.viewSessionWindow) throw new Error('Main window must be defined');
+    const w = await this.createWindow(VisualCalWindow.UserInput, this.viewSessionWindow);
     w.on('show', () => w.webContents.send(IpcChannels.user.input.request, request));
     w.show();
     return w;

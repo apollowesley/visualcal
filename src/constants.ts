@@ -158,7 +158,11 @@ export const IpcChannels = {
     }
   },
   sessions: {
-    viewInfo: 'session-view-info', // Sent by WindowManager when it opens a session view window (procedure session view to run the procedure)
+    viewInfo: {
+      request: 'session-view-info-request',
+      response: 'session-view-info-response',
+      error: 'session-view-info-error'
+    }, 
     getAll: {
       request: 'getAll-sessions-request',
       response: 'getAll-sessions-response',

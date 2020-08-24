@@ -213,7 +213,7 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
 });
 
 const init = () => {
-  ipcRenderer.on(IpcChannels.sessions.viewInfo, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+  ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
     sessionName = viewInfo.session.name;
     session = viewInfo.session;
     sections = viewInfo.sections;
@@ -236,6 +236,11 @@ const init = () => {
         actionsTable.setData(actions);
       }
     }
+    window.visualCal.resultsManager.load(sessionName);
+  });
+
+  ipcRenderer.on(IpcChannels.sessions.viewInfo.error, (_, error: Error) => {
+    window.visualCal.electron.showErrorDialog(error);
   });
 
   ipcRenderer.on(IpcChannels.actions.trigger.error, (_, error: Error) => {
@@ -256,7 +261,7 @@ const init = () => {
     resultsTable.setData(results);
   });
 
-  window.visualCal.resultsManager.load(sessionName);
+  ipcRenderer.send(IpcChannels.sessions.viewInfo.request);
 }
 
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
