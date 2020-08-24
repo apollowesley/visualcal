@@ -86,6 +86,7 @@ app.on('ready', async () => {
     await load();
     await global.visualCal.windowManager.ShowLoading(async () => {
       const loginWindow = await global.visualCal.windowManager.ShowLogin();
+      global.visualCal.windowManager.close(VisualCalWindow.Loading);
       loginWindow.once('closed', async () => {
         global.visualCal.userManager.active = {
           email: 'test@test.com',

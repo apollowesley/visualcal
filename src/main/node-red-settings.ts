@@ -17,6 +17,7 @@ const settings: Settings = {
   getProcedureStatus: getProcedureStatus,
   getSectionNodes: getSectionNodes,
   onComment: onComment,
+  credentialSecret: 'IndySoft#927',
   resetAllConnectedInstructionNodes: resetConnectedInstructionNodes,
   resetAllConnectedNodes: resetAllConnectedNodes,
   paletteCategories: ['Actions', 'User', 'Results', 'Digital Multimeter', 'Multi Product Calibrator', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
