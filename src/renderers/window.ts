@@ -31,7 +31,7 @@ window.visualCal = {
   electron: {
     ipc: ipcRenderer,
     getVisualCalWindowId: () => ipcRenderer.send(IpcChannels.windows.getMyId.request),
-    showWindow: (windowId: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, windowId),
+    showWindow: (id: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, id),
     showViewSessionWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showViewSession, sessionName),
     showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error),
     showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName),

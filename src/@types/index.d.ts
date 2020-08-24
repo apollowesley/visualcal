@@ -1,5 +1,12 @@
+type HtmlPathType = 'bootstrap' | 'public' | 'url' | 'raw';
+
 interface CreateWindowOptions extends VisualCalWindowOptions {
-  config?: import('electron').BrowserWindowConstructorOptions;
+  browserWindow?: import('electron').BrowserWindowConstructorOptions;
+  autoCenter?: boolean;
+  openOnMouseCursorScreen?: boolean;
+  openHidden?: boolean;
+  htmlPath: string;
+  htmlPathType: HtmlPathType;
 }
 
 declare type TreeItemType = 'procedure' | 'procedure-section';
@@ -17,6 +24,13 @@ interface VisualCalCRUDDir {
   remove?: string;
 }
 
+interface VisualCalCRUDViewDir {
+  create: string;
+  edit: string;
+  view: string;
+  remove?: string;
+}
+
 interface VisualCalAugmentDirs {
   base: string;
   public: string;
@@ -28,7 +42,7 @@ interface VisualCalAugmentDirs {
     fonts: string;
     bootstrapStudio: string;
     procedure: VisualCalCRUDDir;
-    session: VisualCalCRUDDir;
+    session: VisualCalCRUDViewDir;
     userAction: string;
     createCommIface: string;
   },
@@ -106,7 +120,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;
-    showWindow: (windowId: VisualCalWindow) => void;
+    showWindow: (id: VisualCalWindow) => void;
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
     showCreateCommIfaceWindow: (sessionName: string) => void;

@@ -13,6 +13,15 @@ const getCRUDDir = (basePath: string, extension: string, filePrefix?: string): V
     view: path.join(basePath, getCRUDFilename('view', extension, filePrefix))
   }
 }
+ 
+const getCRUDViewDir = (basePath: string, extension: string, filePrefix?: string): VisualCalCRUDViewDir => {
+  return {
+    create: path.join(basePath, getCRUDFilename('create', extension, filePrefix)),
+    edit: path.join(basePath, getCRUDFilename('edit', extension, filePrefix)),
+    remove: path.join(basePath, getCRUDFilename('remove', extension, filePrefix)),
+    view: path.join(basePath, getCRUDFilename('view', extension, filePrefix))
+  }
+}
 
 let dirs: VisualCalAugmentDirs;
 
@@ -40,7 +49,7 @@ export const init = (appBase: string, userHomeBase: string) => {
       fonts: path.join(publicPath, 'fonts'),
       js: path.join(publicPath, 'js'),
       procedure: getCRUDDir(bootstrapStudioHtmlPath, 'html','procedure'),
-      session: getCRUDDir(bootstrapStudioHtmlPath, 'html','session'),
+      session: getCRUDViewDir(bootstrapStudioHtmlPath, 'html','session'),
       userAction: path.join(bootstrapStudioHtmlPath, 'user-action.html'),
       views: path.join(publicPath, 'views'),
       windows: path.join(publicPath, 'windows'),

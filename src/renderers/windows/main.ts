@@ -301,14 +301,10 @@ const init = () => {
   activeProcedureHeading = document.getElementById('vc-procedure-active-heading') as HTMLHeadingElement;
 
   createProcedureButton = document.getElementById('vc-card-procedures-create-button') as HTMLButtonElement;
-  createProcedureButton.addEventListener('click', () => {
-    window.visualCal.electron.showWindow(VisualCalWindow.CreateProcedure);
-  });
+  createProcedureButton.addEventListener('click', () => window.visualCal.electron.showWindow(VisualCalWindow.CreateProcedure));
 
   createSessionButton = document.getElementById('vc-card-sessions-create-button') as HTMLButtonElement;
-  createSessionButton.addEventListener('click', () => {
-    window.visualCal.electron.showWindow(VisualCalWindow.CreateSession);
-  });
+  createSessionButton.addEventListener('click', () => window.visualCal.electron.showWindow(VisualCalWindow.CreateSession));
 
   createSessionCommsIfaceButton = document.getElementById('vc-card-session-comm-ifaces-create-button') as HTMLButtonElement;
   createSessionCommsIfaceButton.addEventListener('click', () => {

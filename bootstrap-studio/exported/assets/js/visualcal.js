@@ -4,6 +4,20 @@
     since Bootstrap Studio doesn't allow for inserting handlebar templates.
 */
 
+// Main = 'main',
+// Loading = 'loading',
+// Login = 'login',
+// Console = 'console',
+// NodeRedEditor = 'node-red-editor',
+// CreateProcedure = 'create-procedure',
+// CreateSession = 'create-session',
+// ViewSession = 'view-session',
+// UserInput = 'user-input',
+// CreateCommInterface = 'create-comm-interface',
+// InteractiveDeviceControl = 'interactive-device-control',
+// SelectProcedure = 'select-procedure',
+// UpdateApp = 'update-app'
+
 // Check if we are in a VisualCal BrowserWindow
 if (window.require) {
     // Load the main VisualCal window renderer script.
@@ -14,34 +28,31 @@ if (window.require) {
         // Determine which VisualCal window we're running in, then load the appropriate script
         console.info(`Current window Id: ${windowId}`);
         switch (windowId) {
-            case 0: // main
+            case 'main': // main
                 require('../../dist/renderers/windows/main.js');
                 break;
-            case 2: // Login
+            case 'login': // Login
                 require('../../dist/renderers/windows/login.js');
                 break;
-            case 5: // create procedure
+            case 'create-procedure': // create procedure
                 require('../../dist/renderers/windows/procedure/create.js');
                 break;
-            case 6: // create session
+            case 'create-session': // create session
                 require('../../dist/renderers/windows/session/create.js');
                 break;
-            case 7: // view session
+            case 'view-session': // view session
                 require('../../dist/renderers/windows/session/view.js');
                 break;
-            case 8: // user instruction
+            case 'user-input': // user input
                 require('../../dist/renderers/windows/user/action.js');
                 break;
-            case 9: // user input
-                require('../../dist/renderers/windows/user/action.js');
-                break;
-            case 10: // create communication interface
+            case 'create-comm-interface': // create communication interface
                 require('../../dist/renderers/windows/session/create-comm-iface.js');
                 break;
-            case 12: // select procedure
+            case 'select-procedure': // select procedure
                 require('../../dist/renderers/windows/procedure/select.js');
                 break;
-            case 13: // update app
+            case 'update-app': // update app
                 require('../../dist/renderers/windows/update-app.js');
                 break;
         }

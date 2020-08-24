@@ -1,9 +1,10 @@
-import { autoUpdater, UpdateInfo, AppUpdater as ElectronAutoUpdater } from 'electron-updater';
+import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from 'electron-builder';
 import log from 'electron-log';
 import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../constants';
+import { noop } from 'lodash';
 
 interface Events {
   error: (error: Error) => void;
@@ -17,7 +18,6 @@ interface Events {
 
 export class AutoUpdater extends TypedEmitter<Events> {
 
-  fUpdater: ElectronAutoUpdater | null = null;
   fAborted = false;
 
   constructor() {
@@ -85,7 +85,6 @@ export class AutoUpdater extends TypedEmitter<Events> {
 
   public async checkForUpdates() {
     this.fAborted = false;
-    if (isDev()) throw new Error('Do not check for updates in development mode');
     log.transports.console.level = 'debug';
     log.transports.file.level = 'debug';
     autoUpdater.logger = log;
@@ -99,20 +98,17 @@ export class AutoUpdater extends TypedEmitter<Events> {
     autoUpdater.on('update-not-available', (info: UpdateInfo) => this.onUpdateNotAvailable(info));
     autoUpdater.on('download-progress', (progress: ProgressInfo) => this.onDownloadProgressChanged(progress));
     autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
-    await autoUpdater.checkForUpdates();
+    if (isDev()) {
+      noop(); // Do nothing, for now
+    } else {
+      await autoUpdater.checkForUpdatesAndNotify();
+    }
   }
 
   public abort() {
     this.fAborted = true;
-    if (this.fUpdater) {
-      this.fUpdater.removeAllListeners();
-      this.fUpdater = null;
-    }
-    try {
-      this.windowManager.close(VisualCalWindow.UpdateApp);
-    } catch (error) {
-      // We're aborting, so it doesn't matter if the window isn't open
-    }
+    autoUpdater.removeAllListeners();
+    this.windowManager.close(VisualCalWindow.UpdateApp);
   }
 
 }

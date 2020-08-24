@@ -6,6 +6,20 @@ body {
   margin-bottom: 30px !important;
 }
 
+.vc-nav-bar-item {
+  margin: 5px;
+  padding: 5px;
+  text-decoration-color: red;
+}
+
+#vc-status-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  min-height: 35px;
+  background-color: gray;
+}
+
 .custom-checkbox-x2 {
   transform: scale(2);
   -webkit-transform: scale(2);

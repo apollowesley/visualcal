@@ -1,18 +1,17 @@
 declare const enum VisualCalWindow {
-  Main,
-  Loading,
-  Login,
-  Console,
-  NodeRedEditor,
-  CreateProcedure,
-  CreateSession,
-  ViewSession,
-  UserInstruction,
-  UserInput,
-  CreateCommIface,
-  InteractiveDeviceControl,
-  SelectProcedure,
-  UpdateApp
+  Main = 'main',
+  Loading = 'loading',
+  Login = 'login',
+  Console = 'console',
+  NodeRedEditor = 'node-red-editor',
+  CreateProcedure = 'create-procedure',
+  CreateSession = 'create-session',
+  ViewSession = 'view-session',
+  UserInput = 'user-input',
+  CreateCommInterface = 'create-comm-interface',
+  InteractiveDeviceControl = 'interactive-device-control',
+  SelectProcedure = 'select-procedure',
+  UpdateApp = 'update-app'
 }
 
 declare const enum WindowPathType {

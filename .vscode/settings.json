@@ -1,5 +1,6 @@
 {
   "vetur.experimental.templateInterpolationService": true,
   "typescript.format.semicolons": "insert",
-  "typescript.preferences.quoteStyle": "single"
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

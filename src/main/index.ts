@@ -93,10 +93,9 @@ app.on('ready', async () => {
           nameLast: 'App'
         };
       });
+      await autoUpdater.checkForUpdates();
       if (isDev()) {
         await testingOnly();
-      } else {
-        await autoUpdater.checkForUpdates();
       }
       
     });
