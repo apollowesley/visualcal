@@ -5,6 +5,7 @@ import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../constants';
 import { noop } from 'lodash';
+import { ipcMain } from 'electron';
 
 interface Events {
   error: (error: Error) => void;
@@ -62,7 +63,16 @@ export class AutoUpdater extends TypedEmitter<Events> {
     if (this.fAborted) return;
     this.emit('updateAvailable', info);
     await this.windowManager.showUpdateAppWindow();
-    if (this.updateWindow) this.updateWindow.on('show', () => this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info));
+    if (this.updateWindow) this.updateWindow.webContents.once('did-finish-load', () => {
+      this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
+      ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
+        await autoUpdater.downloadUpdate();
+        autoUpdater.quitAndInstall(false, true);
+      });
+      ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
+        global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
+      });
+    });
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {

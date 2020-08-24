@@ -98,7 +98,9 @@ export const IpcChannels = {
     updateAvailable: 'auto-update-available',
     updateNotAvailable: 'auto-update-not-available',
     downloadProgressChanged: 'auto-update-download-progress-changed',
-    updateDownloaded: 'auto-update-downloaded'
+    updateDownloaded: 'auto-update-downloaded',
+    downloadAndInstallRequest: 'auto-update-download-and-install-request',
+    cancelRequest: 'auto-update-download-and-install-cancel-request'
   },
   communicationInterface: {
     connected: 'communication-interface-connected',
