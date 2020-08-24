@@ -52,7 +52,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     console.info('onUpdateError');
     if (this.fAborted) return;
     this.emit('updateError', error);
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
     this.onError(error); // Send last so other notifications have a chance to get sent before main process reacts
   }
 
@@ -60,7 +60,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     console.info('onCheckingForUpdateStarted');
     if (this.fAborted) return;
     this.emit('checkingForUpdatesStarted');
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
   }
 
   private async onUpdateAvailable(info: UpdateInfo) {
@@ -84,21 +84,21 @@ export class AutoUpdater extends TypedEmitter<Events> {
     console.info('onUpdateNotAvailable');
     if (this.fAborted) return;
     this.emit('updateNotAvailable', info);
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
     console.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     this.emit('downloadProgressChanged', progress);
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
     console.info('onUpdateDownloaded');
     if (this.fAborted) return;
     this.emit('updateDownloaded', info);
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
   }
 
   public async checkForUpdates() {
