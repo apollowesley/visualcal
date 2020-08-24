@@ -72,7 +72,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
       this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
       ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
         await autoUpdater.downloadUpdate();
-        autoUpdater.quitAndInstall(false, true);
+        autoUpdater.quitAndInstall();
       });
       ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
         global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
