@@ -14,6 +14,8 @@ progressRow.classList.add('collapse'); // Not visible, initially
 
 const yesButtonClicked = (ev: MouseEvent) => {
   ev.preventDefault();
+  yesButton.disabled = true;
+  noButton.disabled = true;
   yesButton.removeEventListener('click', yesButtonClicked);
   ipcRenderer.send(IpcChannels.autoUpdate.downloadAndInstallRequest);
 }
@@ -22,6 +24,8 @@ yesButton.addEventListener('click', yesButtonClicked);
 
 const noButtonClicked = (ev: MouseEvent) => {
   ev.preventDefault();
+  yesButton.disabled = true;
+  noButton.disabled = true;
   noButton.removeEventListener('click', noButtonClicked);
   ipcRenderer.send(IpcChannels.autoUpdate.cancelRequest);
 }
