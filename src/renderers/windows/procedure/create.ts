@@ -1,65 +1,44 @@
+import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../constants';
 import { ErrorResponseArgs } from '../../managers/RendererCRUDManager';
 
-let nameField: HTMLInputElement;
-let descriptionField: HTMLTextAreaElement;
-let createButton: HTMLButtonElement;
-let cancelButton: HTMLButtonElement;
-
-const checkElementsExist = () => {
-  if (!nameField) throw new Error('Missing required element');
-  if (!descriptionField) throw new Error('Missing required element');
-  if (!createButton) throw new Error('Missing required element');
-  if (!cancelButton) throw new Error('Missing required element');
-}
+const nameField = document.getElementById('vc-name') as HTMLInputElement;
+const descriptionField = document.getElementById('vc-description') as HTMLTextAreaElement;
+let createButton = document.getElementById('vc-create-button') as HTMLButtonElement;
+let cancelButton = document.getElementById('vc-cancel-button') as HTMLButtonElement;
 
 const updateCreateButton = () => {
-  createButton.disabled = nameField.value === '' || descriptionField.value === '';
+  createButton.disabled = nameField.value.length < 1 || descriptionField.value.length < 1 ;
 }
 
-const init = () => {
-  nameField = document.getElementById('vc-procedure-name') as HTMLInputElement;
-  descriptionField = document.getElementById('vc-procedure-description') as HTMLTextAreaElement;
-  createButton = document.getElementById('vc-procedure-create-button') as HTMLButtonElement;
-  cancelButton = document.getElementById('vc-procedure-cancel-button') as HTMLButtonElement;
+nameField.addEventListener('blur', updateCreateButton);
+nameField.addEventListener('change', updateCreateButton);
+descriptionField.addEventListener('change', updateCreateButton);
 
-  checkElementsExist();
+ipcRenderer.on(IpcChannels.procedures.create.error, (_, response: ErrorResponseArgs) => {
+  alert(response.error.message);
+  updateCreateButton();
+});
 
-  nameField.addEventListener('change', () => {
-    updateCreateButton();
-  });
+ipcRenderer.on(IpcChannels.procedures.create.response, (_, procedure: { name: string }) => {
+  console.info(procedure);
+  ipcRenderer.send(IpcChannels.procedures.setActive.request, procedure.name);
+});
 
-  descriptionField.addEventListener('change', () => {
-    updateCreateButton();
-  });
+createButton.addEventListener('click', async () => {
+  createButton.disabled = true;
+  const procName = nameField.value;
+  const procDescription = descriptionField.value;
+  try {
+    window.visualCal.procedureManager.create({
+      name: procName,
+      description: procDescription
+    });
+  } catch (error) {
+    alert(error.message);
+  }
+});
 
-  window.visualCal.procedureManager.on(IpcChannels.procedures.create.error, (response: ErrorResponseArgs) => {
-    alert(response.error.message);
-    updateCreateButton();
-  });
-
-  window.visualCal.procedureManager.on(IpcChannels.procedures.create.response, () => {
-    alert('Procedure created!');
-    window.close();
-  });
-
-  createButton.addEventListener('click', async () => {
-    createButton.disabled = true;
-    const procName = nameField.value;
-    const procDescription = descriptionField.value;
-    try {
-      window.visualCal.procedureManager.create({
-        name: procName,
-        description: procDescription
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-
-  cancelButton.addEventListener('click', () => {
-    window.close();
-  });
-}
-
-init();
+cancelButton.addEventListener('click', () => {
+  ipcRenderer.send(IpcChannels.procedures.cancelCreate);
+});

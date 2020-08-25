@@ -12,33 +12,35 @@
 </head>
 
 <body style="background-color: #666d70;">
-    <main>
-        <form class="d-flex flex-column">
+    <form class="d-flex flex-column">
+        <div class="container">
+            <div class="form-row">
+                <div class="col">
+                    <h4>Create a procedure</h4>
+                </div>
+            </div>
             <div class="form-row">
                 <!-- Start: Name -->
-                <div class="col-auto">
-                    <div class="form-group"><label for="vc-procedure-name">Name</label><input class="form-control" type="text" id="vc-procedure-name" placeholder="Enter a procedure name" autofocus="" autocomplete="off" required="" minlength="1" style="min-width: 250px;"></div>
+                <div class="col">
+                    <div class="form-group"><label for="vc-name">Name</label><input class="form-control" type="text" id="vc-name" placeholder="Enter a procedure name" autofocus="" autocomplete="off" required="" minlength="1" style="min-width: 250px;"></div>
                 </div>
                 <!-- End: Name -->
+            </div>
+            <div class="form-row">
                 <!-- Start: Description -->
-                <div class="col-auto">
-                    <div class="form-group"><label for="vc-procedure-description">Description</label><textarea class="form-control" id="vc-procedure-description" placeholder="Enter a description"></textarea></div>
+                <div class="col">
+                    <div class="form-group"><label for="vc-description">Description</label><textarea class="form-control" id="vc-description" placeholder="Enter a description" style="min-height: 150px;"></textarea></div>
                 </div>
                 <!-- End: Description -->
             </div>
-            <div class="form-row">
-                <!-- Start: Name -->
-                <div class="col-auto"><button class="btn btn-primary" id="vc-procedure-create-button" type="button" disabled="">Create</button><button class="btn btn-secondary" id="vc-procedure-cancel-button" type="button">Cancel</button></div>
-                <!-- End: Name -->
+            <div class="form-row justify-content-center">
+                <div class="col-auto"><button class="btn btn-primary" id="vc-create-button" type="button">Create</button><button class="btn btn-secondary" id="vc-cancel-button" type="button">Cancel</button></div>
             </div>
-        </form>
-        <!-- Start: visualcal-script -->
-        <!--visualcal-script-->
-        <!-- End: visualcal-script -->
-    </main>
+        </div>
+    </form>
     <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=7c038681746a729e2fff9520a575e78c"></script>
-    <script src="assets/js/visualcal.js?h=baef735eb0a8e342be15b3c981526289"></script>
+    <script src="assets/js/visualcal.js?h=7457e31746fcf6f85ad4c96771dd9845"></script>
 </body>
 
 </html>

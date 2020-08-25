@@ -11,6 +11,7 @@ declare const enum VisualCalWindow {
   CreateCommInterface = 'create-comm-interface',
   InteractiveDeviceControl = 'interactive-device-control',
   SelectProcedure = 'select-procedure',
+  SelectSession = 'select-session',
   UpdateApp = 'update-app'
 }
 

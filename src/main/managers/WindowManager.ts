@@ -1,10 +1,8 @@
-import { BrowserWindow, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import SerialPort from 'serialport';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { Logger } from 'winston';
-import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
-import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import * as WindowUtils from '../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 
@@ -56,16 +54,43 @@ export class WindowManager extends TypedEmitter<Events> {
     ipcMain.on(IpcChannels.windows.showViewSession, async () => {
       await this.ShowViewSessionWindow();
     });
+
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
     ipcMain.on(IpcChannels.windows.showOpenFileDialog.request, (event, opts: OpenDialogOptions) => {
       const browserWindow = BrowserWindow.fromId(event.sender.id);
       const result = dialog.showOpenDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showOpenFileDialog.response, result);
     });
+
     ipcMain.on(IpcChannels.windows.showSaveFileDialog.request, (event, opts: SaveDialogOptions) => {
       const browserWindow = BrowserWindow.fromId(event.sender.id);
       const result = dialog.showSaveDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showSaveFileDialog.response, result);
+    });
+
+    ipcMain.on(IpcChannels.windows.showCreateProcedure, async () => {
+      await this.ShowCreateProcedureWindow();
+      this.closeAllBut(VisualCalWindow.CreateProcedure);
+    });
+
+    ipcMain.on(IpcChannels.windows.showCreateSession, async () => {
+      await this.ShowCreateSessionWindow();
+      this.closeAllBut(VisualCalWindow.CreateSession);
+    });
+
+    ipcMain.on(IpcChannels.procedures.cancelSelect, () => app.quit());
+
+    ipcMain.on(IpcChannels.procedures.cancelCreate, () => {
+      this.close(VisualCalWindow.CreateProcedure);
+    });
+
+    ipcMain.on(IpcChannels.sessions.cancelSelect, async () => {
+      await this.showSelectProcedureWindow();
+      this.closeAllBut(VisualCalWindow.SelectProcedure);
+    });
+
+    ipcMain.on(IpcChannels.sessions.cancelCreate, () => {
+      this.close(VisualCalWindow.CreateSession);
     });
   }
 
@@ -112,7 +137,7 @@ export class WindowManager extends TypedEmitter<Events> {
 
   remove(id: VisualCalWindow) {
     this.fLogger.info('Removing window', { windowId: id });
-    const existing = this.get(id);
+    const existing = Array.from(this.fWindows).find(w => w.visualCal.id === id);
     if (!existing) return;
     this.fWindows.delete(existing);
     this.fLogger.info('Window removed', { windowId: id });
@@ -138,6 +163,13 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!browserWindow) throw new Error(`Window not found, ${id}`);
     if (show) browserWindow.show();
     else browserWindow.hide();
+  }
+
+  closeAllBut(id: VisualCalWindow) {
+    this.fWindows.forEach(browserWindow => {
+      if (browserWindow.visualCal.id === id) return;
+      this.close(browserWindow.visualCal.id);
+    });
   }
 
   closeAll() {
@@ -237,26 +269,6 @@ export class WindowManager extends TypedEmitter<Events> {
     return w;
   }
 
-  // Create procedure window 
-  async ShowCreateProcedureWindow() {
-    const w = await this.createWindow(VisualCalWindow.CreateProcedure);
-    return w;
-  }
-
-  // Create session window 
-  async ShowCreateSessionWindow() {
-    const w = await this.createWindow(VisualCalWindow.CreateSession);
-    w.show();
-    return w;
-  }
-
-  // View session window
-  async ShowViewSessionWindow() {
-    if (!this.mainWindow) throw new Error('Main window must be defined');
-    const w = await this.createWindow(VisualCalWindow.ViewSession, this.mainWindow, true);
-    return w;
-  }
-
   // User input window 
   async ShowUserInputWindow(request: UserInputRequest) {
     if (!this.viewSessionWindow) throw new Error('Main window must be defined');
@@ -286,12 +298,49 @@ export class WindowManager extends TypedEmitter<Events> {
     return w;
   }
 
+  // Select procedure window
   async showSelectProcedureWindow() {
-    const w = await this.createWindow(VisualCalWindow.SelectProcedure);
+    const procedures = await global.visualCal.procedureManager.getAll();
+    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.procedures.selectData, procedures);
     global.visualCal.procedureManager.once('activeSet', async () => {
-      await this.ShowMain();
-      w.close();
+      await this.showSelectSessionWindow();
+      this.closeAllBut(VisualCalWindow.SelectSession);
     });
+    const w = await this.createWindow(VisualCalWindow.SelectProcedure, undefined, false, undefined, undefined, onDidFinishLoading);
+    return w;
+  }
+
+  // Create procedure window 
+  async ShowCreateProcedureWindow() {
+    const w = await this.createWindow(VisualCalWindow.CreateProcedure, this.selectProcedureWindow);
+    return w;
+  }
+
+  async showSelectSessionWindow() {
+    const activeProcedureName = await global.visualCal.procedureManager.getActive();
+    if (!activeProcedureName) throw new Error('Active procedure is not set');
+    const sessions = await global.visualCal.sessionManager.getAll();
+    const sessionsForProc = sessions.filter(s => s.procedureName === activeProcedureName);
+    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.selectData, { procedureName: activeProcedureName, sessions: sessionsForProc });
+    const w = await this.createWindow(VisualCalWindow.SelectSession, undefined, false, undefined, undefined, onDidFinishLoading);
+    global.visualCal.sessionManager.once('activeSet', async () => {
+      await this.ShowMain();
+      this.closeAllBut(VisualCalWindow.Main);
+    });
+    return w;
+  }
+
+  // Create session window 
+  async ShowCreateSessionWindow() {
+    const w = await this.createWindow(VisualCalWindow.CreateSession);
+    w.show();
+    return w;
+  }
+
+  // View session window
+  async ShowViewSessionWindow() {
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    const w = await this.createWindow(VisualCalWindow.ViewSession, this.mainWindow, true);
     return w;
   }
 

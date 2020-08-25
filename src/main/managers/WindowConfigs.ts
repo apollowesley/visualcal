@@ -47,13 +47,14 @@ const loadingWindow = () => createWindowOptions(VisualCalWindow.Loading, 'loadin
 const loginWindow = () => createWindowOptions(VisualCalWindow.Login, 'login.html', 'bootstrap', { subTitle: 'Login' });
 const consoleWindow = () => createWindowOptions(VisualCalWindow.Console, 'loading.html', 'public', { height: 600, width: 800, autoHideMenuBar: true, subTitle: 'Log' });
 const nodeRedEditorWindow = () => createWindowOptions(VisualCalWindow.NodeRedEditor, `http://localhost:${global.visualCal.config.httpServer.port}/red`, 'url', { resizable: true, fullscreenable: true, frame: true, model: false, subTitle: 'Logic Editor', nodeIntegration: false, preload: path.join(global.visualCal.dirs.renderers.windows, 'node-red.js') });
-const createProcedureWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateProcedure, 'procedure-create.html', 'bootstrap', { parent: parent, model: true, subTitle: 'Create Procedure' });
-const createSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateSession, 'session-create.html', 'bootstrap', { parent: parent, model: true, subTitle: 'Create Session' });
+const createProcedureWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateProcedure, 'procedure-create.html', 'bootstrap', { parent, model: true, subTitle: 'Create Procedure' });
+const createSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateSession, 'session-create.html', 'bootstrap', { parent, model: true, subTitle: 'Create Session' });
 const viewSessionWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.ViewSession, 'session-view.html', 'bootstrap', { parent: parent, model: false, resizable: true, fullscreenable: true, frame: true, subTitle: 'Session' });
 const userInputWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.UserInput, 'user-action.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'User Input' });
 const createCommIfaceWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.CreateCommInterface, 'create-comm-iface.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'Add Communication Interface to Session' });
 const interactiveDeviceControlWindow = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.InteractiveDeviceControl, 'interactive-device-control.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, parent: parent, subTitle: 'Device Control' });
 const selectProcedureWindow = () => createWindowOptions(VisualCalWindow.SelectProcedure, 'procedure-select.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, subTitle: 'Select Procedure' });
+const selectSessionWindow = () => createWindowOptions(VisualCalWindow.SelectSession, 'session-select.html', 'bootstrap', { height: 750, width: 1000, model: true, frame: false, fullscreenable: false, subTitle: 'Select Session' });
 const updateAppWindow = () => createWindowOptions(VisualCalWindow.UpdateApp, 'update-app.html', 'bootstrap', { height: 750, width: 1000, frame: false, fullscreenable: false, subTitle: 'Update' });
 
 export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
@@ -61,10 +62,10 @@ export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
     case VisualCalWindow.Console:
       return consoleWindow()
     case VisualCalWindow.CreateProcedure:
-      if (!parent) throw new Error('Parent window is required to create this window');
+      if (!parent || parent.visualCal.id !== VisualCalWindow.SelectProcedure) throw new Error('Parent window is required and must have visualCal.id === VisualCalWindow.SelectProcedure in order to create this window');
       return createProcedureWindow(parent);
     case VisualCalWindow.CreateSession:
-      if (!parent) throw new Error('Parent window is required to create this window');
+      if (!parent || parent.visualCal.id !== VisualCalWindow.SelectProcedure) throw new Error('Parent window is required and must have visualCal.id === VisualCalWindow.SelectSession in order to create this window');
       return createSessionWindow(parent);
     case VisualCalWindow.Loading:
       return loadingWindow();
@@ -79,6 +80,8 @@ export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
       return userInputWindow(parent);
     case VisualCalWindow.SelectProcedure:
       return selectProcedureWindow();
+    case VisualCalWindow.SelectSession:
+      return selectSessionWindow();
     case VisualCalWindow.InteractiveDeviceControl:
       if (!parent) throw new Error('Parent window is required to create this window');
       return interactiveDeviceControlWindow(parent);

@@ -52,6 +52,9 @@ if (window.require) {
             case 'select-procedure': // select procedure
                 require('../../dist/renderers/windows/procedure/select.js');
                 break;
+            case 'select-session': // select procedure
+                require('../../dist/renderers/windows/session/select.js');
+                break;
             case 'update-app': // update app
                 require('../../dist/renderers/windows/update-app.js');
                 break;

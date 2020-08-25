@@ -201,7 +201,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemJson(createItem.name, createItem);
     const retVal = this.getCreatedItem(createItem);
     this.emit('created', retVal);
-    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.create.response, retVal);
+    ipcMain.emit(this.fChannelNames.create.response, retVal);
     return retVal;
   }
 
@@ -231,7 +231,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemJson(oldName, itemJson);
     await fsPromises.rename(oldDirPath, newDirPath);
     this.emit('renamed', { oldName, newName });
-    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.rename.response, itemJson);
+    ipcMain.emit(this.fChannelNames.rename.response, itemJson);
     return itemJson;
   }
   
@@ -249,7 +249,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemsJson(procsJson);
     await this.onSetActive(name);
     this.emit('activeSet', name);
-    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(this.fChannelNames.setActive.response, name);
+    ipcMain.emit(this.fChannelNames.setActive.response, name);
   }
   
   protected async onSetActive(name: string) {
@@ -261,6 +261,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     this.checkExists(item.name);
     await this.saveItemJson(item.name, item);
     this.emit('updated', item);
+    ipcMain.emit(this.fChannelNames.update.response, name);
     return item;
   }
 

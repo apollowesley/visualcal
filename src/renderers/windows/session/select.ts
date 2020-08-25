@@ -2,14 +2,17 @@ import { ipcRenderer } from 'electron';
 import Tabulator from 'tabulator-tables';
 import { IpcChannels } from '../../../constants';
 
+let procedureName = '';
+
 const cancelButton = document.getElementById('vc-cancel-button') as HTMLButtonElement;
 const createButton = document.getElementById('vc-create-button') as HTMLButtonElement;
+const heading = document.getElementById('vc-heading') as HTMLHeadingElement;
 
 const selectButtonClicked = (cell: Tabulator.CellComponent) => {
   const row = cell.getRow();
   const nameCell = row.getCell('name');
-  const procedureName: string = nameCell.getValue();
-  window.visualCal.procedureManager.setActive(procedureName);
+  const sessionName: string = nameCell.getValue();
+  window.visualCal.sessionManager.setActive(sessionName);
   // DO NOT CLOSE WINDOW FROM HERE
 };
 
@@ -20,7 +23,7 @@ const selectButtonTableCellFormatter = (cell: Tabulator.CellComponent) => {
   return btn;
 };
 
-const existingProceduresTable = new Tabulator('#vc-tabulator', {
+const existingSessionsTable = new Tabulator('#vc-tabulator', {
   data: [],
   layout: 'fitColumns',
   columns: [
@@ -32,14 +35,16 @@ const existingProceduresTable = new Tabulator('#vc-tabulator', {
 
 cancelButton.onclick = (ev) => {
   ev.preventDefault();
-  ipcRenderer.send(IpcChannels.procedures.cancelSelect);
+  ipcRenderer.send(IpcChannels.sessions.cancelSelect);
 };
 
 createButton.onclick = (ev) => {
   ev.preventDefault();
-  ipcRenderer.send(IpcChannels.windows.showCreateProcedure);
+  ipcRenderer.send(IpcChannels.windows.showCreateSession, procedureName);
 }
 
-ipcRenderer.on(IpcChannels.procedures.selectData, (_, items: ProcedureInfo[]) => {
-  existingProceduresTable.setData(items);
+ipcRenderer.on(IpcChannels.sessions.selectData, (_, arg: { procedureName: string, sessions: Session[] }) => {
+  procedureName = arg.procedureName;
+  heading.innerText = `Select session for procedure "${procedureName}"`;
+  existingSessionsTable.setData(arg.sessions);
 });

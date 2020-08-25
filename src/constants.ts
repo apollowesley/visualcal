@@ -65,6 +65,8 @@ export const IpcChannels = {
     }
   },
   windows: {
+    showCreateProcedure: 'show-procedure-create-window',
+    showCreateSession: 'show-session-create-window',
     getMyId: {
       request: 'get-visualcal-window-id-request',
       response: 'get-visualcal-window-id-response',
@@ -113,6 +115,9 @@ export const IpcChannels = {
     removed: 'communication-interface-removed',
   },
   procedures: {
+    selectData: 'procedure-select-data',
+    cancelSelect: 'cancel-procedure-select',
+    cancelCreate: 'cancel-procedure-create',
     getAll: {
       request: 'getAll-procedures-request',
       response: 'getAll-procedures-response',
@@ -160,6 +165,9 @@ export const IpcChannels = {
     }
   },
   sessions: {
+    selectData: 'session-select-data',
+    cancelSelect: 'cancel-session-select',
+    cancelCreate: 'cancel-session-create',
     viewInfo: {
       request: 'session-view-info-request',
       response: 'session-view-info-response',
