@@ -5,7 +5,7 @@ import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../constants';
 import { noop } from 'lodash';
-import { ipcMain } from 'electron';
+import { dialog, ipcMain } from 'electron';
 
 interface Events {
   error: (error: Error) => void;
@@ -67,6 +67,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     console.info('onUpdateAvailable');
     if (this.fAborted) return;
     ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
+      dialog.showErrorBox('Testing Auto-Update', `About to download version ${info.version}`);
       await autoUpdater.downloadUpdate();
       autoUpdater.quitAndInstall();
     });
