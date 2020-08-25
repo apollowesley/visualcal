@@ -10,8 +10,6 @@ const logList = document.getElementById('vc-log-list') as HTMLUListElement;
 const progressRow = document.getElementById('vc-progress-row') as HTMLDivElement;
 const progressBar = document.getElementById('vc-progress-bar') as HTMLDivElement;
 
-progressRow.classList.add('collapse'); // Not visible, initially
-
 const yesButtonClicked = (ev: MouseEvent) => {
   ev.preventDefault();
   yesButton.disabled = true;
