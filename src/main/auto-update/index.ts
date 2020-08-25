@@ -66,17 +66,17 @@ export class AutoUpdater extends TypedEmitter<Events> {
   private async onUpdateAvailable(info: UpdateInfo) {
     console.info('onUpdateAvailable');
     if (this.fAborted) return;
+    ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
+      await autoUpdater.downloadUpdate();
+      autoUpdater.quitAndInstall();
+    });
+    ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
+      global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
+    });
     this.emit('updateAvailable', info);
     await this.windowManager.showUpdateAppWindow();
     if (this.updateWindow) this.updateWindow.webContents.once('did-finish-load', () => {
       this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
-      ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
-        await autoUpdater.downloadUpdate();
-        autoUpdater.quitAndInstall();
-      });
-      ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
-        global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
-      });
     });
   }
 
@@ -118,11 +118,10 @@ export class AutoUpdater extends TypedEmitter<Events> {
     autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
     if (isDev()) {
       noop(); // Do nothing, for now
-      return false;
+      await Promise.resolve();
     } else {
       console.info('Checking for updates');
       await autoUpdater.checkForUpdates();
-      return true;
     }
   }
 
