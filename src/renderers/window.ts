@@ -18,7 +18,7 @@ removeDesignTimeFromAllElements();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
-  var args = [sent ? '⬆️' : '⬇️', channel, ...data];
+  var args = [sent ? 'sent' : 'received', channel, ...data];
   if (sync) args.unshift('ipc:sync');
   else args.unshift('ipc');
   console.info(...args);

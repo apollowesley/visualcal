@@ -1,7 +1,13 @@
 import('../window'); // The script we are in now get's preloaded by the BrowserWindow (because we can't run with nodeIntegration enabled).  So we import window here, whereas normally we would preload window.js.
-import { ipcRenderer, OpenDialogOptions } from 'electron';
 import { Red, Nodes, NodeProperties } from 'node-red';
-import { IpcChannels } from '../../constants';
+
+// preload.js
+const _setImmediate = setImmediate
+const _clearImmediate = clearImmediate
+process.once('loaded', () => {
+  global.setImmediate = _setImmediate
+  global.clearImmediate = _clearImmediate
+});
 
 interface NodesModule extends Nodes {
   eachConfig: (cb: (nodeConfig: NodeProperties) => void) => void;

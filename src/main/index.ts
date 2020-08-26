@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import express from 'express';
 import * as http from 'http';
 import path from 'path';
@@ -21,7 +21,7 @@ const autoUpdater = new AutoUpdater();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
-  var args = [sent ? '⬆️' : '⬇️', channel ]; //, ...data];
+  var args = [sent ? 'sent' : 'received', channel ]; //, ...data];
   if (sync) args.unshift('ipc:sync');
   else args.unshift('ipc');
   console.info(...args);
@@ -73,6 +73,21 @@ async function load() {
   sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
   sendToLoadingWindow('Initializing Logic Server ...');
+  // TODO: The follow works to intercept node-red loading, inject a custom index.html and load scripts.  Figure out how to make it useful.  Currently throws exports not defined error.
+  // nodeRedApp.use((_, res, next) => {
+  //   const oldSend = res.send;
+  //   (res.send as any) = function(body?: any) {
+  //     if (body && typeof body === 'string' && body.includes('<title>VisualCal Logic Editor</title>')) {
+  //       body = fs.readFileSync(path.join(global.visualCal.dirs.html.windows, 'node-red.html')).toString('utf-8');
+  //     }
+  //     res.send = oldSend;
+  //     return res.send(body);
+  //   }
+  //   return next();
+  // });
+  // nodeRedApp.use('/red/visualcal/d3.js', (_, res) => res.sendFile(path.join(appBaseDirPath, 'node_modules', 'd3', 'dist', 'd3.min.js')));
+  // nodeRedApp.use('/red/renderers/window.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.base, 'window.js')));
+  // nodeRedApp.use('/red/renderers/windows/node-red.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.windows, 'node-red.js')));
   global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
   nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
   nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);

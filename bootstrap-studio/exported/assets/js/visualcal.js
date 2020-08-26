@@ -63,5 +63,5 @@ if (window.require) {
     window.visualCal.electron.getVisualCalWindowId();
 } else {
     // We're in a normal browser
-    console.warn('Not running in VisualCal');
+    throw new Error('Not running in VisualCal');
 }
