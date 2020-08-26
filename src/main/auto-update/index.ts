@@ -88,10 +88,10 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
-    console.info('onDownloadProgressChanged');
+    // console.info('onDownloadProgressChanged');
     if (this.fAborted) return;
-    this.emit('downloadProgressChanged', progress);
-    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
+    // this.emit('downloadProgressChanged', progress);
+    if (this.updateWindow && progress.percent % 10 === 0) this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
