@@ -29,13 +29,13 @@ export class ActionManager extends EventEmitter {
   stateChanged(node: ActionStartRuntimeNode, state: ActionState) {
     setImmediate(() => {
       if (!node.section) throw new Error(`indysoft-action-start node section property is not defined for node ${node.id}`);
-      global.visualCal.windowManager.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });
+      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });
     });
   }
 
   handleResult(result: LogicResult) {
     setImmediate(() => {
-      global.visualCal.windowManager.sendToAll(IpcChannels.actions.resultAcquired, { result });
+      ipcMain.sendToAll(IpcChannels.actions.resultAcquired, { result });
     });
   }
 

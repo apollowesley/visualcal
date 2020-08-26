@@ -94,13 +94,6 @@ export class WindowManager extends TypedEmitter<Events> {
     });
   }
 
-  // Sends an IPC message to all BrowserWindows
-  sendToAll(channel: string, ...args: any[]) {
-    BrowserWindow.getAllWindows().forEach(w => {
-      if (!w.isDestroyed()) w.webContents.send(channel, ...args);
-    });
-  }
-
   get(id: VisualCalWindow) {
     const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id);
     if (browserWindow && !browserWindow.isDestroyed()) return browserWindow;
@@ -280,14 +273,14 @@ export class WindowManager extends TypedEmitter<Events> {
   // Create communication interface window
   async showCreateCommIfaceWindow(sessionName: string) {
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    const onShow = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
-    const w = await this.createWindow(VisualCalWindow.CreateCommInterface, this.mainWindow, false, onShow);
     const serialPortNames = (await SerialPort.list()).map(sp => sp.path);
     const data: CreateCommunicationInterfaceInitialData = {
       sessionName: sessionName,
       communicationInterfaceTypes: CommunicationInterfaceTypes,
       serialPortNames: serialPortNames
     };
+    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
+    const w = await this.createWindow(VisualCalWindow.CreateCommInterface, this.mainWindow, false, undefined, undefined, onDidFinishLoading);
     return w;
   }
 

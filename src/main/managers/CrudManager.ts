@@ -37,9 +37,9 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     this.fBasePath = basePath;
     this.fChannelNames = channelNames;
     this.fItemFilename = itemFilename;
-    ipcMain.on(this.fChannelNames.create.request, async (event, procedure: TCreate) => {
+    ipcMain.on(this.fChannelNames.create.request, async (event, item: TCreate) => {
       try {
-        const retVal = await this.create(procedure);
+        const retVal = await this.create(item);
         event.reply(this.fChannelNames.create.response, retVal);
       } catch (error) {
         event.reply(this.fChannelNames.create.error, error);
@@ -201,7 +201,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemJson(createItem.name, createItem);
     const retVal = this.getCreatedItem(createItem);
     this.emit('created', retVal);
-    ipcMain.emit(this.fChannelNames.create.response, retVal);
+    ipcMain.sendToAll(this.fChannelNames.create.response, retVal);
     return retVal;
   }
 
@@ -231,7 +231,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemJson(oldName, itemJson);
     await fsPromises.rename(oldDirPath, newDirPath);
     this.emit('renamed', { oldName, newName });
-    ipcMain.emit(this.fChannelNames.rename.response, itemJson);
+    ipcMain.sendToAll(this.fChannelNames.rename.response, itemJson);
     return itemJson;
   }
   
@@ -249,7 +249,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.saveItemsJson(procsJson);
     await this.onSetActive(name);
     this.emit('activeSet', name);
-    ipcMain.emit(this.fChannelNames.setActive.response, name);
+    ipcMain.sendToAll(this.fChannelNames.setActive.response, name);
   }
   
   protected async onSetActive(name: string) {
@@ -261,7 +261,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     this.checkExists(item.name);
     await this.saveItemJson(item.name, item);
     this.emit('updated', item);
-    ipcMain.emit(this.fChannelNames.update.response, name);
+    ipcMain.sendToAll(this.fChannelNames.update.response, item.name);
     return item;
   }
 

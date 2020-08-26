@@ -1,27 +1,27 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import electronIpcLog from 'electron-ipc-log';
 import express from 'express';
+import fs, { promises as fsPromises } from 'fs';
+import fsExtra from 'fs-extra';
 import * as http from 'http';
 import path from 'path';
+import { AutoUpdater } from './auto-update';
 import { init as initGlobal } from './InitGlobal';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
 import NodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
-import fs, { promises as fsPromises } from 'fs';
-import fsExtra from 'fs-extra';
 import { isDev } from './utils/is-dev-mode';
-import electronIpcLog from 'electron-ipc-log';
-// import { init as initUdpDiscovery } from './servers/udp-discovery';
-import { AutoUpdater } from './auto-update';
+import log from 'electron-log';
 
 const nodeRedApp = express();
 const httpServer = http.createServer(nodeRedApp);
 const autoUpdater = new AutoUpdater();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
-  var { channel, data, sent, sync } = event;
-  var args = [sent ? 'sent' : 'received', channel ]; //, ...data];
+  var { channel, sent, sync } = event;
+  var args = [sent ? 'sent' : 'received', channel]; //, ...data];
   if (sync) args.unshift('ipc:sync');
   else args.unshift('ipc');
   console.info(...args);
@@ -51,9 +51,10 @@ const sendToLoadingWindow = (text: string) => {
   const loadingWindow = global.visualCal.windowManager.loadingWindow;
   if (!loadingWindow) return;
   loadingWindow.webContents.send('update-loading-text', text);
-}
+};
 
 async function load() {
+  ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
   sendToLoadingWindow('Initializing main menu ...');
   initMainMenu();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
@@ -66,7 +67,6 @@ async function load() {
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
-  // initUdpDiscovery();
   NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
@@ -110,9 +110,9 @@ async function testingOnly() {
 }
 
 app.on('ready', async () => {
-  app.on('activate', async () => {
-    if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
-  });
+  log.transports.file.level = 'debug';
+  log.transports.console.level = 'debug';
+  log.catchErrors();
   try {
     await load();
     const loginWindow = await global.visualCal.windowManager.ShowLogin();
@@ -131,6 +131,7 @@ app.on('ready', async () => {
   } catch (error) {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);
   }
+  app.on('activate', async () => { if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain(); });
 });
 
 app.on('window-all-closed', () => {

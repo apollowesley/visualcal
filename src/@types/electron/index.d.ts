@@ -8,6 +8,10 @@ declare module Electron {
     visualCal: VisualCalWindowOptions;
   }
 
+  interface IpcMain extends NodeJS.EventEmitter {
+    sendToAll(channelName: string, ...args: any[]);
+  }
+
 }
 
 interface ElectronIpcLogEvent {

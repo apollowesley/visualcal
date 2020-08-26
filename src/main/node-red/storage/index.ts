@@ -43,7 +43,6 @@ const getProcedureSettingsFilePath = (procedureName: string) => fsPath.join(getP
 
 export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
     async init(settings: LogicServerSettings): Promise<void> {
-      console.debug('VisualCalLogicServerFileSystem.init');
       localSettings = settings;
       const packageFile = fsPath.join(localSettings.userDir, 'package.json');
       await fs.ensureDir(fsPath.join(localSettings.userDir, 'node_modules'));
