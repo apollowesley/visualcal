@@ -1,22 +1,21 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import electronIpcLog from 'electron-ipc-log';
-import express from 'express';
+import log from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
-import * as http from 'http';
+import RED from 'node-red';
 import path from 'path';
+import { NodeRed as RealNodeRed } from '../@types/logic-server';
 import { AutoUpdater } from './auto-update';
 import { init as initGlobal } from './InitGlobal';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
-import NodeRedSettings from './node-red-settings';
+import NodeRed, { destroy as destroyNodeRed } from './node-red';
+import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
-import log from 'electron-log';
 
-const nodeRedApp = express();
-const httpServer = http.createServer(nodeRedApp);
 const autoUpdater = new AutoUpdater();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
@@ -67,9 +66,9 @@ async function load() {
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
-  NodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
-  NodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
-  NodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
+  VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
+  VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
+  VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
   sendToLoadingWindow('Initializing Logic Server ...');
@@ -88,20 +87,13 @@ async function load() {
   // nodeRedApp.use('/red/visualcal/d3.js', (_, res) => res.sendFile(path.join(appBaseDirPath, 'node_modules', 'd3', 'dist', 'd3.min.js')));
   // nodeRedApp.use('/red/renderers/window.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.base, 'window.js')));
   // nodeRedApp.use('/red/renderers/windows/node-red.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.windows, 'node-red.js')));
-  global.visualCal.nodeRed.app.init(httpServer, NodeRedSettings);
-  nodeRedApp.use(NodeRedSettings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
-  nodeRedApp.use(NodeRedSettings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
-  nodeRedApp.use('/nodes-public', express.static(global.visualCal.dirs.html.js)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-  sendToLoadingWindow('Starting Web Server ...');
-  httpServer.listen(global.visualCal.config.httpServer.port, 'localhost', async () => {
-    try {
-      sendToLoadingWindow('Starting Logic Server ...');
-      await global.visualCal.nodeRed.app.start();
-      await ProcedureManager.loadActive();
-    } catch (error) {
-      console.error(error);
-    }
+  const nodeRed = NodeRed();
+  nodeRed.once('started', async (port) => {
+    log.info(`Logic server started on port ${port}`);
+    await ProcedureManager.loadActive();
   });
+  await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
+  global.visualCal.nodeRed.app = RED as RealNodeRed;
 }
 
 async function testingOnly() {
@@ -142,6 +134,7 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', async () => {
   autoUpdater.abort();
-  await global.visualCal.nodeRed.app.stop();
-  httpServer.close();
+  log.info('Destroying logic server');
+  await destroyNodeRed();
+  log.info('Logic server destroyed');
 });
