@@ -1,4 +1,4 @@
-import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, ProcedureRuntimeNode, SectionRuntimeNode, ActionStartRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
+import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, DeviceConfigurationNode } from '../../../@types/logic-server';
 import { Node as NodeRedNode } from 'node-red';
 import fs from 'fs-extra';
 import path from 'path';
@@ -8,6 +8,9 @@ import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
 import { dialog } from 'electron';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
+import NodeRed from '../index';
+
+const nodeRed = NodeRed();
 
 export interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -232,44 +235,27 @@ export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) =>
   });
 };
 
-export const getProcedureNode = () => {
-  const procedureConfigNode = findNodesByType('procedure-sidebar') as ProcedureRuntimeNode[];
-  if (procedureConfigNode.length > 0) return procedureConfigNode[0];
-  return null;
-};
-
-export const getSectionNodes = () => {
-  const sectionConfigNodes = findNodesByType('indysoft-section-configuration') as SectionRuntimeNode[];
-  return sectionConfigNodes;
-};
-
-export const getActionNodesForSection = (sectionShortName: string) => {
-  const validStartActionNodes = (findNodesByType('indysoft-action-start').filter(n => n !== undefined && n !== null && (n as ActionStartRuntimeNode).section) as ActionStartRuntimeNode[]).filter(n => n.section && n.section.shortName.toLowerCase() === sectionShortName.toLowerCase());
-  if (!validStartActionNodes) return [];
-  return validStartActionNodes;
-};
-
 export const getProcedureStatus = () => {
-  const procedureNode = getProcedureNode();
+  const procedureNode = nodeRed.visualCalProcedureSidebarNode;
   if (!procedureNode) return null;
   const status: ProcedureStatus = {
-    name: procedureNode.name,
-    shortName: procedureNode.shortName,
+    name: procedureNode.runtime.name,
+    shortName: procedureNode.runtime.shortName,
     sections: []
   };
-  const sectionNodes = getSectionNodes();
+  const sectionNodes = nodeRed.visualCalSectionConfigurationNodes;
   sectionNodes.forEach(sectionNode => {
     const actionStatuses: ActionStatus[] = [];
-    const actionNodesForSection = getActionNodesForSection(sectionNode.shortName);
+    const actionNodesForSection = nodeRed.getVisualCalActionStartNodesForSection(sectionNode.runtime.shortName);
     actionNodesForSection.forEach(actionNode => {
       if (actionNode) actionStatuses.push({
-        name: actionNode.name,
-        isRunning: actionNode.isRunning
+        name: actionNode.runtime.name,
+        isRunning: actionNode.runtime.isRunning
       });
     });
     status.sections.push({
-      name: sectionNode.name,
-      shortName: sectionNode.shortName,
+      name: sectionNode.runtime.name,
+      shortName: sectionNode.runtime.shortName,
       actions: actionStatuses
     });
   });

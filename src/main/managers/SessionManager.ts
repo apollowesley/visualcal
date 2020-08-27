@@ -5,6 +5,9 @@ import { CrudManager } from './CrudManager';
 import { ipcMain } from 'electron';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
+import NodeRed from '../node-red';
+
+const nodeRed = NodeRed();
 
 export class SessionManager extends CrudManager<Session, Session, Session, Session> {
 
@@ -71,9 +74,9 @@ export class SessionManager extends CrudManager<Session, Session, Session, Sessi
         event.reply(IpcChannels.sessions.viewInfo.error, new Error('No active session'));
         return;
       }
-      const sections: SectionInfo[] = global.visualCal.nodeRed.app.settings.getSectionNodes().map(n => { return { name: n.name, shortName: n.shortName, actions: [] }; });
+      const sections: SectionInfo[] = nodeRed.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
       sections.forEach(s => {
-        s.actions = global.visualCal.nodeRed.app.settings.getActionNodesForSection(s.shortName).map(a => { return { name: a.name }; });
+        s.actions = nodeRed.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
       });
       const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
       const viewInfo: SessionViewWindowOpenIPCInfo = {

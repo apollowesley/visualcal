@@ -1,5 +1,5 @@
-import { ActionStartRuntimeNode } from '../../../@types/logic-server';
 import { resetAllNodes, loadCommunicationConfiguration } from '.';
+import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../../nodes/indysoft-action-start-types';
 
 export type TriggerType = 'start' | 'stop' | 'reset';
 
@@ -36,7 +36,7 @@ export const trigger = (options: TriggerOptions): TriggerResult => {
     section: section.toLowerCase(),
     action: action.toLowerCase()
   };
-  const startNode = (global.visualCal.nodeRed.app.settings.findNodesByType('indysoft-action-start') as ActionStartRuntimeNode[]).find(n => n.section && n.section.shortName.toLowerCase() === response.section && n.name.toLowerCase() === response.action);
+  const startNode = (global.visualCal.nodeRed.app.settings.findNodesByType('indysoft-action-start') as IndySoftActionStartRuntimeNode[]).find(n => n.section && n.section.shortName.toLowerCase() === response.section && n.name.toLowerCase() === response.action);
   if (startNode) {
     if (type === 'start') {
       if (startNode.isRunning) {

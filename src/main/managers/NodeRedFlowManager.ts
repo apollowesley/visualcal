@@ -4,6 +4,7 @@ import { ProcedureManager } from './ProcedureManager';
 import path from 'path';
 import { NodeRedFlow } from '../../@types/node-red-info';
 import { loadCommunicationConfiguration } from '../node-red/utils';
+import nodeRed from '../node-red';
 
 export class NodeRedFlowManager extends EventEmitter {
 
@@ -34,7 +35,7 @@ export class NodeRedFlowManager extends EventEmitter {
       }
     }
     try {
-      await global.visualCal.nodeRed.app.runtime.flows.setFlows({ flows: { flows: flowFileContents }, user: 'server' }, 'full');
+      await nodeRed().loadFlow(flowFileContents);
       loadCommunicationConfiguration(session);
     } catch (error) {
       console.error(error);

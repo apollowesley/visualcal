@@ -1,6 +1,9 @@
 import { NodeProperties } from 'node-red';
 import { resetProcedureActionStatus } from './utils';
-import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, ActionStartRuntimeNode, NodeResetOptions, NodeRed } from '../@types/logic-server';
+import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
+import VisualCalNodeRed from '../main/node-red';
+
+const nodeRed = VisualCalNodeRed();
 
 export const NODE_TYPE = 'indysoft-action-completed';
 
@@ -18,15 +21,15 @@ module.exports = (RED: NodeRed) => {
       }
       this.name = config.name;
       // Notify our start action node that we've completed
-      const startNode = (RED.settings.findNodesByType('indysoft-action-start') as ActionStartRuntimeNode[]).find(n => n.section && msg.payload && n.section.shortName === msg.payload.section && n.name === msg.payload.action);
+      const startNode = nodeRed.visualCalActionStartNodes.find(n => n.runtime.section && msg.payload && n.runtime.section.shortName === msg.payload.section && n.runtime.name === msg.payload.action);
       if (!startNode) {
         this.error('Unable to locate start node');
         if (done) done();
         return;
       }
-      startNode.emit('stop');
+      startNode.runtime.emit('stop');
       resetProcedureActionStatus(this);
-      global.visualCal.actionManager.stateChanged(startNode, 'completed');
+      global.visualCal.actionManager.stateChanged(startNode.runtime, 'completed');
       this.status({
         fill: 'blue',
         shape: 'dot',

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { trigger, TriggerOptions } from '../node-red/utils/actions';
 import { ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
-import { ActionStartRuntimeNode } from '../../@types/logic-server';
+import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
 
 export class ActionManager extends EventEmitter {
 
@@ -26,7 +26,7 @@ export class ActionManager extends EventEmitter {
     return result;
   }
 
-  stateChanged(node: ActionStartRuntimeNode, state: ActionState) {
+  stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState) {
     setImmediate(() => {
       if (!node.section) throw new Error(`indysoft-action-start node section property is not defined for node ${node.id}`);
       ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import type { Settings } from '../@types/logic-server';
-import { findNodeById, findNodesByType, getActionNodesForSection, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, getSectionNodes, onComment, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
+import { findNodeById, findNodesByType, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, onComment, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
@@ -9,13 +9,11 @@ const settings: Settings = {
   driversRoot: '',
   findNodeById: findNodeById,
   findNodesByType: findNodesByType,
-  getActionNodesForSection: getActionNodesForSection,
   getAllNodes: getAllNodes,
   getCommunicationInterfaceForDevice: getCommunicationInterfaceForDevice,
   getDriverForDevice: getDriverForDevice,
   getNodeConfig: getNodeConfig,
   getProcedureStatus: getProcedureStatus,
-  getSectionNodes: getSectionNodes,
   onComment: onComment,
   credentialSecret: 'IndySoft#927',
   resetAllConnectedInstructionNodes: resetConnectedInstructionNodes,

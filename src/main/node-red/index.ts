@@ -2,13 +2,13 @@ import express, { Express } from 'express';
 import { Server, createServer } from 'http';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { NodeRed as NodeRedType, NodeRedRuntimeNode, Settings as NodeRedSettings } from '../../@types/logic-server';
-import RED, { NodeProperties } from 'node-red';
-
-interface NodeRedNode {
-  id: string;
-  editorDefinition: NodeProperties;
-  runtime: NodeRedRuntimeNode;
-}
+import RED from 'node-red';
+import { NodeRedFlow, NodeRedFlowNode } from '../../@types/node-red-info';
+import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
+import { IndySoftNodeTypeNames } from '../../constants';
+import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
+import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/indysoft-section-configuration-types';
+import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
 
 interface Events {
   starting: () => void;
@@ -18,6 +18,8 @@ interface Events {
 }
 
 class NodeRed extends TypedEmitter<Events> {
+
+  public static USER = 'VisualCal';
 
   private fExpress?: Express;
   private fHttpServer?: Server;
@@ -64,8 +66,8 @@ class NodeRed extends TypedEmitter<Events> {
    */
   get editorNodes() {
     if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
-    const nodes: NodeProperties[] = [];
-    this.fNodeRed.nodes.eachNode((node => nodes.push(node)));
+    const nodes: NodeRedFlowNode[] = [];
+    this.fNodeRed.nodes.eachNode((node => nodes.push(node as NodeRedFlowNode)));
     return nodes;
   }
 
@@ -75,7 +77,14 @@ class NodeRed extends TypedEmitter<Events> {
   get runtimeNodes() {
     if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
     const nodes: NodeRedRuntimeNode[] = [];
-    this.fNodeRed.runtime.nodes.eachNode((node => nodes.push(node)));
+    const editorNodes = this.editorNodes;
+    editorNodes.forEach(editorNode => {
+      if (!this.fNodeRed) throw new Error('Not running');
+      const runtimeNode = this.fNodeRed.nodes.getNode(editorNode.id);
+      if (runtimeNode) {
+        nodes.push(runtimeNode);
+      }
+    });
     return nodes;
   }
 
@@ -91,12 +100,58 @@ class NodeRed extends TypedEmitter<Events> {
       if (editorNode) {
         nodes.push({
           id: runtimeNode.id,
+          type: runtimeNode.type,
           editorDefinition: editorNode,
           runtime: runtimeNode
         });
       }
     });
     return nodes;
+  }
+
+  findNodesByType(type: string) {
+    return this.nodes.filter(n => n.type.toLocaleUpperCase() === type.toLocaleUpperCase());
+  }
+
+  findTypedNodesByType<TEditorType extends NodeRedFlowNode, TRuntimeType extends NodeRedRuntimeNode>(type: string) {
+    const nodes = this.findNodesByType(type);
+    const typedNodes: NodeRedTypedNode<TEditorType, TRuntimeType>[] = [];
+    nodes.forEach(node => {
+      const typedNode: NodeRedTypedNode<TEditorType, TRuntimeType> = {
+        id: node.id,
+        type: node.type,
+        editorDefinition: node.editorDefinition as TEditorType,
+        runtime: node.runtime as  TRuntimeType
+      }
+      typedNodes.push(typedNode);
+    });
+    return typedNodes;
+  }
+
+  get visualCalProcedureSidebarNode() {
+    const procedureNodes = this.findTypedNodesByType<IndySoftProcedureSideBarEditorNode, IndySoftProcedureSidebarRuntimeNode>(IndySoftNodeTypeNames.Procedure);
+    if (procedureNodes) return procedureNodes[0];
+    return undefined;
+  }
+
+  get visualCalSectionConfigurationNodes() { return this.findTypedNodesByType<IndySoftSectionConfigurationEditorNode, IndySoftSectionConfigurationRuntimeNode>(IndySoftNodeTypeNames.SectionConfiguration); }
+
+  get visualCalActionStartNodes() { return this.findTypedNodesByType<IndySoftActionStartEditorNode, IndySoftActionStartRuntimeNode>(IndySoftNodeTypeNames.ActionStart); }
+
+  getVisualCalActionStartNodesForSection = (sectionName: string) => {
+    let actionStartNodes = this.visualCalActionStartNodes;
+    actionStartNodes = actionStartNodes.filter(n => n.runtime.section !== undefined && n.runtime.section.shortName.toLocaleUpperCase() === sectionName.toLocaleUpperCase());
+    return actionStartNodes;
+  }
+
+  /**
+   * Loads a new flow JSON
+   * @param flow The flow JSON to load
+   * @param deployType How node-red should deploy this flow
+   */
+  async loadFlow(flow: NodeRedFlow, deployType: DeployType = 'full') {
+    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
+    await this.fNodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRed.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
   }
 
 }

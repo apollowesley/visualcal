@@ -1,12 +1,14 @@
-import { NodeRed, ActionStartRuntimeNode, ActionStartRuntimeProperties, SectionRuntimeNode, NodeResetOptions } from '../@types/logic-server';
+import { NodeRed, NodeResetOptions } from '../@types/logic-server';
 import { IndySoftNodeTypeNames } from '../constants';
 import { TriggerOptions } from '../main/node-red/utils/actions';
+import { RuntimeNode, RuntimeProperties } from './indysoft-action-start-types';
+import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
 
 module.exports = (RED: NodeRed) => {
 
-  function nodeConstructor(this: ActionStartRuntimeNode, config: ActionStartRuntimeProperties) {
+  function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
-    this.section = RED.nodes.getNode(config.sectionConfigId) as SectionRuntimeNode;
+    this.section = RED.nodes.getNode(config.sectionConfigId) as IndySoftSectionConfigurationRuntimeNode;
     this.name = config.name;
     this.isRunning = false;
     const resetStatus = () => {

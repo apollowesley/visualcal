@@ -1,6 +1,8 @@
 import { Red, NodeProperties, Node as NodeRedNode } from 'node-red';
 import { NodeRedFlowNode } from './node-red-info';
 import { DriverInfo } from './logic-drivers';
+import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../nodes/indysoft-action-start-types';
+import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../nodes/indysoft-section-configuration-types';
 
 export interface NodeRedAdminAuth {
   type: string;
@@ -50,8 +52,6 @@ export interface Settings {
   resetAllConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions): void;
   resetAllConnectedInstructionNodes(startFrom: NodeRedRuntimeNode): void;
   getProcedureStatus(): ProcedureStatus | null;
-  getSectionNodes(): SectionRuntimeNode[];
-  getActionNodesForSection(sectionShortName: string): ActionStartRuntimeNode[];
   functionGlobalContext: VisualCalContextGlobal;
   logging?: NodeRedLogging;
   editorTheme?: {
@@ -318,11 +318,6 @@ export interface CurrentProcedureName {
 
 
 // ***** LOGIC NODES *****
-export interface SectionNode extends NodeRedFlowNode {
-  shortName: string;
-}
-
-
 
 export interface VisualCalNodeRedNodeInputMessagePayload {
   sessionId?: string;
@@ -347,33 +342,6 @@ export interface NodeRedCommunicationInterfaceRuntimeNode extends NodeRedRuntime
   communicationInterface?: ICommunicationInterface;
   device?: IControllableDevice;
   specificDriverInfo?: DriverInfo;
-}
-
-export interface ProcedureRuntimeNode extends NodeRedRuntimeNode {
-  shortName: string;
-}
-
-export interface ProcedureRuntimeProperties extends NodeRedFlowNode {
-  shortName: string;
-}
-
-export interface SectionRuntimeNode extends NodeRedRuntimeNode {
-  shortName: string;
-}
-
-export interface SectionRuntimeProperties extends NodeRedFlowNode {
-  shortName: string;
-}
-
-export interface ActionStartRuntimeNode extends NodeRedRuntimeNode {
-  sessionId?: string;
-  runId?: string;
-  section?: SectionRuntimeNode;
-  isRunning: boolean;
-}
-
-export interface ActionStartRuntimeProperties extends NodeRedFlowNode {
-  sectionConfigId: string;
 }
 
 export interface DeviceConfigurationNode extends NodeRedRuntimeNode {
