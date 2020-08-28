@@ -2,8 +2,8 @@ import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../constants';
 import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
-import { TriggerOptions } from '../../../main/node-red/utils/actions';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
+import { TriggerOptions } from '../../../nodes/indysoft-action-start-types';
 
 // ***** LOG *****
 
@@ -134,20 +134,17 @@ const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const opts: TriggerOptions = {
     action: action.name,
     section: section.shortName,
-    sessionId: sessionName,
-    runId: Date.now().toString(),
-    type: 'start',
-    session: session
+    runId: Date.now().toString()
   };
   if (session.lastSectionName && session.lastActionName) {
-    opts.type = 'stop'; // Already triggered
+    window.visualCal.actionManager.stop(opts);
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
+    window.visualCal.actionManager.start(opts);
     session.lastSectionName = section.name;
     session.lastActionName = action.name;
   }
-  window.visualCal.actionManager.trigger(opts);
   cell.getRow().reformat();
   lastActionCell = cell;
 }
@@ -212,71 +209,81 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   ]
 });
 
-const init = () => {
-  ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-    sessionName = viewInfo.session.name;
-    session = viewInfo.session;
-    sections = viewInfo.sections;
-    deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-    deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-      devices.push({
-        configNodeId: deviceInfo.configNodeId,
-        driverDisplayName: '',
-        gpibAddress: 1,
-        interfaceName: '',
-        unitId: deviceInfo.unitId
-      });
-    });
-    devicesTable.setData(devices);
-    sectionsTable.setData(sections);
-    if (sections.length > 0) {
-      const firstSection = sections[0];
-      if (firstSection.actions.length > 0) {
-        actions = firstSection.actions;
-        actionsTable.setData(actions);
-      }
-    }
-    window.visualCal.resultsManager.load(sessionName);
-  });
-
-  ipcRenderer.on(IpcChannels.sessions.viewInfo.error, (_, error: Error) => {
-    window.visualCal.electron.showErrorDialog(error);
-  });
-
-  ipcRenderer.on(IpcChannels.actions.trigger.error, (_, error: Error) => {
-    if (error.message) {
-      alert(error.message);
-    } else {
-      alert(error);
-    }
-  });
-
-  window.visualCal.resultsManager.on(IpcChannels.results.load.response, (response: LoadResponseArgs) => {
-    results = response.results;
-    resultsTable.setData(results);
-  });
-
-  window.visualCal.actionManager.on('resultAcquired', (info) => {
-    results.push(info.result);
-    resultsTable.setData(results);
-  });
-
-  ipcRenderer.send(IpcChannels.sessions.viewInfo.request);
-}
-
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 resetButton.addEventListener('click', () => {
   const triggerOpts: TriggerOptions = {
     action: '',
     section: '',
-    sessionId: sessionName,
     runId: Date.now().toString(),
-    type: 'start'
   };
   session.lastSectionName = undefined;
   session.lastActionName = undefined;
   actionsTable.getRows().forEach(row => row.reformat());
-  window.visualCal.actionManager.trigger(triggerOpts);
+  window.visualCal.actionManager.reset(triggerOpts);
 });
 
-init();
+ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+  sessionName = viewInfo.session.name;
+  session = viewInfo.session;
+  sections = viewInfo.sections;
+  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
+  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+    devices.push({
+      configNodeId: deviceInfo.configNodeId,
+      driverDisplayName: '',
+      gpibAddress: 1,
+      interfaceName: '',
+      unitId: deviceInfo.unitId
+    });
+  });
+  devicesTable.setData(devices);
+  sectionsTable.setData(sections);
+  if (sections.length > 0) {
+    const firstSection = sections[0];
+    if (firstSection.actions.length > 0) {
+      actions = firstSection.actions;
+      actionsTable.setData(actions);
+    }
+  }
+  window.visualCal.resultsManager.load(sessionName);
+});
+
+ipcRenderer.on(IpcChannels.sessions.viewInfo.error, (_, error: Error) => {
+  window.visualCal.electron.showErrorDialog(error);
+});
+
+window.visualCal.actionManager.on('startError', (error: Error) => {
+  if (error.message) {
+    alert(error.message);
+  } else {
+    alert(error);
+  }
+});
+
+window.visualCal.actionManager.on('stopError', (error: Error) => {
+  if (error.message) {
+    alert(error.message);
+  } else {
+    alert(error);
+  }
+});
+
+window.visualCal.actionManager.on('resetError', (error: Error) => {
+  if (error.message) {
+    alert(error.message);
+  } else {
+    alert(error);
+  }
+});
+
+window.visualCal.resultsManager.on(IpcChannels.results.load.response, (response: LoadResponseArgs) => {
+  results = response.results;
+  resultsTable.setData(results);
+});
+
+window.visualCal.actionManager.on('resultAcquired', (info) => {
+  results.push(info.result);
+  resultsTable.setData(results);
+});
+
+ipcRenderer.send(IpcChannels.sessions.viewInfo.request);

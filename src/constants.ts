@@ -273,10 +273,20 @@ export const IpcChannels = {
     }
   },
   actions: {
-    trigger: {
+    start: {
       request: 'start-action-request',
       response: 'start-action-response',
       error: 'start-action-error'
+    },
+    stop: {
+      request: 'stop-action-request',
+      response: 'stop-action-response',
+      error: 'stop-action-error'
+    },
+    reset: {
+      request: 'reset-action-request',
+      response: 'reset-action-response',
+      error: 'reset-action-error'
     },
     stateChanged: 'start-action-state-changed',
     resultAcquired: 'action-result-acquired'

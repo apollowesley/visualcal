@@ -1,29 +1,51 @@
 import { EventEmitter } from 'events';
-import { trigger, TriggerOptions } from '../node-red/utils/actions';
 import { ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
-import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
+import { RuntimeNode as IndySoftActionStartRuntimeNode, TriggerOptions } from '../../nodes/indysoft-action-start-types';
+import NodeRed from '../node-red';
+import { loadCommunicationConfiguration } from '../node-red/utils';
+
+const nodeRed = NodeRed();
 
 export class ActionManager extends EventEmitter {
 
   constructor() {
     super();
-    ipcMain.on(IpcChannels.actions.trigger.request, (event, opts: TriggerOptions) => {
+    ipcMain.on(IpcChannels.actions.start.request, async (event, opts: TriggerOptions) => {
       try {
-        const result = this.trigger(opts);
-        event.reply(IpcChannels.actions.trigger.response, result);
+        await this.start(opts);
+        event.reply(IpcChannels.actions.start.response);
       } catch (error) {
-        event.reply(IpcChannels.actions.trigger.error, { opts: opts, err: error });
+        event.reply(IpcChannels.actions.start.error, { opts: opts, err: error });
+      }
+    });
+
+    ipcMain.on(IpcChannels.actions.stop.request, (event, opts: TriggerOptions) => {
+      try {
+        this.stop(opts);
+        event.reply(IpcChannels.actions.stop.response);
+      } catch (error) {
+        event.reply(IpcChannels.actions.stop.error, { opts: opts, err: error });
       }
     });
   }
 
-  trigger(opts: TriggerOptions) {
-    const result = trigger(opts);
-    if (result.error) {
-      throw new Error(result.error);
-    }
-    return result;
+  private async getActiveSession() {
+    const activeSessionName = await global.visualCal.sessionManager.getActive();
+    if (!activeSessionName) return undefined;
+    const activeSession = await global.visualCal.sessionManager.getOne(activeSessionName);
+    return activeSession;
+  }
+
+  async start(opts: TriggerOptions) {
+    const activeSession = await this.getActiveSession();
+    if (!activeSession) throw new Error('No active session, unable to start action');
+    loadCommunicationConfiguration(activeSession);
+    nodeRed.startVisualCalActionStartNode(opts.section, opts.action);
+  }
+
+  stop(opts: TriggerOptions) {
+    nodeRed.stopVisualCalActionStartNode(opts.section, opts.action);
   }
 
   stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState) {

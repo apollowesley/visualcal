@@ -1,20 +1,23 @@
 import express, { Express } from 'express';
-import { Server, createServer } from 'http';
+import { createServer, Server } from 'http';
+import RED from 'node-red';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { NodeRed as NodeRedType, NodeRedRuntimeNode, Settings as NodeRedSettings } from '../../@types/logic-server';
-import RED from 'node-red';
 import { NodeRedFlow, NodeRedFlowNode } from '../../@types/node-red-info';
-import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import { IndySoftNodeTypeNames } from '../../constants';
 import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
 import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/indysoft-section-configuration-types';
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
+import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 
 interface Events {
   starting: () => void;
   started: (port: number) => void;
   stopping: () => void;
   stopped: () => void;
+  sectionActionStarted: (sectionName: string, actionName: string) => void;
+  sectionActionStopped: (sectionName: string, actionName: string) => void;
+  sectionActionReset: (sectionName: string, actionName: string) => void;
 }
 
 class NodeRed extends TypedEmitter<Events> {
@@ -33,9 +36,13 @@ class NodeRed extends TypedEmitter<Events> {
       if (this.isRunning) return reject(new Error('Already running'));
       this.emit('starting');
       this.fExpress = express();
-      this.fHttpServer = createServer();
+      this.fHttpServer = createServer(this.fExpress);
       this.fNodeRed = RED as NodeRedType;
       this.fNodeRed.init(this.fHttpServer, settings);
+      this.fExpress.use((req, _, next) => {
+        console.info(req.url);
+        return next();
+      });
       this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
       this.fExpress.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
@@ -144,6 +151,11 @@ class NodeRed extends TypedEmitter<Events> {
     return actionStartNodes;
   }
 
+  getVisualCalActionStartNode(sectionName: string, actionName: string) {
+    const nodes = this.getVisualCalActionStartNodesForSection(sectionName);
+    return nodes.find(n => n.runtime.name.toLocaleUpperCase() === actionName.toLocaleUpperCase());
+  }
+
   /**
    * Loads a new flow JSON
    * @param flow The flow JSON to load
@@ -154,17 +166,43 @@ class NodeRed extends TypedEmitter<Events> {
     await this.fNodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRed.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
   }
 
+  resetAllNodes() {
+    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
+    this.fNodeRed.runtime.events.emit('reset');
+  }
+
+  startVisualCalActionStartNode(sectionName: string, actionName: string) {
+    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
+    if (startActionNode.runtime.isRunning) throw new Error('Already running');
+    startActionNode.runtime.emit('start');
+    this.emit('sectionActionStarted', sectionName, actionName);
+  }
+
+  stopVisualCalActionStartNode(sectionName: string, actionName: string) {
+    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
+    startActionNode.runtime.emit('stop');
+    this.emit('sectionActionStopped', sectionName, actionName);
+  }
+
+  resetVisualCalActionStartNode(sectionName: string, actionName: string) {
+    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
+    this.stopVisualCalActionStartNode(sectionName, actionName);
+    startActionNode.runtime.emit('reset');
+    this.emit('sectionActionReset', sectionName, actionName);
+  }
+
 }
 
-let nodeRed: NodeRed | undefined;
+const nodeRed = new NodeRed();
 
 export default () => {
-  if (!nodeRed) nodeRed = new NodeRed();
   return nodeRed;
 }
 
 export const destroy = async () => {
   if (!nodeRed) return;
   await nodeRed.stop();
-  nodeRed = undefined;
 }

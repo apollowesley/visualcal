@@ -1,8 +1,10 @@
 import { NodeRed, NodeResetOptions } from '../@types/logic-server';
 import { IndySoftNodeTypeNames } from '../constants';
-import { TriggerOptions } from '../main/node-red/utils/actions';
 import { RuntimeNode, RuntimeProperties } from './indysoft-action-start-types';
 import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
+import VisualCalNodeRed from '../main/node-red';
+
+const visualCalNodeRed = VisualCalNodeRed();
 
 module.exports = (RED: NodeRed) => {
 
@@ -15,7 +17,7 @@ module.exports = (RED: NodeRed) => {
       this.isRunning = false;
       this.status({});
     };
-    this.on('start', (options: TriggerOptions) => {
+    this.on('start', () => {
       if (!this.section) {
         this.error('Missing secton configuration');
         return;
@@ -32,12 +34,8 @@ module.exports = (RED: NodeRed) => {
         text: 'Running'
       });
       this.isRunning = true;
-      this.sessionId = options.sessionId;
-      this.runId = options.runId;
       this.send({
         payload: {
-          sessionId: options.sessionId,
-          runId: options.runId,
           section: this.section.shortName,
           action: this.name
         }
@@ -45,7 +43,7 @@ module.exports = (RED: NodeRed) => {
       global.visualCal.actionManager.stateChanged(this, 'started');
     });
     this.on('stop', () => {
-      if (!this.section || !this.sessionId || !this.runId) {
+      if (!this.section) {
         this.error('Missing secton configuration');
         return;
       }

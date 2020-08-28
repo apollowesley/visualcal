@@ -16,6 +16,7 @@ import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 
+const nodeRed = NodeRed();
 const autoUpdater = new AutoUpdater();
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
@@ -87,7 +88,6 @@ async function load() {
   // nodeRedApp.use('/red/visualcal/d3.js', (_, res) => res.sendFile(path.join(appBaseDirPath, 'node_modules', 'd3', 'dist', 'd3.min.js')));
   // nodeRedApp.use('/red/renderers/window.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.base, 'window.js')));
   // nodeRedApp.use('/red/renderers/windows/node-red.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.windows, 'node-red.js')));
-  const nodeRed = NodeRed();
   nodeRed.once('started', async (port) => {
     log.info(`Logic server started on port ${port}`);
     await ProcedureManager.loadActive();
