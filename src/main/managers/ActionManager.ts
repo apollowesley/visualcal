@@ -30,17 +30,9 @@ export class ActionManager extends EventEmitter {
     });
   }
 
-  private async getActiveSession() {
-    const activeSessionName = await global.visualCal.sessionManager.getActive();
-    if (!activeSessionName) return undefined;
-    const activeSession = await global.visualCal.sessionManager.getOne(activeSessionName);
-    return activeSession;
-  }
-
   async start(opts: TriggerOptions) {
-    const activeSession = await this.getActiveSession();
-    if (!activeSession) throw new Error('No active session, unable to start action');
-    loadCommunicationConfiguration(activeSession);
+    if (!opts.session) throw new Error('A session is required to start and action trigger');
+    loadCommunicationConfiguration(opts.session);
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action);
   }
 

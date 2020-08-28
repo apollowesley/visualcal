@@ -134,7 +134,8 @@ const startStopActionClick = async (cell: Tabulator.CellComponent) => {
   const opts: TriggerOptions = {
     action: action.name,
     section: section.shortName,
-    runId: Date.now().toString()
+    runId: Date.now().toString(),
+    session: session
   };
   if (session.lastSectionName && session.lastActionName) {
     window.visualCal.actionManager.stop(opts);
