@@ -17,7 +17,6 @@ const okButton = document.getElementById('vc-btn-ok') as HTMLButtonElement;
 const cancelButton = document.getElementById('vc-btn-cancel') as HTMLButtonElement;
 
 ipcRenderer.on(IpcChannels.user.input.request, (_, request: UserInputRequest) => {
-  alert(request);
   titleElement.innerText = request.title ? request.title : 'Missing title';
   instructionElement.innerText = request.text ? request.text : 'Missing text';
   handleImage(request);

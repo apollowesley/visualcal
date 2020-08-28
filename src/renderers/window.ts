@@ -22,8 +22,6 @@ const log = electronLog.scope('renderers/window.js');
 // Removes all design-time helpers
 removeDesignTimeFromAllElements();
 
-ipcRenderer.on('testing', (_, value) => alert(value));
-
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, data, sent, sync } = event;
   var args = [sent ? 'sent' : 'received', channel, ...data];

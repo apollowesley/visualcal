@@ -70,7 +70,6 @@ export class AutoUpdater extends TypedEmitter<Events> {
     log.info('onUpdateAvailable');
     if (this.fAborted) return;
     ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
-      dialog.showErrorBox('Testing Auto-Update', `About to download version ${info.version}`);
       this.fCancellationToken = new CancellationToken();
       try {
         await autoUpdater.downloadUpdate(this.fCancellationToken);
