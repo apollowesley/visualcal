@@ -72,7 +72,12 @@ export class AutoUpdater extends TypedEmitter<Events> {
     ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
       dialog.showErrorBox('Testing Auto-Update', `About to download version ${info.version}`);
       this.fCancellationToken = new CancellationToken();
-      await autoUpdater.downloadUpdate(this.fCancellationToken);
+      try {
+        await autoUpdater.downloadUpdate(this.fCancellationToken);
+      } catch (error: unknown) {
+        const err = error as Error;
+        dialog.showErrorBox('An error occured attempting to download the update', err.message);
+      }
     });
     ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
       global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);

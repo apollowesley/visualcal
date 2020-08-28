@@ -107,7 +107,8 @@ async function testingOnly() {
   return Promise.resolve();
 }
 
-app.on('ready', async () => {
+const run = async () => {
+  await app.whenReady();
   try {
     await load();
     const loginWindow = await global.visualCal.windowManager.ShowLogin();
@@ -127,7 +128,7 @@ app.on('ready', async () => {
     dialog.showErrorBox('Oops!  Something went wrong', error.message);
   }
   app.on('activate', async () => { if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain(); });
-});
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -141,3 +142,5 @@ app.on('before-quit', async () => {
   await destroyNodeRed();
   log.info('Logic server destroyed');
 });
+
+run();
