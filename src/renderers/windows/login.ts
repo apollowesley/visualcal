@@ -1,6 +1,9 @@
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../constants';
 import $ from 'jquery';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('renderers/windows/login.js');
 
 const form = document.getElementById('vc-form');
 const btnLogin = document.getElementById('vc-button-login');
@@ -12,11 +15,12 @@ const errorAlertCloseButton = document.getElementById('vc-error-alert-close-butt
 
 if (!form || ! btnLogin || !usernameInput || !passwordInput || !errorAlert) throw new Error('Missing required HTML elements');
 
-const onBtnLoginClicked = (e: MouseEvent) => {
+const onBtnLoginClicked = () => {
   const credentials: LoginCredentials = {
     username: usernameInput.value,
     password: passwordInput.value
   };
+  log.info('Sending login credentials');
   ipcRenderer.send(IpcChannels.user.login.request, credentials);
 }
 

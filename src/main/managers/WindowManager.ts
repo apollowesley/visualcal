@@ -1,10 +1,12 @@
 import { app, BrowserWindow, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import SerialPort from 'serialport';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { Logger } from 'winston';
 import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
 import * as WindowUtils from '../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('WindowManager');
 
 interface Events {
   windowCreated: (id: VisualCalWindow, browserWindow: BrowserWindow) => void;
@@ -19,11 +21,9 @@ export class WindowManager extends TypedEmitter<Events> {
 
   private fWindows: Set<BrowserWindow>;
   private fClosingAll: boolean = false;
-  private fLogger: Logger;
 
-  constructor(logger: Logger) {
+  constructor() {
     super();
-    this.fLogger = logger;
     this.fWindows = new Set<BrowserWindow>();
     ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
       try {
@@ -120,7 +120,7 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   add(browserWindow: BrowserWindow) {
-    this.fLogger.info('Adding window', { windowId: browserWindow.visualCal.id });
+    log.info('Adding window', { windowId: browserWindow.visualCal.id });
     if (!browserWindow.visualCal || !browserWindow.visualCal.id) throw new Error(`Attempting to add a BrowserWindow without a VisualCal.id or an unused BrowserWindow detected with ID, ${browserWindow.visualCal.id}`);
     this.checkWindowExists(browserWindow.visualCal.id);
     this.fWindows.add(browserWindow);
@@ -129,29 +129,29 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   remove(id: VisualCalWindow) {
-    this.fLogger.info('Removing window', { windowId: id });
+    log.info('Removing window', { windowId: id });
     const existing = Array.from(this.fWindows).find(w => w.visualCal.id === id);
     if (!existing) return;
     this.fWindows.delete(existing);
-    this.fLogger.info('Window removed', { windowId: id });
+    log.info('Window removed', { windowId: id });
     this.emit('windowRemoved', id);
   }
 
   private onWindowClosed(id: VisualCalWindow) {
-    this.fLogger.info('Window closed', { windowId: id });
+    log.info('Window closed', { windowId: id });
     this.remove(id);
     this.emit('windowClosed', id);
   }
 
   close(id: VisualCalWindow) {
-    this.fLogger.info('Closing window', { windowId: id });
+    log.info('Closing window', { windowId: id });
     const browserWindow = this.get(id);
-    if (!browserWindow) this.fLogger.warn(`Attempt to close window, ${id}, but it wasn\'t open`);
+    if (!browserWindow) log.warn(`Attempt to close window, ${id}, but it wasn\'t open`);
     if (browserWindow) browserWindow.close();
   };
 
   changeVisiblity(id: VisualCalWindow, show: boolean = true) {
-    this.fLogger.info('Changing window visiblity', { windowId: id, show: show });
+    log.info('Changing window visiblity', { windowId: id, show: show });
     const browserWindow = this.get(id);
     if (!browserWindow) throw new Error(`Window not found, ${id}`);
     if (show) browserWindow.show();
@@ -182,7 +182,7 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   private createBrowserWindow(options: CreateWindowOptions) {
-    this.fLogger.info('Creating window', { windowId: options.id });
+    log.info('Creating window', { windowId: options.id });
     this.checkWindowExists(options.id);
     const newWindow = new BrowserWindow(options.browserWindow);
     newWindow.visualCal = {
@@ -242,17 +242,17 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // Console log window
   async ShowConsole() {
-    const onShow = () => {
-      try {
-        this.fLogger.query({ fields: ['message'] }, (err, results) => {
-          if (this.consoleWindow && !err && results && Array.isArray(results)) this.consoleWindow.webContents.send('results', [results]);
-          else if (err) throw err;
-        });
-      } catch (error) {
-        dialog.showErrorBox('Error querying log', error.message);
-      }
-    };
-    const w = await this.createWindow(VisualCalWindow.Console, undefined, false, onShow);
+    // const onShow = () => {
+    //   try {
+    //     log.query({ fields: ['message'] }, (err, results) => {
+    //       if (this.consoleWindow && !err && results && Array.isArray(results)) this.consoleWindow.webContents.send('results', [results]);
+    //       else if (err) throw err;
+    //     });
+    //   } catch (error) {
+    //     dialog.showErrorBox('Error querying log', error.message);
+    //   }
+    // };
+    const w = await this.createWindow(VisualCalWindow.Console, undefined, false);
     return w;
   }
 

@@ -1,8 +1,6 @@
+import { LogFunctions } from 'electron-log';
 import { Red, NodeProperties, Node as NodeRedNode } from 'node-red';
-import { NodeRedFlowNode } from './node-red-info';
 import { DriverInfo } from './logic-drivers';
-import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../nodes/indysoft-action-start-types';
-import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../nodes/indysoft-section-configuration-types';
 
 export interface NodeRedAdminAuth {
   type: string;
@@ -11,16 +9,26 @@ export interface NodeRedAdminAuth {
   tokens?: unknown[];
 }
 
+export interface NodeRedLogHandlerEntry {
+  timestamp: number;
+  level: number;
+  msg: any;
+}
+
+export interface NodeRedLogHandler {
+  (entry: NodeRedLogHandlerEntry): void;
+}
+
 export interface NodeRedLog {
   level: string;
   metrics?: boolean;
   audit?: boolean;
-  handler?: () => void;
+  handler?: (settings: any) => NodeRedLogHandler;
 }
 
 export interface NodeRedLogging {
   console?: NodeRedLog;
-  websock?: NodeRedLog;
+  electronLog?: NodeRedLog;
 }
 
 export interface Settings {

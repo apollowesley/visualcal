@@ -1,5 +1,8 @@
 import { PrologixGpibInterface } from './PrologixGpibInterface';
 import { Socket } from 'net';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('PrologixGpibTcpInterface');
 
 export interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   host: string;
@@ -61,7 +64,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
         this.fClient.end();
         this.fClient.destroy();
       } catch (error) {
-        console.debug('Expected error: ' + error);
+        log.debug('Expected error: ' + error);
       } finally {
         this.fClient = undefined;
       }
@@ -80,7 +83,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
   }
 
   async setDeviceAddress(address: number): Promise<void> {
-    console.debug(`Setting device GPIB address to ${address}`);
+    log.debug(`Setting device GPIB address to ${address}`);
     const data: string[] = ['++auto 0', `++addr ${address}`, '++auto 1'];
     data.forEach(d => {
       if (!this.fClient) {
@@ -93,7 +96,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
       const view = new Uint8Array(buffer);
       this.fClient.write(view);
     });
-    console.debug(`Device GPIB address set to ${address}`);
+    log.debug(`Device GPIB address set to ${address}`);
   }
 
   write(data: ArrayBuffer): Promise<void> {

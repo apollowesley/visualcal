@@ -1,7 +1,10 @@
 import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, NodeRedNodeMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
+import electronLog from 'electron-log';
 
 export const NODE_TYPE = 'indysoft-scalar-result';
+
+const log = electronLog.scope(NODE_TYPE);
 
 export interface RuntimeProperties extends NodeProperties {
   description: string;
@@ -91,7 +94,7 @@ module.exports = (RED: NodeRed) => {
         shape: 'dot',
         text: `Last: ${result.passed ? 'Passed' : 'Failed'} | ${result.measuredValue}`
       });
-      global.visualCal.logger.info('result', {
+      log.info('result', {
         type: 'result',
         sessionId: msg.payload.sessionId,
         runId: msg.payload.runId,

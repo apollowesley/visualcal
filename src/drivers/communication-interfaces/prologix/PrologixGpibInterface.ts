@@ -1,5 +1,8 @@
 import { CommunicationInterface } from '../CommunicationInterface';
 import { TextEncoder, TextDecoder } from 'util';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('PrologixGpibInterface');
 
 export abstract class PrologixGpibInterface extends CommunicationInterface implements GpibInterface {
   
@@ -13,7 +16,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.writeString('++auto 1');
     await this.writeString('++ifc');
     setTimeout(() => {
-      console.debug('Prologix GPIB connected');
+      log.debug('Prologix GPIB connected');
       super.onConnected();
     }, 1000);
   }

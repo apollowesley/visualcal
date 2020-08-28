@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import electronIpcLog from 'electron-ipc-log';
-import log from 'electron-log';
+import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import RED from 'node-red';
@@ -16,25 +16,31 @@ import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 
+const log = electronLog.scope('main');
 const nodeRed = NodeRed();
 const autoUpdater = new AutoUpdater();
+
+electronLog.transports.file.level = 'debug';
+electronLog.transports.console.level = 'debug';
+electronLog.catchErrors();
+Object.assign(console, electronLog.functions);
 
 electronIpcLog((event: ElectronIpcLogEvent) => {
   var { channel, sent, sync } = event;
   var args = [sent ? 'sent' : 'received', channel]; //, ...data];
   if (sync) args.unshift('ipc:sync');
   else args.unshift('ipc');
-  console.info(...args);
+  log.info(...args);
 });
 
 async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
   if (isDev()) return; // We use the demo directory, in this repo, during dev.  So, prevent copying over the same directory/files.
   const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
   if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
-    console.info('node-red nodes examples directory does not exist, creating');
+    log.info('node-red nodes examples directory does not exist, creating');
     await fsPromises.mkdir(nodeRedNodeExamplesDirPath);
   } else {
-    console.info('node-red nodes examples directory exists');
+    log.info('node-red nodes examples directory exists');
   }
 }
 
@@ -102,9 +108,6 @@ async function testingOnly() {
 }
 
 app.on('ready', async () => {
-  log.transports.file.level = 'debug';
-  log.transports.console.level = 'debug';
-  log.catchErrors();
   try {
     await load();
     const loginWindow = await global.visualCal.windowManager.ShowLogin();

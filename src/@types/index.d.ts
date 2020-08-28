@@ -95,7 +95,7 @@ interface NodeRedUtils {
 }
 
 interface VisualCalGlobalAugment extends VisualCalAugment {
-  logger: import('winston').Logger;
+  logger: import('electron-log').LogFunctions;
   applicationManager: import('../main/managers/ApplicationManager').ApplicationManager;
   windowManager: import('../main/managers/WindowManager').WindowManager;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;

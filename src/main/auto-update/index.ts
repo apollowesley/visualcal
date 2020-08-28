@@ -1,11 +1,13 @@
-import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { autoUpdater, UpdateInfo } from '@imjs/electron-differential-updater';
 import { ProgressInfo } from 'electron-builder';
-import log from 'electron-log';
 import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../constants';
 import { noop } from 'lodash';
 import { dialog, ipcMain } from 'electron';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('auto-update');
 
 interface Events {
   error: (error: Error) => void;
@@ -29,12 +31,12 @@ export class AutoUpdater extends TypedEmitter<Events> {
   private get updateWindow() { return this.windowManager.updateAppWindow; }
 
   private onError(error: Error) {
-    console.error(error);
+    log.error(error);
     this.emit('error', error);
   }
 
   private onUpdateWindowNotShowingError() {
-    console.error('Update window is not showing');
+    log.error('Update window is not showing');
     this.onError(new Error('Update window is not showing'));
   }
 
@@ -49,7 +51,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onUpdateError(error: Error) {
-    console.info('onUpdateError');
+    log.info('onUpdateError');
     if (this.fAborted) return;
     this.emit('updateError', error);
     if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
@@ -57,14 +59,14 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onCheckingForUpdateStarted() {
-    console.info('onCheckingForUpdateStarted');
+    log.info('onCheckingForUpdateStarted');
     if (this.fAborted) return;
     this.emit('checkingForUpdatesStarted');
     if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
   }
 
   private async onUpdateAvailable(info: UpdateInfo) {
-    console.info('onUpdateAvailable');
+    log.info('onUpdateAvailable');
     if (this.fAborted) return;
     ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
       dialog.showErrorBox('Testing Auto-Update', `About to download version ${info.version}`);
@@ -81,21 +83,21 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onUpdateNotAvailable(info: UpdateInfo) {
-    console.info('onUpdateNotAvailable');
+    log.info('onUpdateNotAvailable');
     if (this.fAborted) return;
     this.emit('updateNotAvailable', info);
     if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
-    // console.info('onDownloadProgressChanged');
+    // log.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     // this.emit('downloadProgressChanged', progress);
     if (this.updateWindow && progress.percent % 10 === 0) this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
-    console.info('onUpdateDownloaded');
+    log.info('onUpdateDownloaded');
     if (this.fAborted) return;
     this.emit('updateDownloaded', info);
     if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
@@ -104,8 +106,6 @@ export class AutoUpdater extends TypedEmitter<Events> {
 
   public async checkForUpdates() {
     this.fAborted = false;
-    log.transports.console.level = 'debug';
-    log.transports.file.level = 'debug';
     autoUpdater.logger = log;
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
@@ -121,7 +121,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
       noop(); // Do nothing, for now
       await Promise.resolve();
     } else {
-      console.info('Checking for updates');
+      log.info('Checking for updates');
       await autoUpdater.checkForUpdates();
     }
   }

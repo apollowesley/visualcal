@@ -2,6 +2,9 @@ import * as path from 'path';
 import * as os from 'os';
 import type { Settings } from '../@types/logic-server';
 import { findNodeById, findNodesByType, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, onComment, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('node-red');
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
@@ -41,30 +44,27 @@ const settings: Settings = {
     visualCal: global.visualCal
   },    // enables global context - add extras here if you need them
   logging: {
-    console: {
-      level: 'info',
+    electronLog: {
+      level: 'debug',
       metrics: false,
-      audit: true
-    },
-    websock: {
-      level: 'info',
-      metrics: false
-      // handler: function () {
-      //   return function (msg: any) {
-      //     var ts = (new Date(msg.timestamp)).toISOString();
-      //     ts = ts.replace('Z', ' ').replace('T', ' ');
-      //     // var line = '';
-      //     // if (msg.type && msg.id) {
-      //     //   line = ts + ' : [' + levels[msg.level / 10] + '] [' + msg.type + ':' + msg.id + '] ' + msg.msg;
-      //     // }
-      //     // else {
-      //     //   line = ts + ' : [' + levels[msg.level / 10] + '] ' + msg.msg;
-      //     // }
-      //     // logBuffer.push(line);
-      //     // if (conWindow && !conWindow.isDestroyed) { conWindow.webContents.send('debugMsg', line); }
-      //     // if (logBuffer.length > logLength) { logBuffer.shift(); }
-      //   }
-      // }
+      audit: false,
+      handler: function() {
+        return function(entry) {
+          // entry = { timestamp: number; level: number; msg: any; }
+          // entry.level === 50 === info
+          // entry.level === 50 === debug
+          switch (entry.level) {
+            case 40: // info
+              log.info('info ›', entry.msg);
+              break;
+            case 50: // debug
+              log.debug('debug ›', entry.msg);
+              break;
+            default:
+              log.warn('unknown log level (default) ›', entry.msg);
+          }
+        };
+      }
     }
   }
 };

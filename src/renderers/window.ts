@@ -12,6 +12,12 @@ import { RendererUserManager } from './managers/RendererUserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronIpcLog from 'electron-ipc-log';
 import { removeDesignTimeFromAllElements } from './utils/runtime';
+import electronLog from 'electron-log';
+
+electronLog.transports.file.level = 'debug';
+electronLog.transports.console.level = 'debug';
+
+const log = electronLog.scope('renderers/window.js');
 
 // Removes all design-time helpers
 removeDesignTimeFromAllElements();
@@ -23,7 +29,7 @@ electronIpcLog((event: ElectronIpcLogEvent) => {
   var args = [sent ? 'sent' : 'received', channel, ...data];
   if (sync) args.unshift('ipc:sync');
   else args.unshift('ipc');
-  console.info(...args);
+  log.info(...args);
 });
 
 window.visualCal = {

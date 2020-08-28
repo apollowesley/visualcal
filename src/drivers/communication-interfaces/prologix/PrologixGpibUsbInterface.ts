@@ -2,6 +2,9 @@ import { PrologixGpibInterface } from './PrologixGpibInterface';
 import SerialPort from 'serialport';
 import ReadlineParser from '@serialport/parser-readline';
 import { TextDecoder, TextEncoder } from 'util';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('PrologixGpibUsbInterface');
 
 export interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   portName: string;
@@ -69,7 +72,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         this.fSerialPort.end();
         this.fSerialPort.destroy();
       } catch (error) {
-        console.debug('Expected error: ' + error);
+        log.debug('Expected error: ' + error);
       } finally {
         this.fSerialPort = undefined;
       }
@@ -83,7 +86,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   }
 
   async setDeviceAddress(address: number): Promise<void> {
-    console.debug(`Setting device GPIB address to ${address}`);
+    log.debug(`Setting device GPIB address to ${address}`);
     const data: string[] = ['++auto 0', `++addr ${address}`, '++auto 1'];
     data.forEach(d => {
       if (!this.fSerialPort) {
@@ -94,7 +97,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
       }
       this.fSerialPort.write(`${d}\n`);
     });
-    console.debug(`Device GPIB address set to ${address}`);
+    log.debug(`Device GPIB address set to ${address}`);
   }
 
   write(data: ArrayBuffer): Promise<void> {
