@@ -1,4 +1,4 @@
-import { autoUpdater, UpdateInfo } from '@imjs/electron-differential-updater';
+import { autoUpdater, CancellationToken, UpdateInfo } from '@imjs/electron-differential-updater';
 import { ProgressInfo } from 'electron-builder';
 import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
@@ -22,6 +22,7 @@ interface Events {
 export class AutoUpdater extends TypedEmitter<Events> {
 
   fAborted = false;
+  fCancellationToken?: CancellationToken;
 
   constructor() {
     super();
@@ -70,7 +71,8 @@ export class AutoUpdater extends TypedEmitter<Events> {
     if (this.fAborted) return;
     ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
       dialog.showErrorBox('Testing Auto-Update', `About to download version ${info.version}`);
-      autoUpdater.downloadUpdate();
+      this.fCancellationToken = new CancellationToken();
+      await autoUpdater.downloadUpdate(this.fCancellationToken);
     });
     ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
       global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
@@ -128,6 +130,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
 
   public abort() {
     this.fAborted = true;
+    if (this.fCancellationToken && !this.fCancellationToken.cancelled) this.fCancellationToken.cancel();
     autoUpdater.removeAllListeners();
     this.windowManager.close(VisualCalWindow.UpdateApp);
   }
