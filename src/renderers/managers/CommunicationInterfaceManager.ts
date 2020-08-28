@@ -11,6 +11,7 @@ interface Events {
   interfaceError: (info: { name: string, err: Error }) => void;
   interfaceAdded: (info: { name: string }) => void;
   interfaceRemoved: (info: { name: string }) => void;
+  interfaceWrite: (info: { name: string, data: ArrayBuffer }) => void;
 }
 
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
@@ -28,6 +29,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
 
     ipcRenderer.on(IpcChannels.communicationInterface.dataReceived, (_, info: { name: string, data: ArrayBuffer }) => this.emit('interfaceDataReceived', info));
     ipcRenderer.on(IpcChannels.communicationInterface.stringReceived, (_, info: { name: string, data: string }) => this.emit('interfaceStringReceived', info));
+
+    ipcRenderer.on(IpcChannels.communicationInterface.write, (_, info: { name: string, data: ArrayBuffer }) => this.emit('interfaceWrite', info));
   }
 
 }

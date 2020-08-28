@@ -113,6 +113,7 @@ export const IpcChannels = {
     stringReceived: 'communication-interface-string-received',
     added: 'communication-interface-added',
     removed: 'communication-interface-removed',
+    write: 'communication-interface-write'
   },
   procedures: {
     selectData: 'procedure-select-data',

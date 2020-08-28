@@ -53,6 +53,10 @@ window.visualCal.communicationInterfaceManager.on('interfaceConnecting', (info) 
 window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Disconnected' }));
 window.visualCal.communicationInterfaceManager.on('interfaceError', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Error:  ${info.err.message}` }));
 window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Data received: ${info.data}` }));
+window.visualCal.communicationInterfaceManager.on('interfaceWrite', (info) => {
+  const dataString = new TextDecoder().decode(info.data);
+  addCommInterfaceLogEntry({ name: info.name, message: `Data sent: ${dataString}` });
+});
 
 // ***** END LOG *****
 

@@ -15,6 +15,7 @@ interface Events {
   interfaceError: (iface: ICommunicationInterface, err: Error) => void;
   interfaceAdded: (iface: ICommunicationInterface) => void;
   interfaceRemoved: (name: string) => void;
+  interfaceWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
 }
 
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
@@ -35,6 +36,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('dataReceived', this.onInterfaceDataReceived);
     communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
+    communicationInterface.on('write', this.onInterfaceWrite);
     communicationInterface.on('error', this.onInterfaceError);
     this.emit('interfaceAdded', communicationInterface);
     ipcMain.sendToAll(IpcChannels.communicationInterface.added, { name: communicationInterface.name });
@@ -48,6 +50,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('dataReceived');
     communicationInterface.removeAllListeners('stringReceived');
     communicationInterface.removeAllListeners('disconnected');
+    communicationInterface.removeAllListeners('write');
     communicationInterface.removeAllListeners('error');
     this.emit('interfaceRemoved', communicationInterface.name);
     ipcMain.sendToAll(IpcChannels.communicationInterface.removed, { name: communicationInterface.name });
@@ -166,6 +169,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     this.emit('interfaceDisconnected', communicationInterface, err);
     setImmediate(() => {
       ipcMain.sendToAll(IpcChannels.communicationInterface.disconnected, { name: communicationInterface.name, err: err });
+    });
+  }
+
+  private onInterfaceWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
+    this.emit('interfaceWrite', communicationInterface, data);
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.communicationInterface.write, { name: communicationInterface.name, data: data });
     });
   }
 
