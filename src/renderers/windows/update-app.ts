@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import { ProgressInfo } from 'electron-builder';
-import { UpdateInfo } from 'electron-updater';
+import { UpdateInfo } from '@imjs/electron-differential-updater';
 import { IpcChannels } from '../../constants';
 import '../window';
 
@@ -61,7 +61,8 @@ const onUpdateNotAvailable = (info: UpdateInfo) => {
 };
 
 const onDownloadProgress = (progress: ProgressInfo) => {
-  progressBar.setAttribute('aria-valuenow', progress.total.toString());
+  const progressPercent = Math.round(progress.percent);
+  progressBar.setAttribute('aria-valuenow', progressPercent.toString());
   // console.info(`Auto-update download progress ${progress.percent}%`);
   // log(`Auto-update download progress ${progress.percent}%`);
 };

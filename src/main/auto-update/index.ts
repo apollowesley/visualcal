@@ -79,6 +79,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     });
     this.emit('updateAvailable', info);
     await this.windowManager.showUpdateAppWindow();
+    this.windowManager.closeAllBut(VisualCalWindow.UpdateApp);
     if (this.updateWindow) this.updateWindow.webContents.once('did-finish-load', () => {
       this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
     });
@@ -95,7 +96,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     // log.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     // this.emit('downloadProgressChanged', progress);
-    if (this.updateWindow && progress.percent % 10 === 0) this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
+    this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
