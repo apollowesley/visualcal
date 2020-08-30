@@ -100,7 +100,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
-    // log.info('onDownloadProgressChanged');
+    log.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     // this.emit('downloadProgressChanged', progress);
     this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
