@@ -549,44 +549,6 @@
 				}
 			}
 		},
-		"node-red-contrib-play-audio": {
-			"name": "node-red-contrib-play-audio",
-			"version": "2.5.0",
-			"local": false,
-			"nodes": {
-				"play-audio": {
-					"name": "play-audio",
-					"types": [
-						"play audio"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-contrib-play-audio",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-contrib-play-audio/play-audio.js"
-				}
-			}
-		},
-		"node-red-contrib-web-worldmap": {
-			"name": "node-red-contrib-web-worldmap",
-			"version": "2.4.2",
-			"local": false,
-			"nodes": {
-				"worldmap": {
-					"name": "worldmap",
-					"types": [
-						"worldmap",
-						"ui_worldmap",
-						"worldmap in",
-						"worldmap-tracks",
-						"worldmap-hull"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-contrib-web-worldmap",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-contrib-web-worldmap/worldmap.js"
-				}
-			}
-		},
 		"node-red-dashboard": {
 			"name": "node-red-dashboard",
 			"version": "2.23.2",
@@ -804,57 +766,6 @@
 				}
 			}
 		},
-		"node-red-node-base64": {
-			"name": "node-red-node-base64",
-			"version": "0.2.1",
-			"local": false,
-			"nodes": {
-				"base64": {
-					"name": "base64",
-					"types": [
-						"base64"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-node-base64",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-base64/70-base64.js"
-				}
-			}
-		},
-		"node-red-node-geofence": {
-			"name": "node-red-node-geofence",
-			"version": "0.1.2",
-			"local": false,
-			"nodes": {
-				"geofence": {
-					"name": "geofence",
-					"types": [
-						"geofence"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-node-geofence",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-geofence/geofence.js"
-				}
-			}
-		},
-		"node-red-node-random": {
-			"name": "node-red-node-random",
-			"version": "0.2.0",
-			"local": false,
-			"nodes": {
-				"random": {
-					"name": "random",
-					"types": [
-						"random"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-node-random",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-random/random.js"
-				}
-			}
-		},
 		"node-red-node-rbe": {
 			"name": "node-red-node-rbe",
 			"version": "0.2.9",
@@ -889,23 +800,6 @@
 					"local": false,
 					"module": "node-red-node-serialport",
 					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-serialport/25-serial.js"
-				}
-			}
-		},
-		"node-red-node-smooth": {
-			"name": "node-red-node-smooth",
-			"version": "0.1.2",
-			"local": false,
-			"nodes": {
-				"smooth": {
-					"name": "smooth",
-					"types": [
-						"smooth"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red-node-smooth",
-					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/node-red-node-smooth/17-smooth.js"
 				}
 			}
 		},
