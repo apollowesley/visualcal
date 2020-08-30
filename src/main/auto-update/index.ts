@@ -7,7 +7,10 @@ import { noop } from 'lodash';
 import { dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
 
-const log = electronLog.scope('auto-update');
+const autoUpdateLogger = electronLog.create('auto-update');
+autoUpdateLogger.transports.file.level = false;
+autoUpdateLogger.transports.console.level = 'info';
+const log = autoUpdateLogger.scope('auto-update');
 
 interface Events {
   error: (error: Error) => void;
@@ -113,7 +116,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
 
   public async checkForUpdates() {
     this.fAborted = false;
-    autoUpdater.logger = log;
+    // autoUpdater.logger = log;
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
     autoUpdater.allowDowngrade = false;
