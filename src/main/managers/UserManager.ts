@@ -1,10 +1,10 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
-import userStore from 'electron-cfg';
+import electronStore from 'electron-cfg';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import log from 'electron-log';
+import electronLog from 'electron-log';
 
-const UserManagerLog = log.scope('UserManager');
+const log = electronLog.scope('UserManager');
 
 interface Events {
   activeChanged: (user?: User) => void;
@@ -17,14 +17,35 @@ interface Store {
 
 export class UserManager extends TypedEmitter<Events> {
 
-  private fStore: userStore<Store> = userStore.create<Store>('users.json', UserManagerLog);
+  private fStore: electronStore<Store> = electronStore.create<Store>('users.json', log);
 
   constructor() {
     super();
     this.verifyActiveUserExistsAndClearIfNot();
     this.fStore.observe('activeUserEmail', () => ipcMain.sendToAll(IpcChannels.user.active.changed, this.active));
     ipcMain.on(IpcChannels.user.active.request, (event) => event.reply(IpcChannels.user.active.response, this.active));
-    UserManagerLog.info('Loaded');
+    ipcMain.on(IpcChannels.user.login.request, async (event, loginInfo: LoginCredentials) => {
+      if (!loginInfo.username.includes('@')) {
+        const errorMsg = 'username is not an email address';
+        const win = BrowserWindow.fromWebContents(event.sender);
+        if (!win) return event.reply(IpcChannels.user.login.error, new Error(errorMsg));
+        dialog.showMessageBoxSync(win, { title: 'Invalid credentials', message: errorMsg, type: 'error' });
+        return;
+      }
+      let user = this.getOne(loginInfo.username);
+      // TODO: Add checking for existing users when we're ready
+      // if (!existingUser) return event.reply(IpcChannels.user.login.error, new Error(`Username or password is not correct`));
+      const usernameSplit = loginInfo.username.split('@');
+      const nameFirst = usernameSplit[0];
+      const nameLast = usernameSplit[1];
+      if (!user) {
+        user = this.add({ email: loginInfo.username, nameFirst: nameFirst, nameLast: nameLast });
+      }
+      // No reason to reply, we're closing the login window
+      // event.reply(IpcChannels.user.login.response, user);
+      await global.visualCal.windowManager.showSelectProcedureWindow();
+    });
+    log.info('Loaded');
   }
 
   private get users() { return this.fStore.get('users', []); }
@@ -53,6 +74,7 @@ export class UserManager extends TypedEmitter<Events> {
     if (!users) users = [];
     users.push(user);
     this.fStore.set('users', users);
+    return user;
   }
 
   getOne(email: string) {

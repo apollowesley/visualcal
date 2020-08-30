@@ -13,7 +13,7 @@ const errorAlert = $<HTMLDivElement>('#vc-error-alert');
 const errorAlertText = document.getElementById('vc-error-text') as HTMLElement;
 const errorAlertCloseButton = document.getElementById('vc-error-alert-close-button') as HTMLButtonElement;
 
-if (!form || ! btnLogin || !usernameInput || !passwordInput || !errorAlert) throw new Error('Missing required HTML elements');
+if (!form || ! btnLogin || !usernameInput || !passwordInput || !errorAlert || !errorAlertText || !errorAlertCloseButton) throw new Error('Missing required HTML elements');
 
 const onBtnLoginClicked = () => {
   const credentials: LoginCredentials = {
@@ -24,9 +24,10 @@ const onBtnLoginClicked = () => {
   ipcRenderer.send(IpcChannels.user.login.request, credentials);
 }
 
-ipcRenderer.on(IpcChannels.user.login.error, (_, err: string) => {
-  errorAlertText.innerText = err;
-  errorAlert.alert();
+ipcRenderer.on(IpcChannels.user.login.error, (_, err: Error) => {
+  errorAlertText.innerText = err.message;
+  if (errorAlert.alert) errorAlert.alert();
+  alert(err.message);
 });
 
 form.addEventListener('submit', (e) => e.preventDefault());

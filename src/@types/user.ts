@@ -11,3 +11,8 @@ interface User extends Person {
   image?: string;
   roles?: string[];
 }
+
+interface LoginCredentials {
+  username: string;
+  password: string;
+}

@@ -11,7 +11,6 @@ import { ResultManager } from './managers/ResultManager';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
-import { LoginManager } from './managers/LoginManager';
 import { UserManager } from './managers/UserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import { ApplicationManager } from './managers/ApplicationManager';
@@ -55,7 +54,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
     assetManager: new AssetManager(),
-    loginManager: new LoginManager(),
     userManager: new UserManager(),
     communicationInterfaceManager: new CommunicationInterfaceManager()
   };
