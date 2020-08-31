@@ -8,7 +8,7 @@
       "procedure-sidebar": "procedure-sidebar.js",
       "indysoft-section-configuration": "indysoft-section-configuration.js",
       "indysoft-action-completed": "indysoft-action-completed.js",
-      "indysoft-action-start": "indysoft-action-start.js",
+      "indysoft-action-start": "action-start/node.js",
       "indysoft-command-sequence-builder": "indysoft-command-sequence-builder.js",
       "indysoft-device-result": "indysoft-device-result.js",
       "indysoft-device-configuration": "indysoft-device-configuration.js",
