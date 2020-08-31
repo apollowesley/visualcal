@@ -360,12 +360,12 @@
 				"node": {
 					"name": "node",
 					"types": [
-						"indysoft-action-start"
+						"indysoft-user-input"
 					],
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/action-start/node.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/user-input/node.js"
 				},
 				"indysoft-action-completed": {
 					"name": "indysoft-action-completed",
@@ -506,16 +506,6 @@
 					"local": false,
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-testpoint.js"
-				},
-				"indysoft-user-input": {
-					"name": "indysoft-user-input",
-					"types": [
-						"indysoft-user-input"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-user-input.js"
 				},
 				"procedure-sidebar": {
 					"name": "procedure-sidebar",

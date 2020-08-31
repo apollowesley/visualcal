@@ -123,15 +123,12 @@
       "package.json"
     ],
     "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
+      "target": "nsis",
+      "arch": [
+        "x64",
+        "ia32"
       ],
+      "publisher": "IndySoft Corporation",
       "publish": [
         {
           "provider": "github",

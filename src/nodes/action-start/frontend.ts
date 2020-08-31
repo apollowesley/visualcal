@@ -1,43 +1,4 @@
-import type { NodeProperties } from 'node-red';
-
-export interface NodeRedNodeUIProperties {
-  sectionConfigId?: string;
-  name?: string;
-  category: string;
-  defaults: any;
-  credentials?: any;
-  inputs?: number;
-  outputs?: number;
-  color: string;
-  paletteLabel?: string | any;
-  label?: string | any;
-  labelStyle?: string | any;
-  inputLabels?: string[] | any;
-  outputLabels?: string[] | any;
-  icon?: string;
-  align?: 'left' | 'right';
-  button?: any;
-  oneditprepare?: () => void;
-  oneditsave?: () => void;
-  oneditcancel?: () => void;
-  oneditdelete?: () => void;
-  oneditresize?: () => void;
-  onpaletteadd?: () => void;
-  onpaletteremove?: () => void;
-}
-
-interface NodeRedNodesEachConfigCallback {
-  (node: NodeProperties): void;
-}
-
-interface NodeRedNodes {
-  eachConfig(callback: NodeRedNodesEachConfigCallback): void;
-  registerType<T extends NodeProperties>(type: string, constructor: (props: T) => any, opts?: any): void;
-}
-
-interface NodeRedEditorClient {
-  nodes: NodeRedNodes;
-}
+import { NodeRedEditorClient, NodeRedNodeUIProperties } from '..';
 
 declare const RED: NodeRedEditorClient;
 
@@ -65,4 +26,4 @@ const IndySoftActionStartNodeConfig: NodeRedNodeUIProperties = {
   paletteLabel: 'Start Action'
 }
 
-RED.nodes.registerType('indysoft-action-start', IndySoftActionStartNodeConfig as any);
+RED.nodes.registerType('indysoft-action-start', IndySoftActionStartNodeConfig);

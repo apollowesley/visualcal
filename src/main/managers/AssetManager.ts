@@ -4,16 +4,23 @@ import { promises as fsPromises } from 'fs';
 import { ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
 
+export interface Asset {
+  name: string;
+  content: ArrayBuffer;
+}
+
 export class AssetManager extends EventEmitter {
 
   constructor() {
     super();
-    ipcMain.on(IpcChannels.assets.saveToCurrentProcedure.request, async (event, info: { name: string, contents: ArrayBuffer }) => {
+    ipcMain.on(IpcChannels.assets.saveToCurrentProcedure.request, async (event, files: Asset[]) => {
       try {
-        await this.saveToCurrentProcedure(info.name, info.contents);
-        event.reply(IpcChannels.assets.saveToCurrentProcedure.response, { name: info.name });
+        for (const file of files) {
+          await this.saveToCurrentProcedure(file.name, file.content); 
+        }
+        event.reply(IpcChannels.assets.saveToCurrentProcedure.response, { names: files.map(f => f.name) });
       } catch (error) {
-        event.reply(IpcChannels.assets.saveToCurrentProcedure.error, { err: error });
+        event.reply(IpcChannels.assets.saveToCurrentProcedure.error, { error: error });
       }
     });
   }

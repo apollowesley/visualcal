@@ -18,7 +18,11 @@
   <div class="form-row" id="asset-row">
     <label for="image-input-button"><i class="fa fa-tag"></i> Image to show to user</label>
     <input id="image-input" type="file" style="display: none" />
-    <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select file</button>
+    <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select
+      file</button>
+  </div>
+  <div id="assets-ordered-list-row" class="form-row">
+    <ol id="assets-ordered-list"></ol>
   </div>
   <div class="form-row">
     <label for="node-input-assetFilename"><i class="fa fa-tag"></i> Selected filename</label>
@@ -41,61 +45,8 @@
 </script>
 
 <script type="text/x-red" data-help-name="indysoft-user-input">
-  <p>Shows an input to the user on the frontend.</p>
+  <p>Shows an instruction and optional input to the user on the frontend.</p>
+  <p>Files can also be selected to be showing to the user, such as images, pdf, word documents, etc.</p>
 </script>
 
-<script type="text/javascript">
-
-  RED.nodes.registerType('indysoft-user-input', {
-    color: '#d3d936',
-    category: 'User',
-    defaults: {
-      name: { value: '' },
-      description: { value: '' },
-      title: { value: '', required: true },
-      text: { value: '', required: true },
-      append: { value: '', required: false },
-      dataType: { value: 'string', required: true },
-      showImage: { value: false, required: true },
-      assetFilename: { value: '', required: false }
-    },
-    inputs: 1,
-    outputs: 1,
-    icon: 'font-awesome/fa-question-circle',
-    label: function() {
-      const isInstruction = this.dataType === 'none';
-      const instructionOrInput = isInstruction ? 'Instruction' : 'Input';
-      const dataTypeOrBlank = isInstruction ? '' : `${this.dataType} - `;
-      return this.name || `${instructionOrInput}: ${dataTypeOrBlank}${this.title}`;
-    },
-    labelStyle: function() {
-      return this.name ? 'node_label_italic' : '';
-    },
-    paletteLabel: 'User Input',
-    oneditprepare: function() {
-      const inputDataType = document.getElementById('node-input-dataType');
-      const inputAppendInputRow = document.getElementById('input-append-row');
-      let inputAppendInputRowDisplay = inputAppendInputRow.style.display;
-      const assetFilenameInput = document.getElementById('node-input-assetFilename');
-      const imageInput = document.getElementById('image-input');
-      inputDataType.onchange = () => {
-        if (inputDataType.value === 'none') {
-          inputAppendInputRow.style.display = 'none';
-        } else {
-          inputAppendInputRow.style.display = inputAppendInputRowDisplay;
-        }
-      };
-      inputDataType.dispatchEvent(new Event('change'));
-      imageInput.addEventListener('input', async (ev) => {
-        const file = imageInput.files[0];
-        if (!file) return;
-        const fileArrayBuffer = await file.arrayBuffer();
-        // Watch for responses and send the file to the main process
-        window.visualCal.electron.ipc.once('assets-save-to-current-procedure-error', (_, info) => { alert(`An error occured saving the file:  ${info.err.message}`); });
-        window.visualCal.electron.ipc.once('assets-save-to-current-procedure-response', (_, info) => assetFilenameInput.value = info.name);
-        window.visualCal.electron.ipc.send('assets-save-to-current-procedure-request', { name: file.name, contents: fileArrayBuffer });
-      });
-    }
-  });
-  
-</script>
+<script src="/nodes/scripts/user-input/frontend.js"></script>
