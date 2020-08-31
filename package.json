@@ -35,8 +35,6 @@
     "@node-red-contrib-themes/midnight-red": "^1.4.4",
     "@schemastore/package": "0.0.6",
     "aedes": "^0.42.5",
-    "axios": "^0.20.0",
-    "azure-devops-node-api": "^10.1.1",
     "d3": "^6.1.0",
     "denque": "^1.4.1",
     "directory-tree": "^2.2.4",
@@ -72,7 +70,8 @@
     "tingodb": "^0.6.1",
     "tiny-typed-emitter": "^2.0.2",
     "udp-discovery": "^2.0.1",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "vue": "^2.6.12"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.5.0",

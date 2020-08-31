@@ -79,21 +79,6 @@ async function load() {
   sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
   sendToLoadingWindow('Initializing Logic Server ...');
-  // TODO: The follow works to intercept node-red loading, inject a custom index.html and load scripts.  Figure out how to make it useful.  Currently throws exports not defined error.
-  // nodeRedApp.use((_, res, next) => {
-  //   const oldSend = res.send;
-  //   (res.send as any) = function(body?: any) {
-  //     if (body && typeof body === 'string' && body.includes('<title>VisualCal Logic Editor</title>')) {
-  //       body = fs.readFileSync(path.join(global.visualCal.dirs.html.windows, 'node-red.html')).toString('utf-8');
-  //     }
-  //     res.send = oldSend;
-  //     return res.send(body);
-  //   }
-  //   return next();
-  // });
-  // nodeRedApp.use('/red/visualcal/d3.js', (_, res) => res.sendFile(path.join(appBaseDirPath, 'node_modules', 'd3', 'dist', 'd3.min.js')));
-  // nodeRedApp.use('/red/renderers/window.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.base, 'window.js')));
-  // nodeRedApp.use('/red/renderers/windows/node-red.js', (_, res) => res.sendFile(path.join(global.visualCal.dirs.renderers.windows, 'node-red.js')));
   nodeRed.once('started', async (port) => {
     log.info(`Logic server started on port ${port}`);
     await ProcedureManager.loadActive();

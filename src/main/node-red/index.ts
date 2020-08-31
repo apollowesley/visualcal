@@ -9,6 +9,7 @@ import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftAct
 import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/indysoft-section-configuration-types';
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
+import nodeRedRequestHook from './request-hook';
 
 interface Events {
   starting: () => void;
@@ -43,6 +44,7 @@ class NodeRed extends TypedEmitter<Events> {
         console.info(req.url);
         return next();
       });
+      nodeRedRequestHook(this.fExpress);
       this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
       this.fExpress.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
