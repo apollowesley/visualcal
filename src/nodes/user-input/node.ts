@@ -1,5 +1,5 @@
 import { NodeProperties } from 'node-red';
-import { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions } from '../@types/logic-server';
+import { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions } from '../../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-user-input';
 
