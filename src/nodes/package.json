@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "build:builder": "tsc -p ./tsconfig-builder.json",
-    "build:frontend": "tsc -p ./tsconfig-frontend.json"
+    "build:frontend": "tsc -p ../../tsconfig-frontend.json",
+    "build:runtime": "tsc -p ../../tsconfig-runtime.json",
+    "build": "npm run build:builder && npm run build:frontend && npm run build:runtime"
   },
   "node-red": {
     "nodes": {
