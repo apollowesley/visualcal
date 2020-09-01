@@ -360,12 +360,192 @@
 				"node": {
 					"name": "node",
 					"types": [
+						"indysoft-action-start"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/action-start/node.js"
+				},
+				"indysoft-action-completed": {
+					"name": "indysoft-action-completed",
+					"types": [
+						"indysoft-action-completed"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-completed.js"
+				},
+				"indysoft-command-sequence-builder": {
+					"name": "indysoft-command-sequence-builder",
+					"types": [
+						"indysoft-command-sequence-builder"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-command-sequence-builder.js"
+				},
+				"indysoft-communication-interface": {
+					"name": "indysoft-communication-interface",
+					"types": [
+						"indysoft-communication-interface"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-communication-interface.js"
+				},
+				"indysoft-device-configuration": {
+					"name": "indysoft-device-configuration",
+					"types": [
+						"indysoft-device-configuration"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-configuration.js"
+				},
+				"indysoft-device-digital-multimeter": {
+					"name": "indysoft-device-digital-multimeter",
+					"types": [
+						"indysoft-device-digital-multimeter"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-digital-multimeter.js"
+				},
+				"indysoft-device-fluke45": {
+					"name": "indysoft-device-fluke45",
+					"types": [
+						"indysoft-device-fluke45"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-fluke45.js"
+				},
+				"indysoft-device-keysight34401a": {
+					"name": "indysoft-device-keysight34401a",
+					"types": [
+						"indysoft-device-keysight34401a"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-keysight34401a.js"
+				},
+				"indysoft-device-multi-product-calibrator": {
+					"name": "indysoft-device-multi-product-calibrator",
+					"types": [
+						"indysoft-device-multi-product-calibrator"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-multi-product-calibrator.js"
+				},
+				"indysoft-device-read-handler": {
+					"name": "indysoft-device-read-handler",
+					"types": [
+						"indysoft-device-read-handler"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-read-handler.js"
+				},
+				"indysoft-device-result": {
+					"name": "indysoft-device-result",
+					"types": [
+						"indysoft-device-result"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-result.js"
+				},
+				"indysoft-mqtt-dynamic-topic-in": {
+					"name": "indysoft-mqtt-dynamic-topic-in",
+					"types": [
+						"indysoft-mqtt-dynamic-topic-in"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-mqtt-dynamic-topic-in.js"
+				},
+				"indysoft-scalar-result": {
+					"name": "indysoft-scalar-result",
+					"types": [
+						"indysoft-scalar-result"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-scalar-result.js"
+				},
+				"indysoft-section-configuration": {
+					"name": "indysoft-section-configuration",
+					"types": [
+						"indysoft-section-configuration"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-section-configuration.js"
+				},
+				"indysoft-testpoint": {
+					"name": "indysoft-testpoint",
+					"types": [
+						"indysoft-testpoint"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-testpoint.js"
+				},
+				"indysoft-user-input": {
+					"name": "indysoft-user-input",
+					"types": [
 						"indysoft-user-input"
 					],
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/user-input/node.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-user-input.js"
+				},
+				"procedure-sidebar": {
+					"name": "procedure-sidebar",
+					"types": [
+						"procedure-sidebar"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/procedure-sidebar.js"
+				},
+				"prologix-gpib-tcp-config": {
+					"name": "prologix-gpib-tcp-config",
+					"types": [
+						"prologix-gpib-tcp-config"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp-config.js"
+				},
+				"prologix-gpib-tcp": {
+					"name": "prologix-gpib-tcp",
+					"types": [
+						"prologix-gpib-tcp"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp.js"
 				}
 			}
 		},

@@ -20,6 +20,3 @@ html/common
 html/renderers
 # This shouldn't exist
 html/main
-
-#node-red nodes build
-nodes-build

@@ -1,0 +1,101 @@
+<script type="text/x-red" data-template-name="indysoft-user-input">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-title"><i class="fa fa-tag"></i> Title</label>
+    <input type="text" id="node-input-title">
+  </div>
+  <div class="form-row">
+    <label for="node-input-text"><i class="fa fa-tag"></i> Text</label>
+    <input type="text" id="node-input-text">
+  </div>
+  <div class="form-row">
+    <label for="node-input-showImage"><i class="fa fa-tag"></i> Image?</label>
+    <input type="checkbox" id="node-input-showImage" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="asset-row">
+    <label for="image-input-button"><i class="fa fa-tag"></i> Image to show to user</label>
+    <input id="image-input" type="file" style="display: none" />
+    <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select file</button>
+  </div>
+  <div class="form-row">
+    <label for="node-input-assetFilename"><i class="fa fa-tag"></i> Selected filename</label>
+    <input type="text" id="node-input-assetFilename" disabled />
+  </div>
+  <div class="form-row" id="input-row">
+    <label for="node-input-dataType"><i class="fa fa-tag"></i> Input Data Type</label>
+    <select id="node-input-dataType" style="width:125px !important">
+      <option value="none" selected>None</option>
+      <option value="string">String</option>
+      <option value="float">Floating Point</option>
+      <option value="integer">Integer</option>
+      <option value="boolean">Boolean</option>
+    </select>
+  </div>
+  <div class="form-row" id="input-append-row">
+    <label for="node-input-append"><i class="fa fa-tag"></i> Append to Input</label>
+    <input type="text" id="node-input-append">
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-user-input">
+  <p>Shows an input to the user on the frontend.</p>
+</script>
+
+<script type="text/javascript">
+
+  RED.nodes.registerType('indysoft-user-input', {
+    color: '#d3d936',
+    category: 'User',
+    defaults: {
+      name: { value: '' },
+      description: { value: '' },
+      title: { value: '', required: true },
+      text: { value: '', required: true },
+      append: { value: '', required: false },
+      dataType: { value: 'string', required: true },
+      showImage: { value: false, required: true },
+      assetFilename: { value: '', required: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-question-circle',
+    label: function() {
+      const isInstruction = this.dataType === 'none';
+      const instructionOrInput = isInstruction ? 'Instruction' : 'Input';
+      const dataTypeOrBlank = isInstruction ? '' : `${this.dataType} - `;
+      return this.name || `${instructionOrInput}: ${dataTypeOrBlank}${this.title}`;
+    },
+    labelStyle: function() {
+      return this.name ? 'node_label_italic' : '';
+    },
+    paletteLabel: 'User Input',
+    oneditprepare: function() {
+      const inputDataType = document.getElementById('node-input-dataType');
+      const inputAppendInputRow = document.getElementById('input-append-row');
+      let inputAppendInputRowDisplay = inputAppendInputRow.style.display;
+      const assetFilenameInput = document.getElementById('node-input-assetFilename');
+      const imageInput = document.getElementById('image-input');
+      inputDataType.onchange = () => {
+        if (inputDataType.value === 'none') {
+          inputAppendInputRow.style.display = 'none';
+        } else {
+          inputAppendInputRow.style.display = inputAppendInputRowDisplay;
+        }
+      };
+      inputDataType.dispatchEvent(new Event('change'));
+      imageInput.addEventListener('input', async (ev) => {
+        const file = imageInput.files[0];
+        if (!file) return;
+        const fileArrayBuffer = await file.arrayBuffer();
+        // Watch for responses and send the file to the main process
+        window.visualCal.electron.ipc.once('assets-save-to-current-procedure-error', (_, info) => { alert(`An error occured saving the file:  ${info.err.message}`); });
+        window.visualCal.electron.ipc.once('assets-save-to-current-procedure-response', (_, info) => assetFilenameInput.value = info.name);
+        window.visualCal.electron.ipc.send('assets-save-to-current-procedure-request', { name: file.name, contents: fileArrayBuffer });
+      });
+    }
+  });
+  
+</script>

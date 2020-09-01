@@ -15,7 +15,6 @@ import { UserManager } from './managers/UserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import { ApplicationManager } from './managers/ApplicationManager';
 import electronLog from 'electron-log';
-import NodeRedVisualCal from './node-red';
 
 const log = electronLog.scope('VisualCal');
 
@@ -31,8 +30,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     isMac: process.platform === 'darwin',
     isDev: isDev(),
     nodeRed: {
-      app: RED as NodeRed,
-      visualCal: NodeRedVisualCal()
+      app: RED as NodeRed
     },
     config: {
       httpServer: {

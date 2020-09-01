@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import path from 'path';
-import fs, { promises as fsPromises } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 export default (app: Express, apiBasePath = '/red') => {
   // TODO: The follow works to intercept node-red loading, inject a custom index.html and load scripts.  Figure out how to make it useful.  Currently throws exports not defined error.
@@ -29,11 +29,5 @@ export default (app: Express, apiBasePath = '/red') => {
   app.use('/nodes/scripts/:nodeType/frontend.js.map', (req, res) => {
     const nodeType = req.params.nodeType;
     return res.sendFile(path.join(global.visualCal.dirs.base, 'dist', 'nodes', nodeType, 'frontend.js.map'));
-  });
-  app.use('/src/nodes/:nodeType/frontend.ts', (req, res, next) => {
-    const nodeType = req.params.nodeType;
-    const srcDirExists = fs.existsSync(path.join(global.visualCal.dirs.base, 'src'));
-    if (!srcDirExists) return next();
-    return res.sendFile(path.join(global.visualCal.dirs.base, 'src', 'nodes', nodeType, 'frontend.ts'));
   });
 }

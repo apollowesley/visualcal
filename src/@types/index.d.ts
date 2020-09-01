@@ -111,13 +111,11 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   files: VisualCalAugmentFiles;
   nodeRed: {
     app: import('./logic-server').NodeRed;
-    visualCal: import('../main/node-red').NodeRed;
   };
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {
   browserUtils: VisualCalBrowserUtils;
-  ipcChannels: import('../constants').IpcChannelsType;
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;

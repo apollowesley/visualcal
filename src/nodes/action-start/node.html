@@ -1,11 +1,16 @@
-<script type="text/x-red" data-template-name="{{ nodeType }}">
-  {{{ edit }}}
+<script type="text/x-red" data-template-name="indysoft-action-start">
+  <div class="form-row">
+    <label for="node-input-sectionConfigId"><i class="fa fa-tag"></i> Section</label>
+    <input type="text" id="node-input-sectionConfigId" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Action Name</span></label>
+      <input type="text" id="node-input-name">
+  </div>
 </script>
 
-<script type="text/x-red" data-help-name="{{ nodeType }}">
-  {{{ help }}}
+<script type="text/x-red" data-help-name="indysoft-action-start">
+  <p>Used to invoke a flow from the front-end</p>
 </script>
 
-<script>
-  {{{ script }}}
-</script>
+<script src="/nodes/scripts/action-start/frontend.js"></script>

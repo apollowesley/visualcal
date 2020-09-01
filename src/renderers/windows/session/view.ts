@@ -1,9 +1,9 @@
 import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../constants';
-import { LoadResponseArgs } from '../../managers/RendererResultManager';
+import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
-import { TriggerOptions } from '../../../nodes/action-start/types';
+import { TriggerOptions } from '../../../nodes/indysoft-action-start-types';
 
 // ***** LOG *****
 

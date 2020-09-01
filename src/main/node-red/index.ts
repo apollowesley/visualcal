@@ -5,9 +5,9 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import { NodeRed as NodeRedType, NodeRedRuntimeNode, Settings as NodeRedSettings } from '../../@types/logic-server';
 import { NodeRedFlow, NodeRedFlowNode } from '../../@types/node-red-info';
 import { IndySoftNodeTypeNames } from '../../constants';
-import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/action-start/types';
-import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/section-configuration/types';
-import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar/types';
+import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
+import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/indysoft-section-configuration-types';
+import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 
@@ -21,7 +21,7 @@ interface Events {
   sectionActionReset: (sectionName: string, actionName: string) => void;
 }
 
-export class NodeRed extends TypedEmitter<Events> {
+class NodeRed extends TypedEmitter<Events> {
 
   public static USER = 'VisualCal';
 
@@ -40,6 +40,10 @@ export class NodeRed extends TypedEmitter<Events> {
       this.fHttpServer = createServer(this.fExpress);
       this.fNodeRed = RED as NodeRedType;
       this.fNodeRed.init(this.fHttpServer, settings);
+      this.fExpress.use((req, _, next) => {
+        console.info(req.url);
+        return next();
+      });
       nodeRedRequestHook(this.fExpress);
       this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);

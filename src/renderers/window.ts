@@ -32,7 +32,6 @@ electronIpcLog((event: ElectronIpcLogEvent) => {
 
 window.visualCal = {
   browserUtils: browserUtils,
-  ipcChannels: IpcChannels,
   isMac: process.platform === 'darwin',
   isDev: isDev(),
   electron: {

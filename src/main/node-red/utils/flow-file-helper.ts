@@ -2,8 +2,8 @@ import fs from 'fs-extra';
 import { NodeRedFlowNode } from '../../../@types/node-red-info';
 import sanitizeDirectory from 'sanitize-filename';
 import { IndySoftNodeTypeNames } from '../../../constants';
-import { EditorNode as IndySoftActionStartEditorNode } from '../../../nodes/action-start/types';
-import { EditorNode as IndySoftSectionConfigurationEditorNode } from '../../../nodes/section-configuration/types';
+import { EditorNode as IndySoftActionStartEditorNode } from '../../../nodes/indysoft-action-start-types';
+import { EditorNode as IndySoftSectionConfigurationEditorNode } from '../../../nodes/indysoft-section-configuration-types';
 
 export default class FlowFileHelper {
 

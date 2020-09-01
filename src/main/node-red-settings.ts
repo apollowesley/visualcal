@@ -45,9 +45,9 @@ const settings: Settings = {
   },    // enables global context - add extras here if you need them
   logging: {
     electronLog: {
-      level: 'trace',
+      level: 'debug',
       metrics: false,
-      audit: true,
+      audit: false,
       handler: function() {
         return function(entry) {
           // entry = { timestamp: number; level: number; msg: any; }
@@ -55,16 +55,13 @@ const settings: Settings = {
           // entry.level === 50 === debug
           switch (entry.level) {
             case 40: // info
-              log.info('info >', entry.msg);
+              log.info('info ›', entry.msg);
               break;
             case 50: // debug
-              log.debug('debug >', entry.msg);
-              break;
-            case 60: // trace
-              log.verbose('trace >', entry.msg);
+              log.debug('debug ›', entry.msg);
               break;
             default:
-              log.warn('unknown log level (default) ›', entry);
+              log.warn('unknown log level (default) ›', entry.msg);
           }
         };
       }

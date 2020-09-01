@@ -2,32 +2,27 @@
   "name": "@indysoft/visualcal-logic-nodes",
   "version": "0.1.0",
   "description": "IndySoft VisualCal logic nodes",
-  "scripts": {
-    "build:builder": "tsc -p ./tsconfig-builder.json",
-    "build:frontend": "tsc -p ../../tsconfig-frontend.json",
-    "build:runtime": "tsc -p ../../tsconfig-runtime.json",
-    "build": "npm run build:builder && npm run build:frontend && npm run build:runtime"
-  },
+  "private": true,
   "node-red": {
     "nodes": {
-      "procedure-sidebar": "procedure-sidebar/node.js",
-      "indysoft-section-configuration": "section-configuration/node.js",
-      "indysoft-action-completed": "action-completed/node.js",
+      "procedure-sidebar": "procedure-sidebar.js",
+      "indysoft-section-configuration": "indysoft-section-configuration.js",
+      "indysoft-action-completed": "indysoft-action-completed.js",
       "indysoft-action-start": "action-start/node.js",
-      "indysoft-command-sequence-builder": "command-sequence-builder/node.js",
-      "indysoft-device-result": "device-result/node.js",
-      "indysoft-device-configuration": "device-configuration/node.js",
-      "indysoft-device-fluke45": "device-fluke45/node.js",
-      "indysoft-device-digital-multimeter": "device-digital-multimeter/node.js",
-      "indysoft-device-multi-product-calibrator": "device-multi-product-calibrator/node.js",
-      "indysoft-device-read-handler": "device-read-handler/node.js",
-      "indysoft-scalar-result": "scalar-result/node.js",
-      "indysoft-mqtt-dynamic-topic-in": "mqtt-dynamic-topic-in/node.js",
-      "indysoft-user-input": "user-input/node.js",
-      "indysoft-testpoint": "testpoint/node.js",
-      "prologix-gpib-tcp": "prologix-gpib-tcp/node.js",
-      "prologix-gpib-tcp-config": "prologix-gpib-tcp-config/node.js",
-      "indysoft-communication-interface": "communication-interface/node.js"
+      "indysoft-command-sequence-builder": "indysoft-command-sequence-builder.js",
+      "indysoft-device-result": "indysoft-device-result.js",
+      "indysoft-device-configuration": "indysoft-device-configuration.js",
+      "indysoft-device-fluke45": "indysoft-device-fluke45.js",
+      "indysoft-device-digital-multimeter": "indysoft-device-digital-multimeter.js",
+      "indysoft-device-multi-product-calibrator": "indysoft-device-multi-product-calibrator.js",
+      "indysoft-device-read-handler": "indysoft-device-read-handler.js",
+      "indysoft-scalar-result": "indysoft-scalar-result.js",
+      "indysoft-mqtt-dynamic-topic-in": "indysoft-mqtt-dynamic-topic-in.js",
+      "indysoft-user-input": "indysoft-user-input.js",
+      "indysoft-testpoint": "indysoft-testpoint.js",
+      "prologix-gpib-tcp": "prologix-gpib-tcp.js",
+      "prologix-gpib-tcp-config": "prologix-gpib-tcp-config.js",
+      "indysoft-communication-interface": "indysoft-communication-interface.js"
     }
   }
 }
