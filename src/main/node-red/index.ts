@@ -21,7 +21,7 @@ interface Events {
   sectionActionReset: (sectionName: string, actionName: string) => void;
 }
 
-class NodeRed extends TypedEmitter<Events> {
+export class NodeRed extends TypedEmitter<Events> {
 
   public static USER = 'VisualCal';
 

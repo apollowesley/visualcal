@@ -23,9 +23,9 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
 }
 
 module.exports = (RED: NodeRed) => {
-  console.info('indysoft-action-completed main export function called.');
+  console.info('indysoft-user-input main export function called.');
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
-    console.info('indysoft-action-completed node constructor called.');
+    console.info('indysoft-user-input node constructor called.');
     RED.nodes.createNode(this, config);
     this.title = config.title;
     this.text = config.text;

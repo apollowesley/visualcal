@@ -111,6 +111,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   files: VisualCalAugmentFiles;
   nodeRed: {
     app: import('./logic-server').NodeRed;
+    visualCal: import('../main/node-red').NodeRed;
   };
 }
 

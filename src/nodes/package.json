@@ -2,7 +2,6 @@
   "name": "@indysoft/visualcal-logic-nodes",
   "version": "0.1.0",
   "description": "IndySoft VisualCal logic nodes",
-  "private": true,
   "scripts": {
     "build:builder": "tsc -p ./tsconfig-builder.json",
     "build:frontend": "tsc -p ../../tsconfig-frontend.json",

@@ -76,7 +76,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
       this.fCancellationToken = new CancellationToken();
       try {
         await autoUpdater.downloadUpdate(this.fCancellationToken);
-      } catch (error: unknown) {
+      } catch (error) {
         const err = error as Error;
         dialog.showErrorBox('An error occured attempting to download the update', err.message);
       }
