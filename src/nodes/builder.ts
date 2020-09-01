@@ -37,23 +37,72 @@ const baseDirPath = path.join(__dirname, '..');
 const srcNodesDirPath = path.join(baseDirPath, 'src', 'nodes');
 const packagejsonPath = path.join(srcNodesDirPath, 'package.json');
 const buildDirPath = path.join(baseDirPath, 'nodes-build');
-const frontendBuildDirPath = path.join(buildDirPath, 'frontend');
-const runtimeBuildDirPath = path.join(buildDirPath, 'runtime');
+const frontendBuildDirPath = path.join(buildDirPath, 'frontend', 'nodes');
+const runtimeBuildDirPath = path.join(buildDirPath, 'runtime', 'nodes');
 const outputDirPath = path.join(buildDirPath, 'dist', 'nodes');
+
+const isOldNode = (node: NodeInfo) => {
+  const htmlEditFileExists = fs.existsSync(node.htmlEditContentBuildFilePath);
+  const htmlHelpFileExists = fs.existsSync(node.htmlHelpContentBuildFilePath);
+  const htmlScriptFileExists = fs.existsSync(node.htmlScriptContentBuildFilePath);
+  const exists = htmlEditFileExists && htmlHelpFileExists && htmlScriptFileExists;
+  console.info(node.name, htmlEditFileExists, htmlHelpFileExists, htmlScriptFileExists, exists);
+  return !exists;
+}
+
+/**
+ * Copies a old style node that has not been updated.
+ * The node.html and node.js should be the only files that exist there.
+ */
+const copyOldNode = async (node: NodeInfo) => {
+  console.info(`Copying old node, ${node.name}`);
+  const nodeBuildDirPath = path.join(runtimeBuildDirPath, node.dirName);
+  await fsPromises.copyFile(path.join(srcNodesDirPath, node.dirName, 'node.html'), path.join(node.outputBaseDirPath, 'node.html'));
+  await fsPromises.copyFile(path.join(nodeBuildDirPath, 'node.js'), path.join(node.outputBaseDirPath, 'node.js'));
+  if (fs.existsSync(path.join(nodeBuildDirPath, 'types.js'))) await fsPromises.copyFile(path.join(nodeBuildDirPath, 'types.js'), path.join(node.outputBaseDirPath, 'types.js'));
+}
+
+const buildNode = async (node: NodeInfo) => {
+  await fsPromises.mkdir(node.outputBaseDirPath, { recursive: true });
+  if (isOldNode(node)) {
+    console.info(`Found old node, ${node.name}`);
+    await copyOldNode(node);
+    return;
+  }
+  const htmlEditContent = (await fsPromises.readFile(node.htmlEditContentBuildFilePath)).toString();
+  const htmlHelpContent = (await fsPromises.readFile(node.htmlHelpContentBuildFilePath)).toString();
+  let htmlScriptContent = mustache.render((await fsPromises.readFile(node.htmlScriptContentBuildFilePath)).toString(), { nodeType: node.name });
+  htmlScriptContent = htmlScriptContent.replace(sourceMapUrlSearchString, `sourceMappingURL=nodeMaps/${node.dirName}/frontend.js.map`);
+  htmlScriptContent = htmlScriptContent.replace(objectDefinesSearchString, '');
+  const mainView: NodeTemplate = {
+    nodeType: node.name,
+    edit: htmlEditContent,
+    help: htmlHelpContent,
+    script: htmlScriptContent
+  }
+  const htmlTemplate = (await fsPromises.readFile(node.htmlTemplateBuildPath)).toString();
+  const scriptTemplate = (await fsPromises.readFile(node.runtimeScriptBuildPath)).toString();
+  const nodeHtmlContent = mustache.render(htmlTemplate, mainView);
+  const nodeScriptContent = mustache.render(scriptTemplate, mainView);
+  await fsPromises.writeFile(node.htmlOutputFilePath, nodeHtmlContent);
+  await fsPromises.writeFile(node.runtimeOutputFilePath, nodeScriptContent);
+  await fsPromises.copyFile(path.join(node.baseFrontendBuildPath, 'frontend.js.map'), path.join(node.outputBaseDirPath, 'frontend.js.map'));
+  await fsPromises.copyFile(path.join(node.baseRuntimeBuildPath, 'node.js.map'), path.join(node.outputBaseDirPath, 'node.js.map'));
+}
 
 const getPackageJson = async () => {
   return JSON.parse((await fsPromises.readFile(packagejsonPath)).toString()) as PackageJson;
 }
 
-const getNodes = async () => {
+const build = async () => {
   const packageJson = await getPackageJson();
-  const nodes: NodeInfo[] = [];
   for (const [key, value] of Object.entries(packageJson['node-red'].nodes)) {
     const nodepath = value as string;
     const nodeDirName = path.dirname(nodepath);
     const nodeDirExists = fs.existsSync(path.join(srcNodesDirPath, nodeDirName));
+    console.info(`Found node, ${nodeDirName}`);
     if (nodeDirExists) {
-        nodes.push({
+        await buildNode({
         name: key,
         dirName: nodeDirName,
         baseFrontendBuildPath: path.join(frontendBuildDirPath, nodeDirName),
@@ -64,47 +113,19 @@ const getNodes = async () => {
         htmlScriptContentBuildFilePath: path.join(frontendBuildDirPath, nodeDirName, 'frontend.js'),
         htmlTemplateBuildPath: path.join(srcNodesDirPath, nodeDirName, 'node.html'),
         htmlOutputFilePath: path.join(outputDirPath, nodeDirName, 'node.html'),
-        runtimeScriptBuildPath: path.join(runtimeBuildDirPath, nodeDirName, 'runtime.js'),
+        runtimeScriptBuildPath: path.join(runtimeBuildDirPath, nodeDirName, 'node.js'),
         runtimeOutputFilePath: path.join(outputDirPath, nodeDirName, 'node.js')
       });
-      console.info(`Found node, ${nodeDirName}`);
     } else {
       throw new Error(`Node, ${nodeDirName}, is missing its source directory`);
     }
   }
-  return nodes;
-}
-
-const build = (nodes: NodeInfo[]) => {
-  nodes.forEach(async node => {
-    const htmlEditContent = (await fsPromises.readFile(node.htmlEditContentBuildFilePath)).toString();
-    const htmlHelpContent = (await fsPromises.readFile(node.htmlHelpContentBuildFilePath)).toString();
-    let htmlScriptContent = mustache.render((await fsPromises.readFile(node.htmlScriptContentBuildFilePath)).toString(), { nodeType: node.name });
-    htmlScriptContent = htmlScriptContent.replace(sourceMapUrlSearchString, `sourceMappingURL=nodeMaps/${node.dirName}/frontend.js.map`);
-    htmlScriptContent = htmlScriptContent.replace(objectDefinesSearchString, '');
-    const mainView: NodeTemplate = {
-      nodeType: node.name,
-      edit: htmlEditContent,
-      help: htmlHelpContent,
-      script: htmlScriptContent
-    }
-    const htmlTemplate = (await fsPromises.readFile(node.htmlTemplateBuildPath)).toString();
-    const scriptTemplate = (await fsPromises.readFile(node.runtimeScriptBuildPath)).toString();
-    const nodeHtmlContent = mustache.render(htmlTemplate, mainView);
-    const nodeScriptContent = mustache.render(scriptTemplate, mainView);
-    await fsPromises.mkdir(node.outputBaseDirPath, { recursive: true });
-    await fsPromises.writeFile(node.htmlOutputFilePath, nodeHtmlContent);
-    await fsPromises.writeFile(node.runtimeOutputFilePath, nodeScriptContent);
-    await fsPromises.copyFile(path.join(srcNodesDirPath, node.dirName, 'frontend.js.map'), path.join(node.outputBaseDirPath, 'frontend.js.map'));
-    await fsPromises.copyFile(path.join(srcNodesDirPath, node.dirName, 'runtime.js.map'), path.join(node.outputBaseDirPath, 'runtime.js.map'));
-    await fsPromises.copyFile(path.join(srcNodesDirPath, 'package.json'), path.join(outputDirPath, 'package.json'));
-  });
+  await fsPromises.copyFile(packagejsonPath, path.join(outputDirPath, 'package.json'));
 }
 
 const run = async () => {
   try {
-    const nodes = await getNodes();
-    build(nodes);
+    await build();
   } catch (error) {
     console.error(error);
   }

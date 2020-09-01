@@ -1,5 +1,14 @@
 import type { NodeProperties } from 'node-red';
 
+interface Size {
+  height: number;
+  width: number;
+}
+
+export interface OnEditPrepareThis extends NodeProperties {
+  _: (localeLookup: string) => string;
+}
+
 export interface NodeRedNodeUIProperties {
   sectionConfigId?: string;
   name?: string;
@@ -17,11 +26,11 @@ export interface NodeRedNodeUIProperties {
   icon?: string;
   align?: 'left' | 'right';
   button?: any;
-  oneditprepare?: () => void;
-  oneditsave?: () => void;
+  oneditprepare?: (this: OnEditPrepareThis) => void;
+  oneditsave?: (this: OnEditPrepareThis) => void;
   oneditcancel?: () => void;
   oneditdelete?: () => void;
-  oneditresize?: () => void;
+  oneditresize?: (size: Size) => void;
   onpaletteadd?: () => void;
   onpaletteremove?: () => void;
 }

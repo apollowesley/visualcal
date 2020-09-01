@@ -23,7 +23,8 @@
     "copynodes:examples": "cp -R src/nodes/examples dist/nodes",
     "copynodes:icons": "cp -R src/nodes/icons dist/nodes",
     "copynodes:locales": "cp -R src/nodes/locales dist/nodes",
-    "copynodes": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales",
+    "copybuiltnodes": "rm -rf dist/nodes && cp -R nodes-build/dist/nodes dist",
+    "copynodes": "npm run copybuiltnodes",
     "fix-electron-diff-updater": "cp bug-fixes/electron-differential-updater/AppUpdater.js node_modules/@imjs/electron-differential-updater/out/AppUpdater.js"
   },
   "repository": {

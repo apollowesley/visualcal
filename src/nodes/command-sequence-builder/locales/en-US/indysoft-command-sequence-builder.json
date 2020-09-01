@@ -1,0 +1,61 @@
+{
+  "indySoft": {
+    "commandSequenceBuilder": {
+      "nodeLabel": {
+        "command": "command __property__"
+      },
+      "label": {
+        "operations": "Operations",
+        "operation": "Operation",
+        "clearInterfaces": "Clear interface",
+        "unitId": "Unit Id",
+        "interfaceId": "Interface Id",
+        "respondInBulk": "Grouped response"
+      },
+      "operationType": {
+        "label": "Type",
+        "option": {
+          "command": "Command",
+          "delay": "Delay",
+          "reset": "Reset",
+          "trigger": "Trigger"
+        }
+      },
+      "operationCommandType": {
+        "label": {
+          "commandType": "Command type",
+          "writeData": "Write data",
+          "responseTag": "Response tag"
+        },
+        "option": {
+          "read": "Read",
+          "write": "Write",
+          "query": "Query"
+        }
+      },
+      "operationReadDataType": {
+        "option": {
+          "string": "String",
+          "integer": "Integer",
+          "single": "Single",
+          "double": "Double",
+          "byteArray": "Byte array"
+        }
+      },
+      "operationResetType": {
+        "label": {
+          "device": "Device",
+          "interface": "Interface"
+        }
+      },
+      "operationDelay": {
+        "label": "delay"
+      },
+      "errors": {
+        "invalid-writeProperty": "Invalid 'write' property: __error__",
+        "invalid-json": "Invalid 'to' JSON property",
+        "invalid-expr": "Invalid JSONata expression: __error__"
+      }
+    }
+  }
+}

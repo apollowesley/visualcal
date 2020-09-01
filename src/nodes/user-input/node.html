@@ -1,52 +1,11 @@
-<script type="text/x-red" data-template-name="indysoft-user-input">
-  <div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-  </div>
-  <div class="form-row">
-    <label for="node-input-title"><i class="fa fa-tag"></i> Title</label>
-    <input type="text" id="node-input-title">
-  </div>
-  <div class="form-row">
-    <label for="node-input-text"><i class="fa fa-tag"></i> Text</label>
-    <input type="text" id="node-input-text">
-  </div>
-  <div class="form-row">
-    <label for="node-input-showImage"><i class="fa fa-tag"></i> Image?</label>
-    <input type="checkbox" id="node-input-showImage" style="display: inline-block; width: auto; vertical-align: top;">
-  </div>
-  <div class="form-row" id="asset-row">
-    <label for="image-input-button"><i class="fa fa-tag"></i> Image to show to user</label>
-    <input id="image-input" type="file" style="display: none" />
-    <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select
-      file</button>
-  </div>
-  <div id="assets-ordered-list-row" class="form-row">
-    <ol id="assets-ordered-list"></ol>
-  </div>
-  <div class="form-row">
-    <label for="node-input-assetFilename"><i class="fa fa-tag"></i> Selected filename</label>
-    <input type="text" id="node-input-assetFilename" disabled />
-  </div>
-  <div class="form-row" id="input-row">
-    <label for="node-input-dataType"><i class="fa fa-tag"></i> Input Data Type</label>
-    <select id="node-input-dataType" style="width:125px !important">
-      <option value="none" selected>None</option>
-      <option value="string">String</option>
-      <option value="float">Floating Point</option>
-      <option value="integer">Integer</option>
-      <option value="boolean">Boolean</option>
-    </select>
-  </div>
-  <div class="form-row" id="input-append-row">
-    <label for="node-input-append"><i class="fa fa-tag"></i> Append to Input</label>
-    <input type="text" id="node-input-append">
-  </div>
+<script type="text/x-red" data-template-name="{{ nodeType }}">
+  {{{ edit }}}
 </script>
 
-<script type="text/x-red" data-help-name="indysoft-user-input">
-  <p>Shows an instruction and optional input to the user on the frontend.</p>
-  <p>Files can also be selected to be showing to the user, such as images, pdf, word documents, etc.</p>
+<script type="text/x-red" data-help-name="{{ nodeType }}">
+  {{{ help }}}
 </script>
 
-<script src="/nodes/scripts/user-input/frontend.js"></script>
+<script>
+  {{{ script }}}
+</script>

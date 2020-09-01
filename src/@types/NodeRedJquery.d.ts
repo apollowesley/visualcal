@@ -1,4 +1,4 @@
-export interface NodeRedEditiableListElementOptions<TData> {
+interface NodeRedEditiableListElementOptions<TData> {
   /**
    * Determines whether a button is shown below the list that, when clicked, will add a new entry to the list.
    * 
@@ -12,7 +12,7 @@ export interface NodeRedEditiableListElementOptions<TData> {
   /**
    * Called when a new item is being added to the list
    */
-  addItem?: ((row: HTMLDivElement, index: number, data: TData) => void);
+  addItem?: ((row: JQuery<HTMLDivElement>, index: number, data: TData) => void);
   /**
    * If the list is sortable, this option allows items to be dragged from this list to any other jQuery sortable list, such as another editableList.
    */
@@ -47,7 +47,7 @@ export interface NodeRedEditiableListElementOptions<TData> {
    * 
    * This callback is invoked after the main resize callback is called.
    */
-  resizeItem?: (row: HTMLDivElement, index: number) => void;
+  resizeItem?: (row: JQuery, index: number) => void;
   /**
    * If set to true, each row is displayed with a delete button on the right-hand side. Clicking the button will remove the row from the list and trigger the removeItem callback, if set.
    */
@@ -60,9 +60,10 @@ export interface NodeRedEditiableListElementOptions<TData> {
    * The remove can be triggered by either clicking an item’s remove button, or calling the remoteItem method.
    */
   removeItem?: (data: TData) => void;
+  sortable?: boolean;
 }
 
-export interface HTMLNodeRedEditableListElement<TData> extends JQuery<HTMLOListElement> {
+interface HTMLNodeRedEditableListElement<TData> extends JQuery<HTMLOListElement> {
   editableList(options: NodeRedEditiableListElementOptions<TData>): void;
   editableList(type: 'addItem', itemData: TData): void;
   editableList(type: 'addItems', itemData: TData[]): void;
@@ -75,4 +76,33 @@ export interface HTMLNodeRedEditableListElement<TData> extends JQuery<HTMLOListE
   editableList(type: 'show', item: TData): void;
   editableList(type: 'sort', sort?: (dataA: TData, dataB: TData) => void): void;
   editableList(type: 'length'): number;
+}
+
+type NodeRedUIPropertyType = 'msg' | 'flow' | 'global' | 'str' | 'num' | 'bool' | 'json' | 'bin' | 'date' | 'jsonata' | 'env';
+
+interface TypedInputOptions {
+  type?: NodeRedUIPropertyType;
+  value?: string;
+  types?: NodeRedUIPropertyType[];
+}
+
+interface JQuery {
+  typedInput(options: TypedInputOptions): JQuery;
+  typedInput(propertyName: 'type', type: NodeRedUIPropertyType): JQuery;
+  typedInput(propertyName: 'type'): NodeRedUIPropertyType;
+  typedInput(propertyName: 'value', value: string): JQuery;
+  typedInput(propertyName: 'value'): string;
+  typedInput(propertyName: 'width', value: number): JQuery;
+  editableList<TData>(options: NodeRedEditiableListElementOptions<TData>): void;
+  editableList<TData>(type: 'addItem', itemData: TData): void;
+  editableList<TData>(type: 'addItems', itemData: TData[]): void;
+  editableList<TData>(type: 'removeItem', itemData: TData): void;
+  editableList<TData>(type: 'height', width: number | string | ((index: number, value: number) => void)): void;
+  editableList<TData>(type: 'width', width: number | string | ((index: number, value: number) => void)): void;
+  editableList<TData>(type: 'items'): JQuery;
+  editableList<TData>(type: 'clear'): void;
+  editableList<TData>(type: 'filter', filter?: ((data: any) => void) | null): number;
+  editableList<TData>(type: 'show', item: TData): void;
+  editableList<TData>(type: 'sort', sort?: (dataA: TData, dataB: TData) => void): void;
+  editableList<TData>(type: 'length'): number;
 }

@@ -2,13 +2,14 @@ import { NodeProperties } from 'node-red';
 import { resetProcedureActionStatus } from '../utils';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../../@types/logic-server';
 import VisualCalNodeRed from '../../main/node-red';
+import { IndySoftNodeTypeNames } from '../../constants';
 
 const nodeRed = VisualCalNodeRed();
 
-export const NODE_TYPE = 'indysoft-action-completed';
-
 module.exports = (RED: NodeRed) => {
+  console.info('indysoft-action-completed main export function called.');
   function nodeConstructor(this: NodeRedRuntimeNode, config: NodeProperties) {
+    console.info('indysoft-action-completed node constructor called.');
     RED.nodes.createNode(this, config);
     const reset = () => {
       this.status({});
@@ -42,5 +43,5 @@ module.exports = (RED: NodeRed) => {
       reset();
     });
   }
-  RED.nodes.registerType(NODE_TYPE, nodeConstructor);
+  RED.nodes.registerType(IndySoftNodeTypeNames.ActionCompleted, nodeConstructor);
 };
