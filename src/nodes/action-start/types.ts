@@ -1,6 +1,6 @@
-import { NodeRedNodeUIProperties, NodeRedRuntimeNode } from '../@types/logic-server';
-import { NodeRedFlowNode } from '../@types/node-red-info';
-import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
+import { NodeRedNodeUIProperties, NodeRedRuntimeNode } from '../../@types/logic-server';
+import { NodeRedFlowNode } from '../../@types/node-red-info';
+import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../section-configuration/types';
 
 export interface EditorNode extends NodeRedFlowNode {
   sectionConfigId: string;

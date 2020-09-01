@@ -1,6 +1,6 @@
-import { NodeRed } from '../@types/logic-server';
-import { IndySoftNodeTypeNames } from '../constants';
-import { RuntimeNode, RuntimeProperties } from './procedure-sidebar-types';
+import { NodeRed } from '../../@types/logic-server';
+import { IndySoftNodeTypeNames } from '../../constants';
+import { RuntimeNode, RuntimeProperties } from './types';
 
 module.exports = (RED: NodeRed) => {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {

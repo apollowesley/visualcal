@@ -1,6 +1,6 @@
-import { DeviceNodeProperties } from '../@types/logic-nodes';
-import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
-import { DigitalMultimeterDevice, DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
+import { DeviceNodeProperties } from '../../@types/logic-nodes';
+import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../../@types/logic-server';
+import { DigitalMultimeterDevice, DigitalMultimeterMode } from '../../drivers/devices/digital-multimeters/DigitalMultimeter';
 
 export const NODE_TYPE = 'indysoft-device-digital-multimeter';
 

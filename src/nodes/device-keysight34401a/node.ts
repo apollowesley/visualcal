@@ -1,10 +1,9 @@
-import { DeviceNodeProperties } from '../@types/logic-nodes';
-import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
-import { Fluke45 } from '../drivers/devices/digital-multimeters/Fluke45';
-import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
-import { getDeviceConfig } from '../main/node-red/utils';
+import { DeviceNodeProperties } from '../../@types/logic-nodes';
+import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../../@types/logic-server';
+import { Keysight34401A } from '../../drivers/devices/digital-multimeters/Keysight34401A';
+import { DigitalMultimeterMode } from '../../drivers/devices/digital-multimeters/DigitalMultimeter';
 
-export const NODE_TYPE = 'indysoft-device-fluke45';
+export const NODE_TYPE = 'indysoft-device-keysight34401a';
 
 export interface RuntimeProperties extends DeviceNodeProperties {
   mode: string;
@@ -28,7 +27,7 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   relative: boolean;
   usePreDelay: boolean;
   preDelay: number;
-  device: Fluke45;
+  device: Keysight34401A;
 }
 
 export interface RuntimeNodeInputEventMessagePayload {
@@ -51,10 +50,10 @@ module.exports = (RED: NodeRed) => {
     this.isDevice = true;
     this.isGenericDevice = false;
     this.specificDriverInfo = {
-      manufacturer: 'Fluke',
-      model: '45',
+      manufacturer: 'Keysight',
+      model: '34401A',
       nomenclature: 'Digital Multimeter'
-    }
+    };
     this.deviceConfigNode = (RED.nodes.getNode(config.deviceConfigId) as DeviceConfigurationNode);
     if (!this.deviceConfigNode) {
       this.error('Please assign a device driver configuration');
@@ -89,7 +88,7 @@ module.exports = (RED: NodeRed) => {
           });
           return;
         }
-        this.device = new Fluke45();
+        this.device = new Keysight34401A();
         this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;
@@ -103,7 +102,6 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
-        const devConfig = getDeviceConfig(this.deviceConfigNode.unitId);
         this.device.setCommunicationInterface(this.communicationInterface);
         if (!this.communicationInterface.isConnected) {
           this.status({ fill: 'blue', shape: 'ring', text: 'Connecting' });
@@ -116,12 +114,6 @@ module.exports = (RED: NodeRed) => {
           }
         }
         try {
-          const ibd = this.device as IControllableDevice;
-          if (devConfig?.isGpib) {
-            ibd.isGpib = true;
-            ibd.gpibPrimaryAddress = devConfig.gpibAddress;
-            this.communicationInterface.setDeviceAddress(devConfig.gpibAddress);
-          }
           if (this.measure) {
             this.status({ fill: 'blue', shape: 'ring', text: 'Taking measurement' });
             const measurement = await this.device.getMeasurement({

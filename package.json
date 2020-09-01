@@ -19,7 +19,7 @@
     "rebuild": "rm -rf node_modules && npm install && electron-rebuild --force",
     "copydrivers:packagejson": "cp src/drivers/package.json dist/drivers",
     "copynodes:packagejson": "cp src/nodes/package.json dist/nodes",
-    "copynodes:html": "cp src/nodes/*.html dist/nodes",
+    "copynodes:html": "cp src/nodes/*/*.html dist/nodes",
     "copynodes:examples": "cp -R src/nodes/examples dist/nodes",
     "copynodes:icons": "cp -R src/nodes/icons dist/nodes",
     "copynodes:locales": "cp -R src/nodes/locales dist/nodes",

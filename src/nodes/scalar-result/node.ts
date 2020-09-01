@@ -1,5 +1,5 @@
 import { NodeProperties } from 'node-red';
-import { NodeRedRuntimeNode, NodeRedNodeMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
+import { NodeRedRuntimeNode, NodeRedNodeMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../../@types/logic-server';
 import electronLog from 'electron-log';
 
 export const NODE_TYPE = 'indysoft-scalar-result';

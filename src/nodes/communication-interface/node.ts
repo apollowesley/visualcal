@@ -1,9 +1,9 @@
 import { NodeProperties } from 'node-red';
-import { NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
-import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
-import { SerialInterface } from '../drivers/communication-interfaces/SerialInterface';
-import { PrologixGpibUsbInterface } from '../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
-import { PrologixGpibTcpInterface } from '../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
+import { NodeRedRuntimeNode, NodeRed } from '../../@types/logic-server';
+import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
+import { SerialInterface } from '../../drivers/communication-interfaces/SerialInterface';
+import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibUsbInterface';
+import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
 
 export const NODE_TYPE = 'indysoft-communication-interface';
 

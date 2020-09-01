@@ -1,6 +1,6 @@
 import { NodeProperties } from 'node-red';
-import { getFlowSectionName } from './utils';
-import { NodeRedRuntimeNode, NodeRed, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
+import { getFlowSectionName } from '../utils';
+import { NodeRedRuntimeNode, NodeRed, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../../@types/logic-server';
 
 export const NODE_TYPE = 'indysoft-device-read-handler';
 

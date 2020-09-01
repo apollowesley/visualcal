@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../constants';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
+import { TriggerOptions } from '../../nodes/action-start/types';
 
 interface Events {
   started: () => void;

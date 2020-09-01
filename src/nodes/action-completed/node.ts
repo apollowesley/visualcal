@@ -1,7 +1,7 @@
 import { NodeProperties } from 'node-red';
-import { resetProcedureActionStatus } from './utils';
-import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
-import VisualCalNodeRed from '../main/node-red';
+import { resetProcedureActionStatus } from '../utils';
+import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../../@types/logic-server';
+import VisualCalNodeRed from '../../main/node-red';
 
 const nodeRed = VisualCalNodeRed();
 

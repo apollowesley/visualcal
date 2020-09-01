@@ -1,5 +1,5 @@
-import { NodeRedNodeUIProperties, NodeRedRuntimeNode } from '../@types/logic-server';
-import { NodeRedFlowNode } from '../@types/node-red-info';
+import { NodeRedRuntimeNode, NodeRedNodeUIProperties } from '../../@types/logic-server';
+import { NodeRedFlowNode } from '../../@types/node-red-info';
 
 export interface EditorNode extends NodeRedFlowNode {
   shortName: string;

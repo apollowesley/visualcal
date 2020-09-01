@@ -1,6 +1,6 @@
-import { DeviceNodeProperties } from '../@types/logic-nodes';
-import { NodeRedCommunicationInterfaceRuntimeNode, NodeRed, DeviceConfigurationNode, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
-import { MultiProductCalibratorDevice } from '../drivers/devices/multi-product-calibrators/MultiProductCalibrator';
+import { DeviceNodeProperties } from '../../@types/logic-nodes';
+import { NodeRedCommunicationInterfaceRuntimeNode, NodeRed, DeviceConfigurationNode, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../../@types/logic-server';
+import { MultiProductCalibratorDevice } from '../../drivers/devices/multi-product-calibrators/MultiProductCalibrator';
 
 export const NODE_TYPE = 'indysoft-device-multi-product-calibrator';
 

@@ -1,7 +1,7 @@
 import Denque from 'denque';
 import { Socket } from 'net';
 import { NodeProperties } from 'node-red';
-import { NodeRedNodeMessage, NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
+import { NodeRedNodeMessage, NodeRedRuntimeNode, NodeRed } from '../../@types/logic-server';
 
 export const NODE_TYPE = 'prologix-gpib-tcp-config';
 
