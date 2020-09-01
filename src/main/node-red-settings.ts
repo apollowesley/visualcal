@@ -55,10 +55,13 @@ const settings: Settings = {
           // entry.level === 50 === debug
           switch (entry.level) {
             case 40: // info
-              log.info('info ›', entry.msg);
+              log.info('info >', entry.msg);
               break;
             case 50: // debug
-              log.debug('debug ›', entry.msg);
+              log.debug('debug >', entry.msg);
+              break;
+            case 60: // trace
+              log.verbose('trace >', entry.msg);
               break;
             default:
               log.warn('unknown log level (default) ›', entry.msg);

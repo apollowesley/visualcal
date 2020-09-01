@@ -40,10 +40,6 @@ class NodeRed extends TypedEmitter<Events> {
       this.fHttpServer = createServer(this.fExpress);
       this.fNodeRed = RED as NodeRedType;
       this.fNodeRed.init(this.fHttpServer, settings);
-      this.fExpress.use((req, _, next) => {
-        console.info(req.url);
-        return next();
-      });
       nodeRedRequestHook(this.fExpress);
       this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);

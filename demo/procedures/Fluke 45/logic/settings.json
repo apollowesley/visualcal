@@ -357,16 +357,6 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/node_modules/@node-red/nodes/core/storage/23-watch.js"
 				},
-				"node": {
-					"name": "node",
-					"types": [
-						"indysoft-action-start"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/action-start/node.js"
-				},
 				"indysoft-action-completed": {
 					"name": "indysoft-action-completed",
 					"types": [
@@ -376,6 +366,16 @@
 					"local": false,
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-completed.js"
+				},
+				"indysoft-action-start": {
+					"name": "indysoft-action-start",
+					"types": [
+						"indysoft-action-start"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
 				"indysoft-command-sequence-builder": {
 					"name": "indysoft-command-sequence-builder",

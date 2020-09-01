@@ -1,8 +1,7 @@
-import { NodeRed, NodeResetOptions } from '../../@types/logic-server';
-import { IndySoftNodeTypeNames } from '../../constants';
-import { RuntimeNode, RuntimeProperties } from '../indysoft-action-start-types';
-import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../indysoft-section-configuration-types';
-import VisualCalNodeRed from '../../main/node-red';
+import { NodeRed, NodeResetOptions } from '../@types/logic-server';
+import { IndySoftNodeTypeNames } from '../constants';
+import { RuntimeNode, RuntimeProperties } from './indysoft-action-start-types';
+import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
 import RED from 'node-red';
 
 const nodeRed = RED as NodeRed;
