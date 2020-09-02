@@ -124,7 +124,7 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!browserWindow.visualCal || !browserWindow.visualCal.id) throw new Error(`Attempting to add a BrowserWindow without a VisualCal.id or an unused BrowserWindow detected with ID, ${browserWindow.visualCal.id}`);
     this.checkWindowExists(browserWindow.visualCal.id);
     this.fWindows.add(browserWindow);
-    browserWindow.on('closed', () => this.onWindowClosed(browserWindow.visualCal.id));
+    browserWindow.once('closed', () => this.onWindowClosed(browserWindow.visualCal.id));
     this.emit('windowAdded', browserWindow.visualCal.id);
   }
 
@@ -228,7 +228,7 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // Login window
   async ShowLogin() {
-    global.visualCal.userManager.on('loggedIn', async () => {
+    global.visualCal.userManager.once('loggedIn', async () => {
       await this.showSelectProcedureWindow();
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
