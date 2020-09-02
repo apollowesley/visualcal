@@ -96,9 +96,24 @@ export class UserManager extends TypedEmitter<Events> {
       const nameFirst = usernameSplit[0];
       const nameLast = usernameSplit[1];
       if (!user) {
-        user = this.add({ email: loginInfo.username, nameFirst: nameFirst, nameLast: nameLast });
+        if (global.visualCal.windowManager.loginWindow) {
+          const askIfUserShouldBeCreatedResponse = await dialog.showMessageBox(global.visualCal.windowManager.loginWindow, {
+            title: 'User does not exist',
+            message: `The user, ${loginInfo.username}, does not exist.  Do you want to create the user?`,
+            type: 'question',
+            buttons: [ 'Yes', 'No' ]
+          });
+          const shouldCreateUser = askIfUserShouldBeCreatedResponse.response === 0;
+          if (shouldCreateUser) {
+            user = this.add({ email: loginInfo.username, nameFirst: nameFirst, nameLast: nameLast });
+            this.emit('loggedIn', user);
+          }
+        } else {
+          global.visualCal.applicationManager.showErrorAndQuit('Critical error, the application cannot remain open', 'Expected login window to be created and shown, but it was not.');
+        }
+      } else {
+        this.emit('loggedIn', user);
       }
-      this.emit('loggedIn', user);
     });
   }
 
