@@ -1,14 +1,15 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
-import { IpcChannels } from '../../constants';
 import electronStore from 'electron-cfg';
-import { TypedEmitter } from 'tiny-typed-emitter';
 import electronLog from 'electron-log';
+import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
+import { IpcChannels } from '../../constants';
 
 const log = electronLog.scope('UserManager');
 
 interface Events {
   activeChanged: (user?: User) => void;
+  loggedIn: (user: User) => void;
 }
 
 interface Store {
@@ -24,28 +25,7 @@ export class UserManager extends TypedEmitter<Events> {
     super();
     this.verifyActiveUserExistsAndClearIfNot();
     this.fStore.observe('activeUserEmail', () => ipcMain.sendToAll(IpcChannels.user.active.changed, this.active));
-    ipcMain.on(IpcChannels.user.active.request, (event) => event.reply(IpcChannels.user.active.response, this.active));
-    ipcMain.on(IpcChannels.user.login.request, async (event, loginInfo: LoginCredentials) => {
-      if (!isValidEmailAddress(loginInfo.username)) {
-        const errorMsg = 'username is not an email address';
-        const win = BrowserWindow.fromWebContents(event.sender);
-        if (!win) return event.reply(IpcChannels.user.login.error, new Error(errorMsg));
-        dialog.showMessageBoxSync(win, { title: 'Invalid credentials', message: errorMsg, type: 'error' });
-        return;
-      }
-      let user = this.getOne(loginInfo.username);
-      // TODO: Add checking for existing users when we're ready
-      // if (!existingUser) return event.reply(IpcChannels.user.login.error, new Error(`Username or password is not correct`));
-      const usernameSplit = loginInfo.username.split('@');
-      const nameFirst = usernameSplit[0];
-      const nameLast = usernameSplit[1];
-      if (!user) {
-        user = this.add({ email: loginInfo.username, nameFirst: nameFirst, nameLast: nameLast });
-      }
-      // No reason to reply, we're closing the login window
-      // event.reply(IpcChannels.user.login.response, user);
-      await global.visualCal.windowManager.showSelectProcedureWindow();
-    });
+    this.initIpcEventHandlers();
     log.info('Loaded');
   }
 
@@ -96,6 +76,30 @@ export class UserManager extends TypedEmitter<Events> {
   clear() {
     this.fStore.delete('activeUserEmail');
     this.fStore.delete('users');
+  }
+
+  private initIpcEventHandlers() {
+    ipcMain.on(IpcChannels.user.active.request, (event) => event.reply(IpcChannels.user.active.response, this.active));
+    
+    ipcMain.on(IpcChannels.user.login.request, async (event, loginInfo: LoginCredentials) => {
+      if (!isValidEmailAddress(loginInfo.username)) {
+        const errorMsg = 'username is not an email address';
+        const win = BrowserWindow.fromWebContents(event.sender);
+        if (!win) return event.reply(IpcChannels.user.login.error, new Error(errorMsg));
+        dialog.showMessageBoxSync(win, { title: 'Invalid credentials', message: errorMsg, type: 'error' });
+        return;
+      }
+      let user = this.getOne(loginInfo.username);
+      // TODO: Add checking for existing users when we're ready
+      // if (!existingUser) return event.reply(IpcChannels.user.login.error, new Error(`Username or password is not correct`));
+      const usernameSplit = loginInfo.username.split('@');
+      const nameFirst = usernameSplit[0];
+      const nameLast = usernameSplit[1];
+      if (!user) {
+        user = this.add({ email: loginInfo.username, nameFirst: nameFirst, nameLast: nameLast });
+      }
+      this.emit('loggedIn', user);
+    });
   }
 
 }

@@ -228,6 +228,10 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // Login window
   async ShowLogin() {
+    global.visualCal.userManager.on('loggedIn', async () => {
+      await this.showSelectProcedureWindow();
+      this.closeAllBut(VisualCalWindow.SelectProcedure);
+    });
     const w = await this.createWindow(VisualCalWindow.Login);
     w.show();
     return w;
