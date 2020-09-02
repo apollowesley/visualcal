@@ -1,13 +1,130 @@
 import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../constants';
-import { LoadResponseArgs, SaveOneResponseArgs } from '../../managers/RendererResultManager';
+import { LoadResponseArgs } from '../../managers/RendererResultManager';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
 import { TriggerOptions } from '../../../nodes/indysoft-action-start-types';
 
-// ***** LOG *****
+const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
+const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
+const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
+const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
+const sectionSelectElement = document.getElementById('vc-section-select') as HTMLSelectElement;
+const actionSelectElement = document.getElementById('vc-action-select') as HTMLSelectElement;
+const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 
 const logEntries: any[] = [];
+const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
+
+let results: LogicResult[] = [];
+
+let sessionName: string = '';
+let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
+let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
+
+const getSelectedSection = () => {
+  const selected = sectionSelectElement.selectedOptions[0];
+  if (!selected) return undefined;
+  return JSON.parse(selected.value) as SectionInfo;
+}
+
+const getSelectedAction = () => {
+  const selected = actionSelectElement.selectedOptions[0];
+  if (!selected) return undefined;
+  return JSON.parse(selected.value) as ActionInfo;
+}
+
+const clearSelectElementOptions = (el: HTMLSelectElement) => {
+  for (let index = 0; index < el.options.length; index++) el.options.remove(index);
+}
+
+sectionSelectElement.disabled = true;
+actionSelectElement.disabled = true;
+startStopActionButtonElement.disabled = true;
+
+sectionSelectElement.addEventListener('change', () => {
+  const selectedSection = getSelectedSection();
+  clearSelectElementOptions(actionSelectElement);
+  if (!selectedSection) {
+    sectionSelectElement.disabled = true;
+    actionSelectElement.disabled = true;
+    startStopActionButtonElement.disabled = true;
+    return;
+  }
+  selectedSection.actions.forEach(action => {
+    const option = document.createElement('option') as HTMLOptionElement;
+    option.value = JSON.stringify(action);
+    option.text = action.name;
+    actionSelectElement.options.add(option);
+  });
+  actionSelectElement.disabled = actionSelectElement.options.length <= 0;
+  startStopActionButtonElement.disabled = true;
+  actionSelectElement.selectedIndex = 0;
+  actionSelectElement.dispatchEvent(new Event('change'));
+});
+
+actionSelectElement.addEventListener('change', () => {
+  const selectedAction = getSelectedAction();
+  startStopActionButtonElement.disabled = !selectedAction;
+});
+
+startStopActionButtonElement.addEventListener('click', (ev) => {
+  ev.preventDefault();
+  const section = getSelectedSection();
+  const action = getSelectedAction();
+  if (!section || !action) {
+    alert('The start/stop button was supposed to be disabled.  This is a bug.');
+    return;
+  }
+  devices.forEach(d => d.gpib = { address: d.gpibAddress });
+  session.configuration.devices = devices;
+  const opts: TriggerOptions = {
+    action: action.name,
+    section: section.shortName,
+    runId: Date.now().toString(),
+    session: session
+  };
+  if (session.lastSectionName && session.lastActionName) {
+    window.visualCal.actionManager.stop(opts);
+    session.lastSectionName = undefined;
+    session.lastActionName = undefined;
+  } else {
+    window.visualCal.actionManager.start(opts);
+    session.lastSectionName = section.name;
+    session.lastActionName = action.name;
+  }
+});
+
+// Sent after window loaded
+ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+  sessionName = viewInfo.session.name;
+  session = viewInfo.session;
+  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
+  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+    devices.push({
+      configNodeId: deviceInfo.configNodeId,
+      driverDisplayName: '',
+      gpibAddress: 1,
+      interfaceName: '',
+      unitId: deviceInfo.unitId
+    });
+  });
+  devicesTable.setData(devices);
+  clearSelectElementOptions(sectionSelectElement);
+  viewInfo.sections.forEach(section => {
+    const optionElememt = document.createElement('option') as HTMLOptionElement;
+    optionElememt.value = JSON.stringify(section);
+    optionElememt.text = section.name;
+    sectionSelectElement.options.add(optionElememt);
+  });
+  window.visualCal.resultsManager.load(sessionName);
+  sectionSelectElement.disabled = sectionSelectElement.options.length <= 0;
+  sectionSelectElement.selectedIndex = 0;
+  if (!sectionSelectElement.disabled) sectionSelectElement.dispatchEvent(new Event('change'));
+});
+
+// ***** LOG *****
+
 let sessionLogTable = new Tabulator('#vc-session-log', {
   data: logEntries,
   layout: 'fitColumns',
@@ -60,43 +177,6 @@ window.visualCal.communicationInterfaceManager.on('interfaceWrite', (info) => {
 
 // ***** END LOG *****
 
-let sessionName: string = '';
-let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
-let sections: SectionInfo[] = [];
-let actions: ActionInfo[] = [];
-let results: LogicResult[] = [];
-let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
-const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
-
-const onSectionRowSelected = (selectedRow: Tabulator.RowComponent) => {
-  const section = selectedRow.getData() as SectionInfo;
-  actions = section.actions;
-  actionsTable.setData(actions);
-}
-
-const sectionsTable = new Tabulator('#vc-sections-tabulator', {
-  data: sections,
-  layout: 'fitColumns',
-  selectable: 1,
-  rowSelected: onSectionRowSelected,
-  columns: [
-    { title: 'Name', field: 'name' }
-  ]
-});
-
-const onActionRowSelected = (selectedRow: Tabulator.RowComponent) => {
-  // const action = selectedRow.getData() as ActionInfo;
-}
-
-const startStopActionIcon = () => {
-  if (session.lastSectionName && session.lastActionName) return '<button>Stop</button>'; // Already triggered
-  return '<button>Start</button>';
-}
-
-const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
-const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
-const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
-
 let isRunning = false;
 
 window.visualCal.actionManager.on('stateChanged', (info) => {
@@ -109,7 +189,6 @@ window.visualCal.actionManager.on('stateChanged', (info) => {
       runningActionElement.innerHTML = 'Completed';
       session.lastSectionName = undefined;
       session.lastActionName = undefined;
-      if (lastActionCell) lastActionCell.getRow().reformat();
       isRunning = false;
       break;
     case 'started':
@@ -123,46 +202,8 @@ window.visualCal.actionManager.on('stateChanged', (info) => {
       isRunning = false;
       session.lastSectionName = undefined;
       session.lastActionName = undefined;
-      if (lastActionCell) lastActionCell.getRow().reformat();6
       break;
   }
-});
-
-let lastActionCell: Tabulator.CellComponent | undefined = undefined;
-
-const startStopActionClick = async (cell: Tabulator.CellComponent) => {
-  const section = sectionsTable.getSelectedRows()[0].getData() as SectionInfo;
-  const action = cell.getRow().getData() as ActionInfo;
-  devices.forEach(d => d.gpib = { address: d.gpibAddress });
-  session.configuration.devices = devices;
-  const opts: TriggerOptions = {
-    action: action.name,
-    section: section.shortName,
-    runId: Date.now().toString(),
-    session: session
-  };
-  if (session.lastSectionName && session.lastActionName) {
-    window.visualCal.actionManager.stop(opts);
-    session.lastSectionName = undefined;
-    session.lastActionName = undefined;
-  } else {
-    window.visualCal.actionManager.start(opts);
-    session.lastSectionName = section.name;
-    session.lastActionName = action.name;
-  }
-  cell.getRow().reformat();
-  lastActionCell = cell;
-}
-
-const actionsTable = new Tabulator('#vc-actions-tabulator', {
-  data: actions,
-  layout: 'fitColumns',
-  selectable: 1,
-  rowSelected: onActionRowSelected,
-  columns: [
-    { title: 'Name', field: 'name' },
-    { title: 'Start', formatter: startStopActionIcon, minWidth: 100, hozAlign: 'center', vertAlign: 'middle', cellClick: (_, cell) => startStopActionClick(cell) }
-  ]
 });
 
 const resultsTable = new Tabulator('#vc-results-tabulator', {
@@ -214,7 +255,6 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   ]
 });
 
-const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 resetButton.addEventListener('click', () => {
   const triggerOpts: TriggerOptions = {
     action: '',
@@ -223,45 +263,18 @@ resetButton.addEventListener('click', () => {
   };
   session.lastSectionName = undefined;
   session.lastActionName = undefined;
-  actionsTable.getRows().forEach(row => row.reformat());
   window.visualCal.actionManager.reset(triggerOpts);
-});
-
-ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-  sessionName = viewInfo.session.name;
-  session = viewInfo.session;
-  sections = viewInfo.sections;
-  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-    devices.push({
-      configNodeId: deviceInfo.configNodeId,
-      driverDisplayName: '',
-      gpibAddress: 1,
-      interfaceName: '',
-      unitId: deviceInfo.unitId
-    });
-  });
-  devicesTable.setData(devices);
-  sectionsTable.setData(sections);
-  if (sections.length > 0) {
-    const firstSection = sections[0];
-    if (firstSection.actions.length > 0) {
-      actions = firstSection.actions;
-      actionsTable.setData(actions);
-    }
-  }
-  window.visualCal.resultsManager.load(sessionName);
 });
 
 ipcRenderer.on(IpcChannels.sessions.viewInfo.error, (_, error: Error) => {
   window.visualCal.electron.showErrorDialog(error);
 });
 
-window.visualCal.actionManager.on('startError', (error: Error) => {
-  if (error.message) {
-    alert(error.message);
+window.visualCal.actionManager.on('startError', (args) => {
+  if (args.err.message) {
+    alert(args.err.message);
   } else {
-    alert(error);
+    alert(args.err);
   }
 });
 

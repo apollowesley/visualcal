@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>IndySoft VisualCal</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=b73363d2d6c35b3e215531bae84e4d7f">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=a033efe829b4689bff59352cdb871a15">
     <link rel="stylesheet" href="assets/css/superhero.min.css?h=12d6bcde84b063e355475b2268462a87">
-    <link rel="stylesheet" href="assets/css/styles.css?h=b60dd013189859bbbfabda38517b09cd">
+    <link rel="stylesheet" href="assets/css/styles.css?h=a346257e99d899a675debd3361b003b0">
     <link rel="stylesheet" href="assets/css/tabulator.min.css?h=181f44a2e9f63d71102812f4630cdd08">
 </head>
 
@@ -49,16 +49,20 @@
             <div class="col-3">
                 <div class="card" id="vc-card-sections">
                     <div class="card-body">
-                        <h4 class="card-title">Sections</h4>
-                        <div id="vc-sections-tabulator" class="design-visible" style="max-height: 250px;min-height: 100px;"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="card" id="vc-card-actions">
-                    <div class="card-body">
-                        <h4 class="card-title">Actions</h4>
-                        <div id="vc-actions-tabulator" class="design-visible" style="min-height: 100px;max-height: 250px;"></div>
+                        <h4 class="card-title">Procedure</h4>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col text-center">
+                                <div class="form-group"><label for="vc-section-select">Select a section</label><select class="form-control-lg" id="vc-section-select" style="width: 100%;"></select></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col text-center">
+                                <div class="form-group"><label for="vc-action-select">Select an action</label><select class="form-control-lg" id="vc-action-select" style="min-width: 200px;width: 100%;"></select></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col text-center" id="vc-start-button"><button class="btn btn-primary" id="vc-start-stop-button" type="button">Start</button></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,7 +73,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col"><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset Logic Runtime</button></div>
+                    <div class="col"><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
                 </div>
             </div>
         </div>
@@ -103,7 +107,7 @@
         </div>
     </div>
     <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js?h=7c038681746a729e2fff9520a575e78c"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>
     <script src="assets/js/visualcal.js?h=3f91458140667b5da1d794314a4e5cd0"></script>
 </body>
 

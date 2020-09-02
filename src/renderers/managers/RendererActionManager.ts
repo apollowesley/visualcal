@@ -5,7 +5,7 @@ import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
 
 interface Events {
   started: () => void;
-  startError: (err: Error) => void;
+  startError: (args: { opts: TriggerOptions, err: Error }) => void;
   stopped: () => void;
   stopError: (err: Error) => void;
   reset: () => void;
@@ -19,7 +19,7 @@ export class RendererActionManager extends TypedEmitter<Events> {
   constructor() {
     super();
     ipcRenderer.on(IpcChannels.actions.start.response, () => this.emit('started'));
-    ipcRenderer.on(IpcChannels.actions.start.error, (_, err: Error) => this.emit('startError', err));
+    ipcRenderer.on(IpcChannels.actions.start.error, (_, args: { opts: TriggerOptions, err: Error }) => this.emit('startError', args));
 
     ipcRenderer.on(IpcChannels.actions.stop.response, () => this.emit('stopped'));
     ipcRenderer.on(IpcChannels.actions.stop.error, (_, err: Error) => this.emit('stopError', err));

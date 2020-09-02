@@ -19,7 +19,7 @@ const createWindowOptions = (id: VisualCalWindow, htmlPath: string, pathType: Ht
 };
 
 const mainWindow = () => createWindowOptions(VisualCalWindow.Main, 'index.html', 'bootstrap');
-const loadingWindow = () => createWindowOptions(VisualCalWindow.Loading, 'loading.html', 'public', { height: 200, width: 400 });
+const loadingWindow = () => createWindowOptions(VisualCalWindow.Loading, 'loading.html', 'public', { height: 200, width: 400, frame: false, maximizable: false, center: true, fullscreenable: false, alwaysOnTop: true, minimizable: false, resizable: false });
 const loginWindow = () => createWindowOptions(VisualCalWindow.Login, 'login.html', 'bootstrap', { title: 'Login' });
 const consoleWindow = () => createWindowOptions(VisualCalWindow.Console, 'loading.html', 'public', { height: 600, width: 800, title: 'Log' });
 const nodeRedEditorWindow = () => createWindowOptions(VisualCalWindow.NodeRedEditor, `http://localhost:${global.visualCal.config.httpServer.port}/red`, 'url', { title: 'Logic Editor', webPreferences: { nodeIntegration: false, preload: path.join(global.visualCal.dirs.renderers.windows, 'node-red.js') } });
