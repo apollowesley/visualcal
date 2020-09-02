@@ -35,7 +35,7 @@ const existingSessionsTable = new Tabulator('#vc-tabulator', {
 
 cancelButton.onclick = (ev) => {
   ev.preventDefault();
-  ipcRenderer.send(IpcChannels.sessions.cancelSelect);
+  ipcRenderer.send(IpcChannels.session.cancelSelect);
 };
 
 createButton.onclick = (ev) => {
@@ -43,7 +43,7 @@ createButton.onclick = (ev) => {
   ipcRenderer.send(IpcChannels.windows.showCreateSession, procedureName);
 }
 
-ipcRenderer.on(IpcChannels.sessions.selectData, (_, arg: { procedureName: string, sessions: Session[] }) => {
+ipcRenderer.on(IpcChannels.session.selectData, (_, arg: { procedureName: string, sessions: Session[] }) => {
   procedureName = arg.procedureName;
   heading.innerText = `Select session for procedure "${procedureName}"`;
   existingSessionsTable.setData(arg.sessions);

@@ -48,7 +48,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     applicationManager: new ApplicationManager(),
     windowManager: new WindowManager(),
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
-    sessionManager: new SessionManager(localDirs.userHomeData.sessions),
+    sessionManager: new SessionManager(),
     nodeRedFlowManager: new NodeRedFlowManager(),
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),

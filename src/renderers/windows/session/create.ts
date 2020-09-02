@@ -46,12 +46,12 @@ const init = () => {
     });
   });
 
-  window.visualCal.sessionManager.on(IpcChannels.sessions.create.error, (response: ErrorResponseArgs) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.create.error, (response: ErrorResponseArgs) => {
     alert(response.error.message);
     updateCreateButton();
   });
 
-  window.visualCal.sessionManager.on(IpcChannels.sessions.create.response, () => {
+  window.visualCal.sessionManager.on(IpcChannels.session.create.response, () => {
     alert('Session created!');
     window.close();
   });

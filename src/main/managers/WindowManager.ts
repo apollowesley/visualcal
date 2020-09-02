@@ -84,12 +84,12 @@ export class WindowManager extends TypedEmitter<Events> {
       this.close(VisualCalWindow.CreateProcedure);
     });
 
-    ipcMain.on(IpcChannels.sessions.cancelSelect, async () => {
+    ipcMain.on(IpcChannels.session.cancelSelect, async () => {
       await this.showSelectProcedureWindow();
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
 
-    ipcMain.on(IpcChannels.sessions.cancelCreate, () => {
+    ipcMain.on(IpcChannels.session.cancelCreate, () => {
       this.close(VisualCalWindow.CreateSession);
     });
   }
@@ -282,7 +282,7 @@ export class WindowManager extends TypedEmitter<Events> {
       communicationInterfaceTypes: CommunicationInterfaceTypes,
       serialPortNames: serialPortNames
     };
-    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.createCommunicationInterfaceInitialData, data);
+    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.session.createCommunicationInterfaceInitialData, data);
     const w = await this.createWindow(VisualCalWindow.CreateCommInterface, this.mainWindow, false, undefined, undefined, onDidFinishLoading);
     return w;
   }
@@ -315,11 +315,11 @@ export class WindowManager extends TypedEmitter<Events> {
   async showSelectSessionWindow() {
     const activeProcedureName = await global.visualCal.procedureManager.getActive();
     if (!activeProcedureName) throw new Error('Active procedure is not set');
-    const sessions = await global.visualCal.sessionManager.getAll();
+    const sessions = global.visualCal.sessionManager.all;
     const sessionsForProc = sessions.filter(s => s.procedureName === activeProcedureName);
-    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.sessions.selectData, { procedureName: activeProcedureName, sessions: sessionsForProc });
+    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.session.selectData, { procedureName: activeProcedureName, sessions: sessionsForProc });
     const w = await this.createWindow(VisualCalWindow.SelectSession, undefined, false, undefined, undefined, onDidFinishLoading);
-    global.visualCal.sessionManager.once('activeSet', async () => {
+    global.visualCal.sessionManager.once('activeChanged', async () => {
       await this.ShowMain();
       this.closeAllBut(VisualCalWindow.Main);
     });

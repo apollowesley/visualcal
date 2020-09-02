@@ -165,7 +165,10 @@ export const IpcChannels = {
       error: 'update-procedure-error'
     }
   },
-  sessions: {
+  session: {
+    active: {
+      changed: 'session-active-changed'
+    },
     selectData: 'session-select-data',
     cancelSelect: 'cancel-session-select',
     cancelCreate: 'cancel-session-create',

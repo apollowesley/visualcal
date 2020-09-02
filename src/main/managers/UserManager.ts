@@ -23,7 +23,7 @@ export class UserManager extends TypedEmitter<Events> {
 
   constructor() {
     super();
-    this.verifyActiveUserExistsAndClearIfNot();
+    this.verifyActiveExistsAndClearIfNot();
     this.fStore.observe('activeUserEmail', () => ipcMain.sendToAll(IpcChannels.user.active.changed, this.active));
     this.initIpcEventHandlers();
     log.info('Loaded');
@@ -42,10 +42,9 @@ export class UserManager extends TypedEmitter<Events> {
     } else {
       this.fStore.delete('activeUserEmail');
     }
-    ipcMain.sendToAll(IpcChannels.user.active.changed, this.active);
   }
 
-  private verifyActiveUserExistsAndClearIfNot() {
+  private verifyActiveExistsAndClearIfNot() {
     const activeUser = this.active;
     if (!activeUser) this.fStore.delete('activeUserEmail');
   }

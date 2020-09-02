@@ -96,7 +96,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
 });
 
 // Sent after window loaded
-ipcRenderer.on(IpcChannels.sessions.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
   sessionName = viewInfo.session.name;
   session = viewInfo.session;
   deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
@@ -266,7 +266,7 @@ resetButton.addEventListener('click', () => {
   window.visualCal.actionManager.reset(triggerOpts);
 });
 
-ipcRenderer.on(IpcChannels.sessions.viewInfo.error, (_, error: Error) => {
+ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
   window.visualCal.electron.showErrorDialog(error);
 });
 
@@ -304,4 +304,4 @@ window.visualCal.actionManager.on('resultAcquired', (info) => {
   resultsTable.setData(results);
 });
 
-ipcRenderer.send(IpcChannels.sessions.viewInfo.request);
+ipcRenderer.send(IpcChannels.session.viewInfo.request);

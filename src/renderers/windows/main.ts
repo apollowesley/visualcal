@@ -128,37 +128,37 @@ let selectedSession: Session | null = null;
 let createSessionCommsIfaceButton: HTMLButtonElement;
 
 const initSessionListeners = () => {
-  window.visualCal.sessionManager.on(IpcChannels.sessions.create.response, (response: CreateResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.create.response, (response: CreateResponseArgs<Session>) => {
     console.info('Created', response.item);
     loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.rename.response, (response: RenameResponseArgs) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.rename.response, (response: RenameResponseArgs) => {
     console.info('Renamed', response.oldName, response.newName);
     loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.remove.response, (response: RemoveResponseArgs) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.remove.response, (response: RemoveResponseArgs) => {
     console.info('Removed', response.name);
     loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.getAll.response, (response: GetAllResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.getAll.response, (response: GetAllResponseArgs<Session>) => {
     console.info('GetAll', response.items);
     refreshSessions(response.items);
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.update.response, (response: UpdateResponseArgs<Session>) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.update.response, (response: UpdateResponseArgs<Session>) => {
     console.info('Update', response.item);
     loadSessions();
   });
-  window.visualCal.sessionManager.on(IpcChannels.sessions.getCommunicationInterfaces.response, (response: GetAllCommunicationInterfacesResponse) => {
+  window.visualCal.sessionManager.on(IpcChannels.session.getCommunicationInterfaces.response, (response: GetAllCommunicationInterfacesResponse) => {
     console.info('GetAllCommunicationInterfacesResponse', response.iface);
     loadSessions();
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, (_, response: { sessionName: string, iface: CommunicationInterfaceConfigurationInfo }) => {
+  ipcRenderer.on(IpcChannels.session.createCommunicationInterface.response, (_, response: { sessionName: string, iface: CommunicationInterfaceConfigurationInfo }) => {
     console.info('createCommuniationInterface', response);
     loadSessions();
     refreshSessionCommIfaces(selectedSessionRow);
   });
-  ipcRenderer.on(IpcChannels.sessions.removeCommunicationInterface.response, (_, response: { sessionName: string, ifaceName: string }) => {
+  ipcRenderer.on(IpcChannels.session.removeCommunicationInterface.response, (_, response: { sessionName: string, ifaceName: string }) => {
     const session = sessions.find(s => s.name === response.sessionName);
     if (!session) return;
     const index = session.configuration.interfaces.findIndex(i => i.name === response.ifaceName);
@@ -166,14 +166,14 @@ const initSessionListeners = () => {
     loadSessions();
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.error, (_, error: Error) => alert(error.message));
-  ipcRenderer.on(IpcChannels.sessions.removeCommunicationInterface.error, (_, error: Error) => alert(error.message));
+  ipcRenderer.on(IpcChannels.session.createCommunicationInterface.error, (_, error: Error) => alert(error.message));
+  ipcRenderer.on(IpcChannels.session.removeCommunicationInterface.error, (_, error: Error) => alert(error.message));
 }
 
 const sessionNameCellEdited = (cell: Tabulator.CellComponent) => {
   const oldName = cell.getOldValue() as string;
   const newName = cell.getValue() as string;
-  ipcRenderer.once(IpcChannels.sessions.getExists.response, (_, exists: boolean) => {
+  ipcRenderer.once(IpcChannels.session.getExists.response, (_, exists: boolean) => {
     if (exists) {
       cell.restoreOldValue();
       alert(`Session name must be unique`);
@@ -190,7 +190,7 @@ const sessionProcedureCellEdited = (cell: Tabulator.CellComponent) => {
   const sessionName = cell.getRow().getCell('name').getValue() as string;
   const session = sessions.find(s => s.name === sessionName);
   if (!session) throw new Error('Session not found!');
-  ipcRenderer.once(IpcChannels.sessions.update.response, (_, session: Session) => {
+  ipcRenderer.once(IpcChannels.session.update.response, (_, session: Session) => {
     alert(`Session, ${session.name}, updated`);
   });
   session.procedureName = newProcedureName;

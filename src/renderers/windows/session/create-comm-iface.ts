@@ -53,13 +53,13 @@ const init = () => {
     }
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.response, () => close());
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterface.error, (_, error: Error) => {
+  ipcRenderer.on(IpcChannels.session.createCommunicationInterface.response, () => close());
+  ipcRenderer.on(IpcChannels.session.createCommunicationInterface.error, (_, error: Error) => {
     alert(error.message);
     close();
   });
 
-  ipcRenderer.on(IpcChannels.sessions.createCommunicationInterfaceInitialData, (_, data: CreateCommunicationInterfaceInitialData) => {
+  ipcRenderer.on(IpcChannels.session.createCommunicationInterfaceInitialData, (_, data: CreateCommunicationInterfaceInitialData) => {
     initialData = data;
     selectedSessionNameElement.innerText = initialData.sessionName;
     const filteredCommIfaceTypes = initialData.communicationInterfaceTypes.filter(ciy => ciy !== CommunicationInterfaceTypesEnum.SerialPort && ciy !== CommunicationInterfaceTypesEnum.NationalInstrumentsGPIB);
@@ -106,7 +106,7 @@ const init = () => {
       case CommunicationInterfaceTypesEnum.SerialPort:
         break;
     }
-    ipcRenderer.send(IpcChannels.sessions.createCommunicationInterface.request, initialData.sessionName, iface);
+    ipcRenderer.send(IpcChannels.session.createCommunicationInterface.request, initialData.sessionName, iface);
   });
 
   cancelButton.addEventListener('click', () => {
