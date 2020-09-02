@@ -29,7 +29,7 @@ if (window.require) {
         console.info(`Current window Id: ${windowId}`);
         switch (windowId) {
             case 'main': // main
-                require('../../dist/renderers/windows/main.js');
+                require('../../dist/renderers/windows/session/view.js');
                 break;
             case 'login': // Login
                 require('../../dist/renderers/windows/login.js');
@@ -39,9 +39,6 @@ if (window.require) {
                 break;
             case 'create-session': // create session
                 require('../../dist/renderers/windows/session/create.js');
-                break;
-            case 'view-session': // view session
-                require('../../dist/renderers/windows/session/view.js');
                 break;
             case 'user-input': // user input
                 require('../../dist/renderers/windows/user/action.js');

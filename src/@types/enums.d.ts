@@ -6,7 +6,6 @@ declare const enum VisualCalWindow {
   NodeRedEditor = 'node-red-editor',
   CreateProcedure = 'create-procedure',
   CreateSession = 'create-session',
-  ViewSession = 'view-session',
   UserInput = 'user-input',
   CreateCommInterface = 'create-comm-interface',
   InteractiveDeviceControl = 'interactive-device-control',

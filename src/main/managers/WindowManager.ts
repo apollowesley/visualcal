@@ -52,7 +52,7 @@ export class WindowManager extends TypedEmitter<Events> {
     });
 
     ipcMain.on(IpcChannels.windows.showViewSession, async () => {
-      await this.ShowViewSessionWindow();
+      await this.ShowMain();
     });
 
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
@@ -107,7 +107,6 @@ export class WindowManager extends TypedEmitter<Events> {
   get nodeRedEditorWindow() { return this.get(VisualCalWindow.NodeRedEditor); }
   get createProcedureWindow() { return this.get(VisualCalWindow.CreateProcedure); }
   get createSessionWindow() { return this.get(VisualCalWindow.CreateSession); }
-  get viewSessionWindow() { return this.get(VisualCalWindow.ViewSession); }
   get userInputWindow() { return this.get(VisualCalWindow.UserInput); }
   get createCommIfaceWindow() { return this.get(VisualCalWindow.CreateCommInterface); }
   get interactiveDeviceControlWindow() { return this.get(VisualCalWindow.InteractiveDeviceControl); }
@@ -268,9 +267,9 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // User input window 
   async ShowUserInputWindow(request: UserInputRequest) {
-    if (!this.viewSessionWindow) throw new Error('Main window must be defined');
+    if (!this.mainWindow) throw new Error('Main window must be defined');
     const onWebContentsDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.user.input.request, request);
-    const w = await this.createWindow(VisualCalWindow.UserInput, this.viewSessionWindow, false, undefined, undefined, onWebContentsDidFinishLoading);
+    const w = await this.createWindow(VisualCalWindow.UserInput, this.mainWindow, false, undefined, undefined, onWebContentsDidFinishLoading);
     return w;
   }
 
@@ -331,13 +330,6 @@ export class WindowManager extends TypedEmitter<Events> {
   async ShowCreateSessionWindow() {
     const w = await this.createWindow(VisualCalWindow.CreateSession);
     w.show();
-    return w;
-  }
-
-  // View session window
-  async ShowViewSessionWindow() {
-    if (!this.mainWindow) throw new Error('Main window must be defined');
-    const w = await this.createWindow(VisualCalWindow.ViewSession, this.mainWindow, true);
     return w;
   }
 

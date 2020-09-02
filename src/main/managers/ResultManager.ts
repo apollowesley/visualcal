@@ -46,14 +46,14 @@ export class ResultManager extends EventEmitter {
   async save(sessionName: string, results: LogicResult[]) {
     const resultsString = JSON.stringify(results);
     await fsPromises.writeFile(ResultManager.getResultsFilePath(sessionName), resultsString);
-    if (global.visualCal.windowManager.viewSessionWindow) global.visualCal.windowManager.viewSessionWindow.webContents.send(IpcChannels.results.save.response, sessionName, results);
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.results.save.response, sessionName, results);
   }
 
   async saveOne(sessionName: string, result: LogicResult) {
     const results = await this.load(sessionName);
     results.push(result);
     await this.save(sessionName, results);
-    if (global.visualCal.windowManager.viewSessionWindow) global.visualCal.windowManager.viewSessionWindow.webContents.send(IpcChannels.results.saveOne.response, sessionName, result);
+    if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.results.saveOne.response, sessionName, result);
   }
 
   static getResultsDirPath(sessionName: string) {
