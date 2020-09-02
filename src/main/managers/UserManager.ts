@@ -3,6 +3,7 @@ import { IpcChannels } from '../../constants';
 import electronStore from 'electron-cfg';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import electronLog from 'electron-log';
+import { isValidEmailAddress } from '../../common/utils/validation';
 
 const log = electronLog.scope('UserManager');
 
@@ -25,7 +26,7 @@ export class UserManager extends TypedEmitter<Events> {
     this.fStore.observe('activeUserEmail', () => ipcMain.sendToAll(IpcChannels.user.active.changed, this.active));
     ipcMain.on(IpcChannels.user.active.request, (event) => event.reply(IpcChannels.user.active.response, this.active));
     ipcMain.on(IpcChannels.user.login.request, async (event, loginInfo: LoginCredentials) => {
-      if (!loginInfo.username.includes('@')) {
+      if (!isValidEmailAddress(loginInfo.username)) {
         const errorMsg = 'username is not an email address';
         const win = BrowserWindow.fromWebContents(event.sender);
         if (!win) return event.reply(IpcChannels.user.login.error, new Error(errorMsg));
