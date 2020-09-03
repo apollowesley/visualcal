@@ -64,3 +64,11 @@ window.visualCal = {
   userManager: new RendererUserManager(),
   communicationInterfaceManager: new CommunicationInterfaceManager()
 };
+
+const sendEventNames = () => {
+  window.removeEventListener('visualCalBootstrapLoaded', sendEventNames);
+  if (!window.visualCal.windowId) return;
+  ipcRenderer.send(IpcChannels.ipc.addRendererEventNames, { winId: window.visualCal.windowId, names: ipcRenderer.eventNames() });
+}
+
+window.addEventListener('visualCalBootstrapLoaded', sendEventNames);

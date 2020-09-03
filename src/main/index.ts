@@ -15,6 +15,7 @@ import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
+import initIpcMonitor, { saveComparison } from './ipc';
 
 const log = electronLog.scope('main');
 const nodeRed = NodeRed();
@@ -96,6 +97,7 @@ const run = async () => {
   await app.whenReady();
   try {
     await load();
+    initIpcMonitor();
     const loginWindow = await global.visualCal.windowManager.ShowLogin();
     global.visualCal.windowManager.close(VisualCalWindow.Loading);
     loginWindow.once('closed', async () => {
@@ -122,6 +124,7 @@ app.on('before-quit', async () => {
   await destroyNodeRed();
   log.info('Logic server destroyed');
   global.visualCal.userManager.logout();
+  if (isDev()) await saveComparison();
 });
 
 run();

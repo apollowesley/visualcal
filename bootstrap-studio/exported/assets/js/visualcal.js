@@ -25,6 +25,8 @@ if (window.require) {
     require('../../dist/renderers/window.js');
     // Listen for the IPC event that has our BrowserWindow.visualCal.id (number)
     window.visualCal.electron.ipc.once('get-visualcal-window-id-response', (_, windowId) => {
+        window.visualCal.windowId = windowId;
+        window.dispatchEvent(new Event('windowIdSet'));
         // Determine which VisualCal window we're running in, then load the appropriate script
         console.info(`Current window Id: ${windowId}`);
         switch (windowId) {
@@ -56,6 +58,7 @@ if (window.require) {
                 require('../../dist/renderers/windows/update-app.js');
                 break;
         }
+        window.dispatchEvent(new Event('visualCalBootstrapLoaded'));
     });
     window.visualCal.electron.getVisualCalWindowId();
 } else {

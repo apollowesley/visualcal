@@ -47,6 +47,9 @@ export interface IpcChannelCRUD {
 }
 
 export const IpcChannels = {
+  ipc: {
+    addRendererEventNames: 'ipc-add-renderer-event-names'
+  },
   getDirs: 'get-dirs-request',
   getFiles: 'get-files-request',
   application: {
