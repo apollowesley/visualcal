@@ -31,6 +31,7 @@ const interactiveDeviceControlWindow = () => createWindowOptions(VisualCalWindow
 const selectProcedureWindow = () => createWindowOptions(VisualCalWindow.SelectProcedure, 'procedure-select.html', 'bootstrap', { height: 750, width: 1000, title: 'Select Procedure' });
 const selectSessionWindow = () => createWindowOptions(VisualCalWindow.SelectSession, 'session-select.html', 'bootstrap', { height: 750, width: 1000, title: 'Select Session' });
 const updateAppWindow = () => createWindowOptions(VisualCalWindow.UpdateApp, 'update-app.html', 'bootstrap', { height: 750, width: 1000, title: 'Update' });
+const benchConfigView = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.BenchConfigView, 'bench-configurations-view.html', 'bootstrap', { height: 750, width: 1000, title: 'Bench Configurations', parent, modal: true });
 
 export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
   switch (id) {
@@ -61,6 +62,9 @@ export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
       return updateAppWindow();
     case VisualCalWindow.CreateCommInterface:
       return createCommIfaceWindow();
+    case VisualCalWindow.BenchConfigView:
+      if (!parent) throw new Error('Parent window is required');
+      return benchConfigView(parent);
     default:
       throw new Error(`Invalid window Id, ${id}`);
   }

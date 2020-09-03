@@ -12,25 +12,26 @@
 </head>
 
 <body>
-    <main>
-        <form class="d-flex">
-            <div class="form-row">
-                <!-- Start: Interface name -->
+    <div class="card h-100" id="vc-card-session-comm-ifaces">
+        <div class="card-body">
+            <div class="row">
                 <div class="col-auto">
-                    <div class="form-group"><label for="vc-interface-name">Name</label><input class="form-control" type="text" id="vc-interface-name" placeholder="Enter an interface name" autofocus="" autocomplete="off" required="" minlength="1"></div>
+                    <h4>Bench Configurations</h4>
                 </div>
-                <!-- End: Interface name -->
-                <!-- Start: Interface type -->
-                <div class="col-auto">
-                    <div class="form-group"><label for="vc-interface-type">Type</label><select class="form-control" id="vc-interface-type" required=""><optgroup label="GPIB"><option value="0" selected="">Prologix TCP</option><option value="1">Prologix USB</option></optgroup></select></div>
+                <div class="col">
+                    <h4 id="vc-session-name-comm-ifaces">selected-session-name</h4>
                 </div>
-                <!-- End: Interface type -->
             </div>
-        </form>
-        <!-- Start: visualcal-script -->
-        <!--visualcal-script-->
-        <!-- End: visualcal-script -->
-    </main>
+            <div class="row">
+                <div class="col">
+                    <div id="vc-session-comm-ifaces-tabulator" class="tabulator-table design-visible"></div>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col"><button class="btn btn-primary" id="vc-create-button" type="button">Create</button><button class="btn btn-light" id="vc-close-button" type="button">Close</button></div>
+            </div>
+        </div>
+    </div>
     <script src="assets/js/jquery.min.js?h=89312d34339dcd686309fe284b3f226f"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=0168f7c1e0d08faa2f4b13f4a1dc8c98"></script>
     <script src="assets/js/visualcal.js?h=0040b72525de3599f975d50537f5a637"></script>

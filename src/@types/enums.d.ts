@@ -11,7 +11,8 @@ declare const enum VisualCalWindow {
   InteractiveDeviceControl = 'interactive-device-control',
   SelectProcedure = 'select-procedure',
   SelectSession = 'select-session',
-  UpdateApp = 'update-app'
+  UpdateApp = 'update-app',
+  BenchConfigView = 'bench-configurations-view'
 }
 
 declare const enum WindowPathType {

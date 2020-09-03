@@ -312,7 +312,7 @@ const init = () => {
       alert('Please select a session first');
       return;
     }
-    window.visualCal.electron.showCreateCommIfaceWindow(selectedSession.name);
+    window.visualCal.electron.showCreateCommIfaceWindow();
   });
 
   loadProcedures();

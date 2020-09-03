@@ -112,6 +112,7 @@ export class WindowManager extends TypedEmitter<Events> {
   get interactiveDeviceControlWindow() { return this.get(VisualCalWindow.InteractiveDeviceControl); }
   get selectProcedureWindow() { return this.get(VisualCalWindow.SelectProcedure); }
   get updateAppWindow() { return this.get(VisualCalWindow.UpdateApp); }
+  get benchConfigViewWindow() { return this.get(VisualCalWindow.BenchConfigView); }
 
   private checkWindowExists(id: VisualCalWindow) {
     const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
@@ -203,8 +204,18 @@ export class WindowManager extends TypedEmitter<Events> {
       if (!w) return;
       WindowUtils.centerWindowOnNearestCurorScreen(w, maximize);
     });
-    w.webContents.once('did-finish-load', () => {
+    w.webContents.once('did-finish-load', async () => {
       if (!w) return;
+      const activeProcedureName = await global.visualCal.procedureManager.getActive();
+      let activeProcedure: Procedure | undefined = undefined;
+      if (activeProcedureName) activeProcedure = await global.visualCal.procedureManager.getOne(activeProcedureName);
+      const initialLoadData: VisualCalWindowInitialLoadData = {
+        windowId: w.visualCal.id,
+        user: global.visualCal.userManager.activeUser ? global.visualCal.userManager.activeUser : undefined,
+        session: global.visualCal.userManager.activeSession ? global.visualCal.userManager.activeSession : undefined,
+        procedure: activeProcedure
+      };
+      w.webContents.send(IpcChannels.windows.initialLoadData, initialLoadData);
       if (onWebContentsDidFinishLoading) onWebContentsDidFinishLoading(w);
     });
     w.once('show', () => {
@@ -332,6 +343,11 @@ export class WindowManager extends TypedEmitter<Events> {
 
   async showUpdateAppWindow() {
     const w = await this.createWindow(VisualCalWindow.UpdateApp);
+    return w;
+  }
+
+  async showBenchConfigViewWindow() {
+    const w = await this.createWindow(VisualCalWindow.BenchConfigView, this.mainWindow);
     return w;
   }
 

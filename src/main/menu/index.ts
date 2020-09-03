@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, app, Menu } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions, Menu } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import * as path from 'path';
 
@@ -137,6 +137,20 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
           systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
           await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'SystemInfo.html'));
         }
+      }
+    ]
+  },
+  {
+    label: 'Configuration',
+    submenu: [
+      {
+        label: 'Session',
+        submenu: [
+          {
+            label: 'Bench Configurations',
+            click: async () => global.visualCal.windowManager.showBenchConfigViewWindow()
+          }
+        ]
       }
     ]
   });

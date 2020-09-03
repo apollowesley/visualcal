@@ -40,7 +40,7 @@ window.visualCal = {
     showWindow: (id: VisualCalWindow) => ipcRenderer.send(IpcChannels.windows.show, id),
     showViewSessionWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showViewSession, sessionName),
     showErrorDialog: (error: Error) => ipcRenderer.send(IpcChannels.windows.showErrorDialog, error),
-    showCreateCommIfaceWindow: (sessionName: string) => ipcRenderer.send(IpcChannels.windows.showCreateCommIface, sessionName),
+    showCreateCommIfaceWindow: () => ipcRenderer.send(IpcChannels.windows.showCreateCommIface),
     showOpenFileDialog: (opts: OpenDialogOptions) => ipcRenderer.send(IpcChannels.windows.showOpenFileDialog.request, opts),
     showSaveFileDialog: (opts: SaveDialogOptions) => ipcRenderer.send(IpcChannels.windows.showSaveFileDialog.request, opts),
     quit: () => ipcRenderer.send(IpcChannels.application.quit.request)
@@ -72,3 +72,9 @@ const sendEventNames = () => {
 }
 
 window.addEventListener('visualCalBootstrapLoaded', sendEventNames);
+
+ipcRenderer.on(IpcChannels.windows.initialLoadData, (_, data: VisualCalWindowInitialLoadData) => {
+  window.visualCal.windowId = data.windowId;
+  window.visualCal.initialLoadData = data;
+  window.dispatchEvent(new CustomEvent('initial-load-data-received', { detail: data }));
+});

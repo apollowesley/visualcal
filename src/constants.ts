@@ -68,6 +68,7 @@ export const IpcChannels = {
     }
   },
   windows: {
+    initialLoadData: 'window-initial-load-data',
     showCreateProcedure: 'show-procedure-create-window',
     showCreateSession: 'show-session-create-window',
     getMyId: {
@@ -323,6 +324,13 @@ export const IpcChannels = {
       request: 'user-show-input-request',
       response: 'user-show-input-response',
       error: 'user-show-input-error'
+    },
+    benchConfig: {
+      getAllForCurrentUser: {
+        request: 'user-bench-config-get-all-for-current-user-request',
+        response: 'user-bench-config-get-all-for-current-user-response',
+        error: 'user-bench-config-get-all-for-current-user-error'
+      }
     }
   },
   benchConfig: {
@@ -340,6 +348,11 @@ export const IpcChannels = {
       request: 'save-bench-config-request',
       response: 'save-bench-config-response',
       error: 'save-bench-config-error'
+    },
+    createCommsInterface: {
+      request: 'bench-config-create-comm-interface-request',
+      response: 'bench-config-create-comm-interface-response',
+      error: 'bench-config-create-comm-interface-error'
     }
   }
 }

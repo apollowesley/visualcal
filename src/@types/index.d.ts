@@ -116,6 +116,7 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
 
 interface VisualCalWindowAugment extends VisualCalAugment {
   windowId?: VisualCalWindow;
+  initialLoadData?: VisualCalWindowInitialLoadData,
   browserUtils: VisualCalBrowserUtils;
   electron: {
     ipc: import('electron').IpcRenderer;
@@ -123,7 +124,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     showWindow: (id: VisualCalWindow) => void;
     showViewSessionWindow: (sessionName: string) => void;
     showErrorDialog: (error: Error) => void;
-    showCreateCommIfaceWindow: (sessionName: string) => void;
+    showCreateCommIfaceWindow: () => void;
     showOpenFileDialog: (opts: import('electron').OpenDialogOptions) => void;
     showSaveFileDialog: (opts: import('electron').SaveDialogOptions) => void;
     quit: () => void;
@@ -139,4 +140,11 @@ interface VisualCalWindowAugment extends VisualCalAugment {
 
 interface NamedType {
   name: string;
+}
+
+interface VisualCalWindowInitialLoadData {
+  windowId: VisualCalWindow;
+  user?: User;
+  session?: Session;
+  procedure?: Procedure;
 }
