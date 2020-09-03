@@ -50,6 +50,8 @@ export class ActionManager extends EventEmitter {
   handleResult(result: LogicResult) {
     setImmediate(() => {
       ipcMain.sendToAll(IpcChannels.actions.resultAcquired, { result });
+      const activeSession = global.visualCal.userManager.activeSession;
+      if (activeSession) global.visualCal.resultManager.saveOne(activeSession.name, result);
     });
   }
 

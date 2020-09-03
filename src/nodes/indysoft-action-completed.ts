@@ -14,7 +14,7 @@ module.exports = (RED: NodeRed) => {
       this.status({});
     };
     this.on('input', (msg: VisualCalNodeRedNodeInputMessage, _send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
-      if (!msg.payload || !msg.payload.sessionId || !msg.payload.runId || !msg.payload.section || !msg.payload.action) {
+      if (!msg.payload || !msg.payload.section || !msg.payload.action) {
         this.error('Message missing payload', msg);
         if (done) done();
         return;
