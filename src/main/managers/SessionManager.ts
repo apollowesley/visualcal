@@ -1,13 +1,11 @@
 import { ipcMain } from 'electron';
-import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
-import { promises as fsPromises } from 'fs';
-import path from 'path';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
 import NodeRed from '../node-red';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
+import { UserManager } from './UserManager';
 
 const log = electronLog.scope('SessionManager');
 const nodeRed = NodeRed();
@@ -16,55 +14,40 @@ interface Events {
   activeChanged: (session?: Session) => void;
 }
 
-interface Store {
-  active: string;
-  sessions: Session[];
-}
-
 export class SessionManager extends TypedEmitter<Events> {
 
-  private fStore: electronStore<Store> = electronStore.create<Store>('sessions.json', log);
+  private fUserManager: UserManager;
 
-  constructor() {
+  constructor(userManager: UserManager) {
     super();
-    this.verifyActiveExistsAndClearIfNot();
-    this.fStore.observe('active', async (name) => {
-      const session = this.getOne(name);
-      if (session) {
-        await global.visualCal.procedureManager.setActive(session.procedureName);
-        await global.visualCal.nodeRedFlowManager.load(session);
-      }
-      const active = this.active;
-      ipcMain.sendToAll(IpcChannels.session.active.changed, active);
-      this.emit('activeChanged', active ? active : undefined);
+    this.fUserManager = userManager;
+    this.fUserManager.on('activeSessionChanged', (session) => {
+      this.emit('activeChanged', session);
+      ipcMain.sendToAll(IpcChannels.session.active.changed, session);
     });
     this.initIpcEventHandlers();
     log.info('Loaded');
   }
 
-  static SESSIONS_JSON_FILE_NAME = 'sessions.json';
-
   static SESSION_RESULTS_FOLDER_NAME = 'results';
-  static SESSION_JSON_FILE_NAME = 'session.json';
- 
-  get all() { return this.fStore.get('sessions', []); }
 
   get active() {
-    const activeSession = this.all.find(s => s.name.toLocaleUpperCase() === this.fStore.get('active', '').toLocaleUpperCase());
-    if (!activeSession) return null;
-    return activeSession;
+    return this.fUserManager.activeSession;
   }
   set active(session: Session | null) {
-    if (session) {
-      this.fStore.set('active', session.name);
-    } else {
-      this.fStore.delete('active');
-    }
+    this.fUserManager.activeSession = session;
   }
 
-  private verifyActiveExistsAndClearIfNot() {
-    const activeUser = this.active;
-    if (!activeUser) this.fStore.delete('active');
+  get all() {
+    const activeUser = this.fUserManager.activeUser;
+    if (!activeUser) return [];
+    return activeUser.sessions ? activeUser.sessions : [];
+  }
+
+  getIsActive(name: string) {
+    const active = this.active;
+    if (!active) return false;
+    return active.name.toLocaleUpperCase() === name.toLocaleUpperCase();
   }
 
   getOne(name: string) {
@@ -72,17 +55,15 @@ export class SessionManager extends TypedEmitter<Events> {
   }
 
   getAllForUser(email: string) {
-    return this.all.map(s => s.username.toLocaleUpperCase() === email.toLocaleUpperCase());
+    return this.all.filter(s => s.username.toLocaleUpperCase() === email.toLocaleUpperCase());
+  }
+
+  removeAllForUser(email: string) {
+    this.fUserManager.removeAllSessionsForUser(email);
   }
 
   update(session: Session) {
-    const existing = this.getOne(session.name);
-    if (!existing) throw new Error(`Session, ${session.name}, does not exist`);
-    const sessions = this.all;
-    const existingIndex = sessions.indexOf(existing);
-    if (existingIndex < 0) throw new Error(`Session, ${session.name}, does not exist`);
-    sessions.splice(existingIndex, 1, session);
-    this.fStore.set('sessions', sessions);
+    this.fUserManager.updateSession(session);
   }
 
   // ***** COMMUNICATION INTERFACES *****
@@ -117,12 +98,7 @@ export class SessionManager extends TypedEmitter<Events> {
     return { sessionName: sessionName, ifaceName: ifaceName };
   }
 
-  initIpcEventHandlers() {
-    ipcMain.on(IpcChannels.session.setActive.request, (event, name: string) => {
-      this.fStore.set('active', name);
-      event.reply(IpcChannels.session.setActive.response, name);
-    });
-
+  private initIpcEventHandlers() {
     ipcMain.on(IpcChannels.session.getCommunicationInterfaceTypes.request, (event) => {
       try {
         const retVal = this.getCommunicationInterfaceTypes();

@@ -169,6 +169,11 @@ export const IpcChannels = {
     active: {
       changed: 'session-active-changed'
     },
+    setActive: {
+      request: 'session-set-active-request',
+      response: 'session-set-active-response',
+      error: 'session-set-active-error'
+    },
     selectData: 'session-select-data',
     cancelSelect: 'cancel-session-select',
     cancelCreate: 'cancel-session-create',
@@ -181,6 +186,11 @@ export const IpcChannels = {
       request: 'getAll-sessions-request',
       response: 'getAll-sessions-response',
       error: 'getAll-sessions-error'
+    },
+    getAllForActiveUser: {
+      request: 'session-get-all-for-active-user-request',
+      response: 'session-get-all-for-active-user-response',
+      error: 'session-get-all-for-active-user-error'
     },
     getOne: {
       request: 'getOne-sessions-request',
@@ -206,11 +216,6 @@ export const IpcChannels = {
       request: 'get-active-session-request',
       response: 'get-active-session-response',
       error: 'get-active-session-error'
-    },
-    setActive: {
-      request: 'set-active-session-request',
-      response: 'set-active-session-response',
-      error: 'set-active-session-error'
     },
     getExists: {
       request: 'get-exists-session-request',
@@ -318,6 +323,11 @@ export const IpcChannels = {
     }
   },
   benchConfig: {
+    getAllForSession: {
+      request: 'bench-config-get-all-for-session-request',
+      response: 'bench-config-get-all-for-session-response',
+      error: 'bench-config-get-for-session-all-error'
+    },
     load: {
       request: 'get-bench-config-request',
       response: 'get-bench-config-response',

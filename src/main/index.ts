@@ -99,11 +99,6 @@ const run = async () => {
     const loginWindow = await global.visualCal.windowManager.ShowLogin();
     global.visualCal.windowManager.close(VisualCalWindow.Loading);
     loginWindow.once('closed', async () => {
-      global.visualCal.userManager.active = {
-        email: 'test@test.com',
-        nameFirst: 'User',
-        nameLast: 'App'
-      };
       await autoUpdater.checkForUpdates();
     });
     if (isDev()) {
@@ -126,6 +121,7 @@ app.on('before-quit', async () => {
   log.info('Destroying logic server');
   await destroyNodeRed();
   log.info('Logic server destroyed');
+  global.visualCal.userManager.logout();
 });
 
 run();

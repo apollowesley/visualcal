@@ -14,30 +14,6 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
-                <div class="row">
-                    <!-- Start: Session Status Labels -->
-                    <div class="col d-inline-flex">
-                        <h4 class="status-label">Procedure status:</h4>
-                        <h4 id="vc-procedure-status" class="status-value">Ready</h4>
-                    </div>
-                    <!-- End: Session Status Labels -->
-                    <!-- Start: Session Status Labels -->
-                    <div class="col d-inline-flex">
-                        <h4 class="status-label">Running section:</h4>
-                        <h4 id="vc-running-section" class="status-value">None</h4>
-                    </div>
-                    <!-- End: Session Status Labels -->
-                    <!-- Start: Session Status Labels -->
-                    <div class="col d-inline-flex">
-                        <h4 class="status-label">Running action:</h4>
-                        <h4 id="vc-running-action" class="status-value">None</h4>
-                    </div>
-                    <!-- End: Session Status Labels -->
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-3">
                 <div class="card" id="vc-card-devices">
                     <div class="card-body">
@@ -57,7 +33,7 @@
                         </div>
                         <div class="row" style="margin: 10px;">
                             <div class="col text-center">
-                                <div class="form-group"><label for="vc-action-select">Select an action</label><select class="form-control-lg" id="vc-action-select" style="min-width: 200px;width: 100%;"></select></div>
+                                <div class="form-group"><label for="vc-action-select">Select an action</label><select class="form-control-lg" id="vc-action-select" style="width: 100%;"></select></div>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px;">
@@ -66,14 +42,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col text-center align-self-center">
-                <div class="row">
-                    <div class="col">
-                        <h6>When in doubt</h6>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Procedure state</h4>
+                        <!-- Start: Session Status Labels -->
+                        <div class="col d-inline-flex">
+                            <h4 class="status-label">Status:</h4>
+                            <h4 id="vc-procedure-status" class="status-value">Ready</h4>
+                        </div>
+                        <!-- End: Session Status Labels -->
+                        <!-- Start: Session Status Labels -->
+                        <div class="col d-inline-flex">
+                            <h4 class="status-label">Running section:</h4>
+                            <h4 id="vc-running-section" class="status-value">None</h4>
+                        </div>
+                        <!-- End: Session Status Labels -->
+                        <!-- Start: Session Status Labels -->
+                        <div class="col d-inline-flex">
+                            <h4 class="status-label">Running action:</h4>
+                            <h4 id="vc-running-action" class="status-value">None</h4>
+                        </div>
+                        <!-- End: Session Status Labels -->
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col"><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
+            </div>
+            <div class="col text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-left card-title">Troubleshooting</h4>
+                        <h6>Action isn't starting?</h6><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
                 </div>
             </div>
         </div>
