@@ -26,7 +26,36 @@ export const create: () => Array<MenuItemConstructorOptions> = () => {
   const template: Array<MenuItemConstructorOptions> = [];
 
   template.push({
-    label: "View",
+    label: 'Edit',
+    submenu: [
+      {
+        label: 'Cut',
+        accelerator: 'CmdOrCtrl+X',
+        role: 'cut',
+        click: (_, browserWindow) => {
+          if (browserWindow) browserWindow.webContents.cut();
+        }
+      },
+      {
+        label: 'Copy',
+        accelerator: 'CmdOrCtrl+C',
+        role: 'copy',
+        click: (_, browserWindow) => {
+          if (browserWindow) browserWindow.webContents.copy();
+        }
+      },
+      {
+        label: 'Paste',
+        accelerator: 'CmdOrCtrl+V',
+        role: 'paste',
+        click: (_, browserWindow) => {
+          if (browserWindow) browserWindow.webContents.paste();
+        }
+      }
+    ]
+  },
+  {
+    label:'View',
     submenu: [
       {
         label: 'Import Flow',

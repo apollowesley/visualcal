@@ -1,9 +1,9 @@
-import Tabulator from 'tabulator-tables';
 import { ipcRenderer } from 'electron';
-import { IpcChannels } from '../../../constants';
-import { LoadResponseArgs } from '../../managers/RendererResultManager';
+import Tabulator from 'tabulator-tables';
 import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
+import { IpcChannels } from '../../../constants';
 import { TriggerOptions } from '../../../nodes/indysoft-action-start-types';
+import { LoadResponseArgs } from '../../managers/RendererResultManager';
 
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
@@ -26,17 +26,17 @@ const getSelectedSection = () => {
   const selected = sectionSelectElement.selectedOptions[0];
   if (!selected) return undefined;
   return JSON.parse(selected.value) as SectionInfo;
-}
+};
 
 const getSelectedAction = () => {
   const selected = actionSelectElement.selectedOptions[0];
   if (!selected) return undefined;
   return JSON.parse(selected.value) as ActionInfo;
-}
+};
 
 const clearSelectElementOptions = (el: HTMLSelectElement) => {
   for (let index = 0; index < el.options.length; index++) el.options.remove(index);
-}
+};
 
 sectionSelectElement.disabled = true;
 actionSelectElement.disabled = true;
@@ -160,12 +160,11 @@ let commInterfacesLogTable = new Tabulator('#vc-comm-interface-log', {
 });
 
 const addCommInterfaceLogEntry = (entry: CommInterfaceLogEntry) => {
-  console.info(entry);
   commInterfaceLogEntries.push(entry);
   commInterfacesLogTable.setData(commInterfaceLogEntries);
-}
+};
 
-window.visualCal.communicationInterfaceManager.on('interfaceConnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connected'}));
+window.visualCal.communicationInterfaceManager.on('interfaceConnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connected' }));
 window.visualCal.communicationInterfaceManager.on('interfaceConnecting', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connecting' }));
 window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Disconnected' }));
 window.visualCal.communicationInterfaceManager.on('interfaceError', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Error:  ${info.err.message}` }));
@@ -177,8 +176,6 @@ window.visualCal.communicationInterfaceManager.on('interfaceWrite', (info) => {
 
 // ***** END LOG *****
 
-let isRunning = false;
-
 window.visualCal.actionManager.on('stateChanged', (info) => {
   runningSectionElement.innerHTML = info.section;
   runningActionElement.innerHTML = info.section;
@@ -189,17 +186,15 @@ window.visualCal.actionManager.on('stateChanged', (info) => {
       runningActionElement.innerHTML = 'Completed';
       session.lastSectionName = undefined;
       session.lastActionName = undefined;
-      isRunning = false;
+      alert('Action completed');
       break;
     case 'started':
       procedureStatusElement.innerText = 'Running';
-      isRunning = true;
       break;
     case 'stopped':
       procedureStatusElement.innerText = 'Stopped';
       runningSectionElement.innerHTML = 'None';
       runningActionElement.innerHTML = 'None';
-      isRunning = false;
       session.lastSectionName = undefined;
       session.lastActionName = undefined;
       break;
@@ -235,14 +230,14 @@ const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
     values: foundDeviceConfig.availableDrivers.map(d => d.displayName)
   };
   return retVal;
-}
+};
 
 const devicesTableGetCommInterfaces = () => {
   const retVal: Tabulator.SelectParams = {
     values: session.configuration.interfaces.map(d => d.name)
   };
   return retVal;
-}
+};
 
 const devicesTable = new Tabulator('#vc-devices-tabulator', {
   data: devices,
