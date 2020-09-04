@@ -33,6 +33,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   }
 
   get hasRearTerminals() { return true; }
+  get hasACFilter() { return true; }
 
   async getIdentity(): Promise<DeviceIdentity> {
     if (!this.communicationInterface) throw new Error('No communication interface');
@@ -138,6 +139,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
       await delay(1000);
     }
     await this.communicationInterface.writeString(config.rearTerminals ? 'REAR' : 'FRON');
+    if (config.acFilterHz) await this.communicationInterface.writeString(`DET:BAND ${config.acFilterHz}`);
     const value = await this.communicationInterface.queryString(command);
     return parseFloat(value);
   }

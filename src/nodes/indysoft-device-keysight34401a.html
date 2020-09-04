@@ -53,6 +53,19 @@
     </select>
   </div>
 
+  <div class="form-row">
+    <label for="node-input-setAcFilterHz"><i class="fa fa-tag"></i> Set AC Filter?</label>
+    <input type="checkbox" id="node-input-setAcFilterHz" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+  <div class="form-row" id="acFilterHz-row">
+    <label for="node-input-acFilterHz"><i class="fa fa-tag"></i> AC Filter</label>
+    <select id="node-input-acFilterHz" style="width:auto !important">
+      <option value="3" selected>3</option>
+      <option value="20">20</option>
+      <option value="200">200</option>
+    </select>
+  </div>
+
   <!-- Relative -->
   <div class="form-row">
     <label for="node-input-relative"><i class="fa fa-tag"></i> Relative?</label>
@@ -104,6 +117,8 @@
       preDelay: { value: 0, required: false, validate: RED.validators.number() },
       rearTerminals: { value: false, required: true },
       measure: { value: true, required: true },
+      setAcFilterHz: { value: false, required: true },
+      acFilterHz: { value: 3, required: true },
       outputs: { value: 2 }
     },
     inputs: 1,
@@ -133,6 +148,10 @@
 
       // *** Range ***
       $('#node-input-setRange').on('change', function() { showOrHideRow($(this), '#range-row'); }).change();
+
+      // *** AC Filter ***
+      $('#node-input-setAcFilterHz').on('change', function() { showOrHideRow($(this), '#acFilterHz-row'); }).change();
+
 
       // *** Mode/Ranges ***
       $('#node-input-mode').on('change', () => {

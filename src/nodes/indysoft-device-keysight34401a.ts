@@ -15,6 +15,8 @@ export interface RuntimeProperties extends DeviceNodeProperties {
   relative: boolean;
   usePreDelay: boolean;
   rearTerminals: boolean;
+  setAcFilterHz: boolean;
+  acFilterHz: string;
   preDelay: string;
 }
 
@@ -30,6 +32,8 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   preDelay: number;
   rearTerminals: boolean;
   device: Keysight34401A;
+  setAcFilterHz: boolean;
+  acFilterHz: number;
 }
 
 export interface RuntimeNodeInputEventMessagePayload {
@@ -71,6 +75,8 @@ module.exports = (RED: NodeRed) => {
     this.usePreDelay = config.usePreDelay;
     this.preDelay = Number(config.preDelay);
     this.rearTerminals = !!config.rearTerminals;
+    this.setAcFilterHz = !!config.setAcFilterHz;
+    this.acFilterHz = Number(config.acFilterHz);
     if (this.preDelay <= 0) this.preDelay = 1000;
     const reset = () => {
       this.status({});
@@ -123,7 +129,8 @@ module.exports = (RED: NodeRed) => {
               mode: this.mode as DigitalMultimeterMode,
               range: this.range,
               relative: this.relative,
-              rearTerminals: this.rearTerminals
+              rearTerminals: this.rearTerminals,
+              acFilterHz: this.setAcFilterHz ? this.acFilterHz : undefined
             });
             this.status({ fill: 'green', shape: 'dot', text: `Last measurement = Mode: ${this.mode} - Value: ${measurement.toString()}` });
             // [done, error, measurement]

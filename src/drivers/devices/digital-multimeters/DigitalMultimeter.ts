@@ -19,6 +19,7 @@ export interface MeasurementConfiguration {
   rate?: number;
   relative?: boolean;
   rearTerminals?: boolean;
+  acFilterHz?: number;
 }
 
 export interface SetModeOptions {
@@ -32,6 +33,7 @@ export abstract class DigitalMultimeterDevice extends ControllableDevice {
   }
 
   get hasRearTerminals() { return false; }
+  get hasACFilter() { return false; }
 
   protected get digitalMultimeterDefinition(): DigitalMultimeterDeviceDefinition { return (this.deviceDefinition as DigitalMultimeterDeviceDefinition); }
 
