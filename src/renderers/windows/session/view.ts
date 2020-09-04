@@ -12,6 +12,7 @@ const runningActionElement = document.getElementById('vc-running-action') as HTM
 const sectionSelectElement = document.getElementById('vc-section-select') as HTMLSelectElement;
 const actionSelectElement = document.getElementById('vc-action-select') as HTMLSelectElement;
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
+const clearDeviceLogButtonElement = document.getElementById('vc-clear-device-log') as HTMLButtonElement;
 
 const logEntries: any[] = [];
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
@@ -21,6 +22,11 @@ let results: LogicResult[] = [];
 let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
+
+clearDeviceLogButtonElement.addEventListener('click', () => {
+  commInterfaceLogEntries.length = 0;
+  commInterfacesLogTable.setData(commInterfaceLogEntries);
+});
 
 const getSelectedSection = () => {
   const selected = sectionSelectElement.selectedOptions[0];
@@ -188,14 +194,17 @@ window.visualCal.actionManager.on('stateChanged', (info) => {
       procedureStatusElement.innerText = 'Ready';
       runningSectionElement.innerHTML = 'None';
       runningActionElement.innerHTML = 'Completed';
+      startStopActionButtonElement.innerHTML = 'Start';
       session.lastSectionName = undefined;
       session.lastActionName = undefined;
       alert('Action completed');
       break;
     case 'started':
+      startStopActionButtonElement.innerHTML = 'Stop';
       procedureStatusElement.innerText = 'Running';
       break;
     case 'stopped':
+      startStopActionButtonElement.innerHTML = 'Start';
       procedureStatusElement.innerText = 'Stopped';
       runningSectionElement.innerHTML = 'None';
       runningActionElement.innerHTML = 'None';
