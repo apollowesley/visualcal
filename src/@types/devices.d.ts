@@ -221,6 +221,6 @@ interface CommunicationInterfaceDeviceNodeConfiguration {
 }
 
 interface CommunicationConfiguration {
-  interfaces: CommunicationInterfaceConfigurationInfo[];
+  benchConfigName?: string;
   devices: CommunicationInterfaceDeviceNodeConfiguration[];
 }

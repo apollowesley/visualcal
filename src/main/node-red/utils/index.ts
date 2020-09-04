@@ -263,6 +263,7 @@ export const getProcedureStatus = () => {
 
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
+  if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
   session.configuration.devices.forEach(deviceConfig => {
     const drivers = getDriverInfosForDevice(deviceConfig.unitId);
     const driver = drivers.find(d => d.displayName = deviceConfig.driverDisplayName);

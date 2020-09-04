@@ -2,7 +2,6 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { BenchConfig } from '../../@types/bench-configuration';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
 
@@ -33,6 +32,7 @@ export class UserManager extends TypedEmitter<Events> {
     this.loadStore();
     this.initIpcUserHandlers();
     this.initSessionIpcHandlers();
+    this.initBenchConfigIpcHandlers();
     log.info('Loaded');
   }
 
@@ -116,6 +116,13 @@ export class UserManager extends TypedEmitter<Events> {
     return user.benchConfigs.find(s => s.name.toLocaleUpperCase() === configName.toLocaleUpperCase());
   }
 
+  getBenchConfigFromSession(session: Session) {
+    if (!session.configuration) throw new Error(`Session, ${session.name}, does not have a configuration`);
+    if (!session.configuration.benchConfigName) throw new Error(`Session, ${session.name}, configuration does not have an active bench configuration`);
+    const config = this.getBenchConfig(session.username, session.configuration.benchConfigName);
+    return config;
+  }
+
   add(user: User) {
     const existing = this.getOne(user.email);
     if (existing) throw new Error(`User, ${user.email}, already exists`);
@@ -168,7 +175,7 @@ export class UserManager extends TypedEmitter<Events> {
   removeAllSessionsForUser(email: string) {
     const user = this.getOne(email);
     if (!user) return;
-    user.sessions = undefined;
+    user.sessions.length = 0;
     this.setOne(user);
   }
 
@@ -187,7 +194,7 @@ export class UserManager extends TypedEmitter<Events> {
   removeAllBenchConfigsForUser(email: string) {
     const user = this.getOne(email);
     if (!user) return;
-    user.benchConfigs = undefined;
+    user.benchConfigs.length = 0;
     this.setOne(user);
   }
 
@@ -268,7 +275,7 @@ export class UserManager extends TypedEmitter<Events> {
           });
           const shouldCreateUser = askIfUserShouldBeCreatedResponse.response === 0;
           if (shouldCreateUser) {
-            user = { email: credentials.username, nameFirst: nameFirst, nameLast: nameLast };
+            user = { email: credentials.username, nameFirst: nameFirst, nameLast: nameLast, benchConfigs: [], sessions: [] };
             this.add(user);
             this.emit('loggedIn', user);
           }
@@ -298,6 +305,21 @@ export class UserManager extends TypedEmitter<Events> {
         event.reply(IpcChannels.session.setActive.response, this.activeSession);
       } catch (error) {
         return event.reply(IpcChannels.session.setActive.error, error);
+      }
+    });
+  }
+
+  private initBenchConfigIpcHandlers() {
+    ipcMain.on(IpcChannels.user.benchConfig.removeCommInterface.request, (event, arg: { name: string, userEmail: string, benchConfigName: string }) => {
+      try {
+        const config = this.getBenchConfig(arg.userEmail, arg.benchConfigName);
+        if (!config) return event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, new Error(`Unable to remove communication interface, ${arg.name}, because bench configuration, ${arg.benchConfigName} does not exist`));
+        const interfaceIndex = config.interfaces.findIndex(i => i.name.toLocaleUpperCase() === arg.name.toLocaleUpperCase());
+        if (interfaceIndex < 0) return event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, new Error(`Unable to remove communication interface, ${arg.name}, because it does not exist`)); 
+        config.interfaces.splice(interfaceIndex, 1);
+        this.updateBenchConfig(config);
+      } catch (error) {
+        event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, error);
       }
     });
   }

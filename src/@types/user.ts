@@ -6,8 +6,8 @@ interface Person {
 
 interface User extends Person {
   email: string;
-  sessions?: Session[];
-  benchConfigs?: import('./bench-configuration').BenchConfig[];
+  sessions: Session[];
+  benchConfigs: BenchConfig[];
   token?: string;
   bio?: string;
   image?: string;

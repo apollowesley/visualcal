@@ -25,7 +25,9 @@ export const enum CommunicationInterfaceTypesEnum {
 export const DemoUser: User = {
   email: 'demo@indysoft.com',
   nameFirst: 'Test',
-  nameLast: 'User'
+  nameLast: 'User',
+  benchConfigs: [],
+  sessions: []
 }
 
 interface IpcChannelRequestResponseErrorNames {
@@ -326,10 +328,10 @@ export const IpcChannels = {
       error: 'user-show-input-error'
     },
     benchConfig: {
-      getAllForCurrentUser: {
-        request: 'user-bench-config-get-all-for-current-user-request',
-        response: 'user-bench-config-get-all-for-current-user-response',
-        error: 'user-bench-config-get-all-for-current-user-error'
+      removeCommInterface: {
+        request: 'user-bench-config-remove-comm-interface-request',
+        response: 'user-bench-config-remove-comm-interface-response',
+        error: 'user-bench-config-remove-comm-interface-error'
       }
     }
   },

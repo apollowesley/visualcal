@@ -67,8 +67,8 @@ const init = () => {
         procedureName: selectedProc,
         username: window.visualCal.userManager.active.email,
         configuration: {
-          devices: [],
-          interfaces: []
+          benchConfigName: '',
+          devices: []
         }
       });
     } catch (error) {

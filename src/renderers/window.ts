@@ -77,4 +77,5 @@ ipcRenderer.on(IpcChannels.windows.initialLoadData, (_, data: VisualCalWindowIni
   window.visualCal.windowId = data.windowId;
   window.visualCal.initialLoadData = data;
   window.dispatchEvent(new CustomEvent('initial-load-data-received', { detail: data }));
+  if (window.visualCal.onInitialLoadData) window.visualCal.onInitialLoadData(data);
 });

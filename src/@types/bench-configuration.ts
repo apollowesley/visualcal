@@ -1,5 +1,5 @@
-export interface BenchConfig {
+interface BenchConfig {
   name: string;
   username: string;
-  interfaces: CommunicationInterfaceConfigurationInfo;
+  interfaces: CommunicationInterfaceConfigurationInfo[];
 }

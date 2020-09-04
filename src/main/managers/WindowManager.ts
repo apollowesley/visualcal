@@ -68,6 +68,10 @@ export class WindowManager extends TypedEmitter<Events> {
       event.reply(IpcChannels.windows.showSaveFileDialog.response, result);
     });
 
+    ipcMain.on(IpcChannels.windows.showErrorDialog, (_, error: Error) => {
+      dialog.showErrorBox('An error has occured', error.message);
+    });
+
     ipcMain.on(IpcChannels.windows.showCreateProcedure, async () => {
       await this.ShowCreateProcedureWindow();
       this.closeAllBut(VisualCalWindow.CreateProcedure);

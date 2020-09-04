@@ -19,7 +19,7 @@ const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 let results: LogicResult[] = [];
 
 let sessionName: string = '';
-let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [], interfaces: [] } };
+let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
 const getSelectedSection = () => {
@@ -77,6 +77,10 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     return;
   }
   devices.forEach(d => d.gpib = { address: d.gpibAddress });
+  if (!session.configuration) {
+    window.visualCal.electron.showErrorDialog(new Error(`Session, ${session.name}, does not have a configuration`));
+    return;
+  }
   session.configuration.devices = devices;
   const opts: TriggerOptions = {
     action: action.name,
@@ -232,9 +236,17 @@ const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
   return retVal;
 };
 
+const getBenchConfigurationInterfaces = () => {
+  if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user || !window.visualCal.initialLoadData.session || !window.visualCal.initialLoadData.session.configuration || !window.visualCal.initialLoadData.session.configuration.benchConfigName) return [];
+  const config = window.visualCal.initialLoadData.user?.benchConfigs.find(b => b.name === window.visualCal.initialLoadData?.session?.configuration?.benchConfigName);
+  if (!config) return [];
+  return config.interfaces;
+}
+
 const devicesTableGetCommInterfaces = () => {
+  if (!session.configuration || !session.configuration.benchConfigName) return [];
   const retVal: Tabulator.SelectParams = {
-    values: session.configuration.interfaces.map(d => d.name)
+    values: getBenchConfigurationInterfaces().map(d => d.name)
   };
   return retVal;
 };
@@ -300,3 +312,7 @@ window.visualCal.actionManager.on('resultAcquired', (info) => {
 });
 
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
+
+window.visualCal.onInitialLoadData = (data) => {
+  alert(data.windowId);
+}

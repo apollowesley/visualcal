@@ -31,7 +31,7 @@ const interactiveDeviceControlWindow = () => createWindowOptions(VisualCalWindow
 const selectProcedureWindow = () => createWindowOptions(VisualCalWindow.SelectProcedure, 'procedure-select.html', 'bootstrap', { height: 750, width: 1000, title: 'Select Procedure' });
 const selectSessionWindow = () => createWindowOptions(VisualCalWindow.SelectSession, 'session-select.html', 'bootstrap', { height: 750, width: 1000, title: 'Select Session' });
 const updateAppWindow = () => createWindowOptions(VisualCalWindow.UpdateApp, 'update-app.html', 'bootstrap', { height: 750, width: 1000, title: 'Update' });
-const benchConfigView = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.BenchConfigView, 'bench-configurations-view.html', 'bootstrap', { height: 750, width: 1000, title: 'Bench Configurations', parent, modal: true });
+const benchConfigView = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.BenchConfigView, 'bench-configurations-view.html', 'bootstrap', { height: 850, width: 1200, title: 'Bench Configurations', parent });
 
 export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
   switch (id) {

@@ -75,16 +75,19 @@ export class SessionManager extends TypedEmitter<Events> {
   getCommunicationInterfaces(sessionName: string) {
     const session = this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    if (session.configuration) return session.configuration.interfaces;
-    return [];
+    const config = this.fUserManager.getBenchConfigFromSession(session);
+    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
+    return config.interfaces;
   }
 
   createCommunicationInterface(sessionName: string, iface: CommunicationInterfaceConfigurationInfo) {
     const session = this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    const existingIfaceWithSameName = session.configuration.interfaces.find(i => i.name.toLocaleUpperCase() === iface.name.toLocaleUpperCase());
+    const config = this.fUserManager.getBenchConfigFromSession(session);
+    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
+    const existingIfaceWithSameName = config.interfaces.find(i => i.name.toLocaleUpperCase() === iface.name.toLocaleUpperCase());
     if (existingIfaceWithSameName) throw new Error(`Interface, ${iface.name}, already exists in session, ${sessionName}`);
-    session.configuration.interfaces.push(iface);
+    config.interfaces.push(iface);
     this.update(session);
     return iface;
   }
@@ -92,8 +95,10 @@ export class SessionManager extends TypedEmitter<Events> {
   removeCommunicationInterface(sessionName: string, ifaceName: string) {
     const session = this.getOne(sessionName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    const ifaceIndex = session.configuration.interfaces.findIndex(findIface => findIface.name === ifaceName);
-    session.configuration.interfaces.splice(ifaceIndex, 1);
+    const config = this.fUserManager.getBenchConfigFromSession(session);
+    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
+    const ifaceIndex = config.interfaces.findIndex(findIface => findIface.name === ifaceName);
+    config.interfaces.splice(ifaceIndex, 1);
     this.update(session);
     return { sessionName: sessionName, ifaceName: ifaceName };
   }

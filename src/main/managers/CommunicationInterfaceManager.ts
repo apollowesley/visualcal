@@ -108,7 +108,10 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
 
   loadFromSession(session: Session) {
     this.clear();
-    session.configuration.interfaces.forEach(info => {
+    if (!session.configuration || !session.configuration.benchConfigName) throw new Error(`Session, ${session.name}, does not have a configuration or bench configuration name`);
+    const config = global.visualCal.userManager.getBenchConfig(session.username, session.configuration.benchConfigName);
+    if (!config) throw new Error(`Bench configuration, ${session.configuration.benchConfigName}, does not exist in session, ${session.name}`);
+    config.interfaces.forEach(info => {
       const iface = this.createFromInfo(info);
       this.add(iface);
     });
