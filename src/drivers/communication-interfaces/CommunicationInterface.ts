@@ -2,6 +2,9 @@ import Denque from 'denque';
 import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
 import { TypedEmitter } from 'tiny-typed-emitter';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('CommunicationInterface');
 
 interface Events {
   connecting: (iface: ICommunicationInterface) => void;
@@ -53,6 +56,10 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   protected onDisconnected() {
     if (this.fReadQueue) {
+      for (let index = 0; index < this.fReadQueue.length; index++) {
+        const handler = this.fReadQueue.get(index);
+        if (handler?.cancelCallback) handler.cancelCallback();
+      }
       this.fReadQueue.clear();
       this.fReadQueue = undefined;
     }
@@ -89,7 +96,12 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   private enqueue(readHandler: ReadQueueItem) {
     if (!this.fReadQueue) this.fReadQueue = new Denque<ReadQueueItem>();
-    this.fReadQueue.push(readHandler);
+    const handlerQueueIndex = this.fReadQueue.push(readHandler);
+    readHandler.cancelCallback = () => {
+      log.debug('enqueue::readHandler.cancelCallback called');
+      if (this.fReadQueue) this.fReadQueue.removeOne(handlerQueueIndex);
+      (readHandler as any).callback = undefined;
+    }
   }
 
   async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {

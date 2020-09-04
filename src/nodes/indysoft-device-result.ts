@@ -50,13 +50,14 @@ module.exports = (RED: NodeRed) => {
     this.on('input', (msg: InputMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       // Make sure we have a msg.payload and msg.payload.data (the data read from the device)
       if (!msg.payload || !msg.payload.data) {
-        this.error('Missing msg.payload or msg.payload.data');
+        this.error('indysoft-device-result', 'Message is missing payload or payload.data');
+        this.emit('msg-missing-payload-error', msg);
         if (done) done();
         return;
       }
       // Make sure we have section and actionName in the msg.payload
       if (!msg.payload.section && !msg.payload.action) {
-        this.error('Missing Action Name or Read Tag');
+        this.error('Message is missing payload.section or payload.action');
         if (done) done();
         return;
       }

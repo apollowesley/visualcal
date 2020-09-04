@@ -91,7 +91,8 @@ interface InterfaceOperationResponseMessage {
 }
 
 interface ReadQueueItem {
-  callback: (data: ArrayBuffer) => void;
+  callback: (data: ArrayBuffer, cancelled = false) => void;
+  cancelCallback?: () => void;
 }
 
 type EndOfStringTerminator = 'CrLf' | 'Cr' | 'Lf' | 'none';

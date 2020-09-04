@@ -79,6 +79,7 @@
     "@types/d3": "^5.7.2",
     "@types/events": "^3.0.0",
     "@types/express": "^4.17.8",
+    "@types/js-quantities": "^1.6.2",
     "@types/lodash": "^4.14.161",
     "@types/materialize-css": "^1.0.8",
     "@types/mathjs": "^6.0.5",

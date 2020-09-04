@@ -321,7 +321,3 @@ window.visualCal.actionManager.on('resultAcquired', (info) => {
 });
 
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
-
-window.visualCal.onInitialLoadData = (data) => {
-  alert(data.windowId);
-}
