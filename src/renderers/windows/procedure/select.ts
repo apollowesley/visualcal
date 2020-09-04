@@ -26,6 +26,8 @@ const existingProceduresTable = new Tabulator('#vc-tabulator', {
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'] },
     { title: 'Description', field: 'description' },
+    { title: 'Version', field: 'version' },
+    { title: 'Created By', field: 'authorOrganization' },
     { title: '', formatter: selectButtonTableCellFormatter, width: 80, hozAlign: 'center', vertAlign: 'middle' }
   ]
 });

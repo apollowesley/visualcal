@@ -1,4 +1,6 @@
 {
   "name": "Fluke 77",
-  "description": "Fluke 77 calibration"
+  "description": "Fluke 77 calibration",
+  "authorOrganization":"IndySoft Corporation",
+  "version": "1.0.0"
 }

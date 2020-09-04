@@ -1,4 +1,6 @@
 {
   "name": "Keysight 34401A",
-  "description": "Keysight 34401A calibration"
+  "description": "Keysight 34401A calibration",
+  "authorOrganization":"IndySoft Corporation",
+  "version": "1.0.0"
 }
