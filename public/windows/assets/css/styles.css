@@ -2,8 +2,8 @@ body {
   height: calc(100vh - 60px);
   width: calc(100vw);
   overflow: auto;
-  margin-top: 30px !important;
-  margin-bottom: 30px !important;
+  margin-top: 30px!important;
+  margin-bottom: 30px!important;
 }
 
 .vc-nav-bar-item {

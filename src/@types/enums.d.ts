@@ -3,7 +3,7 @@ declare const enum VisualCalWindow {
   Loading = 'loading',
   Login = 'login',
   Console = 'console',
-  NodeRedEditor = 'node-red-editor',
+  NodeRedEditor = 'logic-server-editor',
   CreateProcedure = 'create-procedure',
   CreateSession = 'create-session',
   UserInput = 'user-input',

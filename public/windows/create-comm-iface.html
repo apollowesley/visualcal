@@ -12,18 +12,10 @@
 </head>
 
 <body>
-    <div class="container bg-dark p-3">
+    <div class="container-fluid bg-dark p-3">
         <div class="row">
             <div class="col-auto">
                 <h1>Adding a communication interface</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-auto">
-                <h3>Selected Session:</h3>
-            </div>
-            <div class="col">
-                <h3 id="vc-selected-session-name">selectedSessionName</h3>
             </div>
         </div>
         <div class="row">
@@ -39,26 +31,21 @@
                             <div class="form-group"><label for="vc-iface-type">Type</label><select class="form-control" id="vc-iface-type" required=""></select></div>
                         </div>
                     </div>
-                    <div class="container p-0" id="vc-iface-settings-ip-network">
-                        <div class="form-row">
-                            <div class="col-8 col-xl-8">
-                                <div class="form-group"><label for="vc-iface-settings-ip-network-host">IP Address</label><input class="form-control" type="text" id="vc-iface-settings-ip-network-host" placeholder="Example 10.0.0.100"></div>
-                            </div>
-                            <div class="col-4">
-                                <div class="form-group"><label for="vc-iface-settings-ip-network-port">Port</label><input class="form-control" type="text" id="vc-iface-settings-ip-network-port" placeholder="Example 1234" inputmode="numeric"></div>
-                            </div>
+                    <div class="form-row" id="vc-iface-settings-ip-network">
+                        <div class="col-8 col-xl-8">
+                            <div class="form-group"><label for="vc-iface-settings-ip-network-host">IP Address</label><input class="form-control" type="text" id="vc-iface-settings-ip-network-host" placeholder="Example 10.0.0.100"></div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group"><label for="vc-iface-settings-ip-network-port">Port</label><input class="form-control" type="text" id="vc-iface-settings-ip-network-port" placeholder="Example 1234" inputmode="numeric"></div>
                         </div>
                     </div>
-                    <div class="container p-0" id="vc-iface-settings-serial">
-                        <div class="form-row">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-iface-settings-serial-portname">Port</label><select class="form-control" id="vc-iface-settings-serial-portname"></select></div>
-                            </div>
+                    <div class="form-row" id="vc-iface-settings-serial">
+                        <div class="col">
+                            <div class="form-group"><label for="vc-iface-settings-serial-portname">Port</label><select class="form-control" id="vc-iface-settings-serial-portname"></select></div>
                         </div>
                     </div>
-                    <div class="btn-toolbar">
-                        <div class="btn-group mr-3" role="group"><button class="btn btn-primary" id="vc-iface-create-button" type="button">Create</button></div>
-                        <div class="btn-group" role="group"><button class="btn btn-secondary mr-3 bg-light" id="vc-iface-cancel-button" type="button">Cancel</button></div>
+                    <div class="form-row text-center">
+                        <div class="col"><button class="btn btn-primary" id="vc-iface-create-button" type="button">Create</button><button class="btn btn-secondary mr-3 bg-light" id="vc-iface-cancel-button" type="button">Cancel</button></div>
                     </div>
                 </form>
             </div>

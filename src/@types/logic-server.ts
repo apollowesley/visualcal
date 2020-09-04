@@ -75,6 +75,7 @@ export interface Settings {
       image?: string;
       url?: string;
     };
+    menu?: {},
     login?: {
       title?: string;
       image: string;
