@@ -58,6 +58,14 @@
     <label for="node-input-relative"><i class="fa fa-tag"></i> Relative?</label>
     <input type="checkbox" id="node-input-relative" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
+
+  <!-- Front and rear terminals -->
+  <div class="form-row">
+    <label for="node-input-rearTerminals"><i class="fa fa-tag"></i> Rear terminals?</label>
+    <input type="checkbox" id="node-input-rearTerminals" style="display: inline-block; width: auto; vertical-align: top;">
+  </div>
+
+  <!-- Take measurement -->
   <div class="form-row">
     <label for="node-input-measure"><i class="fa fa-tag"></i> Take measurement?</label>
     <input type="checkbox" id="node-input-measure" style="display: inline-block; width: auto; vertical-align: top;">
@@ -94,6 +102,7 @@
       relative: { value: false, required: true },
       usePreDelay: { value: false, required: true },
       preDelay: { value: 0, required: false, validate: RED.validators.number() },
+      rearTerminals: { value: false, required: true },
       measure: { value: true, required: true },
       outputs: { value: 2 }
     },
