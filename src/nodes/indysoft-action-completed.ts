@@ -1,5 +1,4 @@
 import { NodeProperties } from 'node-red';
-import { resetProcedureActionStatus } from './utils';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
 import VisualCalNodeRed from '../main/node-red';
 
@@ -28,7 +27,6 @@ module.exports = (RED: NodeRed) => {
         return;
       }
       startNode.runtime.emit('stop');
-      resetProcedureActionStatus(this);
       global.visualCal.actionManager.stateChanged(startNode.runtime, 'completed');
       this.status({
         fill: 'blue',

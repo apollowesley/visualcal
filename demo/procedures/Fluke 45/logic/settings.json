@@ -447,16 +447,6 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-multi-product-calibrator.js"
 				},
-				"indysoft-device-read-handler": {
-					"name": "indysoft-device-read-handler",
-					"types": [
-						"indysoft-device-read-handler"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-read-handler.js"
-				},
 				"indysoft-device-result": {
 					"name": "indysoft-device-result",
 					"types": [

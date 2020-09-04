@@ -26,9 +26,9 @@ export class ResultManager extends TypedEmitter<Events> {
   constructor() {
     super();
     this.fResults = this.fStore.get('results', []);
-    ipcMain.on(IpcChannels.results.load.request, (event, sessionName: string) => {
+    ipcMain.on(IpcChannels.results.load.request, async (event, sessionName: string) => {
       try {
-        const retVal = this.getResultsForSession(sessionName);
+        const retVal = await this.getResultsForSession(sessionName);
         event.reply(IpcChannels.results.load.response, sessionName, retVal);
       } catch (error) {
         event.reply(IpcChannels.results.load.error, error);
