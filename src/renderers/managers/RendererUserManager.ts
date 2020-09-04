@@ -2,7 +2,7 @@ import { ipcRenderer } from 'electron';
 import { EventEmitter } from 'events';
 import { IpcChannels } from '../../constants';
 
-export interface ActiveChangedCallback {
+interface ActiveChangedCallback {
   (user: User | null): void;
 }
 

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { ipcRenderer, IpcRendererEvent } from 'electron';
 import { IpcChannelCRUD } from '../../constants';
 
-export interface RendererCRUDManagerType<TCreate extends NamedType, TItem extends NamedType> extends EventEmitter {
+interface RendererCRUDManagerType<TCreate extends NamedType, TItem extends NamedType> extends EventEmitter {
   getAll(): void;
   getOne(name: string): void;
   create(info: TCreate): void;
@@ -14,7 +14,7 @@ export interface RendererCRUDManagerType<TCreate extends NamedType, TItem extend
   update(item: TItem): void;
 }
 
-export interface ResponseArgs {
+interface ResponseArgs {
   event: IpcRendererEvent;
 }
 
@@ -24,43 +24,6 @@ export interface ErrorResponseArgs extends ResponseArgs {
 
 export interface GetAllResponseArgs<TItem> extends ResponseArgs {
   items: TItem[];
-}
-
-export interface GetOneResponseArgs<TItem> extends ResponseArgs {
-  item: TItem;
-}
-
-export interface CreateResponseArgs<TCreated> extends ResponseArgs {
-  item: TCreated;
-}
-
-export interface RemoveResponseArgs extends ResponseArgs {
-  name: string;
-}
-
-export interface RenameResponseArgs extends ResponseArgs {
-  oldName: string;
-  newName: string;
-}
-
-export interface GetActiveResponseArgs extends ResponseArgs {
-  name: string;
-}
-
-export interface SetActiveResponseArgs extends ResponseArgs {
-  name: string;
-}
-
-export interface UpdateResponseArgs<TItem> extends ResponseArgs {
-  item: TItem;
-}
-
-export interface GetAllCommunicationInterfacesResponse extends ResponseArgs {
-  iface: CommunicationInterfaceConfigurationInfo;
-}
-
-export interface Response<T extends ResponseArgs> {
-  (args: T): void;
 }
 
 export abstract class RendererCRUDManager<TCreate extends NamedType, TCreated extends NamedType, TItem extends NamedType> extends EventEmitter implements RendererCRUDManagerType<TCreate, TItem> {

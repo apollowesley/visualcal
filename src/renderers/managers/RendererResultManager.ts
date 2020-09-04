@@ -2,20 +2,12 @@ import { EventEmitter } from 'events';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../constants';
 
-export interface ResponseArgs {
+interface ResponseArgs {
   sessionName: string;
 }
 
 export interface LoadResponseArgs extends ResponseArgs {
   results: LogicResult[];
-}
-
-export interface SaveResponseArgs extends ResponseArgs {
-  results: LogicResult[];
-}
-
-export interface SaveOneResponseArgs extends ResponseArgs {
-  result: LogicResult;
 }
 
 export class RendererResultManager extends EventEmitter {
