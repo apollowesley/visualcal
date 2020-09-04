@@ -76,6 +76,11 @@ export interface Settings {
       url?: string;
     };
     menu?: {},
+    deployButton?: {
+      type?: string;
+      label?: string;
+      icon?: string;
+    };
     login?: {
       title?: string;
       image: string;

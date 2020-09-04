@@ -101,7 +101,11 @@ const run = async () => {
     const loginWindow = await global.visualCal.windowManager.ShowLogin();
     global.visualCal.windowManager.close(VisualCalWindow.Loading);
     loginWindow.once('closed', async () => {
-      await autoUpdater.checkForUpdates();
+      try {
+        await autoUpdater.checkForUpdates();
+      } catch (error) {
+        log.error('Error checking for updates', error);
+      }
     });
     if (isDev()) {
       await testingOnly();
