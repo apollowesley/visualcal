@@ -13,7 +13,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   async onConnected() {
     await this.writeString('++savecfg 0');
     await this.writeString('++mode 1');
-    await this.writeString('++auto 1');
+    await this.writeString('++auto 0');
     await this.writeString('++ifc');
     setTimeout(() => {
       log.debug('Prologix GPIB connected');
@@ -21,13 +21,17 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     }, 1000);
   }
 
-  writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {
+  async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {
     let view = new Uint8Array(data);
     let viewString = new TextDecoder().decode(view);
     viewString = viewString + '\n';
     view = new TextEncoder().encode(viewString);
     data = view.buffer;
-    return super.writeData(data, readHandler);
+    await super.writeData(data, readHandler);
+    if (readHandler) {
+      // Auto read is turned off, so we need to send the ++read command to the Prologix GPIB controller
+      await this.writeString('++read');
+    }
   }
 
   address = 0;
@@ -50,57 +54,50 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     });
   }
 
-  // eslint-disable-next-line
   async setEndOfInstruction(enable: boolean): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
-  // eslint-disable-next-line
   async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async getEndOfTransmission(): Promise<EndOfTransmissionOptions> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
-  // eslint-disable-next-line
   async setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async becomeControllerInCharge(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
-  // eslint-disable-next-line
   async gotToRemote(address: number): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
-  // eslint-disable-next-line
   async goToLocal(address: number): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async getListenOnly(): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
   
-  // eslint-disable-next-line
   async setListenOnly(enable: boolean): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async reset(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
-  // eslint-disable-next-line
   async serialPoll(primaryAddress: number, secondaryAddress?: number | undefined): Promise<StatusByteRegisterValues> {
     return new Promise((resolve, reject) => {
       this.queryString(`++spoll ${primaryAddress}`)
@@ -117,15 +114,15 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async readStatusByte(): Promise<StatusByteRegisterValues> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async readEventStatusRegister(): Promise<EventStatusRegisterValues> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async getEventStatusEnable(): Promise<EventStatusRegisterValues> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   async setEventStatusEnable(values: EventStatusRegisterValues): Promise<void> {
@@ -140,12 +137,12 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async clearEventStatusEnable(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
   // eslint-disable-next-line
   async trigger(addresses: number | number[]): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.reject('Method not implemented.');
   }
 
 }
