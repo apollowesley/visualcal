@@ -23,7 +23,7 @@ interface DeviceCommunicationInterfaceNamePair {
 let driversPackagejson: DriversPackageJson;
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
-export const onComment = (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
+export const onComment = (_source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
   console.debug(`[global.visualCal.nodeRed.app.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
   if (type === 'error') {
     dialog.showErrorBox('An error occured', comment);
@@ -35,13 +35,6 @@ export const getCommunicationInterfaceForDevice = (deviceName: string) => {
   if (!pair) return undefined;
   const ci = global.visualCal.communicationInterfaceManager.find(pair.communicationInterfaceName);
   return ci;
-};
-
-const addCommunicationInterfaceForDevice = (options: DeviceCommunicationInterfaceNamePair) => {
-  const existing = getCommunicationInterfaceForDevice(options.deviceName);
-  if (existing) return false;
-  deviceCommunicationInterfaces.push(options);
-  return true;
 };
 
 const clearDeviceCommunicationInterfaces = () => {
@@ -86,23 +79,6 @@ const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
     return retVal;
   });
   return retVal;
-};
-
-const assignDriverToDevice = (deviceName: string, driverDisplayName: string) => {
-  const driverInfo = driversPackagejson.visualcal.drivers.devices.find(d => d.displayName === driverDisplayName);
-  if (!driverInfo) throw new Error(`Driver not found: ${driverDisplayName}`);
-  const device = deviceCommunicationInterfaces.find(d => d.deviceName === deviceName);
-  if (!device) throw new Error(`Device not found: ${deviceName}`);
-  device.deviceDriver = {
-    manufacturer: driverInfo.manufacturer,
-    deviceModel: driverInfo.model,
-    categories: driverInfo.categories
-  };
-};
-
-const getDeviceDriverCategories = () => {
-  const flatDevices = driversPackagejson.visualcal.drivers.devices.flatMap(d => d.categories);
-  return flatDevices.filter((item, index) => flatDevices.indexOf(item) === index);
 };
 
 export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
@@ -167,14 +143,6 @@ const getDriverInfosForDevice = (deviceName: string) => {
   }
 
   return retVal;
-};
-
-const getInterfaceDriverInfos = () => {
-  return driversPackagejson.visualcal.drivers.devices;
-};
-
-const resetAllNodes = () => {
-  global.visualCal.nodeRed.app.runtime.events.emit('reset');
 };
 
 export const getAllNodes = (): NodeRedRuntimeNode[] => {
