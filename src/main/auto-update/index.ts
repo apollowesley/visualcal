@@ -50,7 +50,10 @@ export class AutoUpdater extends TypedEmitter<Events> {
       this.onUpdateWindowNotShowingError();
       return false;
     };
-    this.updateWindow.webContents.send(channel, arg);
+    setImmediate( () => {
+      if (!this.updateWindow) return;
+      this.updateWindow.webContents.send(channel, arg);
+    });
     return true;
   }
 
