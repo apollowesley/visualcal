@@ -22,7 +22,7 @@ const selectButtonTableCellFormatter = (cell: Tabulator.CellComponent) => {
 
 const existingProceduresTable = new Tabulator('#vc-tabulator', {
   data: [],
-  layout: 'fitColumns',
+  layout: 'fitDataStretch',
   columns: [
     { title: 'Name', field: 'name', validator: ['required', 'string', 'unique'] },
     { title: 'Description', field: 'description' },
