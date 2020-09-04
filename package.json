@@ -119,7 +119,6 @@
     "files": [
       "dist/**/*",
       "public/**/*",
-      "bootstrap-studio/exported/**/*",
       "demo/**/*",
       "package.json"
     ],

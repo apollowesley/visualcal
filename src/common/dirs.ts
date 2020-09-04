@@ -30,7 +30,7 @@ export const getDirs = () => dirs;
 export const init = (appBase: string, userHomeBase: string) => {
   const publicPath = path.join(appBase, 'public');
   const distPath = path.join(appBase, 'dist');
-  const bootstrapStudioHtmlPath = path.join(appBase, 'bootstrap-studio', 'exported');
+  const bootstrapStudioHtmlPath = path.join(publicPath, 'windows');
   const renderersPath = path.join(distPath, 'renderers');
   const renderersWindowsPath = path.join(renderersPath, 'windows');
   const renderersProcedurePath = path.join(renderersWindowsPath, 'procedure');
