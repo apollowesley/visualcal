@@ -140,7 +140,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     this.fAborted = true;
     if (this.fCancellationToken && !this.fCancellationToken.cancelled) this.fCancellationToken.cancel();
     autoUpdater.removeAllListeners();
-    this.windowManager.close(VisualCalWindow.UpdateApp);
+    if (this.windowManager.updateAppWindow) this.windowManager.close(VisualCalWindow.UpdateApp);
   }
 
 }
