@@ -43,8 +43,3 @@ export const openFlow = async (mainWindow: BrowserWindow) => {
     });
   });
 }
-
-export default {
-  saveFlow,
-  openFlow
-}

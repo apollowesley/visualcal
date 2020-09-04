@@ -12,7 +12,7 @@ import NodeRed from '../index';
 
 const nodeRed = NodeRed();
 
-export interface DeviceCommunicationInterfaceNamePair {
+interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
   communicationInterfaceName: string;
   deviceDriver?: DeviceDriverInfo;
@@ -37,14 +37,14 @@ export const getCommunicationInterfaceForDevice = (deviceName: string) => {
   return ci;
 };
 
-export const addCommunicationInterfaceForDevice = (options: DeviceCommunicationInterfaceNamePair) => {
+const addCommunicationInterfaceForDevice = (options: DeviceCommunicationInterfaceNamePair) => {
   const existing = getCommunicationInterfaceForDevice(options.deviceName);
   if (existing) return false;
   deviceCommunicationInterfaces.push(options);
   return true;
 };
 
-export const clearDeviceCommunicationInterfaces = () => {
+const clearDeviceCommunicationInterfaces = () => {
   deviceCommunicationInterfaces.splice(0, deviceCommunicationInterfaces.length);
 };
 
@@ -78,7 +78,7 @@ export const getDriverForDevice = async (deviceName: string) => {
   // return tempDriver;
 };
 
-export const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
+const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
   const retVal: DeviceNodeProperties[] = [];
   global.visualCal.nodeRed.app.nodes.eachNode(node => {
     const nodeAny = node as DeviceNodeProperties;
@@ -88,7 +88,7 @@ export const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
   return retVal;
 };
 
-export const assignDriverToDevice = (deviceName: string, driverDisplayName: string) => {
+const assignDriverToDevice = (deviceName: string, driverDisplayName: string) => {
   const driverInfo = driversPackagejson.visualcal.drivers.devices.find(d => d.displayName === driverDisplayName);
   if (!driverInfo) throw new Error(`Driver not found: ${driverDisplayName}`);
   const device = deviceCommunicationInterfaces.find(d => d.deviceName === deviceName);
@@ -100,7 +100,7 @@ export const assignDriverToDevice = (deviceName: string, driverDisplayName: stri
   };
 };
 
-export const getDeviceDriverCategories = () => {
+const getDeviceDriverCategories = () => {
   const flatDevices = driversPackagejson.visualcal.drivers.devices.flatMap(d => d.categories);
   return flatDevices.filter((item, index) => flatDevices.indexOf(item) === index);
 };
@@ -130,12 +130,12 @@ export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
   return retVal;
 };
 
-export const getDeviceDriverInfos = (opts?: { category: string; }) => {
+const getDeviceDriverInfos = (opts?: { category: string; }) => {
   if (opts) return driversPackagejson.visualcal.drivers.devices.filter(d => d.categories.includes(opts.category));
   return driversPackagejson.visualcal.drivers.devices;
 };
 
-export const getDriverInfosForDevice = (deviceName: string) => {
+const getDriverInfosForDevice = (deviceName: string) => {
   const deviceConfigNode = findNodesByType('indysoft-device-configuration').find(node => (node as any).unitId.toUpperCase() === deviceName.toUpperCase());
   if (!deviceConfigNode) return [];
   const deviceOwners = findDeviceConfigurationNodeOwners(deviceConfigNode.id);
@@ -169,11 +169,11 @@ export const getDriverInfosForDevice = (deviceName: string) => {
   return retVal;
 };
 
-export const getInterfaceDriverInfos = () => {
+const getInterfaceDriverInfos = () => {
   return driversPackagejson.visualcal.drivers.devices;
 };
 
-export const resetAllNodes = () => {
+const resetAllNodes = () => {
   global.visualCal.nodeRed.app.runtime.events.emit('reset');
 };
 
@@ -261,7 +261,7 @@ export const getProcedureStatus = () => {
   return status;
 };
 
-export const loadDevices = (session: Session) => {
+const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
   session.configuration.devices.forEach(deviceConfig => {

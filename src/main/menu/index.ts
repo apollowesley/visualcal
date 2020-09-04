@@ -2,7 +2,7 @@ import { BrowserWindow, shell, MenuItemConstructorOptions, Menu } from 'electron
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import * as path from 'path';
 
-export interface Options {
+interface Options {
   start?: any;
   flowFile?: string;
   addNodes?: boolean;
@@ -22,7 +22,7 @@ export interface Options {
 }
 
 // Create the Application's main menu
-export const create: () => Array<MenuItemConstructorOptions> = () => {
+const create: () => Array<MenuItemConstructorOptions> = () => {
   const template: Array<MenuItemConstructorOptions> = [];
 
   template.push({
