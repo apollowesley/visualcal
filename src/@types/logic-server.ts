@@ -1,32 +1,30 @@
-import { LogFunctions } from 'electron-log';
 import { Red, NodeProperties, Node as NodeRedNode } from 'node-red';
-import { DriverInfo } from './logic-drivers';
 
-export interface NodeRedAdminAuth {
+interface NodeRedAdminAuth {
   type: string;
   users: (username: string) => Promise<unknown>;
   authenticate: (username: string, password: string) => Promise<unknown>;
   tokens?: unknown[];
 }
 
-export interface NodeRedLogHandlerEntry {
+interface NodeRedLogHandlerEntry {
   timestamp: number;
   level: number;
   msg: any;
 }
 
-export interface NodeRedLogHandler {
+interface NodeRedLogHandler {
   (entry: NodeRedLogHandlerEntry): void;
 }
 
-export interface NodeRedLog {
+interface NodeRedLog {
   level: string;
   metrics?: boolean;
   audit?: boolean;
   handler?: (settings: any) => NodeRedLogHandler;
 }
 
-export interface NodeRedLogging {
+interface NodeRedLogging {
   console?: NodeRedLog;
   electronLog?: NodeRedLog;
 }
@@ -110,7 +108,7 @@ export interface NodeRed extends Red {
   version(): string;
 }
 
-export interface NodeRedContextBase {
+interface NodeRedContextBase {
   get(name: string): unknown;
   set(name: string, value: unknown): void;
 }
@@ -119,16 +117,16 @@ type NodeRedContextFlow = NodeRedContextBase
 
 export type LibraryType = 'flows' | 'functions' | 'templates';
 
-export interface VisualCalContextGlobal {
+interface VisualCalContextGlobal {
   indySoftLogicServerVersion: string;
   visualCal: any;
 }
 
-export interface NodeRedRuntimeContextGlobal extends NodeRedContextBase {
+interface NodeRedRuntimeContextGlobal extends NodeRedContextBase {
   indySoftLogicServerVersion: string;
 }
 
-export interface NodeRedContext {
+interface NodeRedContext {
   global: NodeRedRuntimeContextGlobal;
   flow: NodeRedContextFlow;
 }
@@ -138,34 +136,34 @@ export interface NodeRedRuntimeNode extends NodeRedNode {
   wires?: string[];
 }
 
-export interface NodeRedGlobalCommsConnection {
+interface NodeRedGlobalCommsConnection {
   removeMe?: boolean;
 }
 
-export interface NodeRedRuntimeOptions {
+interface NodeRedRuntimeOptions {
   user: unknown;
 }
 
-export interface NodeRedAuthModule {
+interface NodeRedAuthModule {
   needsPermission(permission: string): import('express').NextFunction;
 }
 
-export interface NodeRedRuntimeCommsConnectionOptions extends NodeRedRuntimeOptions {
+interface NodeRedRuntimeCommsConnectionOptions extends NodeRedRuntimeOptions {
   client: NodeRedGlobalCommsConnection;
 }
 
-export interface NodeRedRuntimeCommsSubscriptionOptions extends NodeRedRuntimeCommsConnectionOptions {
+interface NodeRedRuntimeCommsSubscriptionOptions extends NodeRedRuntimeCommsConnectionOptions {
   topic: string;
 }
 
-export interface NodeRedRuntimeCommsModule {
+interface NodeRedRuntimeCommsModule {
   addConnection(opts: NodeRedRuntimeCommsConnectionOptions): Promise<any>;
   removeConnection(opts: NodeRedRuntimeCommsConnectionOptions): Promise<any>;
   subscribe(opts: NodeRedRuntimeCommsSubscriptionOptions): Promise<any>;
   unsubscribe(opts: NodeRedRuntimeCommsSubscriptionOptions): Promise<any>;
 }
 
-export interface NodeRedRuntimeContextOptions extends NodeRedRuntimeOptions {
+interface NodeRedRuntimeContextOptions extends NodeRedRuntimeOptions {
   scope: string;
   id: string;
   store: string;
@@ -173,12 +171,12 @@ export interface NodeRedRuntimeContextOptions extends NodeRedRuntimeOptions {
   req?: any;
 }
 
-export interface NodeRedRuntimeContextModule {
+interface NodeRedRuntimeContextModule {
   delete(opts: NodeRedRuntimeContextOptions): Promise<unknown>;
   getValue(opts: NodeRedRuntimeContextOptions): Promise<unknown>;
 }
 
-export interface NodeRedRuntimeModuleNodes {
+interface NodeRedRuntimeModuleNodes {
   init: () => void;
   load: () => void;
   // eslint-disable-next-line
@@ -189,7 +187,7 @@ export interface NodeRedRuntimeModuleNodes {
   getContext: (nodeId: string, flowId: string) => any;
 }
 
-export interface NodeRedRuntimeModule {
+interface NodeRedRuntimeModule {
   comms: NodeRedRuntimeCommsModule;
   context: NodeRedRuntimeContextModule;
   events: import('events').EventEmitter;
@@ -206,7 +204,7 @@ export interface NodeRedRuntimeModule {
   version(opts: NodeRedRuntimeOptions): Promise<string>;
 }
 
-export interface NodeRedUtilModule {
+interface NodeRedUtilModule {
   cloneMessage(msg: unknown): any;
   compareObjects(obj1: unknown, obj2: unknown): boolean;
   encodeObject(msg: any, opts: any): any;
@@ -226,18 +224,18 @@ export interface NodeRedUtilModule {
   setObjectProperty(msg: any, prop: string, value: unknown, createMissing: boolean): void;
 }
 
-export interface NodeRedCommsMessage {
+interface NodeRedCommsMessage {
   topic: string;
   data: unknown;
 }
 
-export interface NodeRedNodeUIPropertiesDefaultsValue {
+interface NodeRedNodeUIPropertiesDefaultsValue {
   value: unknown;
   prefix?: unknown;
   validate?: unknown;
 }
 
-export interface NodeRedNodeUIPropertiesDefaults {
+interface NodeRedNodeUIPropertiesDefaults {
   name: NodeRedNodeUIPropertiesDefaultsValue;
 }
 
@@ -281,53 +279,53 @@ export interface NodeRedNodeDoneFunction {
   (): void;
 }
 
-export interface VisualCalCommsMessageData {
+interface VisualCalCommsMessageData {
   source: 'logic' | 'frontend';
   type: string;
 }
 
-export interface VisualCalCommsLogicMessageData {
+interface VisualCalCommsLogicMessageData {
   source: 'logic';
   type: string;
 }
 
-export interface VisualCalCommsFrontendMessageData {
+interface VisualCalCommsFrontendMessageData {
   source: 'frontend';
   type: 'action';
   actionName: string;
 }
 
-export interface VisualCalCommsFrontendActionMessageData {
+interface VisualCalCommsFrontendActionMessageData {
   source: 'frontend';
   type: 'action';
   actionName: string;
   actionType: 'start' | 'stop';
 }
 
-export interface VisualCalCommsMessage extends NodeRedCommsMessage {
+interface VisualCalCommsMessage extends NodeRedCommsMessage {
   data: VisualCalCommsMessageData;
 }
 
-export interface VisualCalCommsLogicMessage extends VisualCalCommsMessage {
+interface VisualCalCommsLogicMessage extends VisualCalCommsMessage {
   data: VisualCalCommsLogicMessageData;
 }
 
-export interface VisualCalCommsFrontendMessage extends VisualCalCommsMessage {
+interface VisualCalCommsFrontendMessage extends VisualCalCommsMessage {
   data: VisualCalCommsFrontendMessageData;
 }
 
-export interface VisualCalCommsFrontendActionMessage extends VisualCalCommsFrontendMessage {
+interface VisualCalCommsFrontendActionMessage extends VisualCalCommsFrontendMessage {
   data: VisualCalCommsFrontendActionMessageData;
 }
 
-export interface CurrentProcedureName {
+interface CurrentProcedureName {
   (): Promise<string | boolean>;
 }
 
 
 // ***** LOGIC NODES *****
 
-export interface VisualCalNodeRedNodeInputMessagePayload {
+interface VisualCalNodeRedNodeInputMessagePayload {
   sessionId?: string;
   runId?: string;
   section?: string;
@@ -358,7 +356,7 @@ export interface DeviceConfigurationNode extends NodeRedRuntimeNode {
 
 // ***** node-red catalogue *****
 
- export interface NodeRedCatalogueModule {
+ interface NodeRedCatalogueModule {
   id: string;
   version: string;
   description: string;
@@ -367,13 +365,13 @@ export interface DeviceConfigurationNode extends NodeRedRuntimeNode {
   url: string;
 }
 
-export interface NodeRedCatalogue {
+interface NodeRedCatalogue {
   name: string;
   updated_at: Date;
   modules: NodeRedCatalogueModule[];
 }
 
-export interface LogicNodesPackageJson {
+interface LogicNodesPackageJson {
   name: string;
   description: string;
   version: string;

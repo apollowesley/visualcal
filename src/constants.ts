@@ -1,9 +1,3 @@
-import { UserConfig } from './UserConfig';
-
-export const UserConfigDefaults: UserConfig = {
-  showSplash: true
-}
-
 export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
 
 export const CommunicationInterfaceTypes = [
@@ -20,14 +14,6 @@ export const enum CommunicationInterfaceTypesEnum {
   PrologixGPIBTCP = 'Prologix GPIB TCP',
   PrologixGPIBUSB = 'Prologix GPIB USB',
   Emulated = 'Emulated'
-}
-
-export const DemoUser: User = {
-  email: 'demo@indysoft.com',
-  nameFirst: 'Test',
-  nameLast: 'User',
-  benchConfigs: [],
-  sessions: []
 }
 
 interface IpcChannelRequestResponseErrorNames {

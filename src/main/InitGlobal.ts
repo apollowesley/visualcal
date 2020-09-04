@@ -18,7 +18,7 @@ import electronLog from 'electron-log';
 
 const log = electronLog.scope('VisualCal');
 
-export let visualCal: VisualCalGlobalAugment;
+let visualCal: VisualCalGlobalAugment;
 const userManager = new UserManager();
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {

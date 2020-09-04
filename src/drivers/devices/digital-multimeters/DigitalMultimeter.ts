@@ -1,11 +1,11 @@
 import { ControllableDevice } from '../ControllableDevice';
 import { DeviceDefinition } from '../device-interfaces';
 
-export type DigitalMultimeterDeviceDefinition = DeviceDefinition
+type DigitalMultimeterDeviceDefinition = DeviceDefinition
 
 export type DigitalMultimeterMode = 'aac' | 'adc' | 'vac' | 'vdc' | 'ohms' | 'ohms4' | 'freq' | 'diode' | 'cont' | 'per';
-export type DigitalMultimeterRate = 'slow' | 'medium' | 'fast';
-export type DigitalMultimeterRange = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type DigitalMultimeterRate = 'slow' | 'medium' | 'fast';
+type DigitalMultimeterRange = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export interface Configuration {
   mode: DigitalMultimeterMode;

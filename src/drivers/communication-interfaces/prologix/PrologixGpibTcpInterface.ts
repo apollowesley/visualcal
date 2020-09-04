@@ -4,7 +4,7 @@ import electronLog from 'electron-log';
 
 const log = electronLog.scope('PrologixGpibTcpInterface');
 
-export interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
+interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   host: string;
   port: number | 1234;
 }

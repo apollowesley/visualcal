@@ -31,13 +31,6 @@ export class SessionManager extends TypedEmitter<Events> {
 
   static SESSION_RESULTS_FOLDER_NAME = 'results';
 
-  get active() {
-    return this.fUserManager.activeSession;
-  }
-  set active(session: Session | null) {
-    this.fUserManager.activeSession = session;
-  }
-
   get all() {
     const activeUser = this.fUserManager.activeUser;
     if (!activeUser) return [];
@@ -45,7 +38,7 @@ export class SessionManager extends TypedEmitter<Events> {
   }
 
   getIsActive(name: string) {
-    const active = this.active;
+    const active = this.fUserManager.activeSession;
     if (!active) return false;
     return active.name.toLocaleUpperCase() === name.toLocaleUpperCase();
   }
@@ -66,83 +59,7 @@ export class SessionManager extends TypedEmitter<Events> {
     this.fUserManager.updateSession(session);
   }
 
-  // ***** COMMUNICATION INTERFACES *****
-
-  getCommunicationInterfaceTypes() {
-    return CommunicationInterfaceTypes.sort();
-  }
-
-  getCommunicationInterfaces(sessionName: string) {
-    const session = this.getOne(sessionName);
-    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    const config = this.fUserManager.getBenchConfigFromSession(session);
-    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
-    return config.interfaces;
-  }
-
-  createCommunicationInterface(sessionName: string, iface: CommunicationInterfaceConfigurationInfo) {
-    const session = this.getOne(sessionName);
-    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    const config = this.fUserManager.getBenchConfigFromSession(session);
-    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
-    const existingIfaceWithSameName = config.interfaces.find(i => i.name.toLocaleUpperCase() === iface.name.toLocaleUpperCase());
-    if (existingIfaceWithSameName) throw new Error(`Interface, ${iface.name}, already exists in session, ${sessionName}`);
-    config.interfaces.push(iface);
-    this.update(session);
-    return iface;
-  }
-
-  removeCommunicationInterface(sessionName: string, ifaceName: string) {
-    const session = this.getOne(sessionName);
-    if (!session) throw new Error(`Session, ${sessionName}, does not exist`);
-    const config = this.fUserManager.getBenchConfigFromSession(session);
-    if (!config) throw new Error(`Bench configuration does not exist for session ${sessionName}`);
-    const ifaceIndex = config.interfaces.findIndex(findIface => findIface.name === ifaceName);
-    config.interfaces.splice(ifaceIndex, 1);
-    this.update(session);
-    return { sessionName: sessionName, ifaceName: ifaceName };
-  }
-
   private initIpcEventHandlers() {
-    ipcMain.on(IpcChannels.session.getCommunicationInterfaceTypes.request, (event) => {
-      try {
-        const retVal = this.getCommunicationInterfaceTypes();
-        event.reply(IpcChannels.session.getCommunicationInterfaceTypes.response, retVal);
-      } catch (error) {
-        event.reply(IpcChannels.session.getCommunicationInterfaceTypes.error, error);
-      }
-    });
-
-    ipcMain.on(IpcChannels.session.getCommunicationInterfaces.request, (event, sessionName: string) => {
-      try {
-        const retVal = this.getCommunicationInterfaces(sessionName);
-        event.reply(IpcChannels.session.getCommunicationInterfaces.response, retVal);
-      } catch (error) {
-        event.reply(IpcChannels.session.getCommunicationInterfaces.error, error);
-      }
-    });
-
-    ipcMain.on(IpcChannels.session.createCommunicationInterface.request, (event, sessionName: string, iface: CommunicationInterfaceConfigurationInfo) => {
-      try {
-        const retVal = this.createCommunicationInterface(sessionName, iface);
-        event.reply(IpcChannels.session.createCommunicationInterface.response, { sessionName, retVal });
-        // next line need to target mainWindow, since original request from from create-comm-iface script file
-        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.session.createCommunicationInterface.response, { sessionName, iface: retVal });
-      } catch (error) {
-        event.reply(IpcChannels.session.createCommunicationInterface.error, error);
-        // next line need to target mainWindow, since original request from from create-comm-iface script file
-        if (global.visualCal.windowManager.mainWindow) global.visualCal.windowManager.mainWindow.webContents.send(IpcChannels.session.createCommunicationInterface.error, error);
-      }
-    });
-
-    ipcMain.on(IpcChannels.session.removeCommunicationInterface.request, (event, sessionName: string, ifaceName: string) => {
-      try {
-        const retVal = this.removeCommunicationInterface(sessionName, ifaceName);
-        event.reply(IpcChannels.session.removeCommunicationInterface.response, retVal);
-      } catch (error) {
-        event.reply(IpcChannels.session.removeCommunicationInterface.error, error);
-      }
-    });
 
     ipcMain.on(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.request, (event) => {
       try {
@@ -154,7 +71,7 @@ export class SessionManager extends TypedEmitter<Events> {
     });
 
     ipcMain.on(IpcChannels.session.viewInfo.request, (event) => {
-      const activeSession = this.active;
+      const activeSession = this.fUserManager.activeSession;
       if (!activeSession) {
         event.reply(IpcChannels.session.viewInfo.error, new Error('No active session'));
         return;

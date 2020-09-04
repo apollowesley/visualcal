@@ -1,7 +1,7 @@
 import SerialPort from 'serialport';
 import { CommunicationInterface } from './CommunicationInterface';
 
-export interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
+interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   portName: string;
   baudRate?: number;
   dataBits?: 5 | 6 | 7 | 8;

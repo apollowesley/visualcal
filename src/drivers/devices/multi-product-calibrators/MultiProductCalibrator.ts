@@ -1,6 +1,6 @@
 import { ControllableDevice } from '../ControllableDevice';
 
-export interface MultiProductCalibrator extends ControllableDevice {
+interface MultiProductCalibrator extends ControllableDevice {
   turnOutputOn(): Promise<void>;
   turnOutputOff(): Promise<void>;
   setCurrentAC(current: number, frequency: number): Promise<void>;

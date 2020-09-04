@@ -13,7 +13,7 @@ interface Events<TCreated extends NamedType, TItem extends NamedType> {
   activeSet: (activeName: string) => void;
 }
 
-export interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends TypedEmitter<Events<TCreated, TItem>> {
+interface CrudManagerType<TCreate extends NamedType, TCreated extends NamedType, TItemsFile extends NamedType, TItem extends NamedType> extends TypedEmitter<Events<TCreated, TItem>> {
   getAll(): Promise<TItem[]>;
   getOne(name: string): Promise<TItem | undefined>;
   create(info: TCreate): Promise<TCreated>;

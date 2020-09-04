@@ -6,7 +6,7 @@ import electronLog from 'electron-log';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
-export interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
+interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   portName: string;
 }
 

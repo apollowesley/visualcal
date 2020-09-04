@@ -17,7 +17,7 @@ const addRendererEventNames = (winId: VisualCalWindow, names: (string | symbol)[
   });
 }
 
-export const getComparison = () => {
+const getComparison = () => {
   const matched = mainEventNames.filter(men => rendererEventNames.has(men));
   const unMatched = mainEventNames.filter(men => !rendererEventNames.has(men));
   const rendererEvents: { winId: VisualCalWindow, name: string }[] = [];

@@ -1,16 +1,16 @@
-export type deviceClass = 'generic' | 'digital-multi-meter' | 'oscilloscope' | 'multi-product-calibrator';
+type deviceClass = 'generic' | 'digital-multi-meter' | 'oscilloscope' | 'multi-product-calibrator';
 
-export interface DeviceCommand {
+interface DeviceCommand {
   type: 'read' | 'write' | 'query';
   command: string | ArrayBuffer;
 }
 
-export interface DeviceReadCommand extends DeviceCommand {
+interface DeviceReadCommand extends DeviceCommand {
   type: 'read';
   readTag: string;
 }
 
-export class DeviceCommandSet {
+class DeviceCommandSet {
 
   private fCommands: DeviceCommand[];
 

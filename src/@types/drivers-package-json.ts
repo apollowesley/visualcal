@@ -1,4 +1,4 @@
-export interface DriversPackageJsonInterface {
+interface DriversPackageJsonInterface {
   displayName: string;
   class: string;
   path: string;
@@ -13,12 +13,12 @@ export interface DriversPackageJsonDriver {
   path: string;
 }
 
-export interface DriversPackageJsonVisualCalDrivers {
+interface DriversPackageJsonVisualCalDrivers {
   interfaces: DriversPackageJsonInterface[];
   devices: DriversPackageJsonDriver[];
 }
 
-export interface DriversPackageJsonVisualCal {
+interface DriversPackageJsonVisualCal {
   drivers: DriversPackageJsonVisualCalDrivers;
 }
 
