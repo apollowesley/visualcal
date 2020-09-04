@@ -18,6 +18,7 @@ export interface MeasurementConfiguration {
   range?: number;
   rate?: number;
   relative?: boolean;
+  rearTerminals?: boolean;
 }
 
 export interface SetModeOptions {
@@ -29,6 +30,8 @@ export abstract class DigitalMultimeterDevice extends ControllableDevice {
   constructor(definition: DeviceDefinition) {
     super(definition);
   }
+
+  get hasRearTerminals() { return false; }
 
   protected get digitalMultimeterDefinition(): DigitalMultimeterDeviceDefinition { return (this.deviceDefinition as DigitalMultimeterDeviceDefinition); }
 

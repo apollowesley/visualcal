@@ -32,6 +32,8 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     });
   }
 
+  get hasRearTerminals() { return true; }
+
   async getIdentity(): Promise<DeviceIdentity> {
     if (!this.communicationInterface) throw new Error('No communication interface');
     const ident = await this.communicationInterface.queryString('*IDN?');
@@ -92,7 +94,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   async getMeasurement(config: MeasurementConfiguration): Promise<number> {
     if (!this.communicationInterface) throw new Error('No communication interface');
     function delay(duration: number) {
-      return new Promise(function(resolve) { 
+      return new Promise((resolve) => { 
         return setTimeout(resolve, duration);
       });
     }
@@ -135,6 +137,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
       await this.communicationInterface.writeString('CALC:STATE ON');
       await delay(1000);
     }
+    await this.communicationInterface.writeString(config.rearTerminals ? 'REAR' : 'FRON');
     const value = await this.communicationInterface.queryString(command);
     return parseFloat(value);
   }

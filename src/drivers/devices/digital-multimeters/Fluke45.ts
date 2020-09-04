@@ -16,6 +16,8 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
     });
   }
 
+  get hasRearTerminals() { return true; }
+
   async getIdentity(): Promise<DeviceIdentity> {
     if (!this.communicationInterface) throw new Error('No communication interface');
     const ident = await this.communicationInterface.queryString('*IDN?');
