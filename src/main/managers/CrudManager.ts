@@ -165,11 +165,11 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   }
   
   checkExists(name: string) {
-    if (!this.exists(name, true)) throw new Error(`Procedure directory, ${name}, does not exist`);
+    if (!this.exists(name, true)) throw new Error(`Directory, ${name}, does not exist`);
   }
   
   checkNotExists(name: string) {
-    if (this.exists(name, false)) throw new Error(`Procedure directory, ${name}, already exists`);
+    if (this.exists(name, false)) throw new Error(`Directory, ${name}, already exists`);
   }
   
   async getOne(name: string) {

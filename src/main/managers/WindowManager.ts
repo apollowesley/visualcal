@@ -312,10 +312,6 @@ export class WindowManager extends TypedEmitter<Events> {
   async showSelectProcedureWindow() {
     const procedures = await global.visualCal.procedureManager.getAll();
     const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.procedures.selectData, procedures);
-    global.visualCal.procedureManager.once('activeSet', async () => {
-      await this.showSelectSessionWindow();
-      this.closeAllBut(VisualCalWindow.SelectSession);
-    });
     const w = await this.createWindow(VisualCalWindow.SelectProcedure, undefined, false, undefined, undefined, onDidFinishLoading);
     return w;
   }

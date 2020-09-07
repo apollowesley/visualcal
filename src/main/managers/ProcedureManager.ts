@@ -21,6 +21,8 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
         nodeRed.once('started', async (port) => {
           log.info(`Logic server started on port ${port}`);
           event.reply(IpcChannels.procedures.setActive.response, procedureName);
+          await global.visualCal.windowManager.showSelectSessionWindow();
+          global.visualCal.windowManager.closeAllBut(VisualCalWindow.SelectSession);
         });
         await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
       } catch (error) {
