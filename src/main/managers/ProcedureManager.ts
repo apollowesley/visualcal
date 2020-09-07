@@ -1,12 +1,33 @@
+import { ipcMain } from 'electron';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { IpcChannels } from '../../constants';
+import NodeRed from '../node-red';
 import { CrudManager } from './CrudManager';
+import electronLog from 'electron-log';
+import VisualCalNodeRedSettings from '../node-red-settings';
+
+const log = electronLog.scope('ProcedureManager');
+const nodeRed = NodeRed();
 
 export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedProcedureInfo, ProcedureFile, Procedure> {
 
   constructor(basePath: string) {
     super(basePath, IpcChannels.procedures, 'procedure');
+
+    ipcMain.on(IpcChannels.procedures.setActive.request, async (event, procedureName: string) => {
+      try {
+        await this.setActive(procedureName);
+        nodeRed.once('started', async (port) => {
+          log.info(`Logic server started on port ${port}`);
+          event.reply(IpcChannels.procedures.setActive.response, procedureName);
+        });
+        await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
+      } catch (error) {
+        event.reply(IpcChannels.procedures.setActive.error, error);
+      }
+    });
+    log.info('Loaded');
   }
 
   static PROCEDURES_JSON_FILE_NAME = 'procedures.json';
@@ -28,18 +49,14 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     };
   }
 
+  async load(procedureName: string) {
+    const procedure = this.getOne(procedureName);
+    return procedure;
+  }
+
   static getProcedureDirPath(name: string) {
     const procDir = path.join(global.visualCal.dirs.userHomeData.procedures, name);
     return procDir;
-  }
-
-  /**
-   * Loads the active procedure, if any, from the procedures.json file.
-   * This should be call when the app starts.
-   */
-  static async loadActive() {
-    const activeProc = await global.visualCal.procedureManager.getActive();
-    if (activeProc) await global.visualCal.procedureManager.setActive(activeProc);
   }
 
 }

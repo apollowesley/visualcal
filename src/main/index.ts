@@ -8,7 +8,6 @@ import path from 'path';
 import { NodeRed as RealNodeRed } from '../@types/logic-server';
 import { AutoUpdater } from './auto-update';
 import { init as initGlobal } from './InitGlobal';
-import { ProcedureManager } from './managers/ProcedureManager';
 import { init as initMainMenu } from './menu';
 import NodeRed, { destroy as destroyNodeRed } from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
@@ -79,12 +78,6 @@ async function load() {
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
-  sendToLoadingWindow('Initializing Logic Server ...');
-  nodeRed.once('started', async (port) => {
-    log.info(`Logic server started on port ${port}`);
-    await ProcedureManager.loadActive();
-  });
-  await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
   global.visualCal.nodeRed.app = RED as RealNodeRed;
 }
 

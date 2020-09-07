@@ -247,7 +247,6 @@ export class WindowManager extends TypedEmitter<Events> {
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
     const w = await this.createWindow(VisualCalWindow.Login);
-    w.show();
     return w;
   }
 
