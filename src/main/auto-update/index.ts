@@ -135,7 +135,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
       await Promise.resolve();
     } else {
       log.info('Checking for updates');
-      await autoUpdater.checkForUpdates();
+      await autoUpdater.checkForUpdatesAndNotify();
     }
   }
 
