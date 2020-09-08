@@ -13,6 +13,8 @@ const sectionSelectElement = document.getElementById('vc-section-select') as HTM
 const actionSelectElement = document.getElementById('vc-action-select') as HTMLSelectElement;
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const clearDeviceLogButtonElement = document.getElementById('vc-clear-device-log') as HTMLButtonElement;
+const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
+const runNameTextInputElement = document.getElementById('vc-run-name-text-input') as HTMLInputElement;
 
 const logEntries: any[] = [];
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
@@ -70,9 +72,28 @@ sectionSelectElement.addEventListener('change', () => {
 });
 
 actionSelectElement.addEventListener('change', () => {
-  const selectedAction = getSelectedAction();
-  startStopActionButtonElement.disabled = !selectedAction;
+  updateStartStopActionButton();
 });
+
+const getSelectedBenchconfig = () => {
+  const selected = benchConfigsSelectElement.selectedOptions[0];
+  if (!selected) return undefined;
+  return JSON.parse(selected.value) as BenchConfig;
+}
+
+const getRunName = () => {
+  return runNameTextInputElement.value || undefined;
+}
+
+runNameTextInputElement.addEventListener('change', () => updateStartStopActionButton());
+
+const updateStartStopActionButton = () => {
+  let disabled = false;
+  disabled = disabled || !getSelectedAction();
+  disabled = disabled || !getSelectedBenchconfig();
+  disabled = disabled || !getRunName();
+  startStopActionButtonElement.disabled = disabled;
+}
 
 startStopActionButtonElement.addEventListener('click', (ev) => {
   ev.preventDefault();
@@ -131,6 +152,7 @@ ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewW
   sectionSelectElement.disabled = sectionSelectElement.options.length <= 0;
   sectionSelectElement.selectedIndex = 0;
   if (!sectionSelectElement.disabled) sectionSelectElement.dispatchEvent(new Event('change'));
+  updateStartStopActionButton();
 });
 
 // ***** LOG *****
@@ -319,5 +341,7 @@ window.visualCal.actionManager.on('resultAcquired', (info) => {
   results.push(info.result);
   resultsTable.setData(results);
 });
+
+updateStartStopActionButton();
 
 ipcRenderer.send(IpcChannels.session.viewInfo.request);

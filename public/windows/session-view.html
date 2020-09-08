@@ -15,6 +15,16 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Bench Configuration</h4>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group"><label for="vc-bench-config-select">Select a bench configuration</label><select id="vc-bench-config-select" style="width: 100%;" required=""></select></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card" id="vc-card-devices">
                     <div class="card-body">
                         <h4 class="card-title">Devices</h4>
@@ -28,12 +38,17 @@
                         <h4 class="card-title">Procedure</h4>
                         <div class="row" style="margin: 10px;">
                             <div class="col text-center">
-                                <div class="form-group"><label for="vc-section-select">Select a section</label><select class="form-control-lg" id="vc-section-select" style="width: 100%;"></select></div>
+                                <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" style="width: 100%;" required=""></select></div>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px;">
                             <div class="col text-center">
-                                <div class="form-group"><label for="vc-action-select">Select an action</label><select class="form-control-lg" id="vc-action-select" style="width: 100%;"></select></div>
+                                <div class="form-group"><label for="vc-action-select">Select an action</label><select id="vc-action-select" style="width: 100%;" required=""></select></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <div class="form-group"><label for="vc-run-name-text-input">Give this run a name</label><input type="text" id="vc-run-name-text-input" style="width: 100%" required=""></div>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px;">
