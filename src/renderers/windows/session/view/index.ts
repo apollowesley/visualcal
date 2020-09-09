@@ -7,26 +7,24 @@ import { ProcedureHandler } from './ProcedureHandler';
 import { StatusHandler } from './StatusHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
 import { ResultHandler } from './ResultHandler';
+import { StateChangeInfo } from '../../../managers/RendererActionManager';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 
-const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
-
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
+const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
-// ================================================================================================
-//  Status handler
-// ================================================================================================
-const status = new StatusHandler({
-  procedureStatusElementId: 'vc-procedure-status',
-  sectionStatusElementId: 'vc-running-section',
-  actionStatusElementId: 'vc-running-action'
-});
+const updateStartStopActionButton = (info?: StateChangeInfo) => {
+  let disabled = false;
+  disabled = disabled || !procedure.isReady;
+  // disabled = disabled || !getSelectedBenchconfig();
+  disabled = disabled || !procedure.runName;
+  startStopActionButtonElement.disabled = disabled;
 
-status.on('stateChanged', (info) => {
+  if (!info) return;
   if (info.state === 'stopped' || info.state === 'completed') {
     startStopActionButtonElement.textContent = 'Start';
     session.lastSectionName = undefined;
@@ -37,7 +35,18 @@ status.on('stateChanged', (info) => {
     session.lastSectionName = info.section;
     session.lastActionName = info.action;
   }
+}
+
+// ================================================================================================
+//  Status handler
+// ================================================================================================
+const status = new StatusHandler({
+  procedureStatusElementId: 'vc-procedure-status',
+  sectionStatusElementId: 'vc-running-section',
+  actionStatusElementId: 'vc-running-action'
 });
+
+status.on('stateChanged', (info) => updateStartStopActionButton(info));
 // ************************************************************************************************
 
 // ================================================================================================
@@ -50,7 +59,7 @@ const deviceLog = new DeviceLogHandler({
 // ************************************************************************************************
 
 // ================================================================================================
-//  Status handler
+//  Results handler
 // ================================================================================================
 const results = new ResultHandler({
   tableId: 'vc-results-tabulator',
@@ -67,23 +76,102 @@ const procedure = new ProcedureHandler({
   runTimeElementId: 'vc-run-name-text-input'
 });
 
-const updateStartStopActionButton = () => {
-  let disabled = false;
-  disabled = disabled || !procedure.isReady;
-  // disabled = disabled || !getSelectedBenchconfig();
-  disabled = disabled || !procedure.runName;
-  startStopActionButtonElement.disabled = disabled;
-}
-
 procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
 // ************************************************************************************************
 
-const getSelectedBenchconfig = () => {
-  const selected = benchConfigsSelectElement.selectedOptions[0];
-  if (!selected) return undefined;
-  return JSON.parse(selected.value) as BenchConfig;
-}
+// ***** LOG *****
+
+const logEntries: any[] = [];
+let sessionLogTable = new Tabulator('#vc-session-log', {
+  data: logEntries,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Type', field: 'type' },
+    { title: 'Session', field: 'sessionId' },
+    { title: 'Run', field: 'runId' },
+    { title: 'Section', field: 'section' },
+    { title: 'Action', field: 'action' },
+    { title: 'State', field: 'state' },
+    { title: 'Message', field: 'message' }
+  ]
+});
+
+ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
+  logEntries.push(entry);
+  await sessionLogTable.setData(logEntries);
+});
+
+// ***** END LOG *****
+
+// ================================================================================================
+// Troubleshooting and reset
+// ================================================================================================
+resetButton.addEventListener('click', () => {
+  const triggerOpts: TriggerOptions = {
+    action: '',
+    section: '',
+    runId: Date.now().toString(),
+  };
+  session.lastSectionName = undefined;
+  session.lastActionName = undefined;
+  window.visualCal.actionManager.reset(triggerOpts);
+});
+// ************************************************************************************************
+
+// ================================================================================================
+// Action errors
+// ================================================================================================
+window.visualCal.actionManager.on('startError', (args) => {
+  if (args.err.message) {
+    alert(args.err.message);
+  } else {
+    alert(args.err);
+  }
+});
+
+window.visualCal.actionManager.on('stopError', (error: Error) => {
+  if (error.message) {
+    alert(error.message);
+  } else {
+    alert(error);
+  }
+});
+
+window.visualCal.actionManager.on('resetError', (error: Error) => {
+  if (error.message) {
+    alert(error.message);
+  } else {
+    alert(error);
+  }
+});
+// ************************************************************************************************
+
+// ================================================================================================
+// Initialize
+// ================================================================================================
+ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+  session = viewInfo.session;
+  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
+  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+    devices.push({
+      configNodeId: deviceInfo.configNodeId,
+      driverDisplayName: '',
+      gpibAddress: 1,
+      interfaceName: '',
+      unitId: deviceInfo.unitId
+    });
+  });
+  await devicesTable.setData(devices);
+  procedure.sectionHandler.items = viewInfo.sections;
+  results.loadResultsForSession(session.name);
+});
+
+ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
+  window.visualCal.electron.showErrorDialog(error);
+});
+
+startStopActionButtonElement.disabled = true;
 
 startStopActionButtonElement.addEventListener('click', (ev) => {
   ev.preventDefault();
@@ -116,30 +204,11 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   }
 });
 
-// ***** LOG *****
+ipcRenderer.send(IpcChannels.session.viewInfo.request);
+// ************************************************************************************************
 
-const logEntries: any[] = [];
-let sessionLogTable = new Tabulator('#vc-session-log', {
-  data: logEntries,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Type', field: 'type' },
-    { title: 'Session', field: 'sessionId' },
-    { title: 'Run', field: 'runId' },
-    { title: 'Section', field: 'section' },
-    { title: 'Action', field: 'action' },
-    { title: 'State', field: 'state' },
-    { title: 'Message', field: 'message' }
-  ]
-});
 
-ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
-  logEntries.push(entry);
-  await sessionLogTable.setData(logEntries);
-});
-
-// ***** END LOG *****
-
+// TODO: Move the remaining code to it's own handler(s)
 const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
   const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
   const foundDeviceConfig = deviceConfigurationNodeInfosForCurrentFlow.find(d => d.unitId === deviceInfo.unitId);
@@ -175,67 +244,3 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
     { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]
 });
-
-resetButton.addEventListener('click', () => {
-  const triggerOpts: TriggerOptions = {
-    action: '',
-    section: '',
-    runId: Date.now().toString(),
-  };
-  session.lastSectionName = undefined;
-  session.lastActionName = undefined;
-  window.visualCal.actionManager.reset(triggerOpts);
-});
-
-window.visualCal.actionManager.on('startError', (args) => {
-  if (args.err.message) {
-    alert(args.err.message);
-  } else {
-    alert(args.err);
-  }
-});
-
-window.visualCal.actionManager.on('stopError', (error: Error) => {
-  if (error.message) {
-    alert(error.message);
-  } else {
-    alert(error);
-  }
-});
-
-window.visualCal.actionManager.on('resetError', (error: Error) => {
-  if (error.message) {
-    alert(error.message);
-  } else {
-    alert(error);
-  }
-});
-
-// ================================================================================================
-// Initialize
-// ================================================================================================
-ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-  session = viewInfo.session;
-  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-    devices.push({
-      configNodeId: deviceInfo.configNodeId,
-      driverDisplayName: '',
-      gpibAddress: 1,
-      interfaceName: '',
-      unitId: deviceInfo.unitId
-    });
-  });
-  await devicesTable.setData(devices);
-  procedure.sectionHandler.items = viewInfo.sections;
-  results.loadResultsForSession(session.name);
-});
-
-ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
-  window.visualCal.electron.showErrorDialog(error);
-});
-
-// Start
-startStopActionButtonElement.disabled = true;
-ipcRenderer.send(IpcChannels.session.viewInfo.request);
-// ************************************************************************************************
