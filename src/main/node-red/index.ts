@@ -16,7 +16,7 @@ interface Events {
   started: (port: number) => void;
   stopping: () => void;
   stopped: () => void;
-  sectionActionStarted: (sectionName: string, actionName: string) => void;
+  sectionActionStarted: (sectionName: string, actionName: string, runId: string) => void;
   sectionActionStopped: (sectionName: string, actionName: string) => void;
   sectionActionReset: (sectionName: string, actionName: string) => void;
 }
@@ -169,12 +169,12 @@ class NodeRed extends TypedEmitter<Events> {
     this.fNodeRed.runtime.events.emit('reset');
   }
 
-  startVisualCalActionStartNode(sectionName: string, actionName: string) {
+  startVisualCalActionStartNode(sectionName: string, actionName: string, runId: string) {
     const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
     if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
     if (startActionNode.runtime.isRunning) throw new Error('Already running');
-    startActionNode.runtime.emit('start');
-    this.emit('sectionActionStarted', sectionName, actionName);
+    startActionNode.runtime.emit('start', runId);
+    this.emit('sectionActionStarted', sectionName, actionName, runId);
   }
 
   stopVisualCalActionStartNode(sectionName: string, actionName: string) {

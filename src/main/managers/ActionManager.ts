@@ -33,7 +33,7 @@ export class ActionManager extends EventEmitter {
   async start(opts: TriggerOptions) {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
     loadCommunicationConfiguration(opts.session);
-    nodeRed.startVisualCalActionStartNode(opts.section, opts.action);
+    nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
   }
 
   stop(opts: TriggerOptions) {

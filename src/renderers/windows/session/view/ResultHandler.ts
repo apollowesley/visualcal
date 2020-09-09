@@ -6,6 +6,7 @@ import { LoadResponseArgs } from '../../../managers/RendererResultManager';
 interface ConstructorOptions {
   tableId: string;
   clearResultsElementId: string;
+  runsSelectElementId: string;
 }
 
 interface Events {
@@ -16,6 +17,7 @@ export class ResultHandler extends TypedEmitter<Events> {
 
   private fTable: Tabulator;
   private fClearResultsElement: HTMLButtonElement;
+  private fRunsSelectElement: HTMLSelectElement;
 
   private fResults: LogicResult[] = [];
 
@@ -24,16 +26,18 @@ export class ResultHandler extends TypedEmitter<Events> {
     this.fClearResultsElement = document.getElementById(opts.clearResultsElementId) as HTMLButtonElement;
     this.fClearResultsElement.addEventListener('click', () => this.clear());
 
+    this.fRunsSelectElement = document.getElementById(opts.runsSelectElementId) as HTMLSelectElement;
+    this.fRunsSelectElement.addEventListener('change', () => this.onRunsSelectElementSelectedOptionChanged());
+
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
       layout: 'fitColumns',
       columns: [
-        { title: 'Run name', field: 'runId' },
+        { title: 'Timestamp', field: 'timestamp' },
         { title: 'Section', field: 'section' },
         { title: 'Action', field: 'action' },
         { title: 'Type', field: 'type' },
         { title: 'Description', field: 'description' },
-        { title: 'Timestamp', field: 'timestamp' },
         { title: 'Base EU', field: 'baseQuantity' },
         { title: 'Derived EU', field: 'derivedQuantity' },
         { title: 'Nominal', field: 'inputLevel' },
@@ -53,12 +57,42 @@ export class ResultHandler extends TypedEmitter<Events> {
     window.visualCal.actionManager.on('resultAcquired', async (info) => this.add(info.result));
   }
 
+  private refreshRunIds() {
+    const runIds = this.fResults.filter((value, index, self) => self.indexOf(value) === index).map(r => r.runId);
+    runIds.forEach(runId => {
+      let found = false;
+      for (let index = 0; index < this.fRunsSelectElement.options.length; index++) {
+        const option = this.fRunsSelectElement.options[index];
+        const curOptionRunId = option.value;
+        if (curOptionRunId === runId) {
+          found = true;
+          break;
+        };
+      }
+      if (!found) {
+        const newOption = document.createElement('option');
+        newOption.value = runId;
+        newOption.text = runId;
+        this.fRunsSelectElement.options.add(newOption);
+      }
+    });
+
+  }
+
+  private onRunsSelectElementSelectedOptionChanged() {
+    if (this.fRunsSelectElement.selectedOptions.length <= 0) return;
+    const runId = this.fRunsSelectElement.selectedOptions[0].value;
+    this.fTable.clearFilter(false);
+    this.fTable.addFilter('runId', '=', runId);
+  } 
+
   private async syncTable() {
     await this.fTable.setData(this.fResults);
     if (this.fResults.length <= 0) return;
     const lastRow = this.fTable.getRowFromPosition(this.fTable.getRows().length - 1);
     if (!lastRow) return;
     await lastRow.scrollTo();
+    this.refreshRunIds();
   }
 
   clear() {

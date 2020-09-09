@@ -63,7 +63,8 @@ const deviceLog = new DeviceLogHandler({
 // ================================================================================================
 const results = new ResultHandler({
   tableId: 'vc-results-tabulator',
-  clearResultsElementId: 'vc-clear-results-button'
+  clearResultsElementId: 'vc-clear-results-button',
+  runsSelectElementId: 'vc-runs-select'
 });
 // ************************************************************************************************
 
@@ -182,7 +183,8 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   ev.preventDefault();
   const section = procedure.sectionHandler.selectedItem;
   const action = procedure.actionHandler.selectedItem;
-  if (!section || !action) {
+  const runName = procedure.runName;
+  if (!section || !action || !runName) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;
   }
@@ -195,7 +197,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   const opts: TriggerOptions = {
     action: action.name,
     section: section.shortName,
-    runId: Date.now().toString(),
+    runId: runName,
     session: session
   };
   if (session.lastSectionName && session.lastActionName) {
