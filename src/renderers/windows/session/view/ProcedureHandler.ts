@@ -32,7 +32,7 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     this.fActionHandler.on('changed', (action) => this.onActionChanged(action));
 
     this.fRunNameElement = document.getElementById(opts.runTimeElementId) as HTMLInputElement;
-    this.fRunNameElement.addEventListener('change', () => this.onRunNameElementValueChanged());
+    this.fRunNameElement.addEventListener('keyup', () => this.onRunNameElementValueChanged());
   }
 
   get sectionHandler() { return this.fSectionHandler; }
@@ -47,10 +47,6 @@ export class ProcedureHandler extends TypedEmitter<Events> {
   }
 
   get isReady() { return this.sectionHandler.selectedItem && this.actionHandler.selectedItem && this.runName; }
-
-  public async initialize() {
-
-  }
 
   private onCheckRunStateAndNotify() {
     if (this.sectionHandler.selectedItem && this.actionHandler.selectedItem && this.runName) this.emit('ready', this.sectionHandler.selectedItem, this.actionHandler.selectedItem, this.runName);

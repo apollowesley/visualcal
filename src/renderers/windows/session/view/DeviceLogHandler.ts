@@ -14,7 +14,7 @@ interface ConstructorOptions {
 }
 
 interface Events {
-
+  entryAdded: (entry: CommInterfaceLogEntry) => void;
 }
 
 export class DeviceLogHandler extends TypedEmitter<Events> {
@@ -65,6 +65,7 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
     entry.id = uuid();
     this.fEntries.push(entry);
     await this.syncTable();
+    this.emit('entryAdded', entry);
   }
 
 }

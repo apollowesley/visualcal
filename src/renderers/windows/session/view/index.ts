@@ -61,6 +61,14 @@ const procedure = new ProcedureHandler({
   runTimeElementId: 'vc-run-name-text-input'
 });
 
+const updateStartStopActionButton = () => {
+  let disabled = false;
+  disabled = disabled || !procedure.isReady;
+  // disabled = disabled || !getSelectedBenchconfig();
+  disabled = disabled || !procedure.runName;
+  startStopActionButtonElement.disabled = disabled;
+}
+
 procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
 // ************************************************************************************************
@@ -71,14 +79,6 @@ const getSelectedBenchconfig = () => {
   const selected = benchConfigsSelectElement.selectedOptions[0];
   if (!selected) return undefined;
   return JSON.parse(selected.value) as BenchConfig;
-}
-
-const updateStartStopActionButton = () => {
-  let disabled = false;
-  disabled = disabled || !procedure.isReady;
-  // disabled = disabled || !getSelectedBenchconfig();
-  disabled = disabled || !procedure.runName;
-  startStopActionButtonElement.disabled = disabled;
 }
 
 startStopActionButtonElement.addEventListener('click', (ev) => {
@@ -257,7 +257,6 @@ ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: Sessio
   await devicesTable.setData(devices);
   procedure.sectionHandler.items = viewInfo.sections;
   window.visualCal.resultsManager.load(sessionName);
-  updateStartStopActionButton();
 });
 
 ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
@@ -265,5 +264,4 @@ ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
 });
 
 // Start
-updateStartStopActionButton();
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
