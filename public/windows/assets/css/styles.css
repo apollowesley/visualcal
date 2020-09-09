@@ -1,9 +1,31 @@
+html {
+  height: calc(100vh - 60px);
+}
+
 body {
   height: calc(100vh - 60px);
   width: calc(100vw);
   overflow: auto;
   margin-top: 30px!important;
   margin-bottom: 30px!important;
+}
+
+.sticky-header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.sticky-middle {
+  position: absolute;
+  top: 25%;
+  width: 100%;
+}
+
+.sticky-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .vc-nav-bar-item {

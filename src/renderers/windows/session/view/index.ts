@@ -3,10 +3,10 @@ import Tabulator from 'tabulator-tables';
 import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { IpcChannels } from '../../../../constants';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
-import { LoadResponseArgs } from '../../../managers/RendererResultManager';
 import { ProcedureHandler } from './ProcedureHandler';
 import { StatusHandler } from './StatusHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
+import { ResultHandler } from './ResultHandler';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
@@ -14,9 +14,6 @@ const benchConfigsSelectElement = document.getElementById('vc-bench-config-selec
 
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 
-let results: LogicResult[] = [];
-
-let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
@@ -53,6 +50,15 @@ const deviceLog = new DeviceLogHandler({
 // ************************************************************************************************
 
 // ================================================================================================
+//  Status handler
+// ================================================================================================
+const results = new ResultHandler({
+  tableId: 'vc-results-tabulator',
+  clearResultsElementId: 'vc-clear-results-button'
+});
+// ************************************************************************************************
+
+// ================================================================================================
 //  Procedure handler
 // ================================================================================================
 const procedure = new ProcedureHandler({
@@ -72,8 +78,6 @@ const updateStartStopActionButton = () => {
 procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
 // ************************************************************************************************
-
-startStopActionButtonElement.disabled = true;
 
 const getSelectedBenchconfig = () => {
   const selected = benchConfigsSelectElement.selectedOptions[0];
@@ -135,27 +139,6 @@ ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
 });
 
 // ***** END LOG *****
-
-const resultsTable = new Tabulator('#vc-results-tabulator', {
-  data: results,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Run name', field: 'runId' },
-    { title: 'Section', field: 'section' },
-    { title: 'Action', field: 'action' },
-    { title: 'Type', field: 'type' },
-    { title: 'Description', field: 'description' },
-    { title: 'Timestamp', field: 'timestamp' },
-    { title: 'Base EU', field: 'baseQuantity' },
-    { title: 'Derived EU', field: 'derivedQuantity' },
-    { title: 'Nominal', field: 'inputLevel' },
-    { title: 'Minimum', field: 'minimum' },
-    { title: 'Maximum', field: 'maximum' },
-    { title: 'Raw', field: 'rawValue' },
-    { title: 'Measured', field: 'measuredValue' },
-    { title: 'Passed', field: 'passed' }
-  ]
-});
 
 const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
   const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
@@ -228,21 +211,10 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
   }
 });
 
-window.visualCal.resultsManager.on(IpcChannels.results.load.response, async (response: LoadResponseArgs) => {
-  results = response.results;
-  await resultsTable.setData(results);
-});
-
-window.visualCal.actionManager.on('resultAcquired', async (info) => {
-  results.push(info.result);
-  await resultsTable.setData(results);
-});
-
 // ================================================================================================
 // Initialize
 // ================================================================================================
 ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-  sessionName = viewInfo.session.name;
   session = viewInfo.session;
   deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
   deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
@@ -256,7 +228,7 @@ ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: Sessio
   });
   await devicesTable.setData(devices);
   procedure.sectionHandler.items = viewInfo.sections;
-  window.visualCal.resultsManager.load(sessionName);
+  results.loadResultsForSession(session.name);
 });
 
 ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
@@ -264,4 +236,6 @@ ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
 });
 
 // Start
+startStopActionButtonElement.disabled = true;
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
+// ************************************************************************************************
