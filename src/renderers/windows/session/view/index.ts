@@ -6,15 +6,12 @@ import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { LoadResponseArgs } from '../../../managers/RendererResultManager';
 import { ProcedureHandler } from './ProcedureHandler';
 import { StatusHandler } from './StatusHandler';
+import { DeviceLogHandler } from './DeviceLogHandler';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
-
-const clearDeviceLogButtonElement = document.getElementById('vc-clear-device-log') as HTMLButtonElement;
-
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 
-const logEntries: any[] = [];
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 
 let results: LogicResult[] = [];
@@ -44,7 +41,15 @@ status.on('stateChanged', (info) => {
     session.lastActionName = info.action;
   }
 });
+// ************************************************************************************************
 
+// ================================================================================================
+//  Status handler
+// ================================================================================================
+const deviceLog = new DeviceLogHandler({
+  clearButtonElementId: 'vc-clear-device-log',
+  tableId: 'vc-comm-interface-log'
+});
 // ************************************************************************************************
 
 // ================================================================================================
@@ -60,11 +65,6 @@ procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
 // ************************************************************************************************
 
-clearDeviceLogButtonElement.addEventListener('click', () => {
-  commInterfaceLogEntries.length = 0;
-  commInterfacesLogTable.setData(commInterfaceLogEntries);
-});
-
 startStopActionButtonElement.disabled = true;
 
 const getSelectedBenchconfig = () => {
@@ -76,7 +76,7 @@ const getSelectedBenchconfig = () => {
 const updateStartStopActionButton = () => {
   let disabled = false;
   disabled = disabled || !procedure.isReady;
-  disabled = disabled || !getSelectedBenchconfig();
+  // disabled = disabled || !getSelectedBenchconfig();
   disabled = disabled || !procedure.runName;
   startStopActionButtonElement.disabled = disabled;
 }
@@ -114,6 +114,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
 
 // ***** LOG *****
 
+const logEntries: any[] = [];
 let sessionLogTable = new Tabulator('#vc-session-log', {
   data: logEntries,
   layout: 'fitColumns',
@@ -128,39 +129,19 @@ let sessionLogTable = new Tabulator('#vc-session-log', {
   ]
 });
 
-ipcRenderer.on(IpcChannels.log.all, (_, entry: any) => {
+ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
   logEntries.push(entry);
-  sessionLogTable.setData(logEntries);
+  await sessionLogTable.setData(logEntries);
 });
 
-interface CommInterfaceLogEntry {
-  name: string;
-  message: string;
-}
-
-const commInterfaceLogEntries: CommInterfaceLogEntry[] = [];
-let commInterfacesLogTable = new Tabulator('#vc-comm-interface-log', {
-  data: commInterfaceLogEntries,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Interface Name', field: 'name' },
-    { title: 'Message', field: 'message' }
-  ]
-});
-
-const addCommInterfaceLogEntry = (entry: CommInterfaceLogEntry) => {
-  commInterfaceLogEntries.push(entry);
-  commInterfacesLogTable.setData(commInterfaceLogEntries);
-};
-
-window.visualCal.communicationInterfaceManager.on('interfaceConnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connected' }));
-window.visualCal.communicationInterfaceManager.on('interfaceConnecting', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Connecting' }));
-window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', (info) => addCommInterfaceLogEntry({ name: info.name, message: 'Disconnected' }));
-window.visualCal.communicationInterfaceManager.on('interfaceError', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Error:  ${info.err.message}` }));
-window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', (info) => addCommInterfaceLogEntry({ name: info.name, message: `Data received: ${info.data}` }));
-window.visualCal.communicationInterfaceManager.on('interfaceWrite', (info) => {
+window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => await deviceLog.add({ name: info.name, message: 'Connected' }));
+window.visualCal.communicationInterfaceManager.on('interfaceConnecting', async (info) => await deviceLog.add({ name: info.name, message: 'Connecting' }));
+window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await deviceLog.add({ name: info.name, message: 'Disconnected' }));
+window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await deviceLog.add({ name: info.name, message: `Error:  ${info.err.message}` }));
+window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await deviceLog.add({ name: info.name, message: `Data received: ${info.data}` }));
+window.visualCal.communicationInterfaceManager.on('interfaceWrite', async (info) => {
   const dataString = new TextDecoder().decode(info.data);
-  addCommInterfaceLogEntry({ name: info.name, message: `Data sent: ${dataString}` });
+  await deviceLog.add({ name: info.name, message: `Data sent: ${dataString}` });
 });
 
 // ***** END LOG *****
@@ -257,20 +238,20 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
   }
 });
 
-window.visualCal.resultsManager.on(IpcChannels.results.load.response, (response: LoadResponseArgs) => {
+window.visualCal.resultsManager.on(IpcChannels.results.load.response, async (response: LoadResponseArgs) => {
   results = response.results;
-  resultsTable.setData(results);
+  await resultsTable.setData(results);
 });
 
-window.visualCal.actionManager.on('resultAcquired', (info) => {
+window.visualCal.actionManager.on('resultAcquired', async (info) => {
   results.push(info.result);
-  resultsTable.setData(results);
+  await resultsTable.setData(results);
 });
 
 // ================================================================================================
 // Initialize
 // ================================================================================================
-ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
   sessionName = viewInfo.session.name;
   session = viewInfo.session;
   deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
@@ -283,7 +264,7 @@ ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewW
       unitId: deviceInfo.unitId
     });
   });
-  devicesTable.setData(devices);
+  await devicesTable.setData(devices);
   procedure.sectionHandler.items = viewInfo.sections;
   window.visualCal.resultsManager.load(sessionName);
   updateStartStopActionButton();
@@ -296,5 +277,3 @@ ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
 // Start
 updateStartStopActionButton();
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
-
-// ************************************************************************************************
