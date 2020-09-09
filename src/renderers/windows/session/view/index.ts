@@ -134,16 +134,6 @@ ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
   await sessionLogTable.setData(logEntries);
 });
 
-window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => await deviceLog.add({ name: info.name, message: 'Connected' }));
-window.visualCal.communicationInterfaceManager.on('interfaceConnecting', async (info) => await deviceLog.add({ name: info.name, message: 'Connecting' }));
-window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await deviceLog.add({ name: info.name, message: 'Disconnected' }));
-window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await deviceLog.add({ name: info.name, message: `Error:  ${info.err.message}` }));
-window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await deviceLog.add({ name: info.name, message: `Data received: ${info.data}` }));
-window.visualCal.communicationInterfaceManager.on('interfaceWrite', async (info) => {
-  const dataString = new TextDecoder().decode(info.data);
-  await deviceLog.add({ name: info.name, message: `Data sent: ${dataString}` });
-});
-
 // ***** END LOG *****
 
 const resultsTable = new Tabulator('#vc-results-tabulator', {
