@@ -52,12 +52,15 @@ export class ResultHandler extends TypedEmitter<Events> {
     window.visualCal.resultsManager.on(IpcChannels.results.load.response, async (response: LoadResponseArgs) => {
       this.fResults = response.results;
       await this.syncTable();
+      this.initRunIds();
     });
     
     window.visualCal.actionManager.on('resultAcquired', async (info) => this.add(info.result));
   }
 
-  private refreshRunIds() {
+  get runIds() { return this.fResults.filter((value, index, self) => self.indexOf(value) === index).map(r => r.runId); }
+
+  private initRunIds() {
     const runIds = this.fResults.filter((value, index, self) => self.indexOf(value) === index).map(r => r.runId);
     runIds.forEach(runId => {
       let found = false;
@@ -76,7 +79,8 @@ export class ResultHandler extends TypedEmitter<Events> {
         this.fRunsSelectElement.options.add(newOption);
       }
     });
-
+    if (this.fRunsSelectElement.options.length > 0) this.fRunsSelectElement.selectedIndex = this.fRunsSelectElement.options.length - 1;
+    this.fRunsSelectElement.dispatchEvent(new Event('change'));
   }
 
   private onRunsSelectElementSelectedOptionChanged() {
@@ -88,11 +92,10 @@ export class ResultHandler extends TypedEmitter<Events> {
 
   private async syncTable() {
     await this.fTable.setData(this.fResults);
-    if (this.fResults.length <= 0) return;
-    const lastRow = this.fTable.getRowFromPosition(this.fTable.getRows().length - 1);
-    if (!lastRow) return;
-    await lastRow.scrollTo();
-    this.refreshRunIds();
+    // if (this.fResults.length <= 0) return;
+    // const lastRow = this.fTable.getRowFromPosition(this.fTable.getRows().length - 1);
+    // if (!lastRow) return;
+    // await lastRow.scrollTo();
   }
 
   async clear() {
@@ -104,6 +107,21 @@ export class ResultHandler extends TypedEmitter<Events> {
     this.fResults.push(result);
     await this.syncTable();
     this.emit('resultAdded', result);
+  }
+
+  getDoesRunExist(id: string) {
+    return this.runIds.find(r =>  r.toLocaleUpperCase() === id.toLocaleUpperCase()) !== undefined;
+  }
+
+  addRun(id: string) {
+    if (this.getDoesRunExist(id)) throw new Error(`Duplicate run Id, ${id}`);
+    const newOption = document.createElement('option');
+    newOption.value = id;
+    newOption.text = id;
+    newOption.selected = true;
+    this.fRunsSelectElement.options.add(newOption);
+    this.fRunsSelectElement.selectedIndex = this.fRunsSelectElement.options.length - 1;
+    this.fRunsSelectElement.dispatchEvent(new Event('change'));
   }
 
   loadResultsForSession(sessionName: string) {

@@ -205,6 +205,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
+    results.addRun(runName);
     window.visualCal.actionManager.start(opts);
     session.lastSectionName = section.name;
     session.lastActionName = action.name;
