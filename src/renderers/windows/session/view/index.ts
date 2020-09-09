@@ -1,9 +1,9 @@
 import { ipcRenderer } from 'electron';
 import Tabulator from 'tabulator-tables';
-import { SessionViewWindowOpenIPCInfo } from '../../../@types/session-view';
-import { IpcChannels } from '../../../constants';
-import { TriggerOptions } from '../../../nodes/indysoft-action-start-types';
-import { LoadResponseArgs } from '../../managers/RendererResultManager';
+import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
+import { IpcChannels } from '../../../../constants';
+import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
+import { LoadResponseArgs } from '../../../managers/RendererResultManager';
 
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
