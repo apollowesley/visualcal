@@ -24,7 +24,7 @@ export class ResultHandler extends TypedEmitter<Events> {
   constructor(opts: ConstructorOptions) {
     super();
     this.fClearResultsElement = document.getElementById(opts.clearResultsElementId) as HTMLButtonElement;
-    this.fClearResultsElement.addEventListener('click', () => this.clear());
+    this.fClearResultsElement.addEventListener('click', async () => await this.clear());
 
     this.fRunsSelectElement = document.getElementById(opts.runsSelectElementId) as HTMLSelectElement;
     this.fRunsSelectElement.addEventListener('change', () => this.onRunsSelectElementSelectedOptionChanged());
@@ -95,9 +95,9 @@ export class ResultHandler extends TypedEmitter<Events> {
     this.refreshRunIds();
   }
 
-  clear() {
+  async clear() {
     this.fResults.length = 0;
-    this.syncTable();
+    await this.syncTable();
   }
 
   async add(result: LogicResult) {
