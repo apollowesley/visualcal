@@ -150,6 +150,12 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
 // ================================================================================================
 // Initialize
 // ================================================================================================
+window.visualCal.onInitialLoadData = (data) => {
+  if (data.sections) {
+    procedure.sectionHandler.items = data.sections;
+  }
+}
+
 ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
   session = viewInfo.session;
   deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
@@ -163,7 +169,6 @@ ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: Sessio
     });
   });
   await devicesTable.setData(devices);
-  procedure.sectionHandler.items = viewInfo.sections;
   results.loadResultsForSession(session.name);
 });
 
