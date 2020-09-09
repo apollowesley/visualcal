@@ -3,6 +3,13 @@ import { IpcChannels } from '../../constants';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
 
+export interface StateChangeInfo {
+  state: ActionState;
+  section: string;
+  action: string;
+}
+
+
 interface Events {
   started: () => void;
   startError: (args: { opts: TriggerOptions, err: Error }) => void;
@@ -10,7 +17,7 @@ interface Events {
   stopError: (err: Error) => void;
   reset: () => void;
   resetError: (err: Error) => void;
-  stateChanged: (info: { section: string, action: string, state: ActionState }) => void;
+  stateChanged: (info: StateChangeInfo) => void;
   resultAcquired: (info: { result: LogicResult }) => void;
 }
 
@@ -27,7 +34,7 @@ export class RendererActionManager extends TypedEmitter<Events> {
     ipcRenderer.on(IpcChannels.actions.reset.response, () => this.emit('reset'));
     ipcRenderer.on(IpcChannels.actions.reset.error, (_, err: Error) => this.emit('resetError', err));
 
-    ipcRenderer.on(IpcChannels.actions.stateChanged, (_, info: { section: string, action: string, state: ActionState }) => this.emit('stateChanged', info));
+    ipcRenderer.on(IpcChannels.actions.stateChanged, (_, info: StateChangeInfo) => this.emit('stateChanged', info));
     ipcRenderer.on(IpcChannels.actions.resultAcquired, (_, info: { result: LogicResult }) => this.emit('resultAcquired', info));
   }
 

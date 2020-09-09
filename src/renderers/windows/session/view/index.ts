@@ -5,13 +5,13 @@ import { IpcChannels } from '../../../../constants';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { LoadResponseArgs } from '../../../managers/RendererResultManager';
 import { ProcedureHandler } from './ProcedureHandler';
+import { StatusHandler } from './StatusHandler';
 
-const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
-const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
-const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
-const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
+const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
+
 const clearDeviceLogButtonElement = document.getElementById('vc-clear-device-log') as HTMLButtonElement;
+
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 
 const logEntries: any[] = [];
@@ -22,6 +22,30 @@ let results: LogicResult[] = [];
 let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
+
+// ================================================================================================
+//  Status handler
+// ================================================================================================
+const status = new StatusHandler({
+  procedureStatusElementId: 'vc-procedure-status',
+  sectionStatusElementId: 'vc-running-section',
+  actionStatusElementId: 'vc-running-action'
+});
+
+status.on('stateChanged', (info) => {
+  if (info.state === 'stopped' || info.state === 'completed') {
+    startStopActionButtonElement.textContent = 'Start';
+    session.lastSectionName = undefined;
+    session.lastActionName = undefined;
+    if (info.state === 'completed') alert('Action completed');
+  } else if (info.state === 'started') {
+    startStopActionButtonElement.textContent = 'Stop';
+    session.lastSectionName = info.section;
+    session.lastActionName = info.action;
+  }
+});
+
+// ************************************************************************************************
 
 // ================================================================================================
 //  Procedure handler
@@ -140,34 +164,6 @@ window.visualCal.communicationInterfaceManager.on('interfaceWrite', (info) => {
 });
 
 // ***** END LOG *****
-
-window.visualCal.actionManager.on('stateChanged', (info) => {
-  runningSectionElement.innerHTML = info.section;
-  runningActionElement.innerHTML = info.section;
-  switch (info.state) {
-    case 'completed':
-      procedureStatusElement.innerText = 'Ready';
-      runningSectionElement.innerHTML = 'None';
-      runningActionElement.innerHTML = 'Completed';
-      startStopActionButtonElement.innerHTML = 'Start';
-      session.lastSectionName = undefined;
-      session.lastActionName = undefined;
-      alert('Action completed');
-      break;
-    case 'started':
-      startStopActionButtonElement.innerHTML = 'Stop';
-      procedureStatusElement.innerText = 'Running';
-      break;
-    case 'stopped':
-      startStopActionButtonElement.innerHTML = 'Start';
-      procedureStatusElement.innerText = 'Stopped';
-      runningSectionElement.innerHTML = 'None';
-      runningActionElement.innerHTML = 'None';
-      session.lastSectionName = undefined;
-      session.lastActionName = undefined;
-      break;
-  }
-});
 
 const resultsTable = new Tabulator('#vc-results-tabulator', {
   data: results,
