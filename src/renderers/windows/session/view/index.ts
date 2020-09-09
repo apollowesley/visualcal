@@ -4,27 +4,15 @@ import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { IpcChannels } from '../../../../constants';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { LoadResponseArgs } from '../../../managers/RendererResultManager';
-import { ActionHandler } from './ActionHandler';
-
-const actionHandler = new ActionHandler({
-  sectionElementId: 'vc-section-select',
-  actionElementId: 'vc-action-select',
-  runTimeElementId: 'vc-run-name-text-input'
-});
-
-actionHandler.on('readyToStart', () => alert('Ready!'));
-actionHandler.on('notReadyToStart', () => alert('Not ready :('));
+import { ProcedureHandler } from './ProcedureHandler';
 
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
 const runningSectionElement = document.getElementById('vc-running-section') as HTMLHeadingElement;
 const runningActionElement = document.getElementById('vc-running-action') as HTMLHeadingElement;
-const sectionSelectElement = document.getElementById('vc-section-select') as HTMLSelectElement;
-const actionSelectElement = document.getElementById('vc-action-select') as HTMLSelectElement;
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const clearDeviceLogButtonElement = document.getElementById('vc-clear-device-log') as HTMLButtonElement;
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
-const runNameTextInputElement = document.getElementById('vc-run-name-text-input') as HTMLInputElement;
 
 const logEntries: any[] = [];
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
@@ -35,55 +23,25 @@ let sessionName: string = '';
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
+// ================================================================================================
+//  Procedure handler
+// ================================================================================================
+const procedure = new ProcedureHandler({
+  sectionElementId: 'vc-section-select',
+  actionElementId: 'vc-action-select',
+  runTimeElementId: 'vc-run-name-text-input'
+});
+
+procedure.on('ready', () => updateStartStopActionButton());
+procedure.on('notReady', () => updateStartStopActionButton());
+// ************************************************************************************************
+
 clearDeviceLogButtonElement.addEventListener('click', () => {
   commInterfaceLogEntries.length = 0;
   commInterfacesLogTable.setData(commInterfaceLogEntries);
 });
 
-const getSelectedSection = () => {
-  const selected = sectionSelectElement.selectedOptions[0];
-  if (!selected) return undefined;
-  return JSON.parse(selected.value) as SectionInfo;
-};
-
-const getSelectedAction = () => {
-  const selected = actionSelectElement.selectedOptions[0];
-  if (!selected) return undefined;
-  return JSON.parse(selected.value) as ActionInfo;
-};
-
-const clearSelectElementOptions = (el: HTMLSelectElement) => {
-  for (let index = 0; index < el.options.length; index++) el.options.remove(index);
-};
-
-sectionSelectElement.disabled = true;
-actionSelectElement.disabled = true;
 startStopActionButtonElement.disabled = true;
-
-sectionSelectElement.addEventListener('change', () => {
-  const selectedSection = getSelectedSection();
-  clearSelectElementOptions(actionSelectElement);
-  if (!selectedSection) {
-    sectionSelectElement.disabled = true;
-    actionSelectElement.disabled = true;
-    startStopActionButtonElement.disabled = true;
-    return;
-  }
-  selectedSection.actions.forEach(action => {
-    const option = document.createElement('option') as HTMLOptionElement;
-    option.value = JSON.stringify(action);
-    option.text = action.name;
-    actionSelectElement.options.add(option);
-  });
-  actionSelectElement.disabled = actionSelectElement.options.length <= 0;
-  startStopActionButtonElement.disabled = true;
-  actionSelectElement.selectedIndex = 0;
-  actionSelectElement.dispatchEvent(new Event('change'));
-});
-
-actionSelectElement.addEventListener('change', () => {
-  updateStartStopActionButton();
-});
 
 const getSelectedBenchconfig = () => {
   const selected = benchConfigsSelectElement.selectedOptions[0];
@@ -91,24 +49,18 @@ const getSelectedBenchconfig = () => {
   return JSON.parse(selected.value) as BenchConfig;
 }
 
-const getRunName = () => {
-  return runNameTextInputElement.value || undefined;
-}
-
-runNameTextInputElement.addEventListener('change', () => updateStartStopActionButton());
-
 const updateStartStopActionButton = () => {
   let disabled = false;
-  disabled = disabled || !getSelectedAction();
+  disabled = disabled || !procedure.isReady;
   disabled = disabled || !getSelectedBenchconfig();
-  disabled = disabled || !getRunName();
+  disabled = disabled || !procedure.runName;
   startStopActionButtonElement.disabled = disabled;
 }
 
 startStopActionButtonElement.addEventListener('click', (ev) => {
   ev.preventDefault();
-  const section = getSelectedSection();
-  const action = getSelectedAction();
+  const section = procedure.sectionHandler.selectedItem;
+  const action = procedure.actionHandler.selectedItem;
   if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;
@@ -134,35 +86,6 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     session.lastSectionName = section.name;
     session.lastActionName = action.name;
   }
-});
-
-// Sent after window loaded
-ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-  sessionName = viewInfo.session.name;
-  session = viewInfo.session;
-  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-    devices.push({
-      configNodeId: deviceInfo.configNodeId,
-      driverDisplayName: '',
-      gpibAddress: 1,
-      interfaceName: '',
-      unitId: deviceInfo.unitId
-    });
-  });
-  devicesTable.setData(devices);
-  clearSelectElementOptions(sectionSelectElement);
-  viewInfo.sections.forEach(section => {
-    const optionElememt = document.createElement('option') as HTMLOptionElement;
-    optionElememt.value = JSON.stringify(section);
-    optionElememt.text = section.name;
-    sectionSelectElement.options.add(optionElememt);
-  });
-  window.visualCal.resultsManager.load(sessionName);
-  sectionSelectElement.disabled = sectionSelectElement.options.length <= 0;
-  sectionSelectElement.selectedIndex = 0;
-  if (!sectionSelectElement.disabled) sectionSelectElement.dispatchEvent(new Event('change'));
-  updateStartStopActionButton();
 });
 
 // ***** LOG *****
@@ -314,10 +237,6 @@ resetButton.addEventListener('click', () => {
   window.visualCal.actionManager.reset(triggerOpts);
 });
 
-ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
-  window.visualCal.electron.showErrorDialog(error);
-});
-
 window.visualCal.actionManager.on('startError', (args) => {
   if (args.err.message) {
     alert(args.err.message);
@@ -352,6 +271,34 @@ window.visualCal.actionManager.on('resultAcquired', (info) => {
   resultsTable.setData(results);
 });
 
-updateStartStopActionButton();
+// ================================================================================================
+// Initialize
+// ================================================================================================
+ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
+  sessionName = viewInfo.session.name;
+  session = viewInfo.session;
+  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
+  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+    devices.push({
+      configNodeId: deviceInfo.configNodeId,
+      driverDisplayName: '',
+      gpibAddress: 1,
+      interfaceName: '',
+      unitId: deviceInfo.unitId
+    });
+  });
+  devicesTable.setData(devices);
+  procedure.sectionHandler.items = viewInfo.sections;
+  window.visualCal.resultsManager.load(sessionName);
+  updateStartStopActionButton();
+});
 
+ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
+  window.visualCal.electron.showErrorDialog(error);
+});
+
+// Start
+updateStartStopActionButton();
 ipcRenderer.send(IpcChannels.session.viewInfo.request);
+
+// ************************************************************************************************
