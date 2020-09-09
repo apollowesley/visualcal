@@ -4,6 +4,16 @@ import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { IpcChannels } from '../../../../constants';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { LoadResponseArgs } from '../../../managers/RendererResultManager';
+import { ActionHandler } from './ActionHandler';
+
+const actionHandler = new ActionHandler({
+  sectionElementId: 'vc-section-select',
+  actionElementId: 'vc-action-select',
+  runTimeElementId: 'vc-run-name-text-input'
+});
+
+actionHandler.on('readyToStart', () => alert('Ready!'));
+actionHandler.on('notReadyToStart', () => alert('Not ready :('));
 
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const procedureStatusElement = document.getElementById('vc-procedure-status') as HTMLHeadingElement;
