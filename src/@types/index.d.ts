@@ -148,4 +148,5 @@ interface VisualCalWindowInitialLoadData {
   user?: User;
   session?: Session;
   procedure?: Procedure;
+  sections?: SectionInfo[];
 }

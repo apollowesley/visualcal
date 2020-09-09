@@ -5,7 +5,9 @@ import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
 import * as WindowUtils from '../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
+import visualCalNodeRed from '../node-red';
 
+const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
 
 interface Events {
@@ -213,11 +215,19 @@ export class WindowManager extends TypedEmitter<Events> {
       const activeProcedureName = await global.visualCal.procedureManager.getActive();
       let activeProcedure: Procedure | undefined = undefined;
       if (activeProcedureName) activeProcedure = await global.visualCal.procedureManager.getOne(activeProcedureName);
+      let sections: SectionInfo[] | undefined = undefined;
+      if (nodeRed.isRunning) {
+        sections = nodeRed.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+        sections.forEach(s => {
+          s.actions = nodeRed.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+        });
+      }
       const initialLoadData: VisualCalWindowInitialLoadData = {
         windowId: w.visualCal.id,
         user: global.visualCal.userManager.activeUser ? global.visualCal.userManager.activeUser : undefined,
         session: global.visualCal.userManager.activeSession ? global.visualCal.userManager.activeSession : undefined,
-        procedure: activeProcedure
+        procedure: activeProcedure,
+        sections: (sections && sections.length > 0) ? sections : undefined
       };
       w.webContents.send(IpcChannels.windows.initialLoadData, initialLoadData);
       if (onWebContentsDidFinishLoading) onWebContentsDidFinishLoading(w);
