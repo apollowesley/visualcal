@@ -31,7 +31,7 @@ if (window.require) {
         console.info(`Current window Id: ${windowId}`);
         switch (windowId) {
             case 'main': // main
-                require('../../dist/renderers/windows/session/view.js');
+                require('../../dist/renderers/windows/session/view/index.js');
                 break;
             case 'login': // Login
                 require('../../dist/renderers/windows/login.js');
