@@ -203,8 +203,8 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   ev.preventDefault();
   const section = procedure.sectionHandler.selectedItem;
   const action = procedure.actionHandler.selectedItem;
-  const runName = procedure.runName;
-  if (!section || !action || !runName) {
+  const runName = procedure.runName ? procedure.runName : new Date().toUTCString();
+  if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;
   }
