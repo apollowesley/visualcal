@@ -1,6 +1,7 @@
 import Tabulator from 'tabulator-tables';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { StateChangeInfo } from '../../../managers/RendererActionManager';
+import { DeviceConfigHandler } from './DeviceConfigHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
 import { IpcHandler } from './IpcHandler';
 import { ProcedureHandler } from './ProcedureHandler';
@@ -70,7 +71,7 @@ const updateStartStopActionButton = (info?: StateChangeInfo) => {
   let disabled = false;
   disabled = disabled || !procedure.isReady;
   // disabled = disabled || !getSelectedBenchconfig();
-  disabled = disabled || !procedure.runName;
+  disabled = disabled || !procedure.runName || results.getDoesRunExist(procedure.runName);
   startStopActionButtonElement.disabled = disabled;
 
   if (!info) return;
@@ -139,6 +140,21 @@ const procedure = new ProcedureHandler({
 
 procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
+procedure.on('runNameChanged', () => updateStartStopActionButton());
+// ************************************************************************************************
+
+// ================================================================================================
+// Bench and device configuration
+// ================================================================================================
+const deviceConfigHandler = new DeviceConfigHandler({
+  configsSelectElementId: 'vc-bench-config-select'
+});
+
+deviceConfigHandler.on('selectedBenchConfigChanged', (config) => {
+  // TODO: Finish
+  if (config) alert(config.name);
+});
+
 // ************************************************************************************************
 
 // ================================================================================================
@@ -226,7 +242,7 @@ const init = async () => {
   try {
     const info = await ipc.getViewInfo();
     session = info.session;
-    deviceConfigurationNodeInfosForCurrentFlow = info.deviceConfigurationNodeInfosForCurrentFlow;
+    deviceConfigurationNodeInfosForCurrentFlow = info.deviceNodes;
     deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
       devices.push({
         configNodeId: deviceInfo.configNodeId,
@@ -239,9 +255,11 @@ const init = async () => {
     await devicesTable.setData(devices);
     results.loadResultsForSession(session.name);
     procedure.sectionHandler.items = info.sections;
+    deviceConfigHandler.benchConfigHandler.items = info.user.benchConfigs;
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
   }
 }
+
 init();
 // ************************************************************************************************

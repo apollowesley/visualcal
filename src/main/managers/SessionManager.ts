@@ -70,10 +70,19 @@ export class SessionManager extends TypedEmitter<Events> {
       }
     });
 
-    ipcMain.on(IpcChannels.session.viewInfo.request, (event) => {
+    ipcMain.on(IpcChannels.session.viewInfo.request, async (event) => {
+      if (!this.fUserManager.activeUser) {
+        event.reply(IpcChannels.session.viewInfo.error, new Error('No active user'));
+        return;
+      }
       const activeSession = this.fUserManager.activeSession;
       if (!activeSession) {
         event.reply(IpcChannels.session.viewInfo.error, new Error('No active session'));
+        return;
+      }
+      const procedure = await global.visualCal.procedureManager.getOne(activeSession.procedureName);
+      if (!procedure) {
+        event.reply(IpcChannels.session.viewInfo.error, new Error(`Procedure, ${activeSession.procedureName}, does not exist`));
         return;
       }
       const sections: SectionInfo[] = nodeRed.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
@@ -82,9 +91,12 @@ export class SessionManager extends TypedEmitter<Events> {
       });
       const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
       const viewInfo: SessionViewWindowOpenIPCInfo = {
+        user: this.fUserManager.activeUser,
         session: activeSession,
+        procedure: procedure,
         sections: sections,
-        deviceConfigurationNodeInfosForCurrentFlow: deviceConfigurationNodeInfosForCurrentFlow
+        benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
+        deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
       };
       event.reply(IpcChannels.session.viewInfo.response, viewInfo);
     });

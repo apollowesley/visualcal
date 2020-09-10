@@ -1,5 +1,8 @@
 export interface SessionViewWindowOpenIPCInfo {
+  user: User;
+  benchConfig?: BenchConfig;
   session: Session,
+  procedure: Procedure;
   sections: SectionInfo[];
-  deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[];
+  deviceNodes: DeviceNodeDriverRequirementsInfo[];
 }
