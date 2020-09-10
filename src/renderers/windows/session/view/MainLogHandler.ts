@@ -1,4 +1,5 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
+import Tabulator from 'tabulator-tables';
 
 interface ConstructorOptions {
   tableId: string;

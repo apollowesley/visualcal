@@ -541,7 +541,7 @@
 		},
 		"node-red-dashboard": {
 			"name": "node-red-dashboard",
-			"version": "2.23.2",
+			"version": "2.23.3",
 			"local": false,
 			"nodes": {
 				"ui_base": {
