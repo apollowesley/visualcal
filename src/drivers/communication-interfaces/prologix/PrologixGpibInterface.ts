@@ -15,10 +15,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.writeString('++mode 1');
     await this.writeString('++auto 0');
     await this.writeString('++ifc');
-    setTimeout(() => {
-      log.debug('Prologix GPIB connected');
-      super.onConnected();
-    }, 1000);
+    log.debug('Prologix GPIB connected');
+    await super.onConnected();
   }
 
   async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {

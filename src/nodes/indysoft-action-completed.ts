@@ -1,6 +1,7 @@
 import { NodeProperties } from 'node-red';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
 import VisualCalNodeRed from '../main/node-red';
+import { TriggerOptions } from './indysoft-action-start-types';
 
 const nodeRed = VisualCalNodeRed();
 
@@ -26,7 +27,12 @@ module.exports = (RED: NodeRed) => {
         if (done) done();
         return;
       }
-      startNode.runtime.emit('stop');
+      const opts: TriggerOptions = {
+        action: msg.payload.action,
+        section: msg.payload.section,
+        runId: msg.payload.runId ? msg.payload.runId : 'unknown'
+      }
+      startNode.runtime.emit('stop', opts);
       global.visualCal.actionManager.stateChanged(startNode.runtime, 'completed');
       this.status({
         fill: 'blue',

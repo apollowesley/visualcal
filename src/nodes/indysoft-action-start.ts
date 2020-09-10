@@ -1,6 +1,6 @@
 import { NodeRed, NodeResetOptions } from '../@types/logic-server';
 import { IndySoftNodeTypeNames } from '../constants';
-import { RuntimeNode, RuntimeProperties } from './indysoft-action-start-types';
+import { RuntimeNode, RuntimeProperties, TriggerOptions } from './indysoft-action-start-types';
 import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
 import RED from 'node-red';
 
@@ -51,7 +51,6 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
       return;
     }
     nodeRed.settings.resetAllConnectedNodes(this);
-    global.visualCal.communicationInterfaceManager.enableAll();
     this.status({
       fill: 'green',
       shape: 'dot',
@@ -67,15 +66,14 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
     });
     global.visualCal.actionManager.stateChanged(this, 'started');
   });
-  this.on('stop', () => {
+  this.on('stop', (opts?: TriggerOptions) => {
     if (!this.section) {
       this.error('Missing secton configuration');
       return;
     }
     resetStatus();
-    global.visualCal.communicationInterfaceManager.disableAll();
     nodeRed.settings.resetAllConnectedInstructionNodes(this);
-    global.visualCal.actionManager.stateChanged(this, 'stopped');
+    global.visualCal.actionManager.stateChanged(this, 'stopped', opts);
   });
   this.on('reset', (options?: NodeResetOptions) => {
     resetStatus();

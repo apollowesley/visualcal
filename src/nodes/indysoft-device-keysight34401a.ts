@@ -112,16 +112,6 @@ module.exports = (RED: NodeRed) => {
           return;
         }
         this.device.setCommunicationInterface(this.communicationInterface);
-        if (!this.communicationInterface.isConnected) {
-          this.status({ fill: 'blue', shape: 'ring', text: 'Connecting' });
-          try {
-            await this.communicationInterface.connect();
-          } catch (error) {
-            this.status({ fill: 'red', shape: 'dot', text: error.message });
-            send([error, null]);
-            return;
-          }
-        }
         try {
           if (this.measure) {
             this.status({ fill: 'blue', shape: 'ring', text: 'Taking measurement' });

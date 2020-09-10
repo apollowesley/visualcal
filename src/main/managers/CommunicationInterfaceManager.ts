@@ -120,16 +120,21 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
   async connectAll() {
     return new Promise(async (resolve, reject) => {
       try {
-        this.fInterfaces.forEach(async i => await i.connect());
+        for (const iface of this.fInterfaces) {
+          await iface.connect();
+        }
         return resolve();
       } catch (error) {
+        this.disconnectAll();
         return reject(error.message);
       }
     });
   }
 
   disconnectAll() {
-    this.fInterfaces.forEach(i => i.disconnect());
+    for (const iface of this.fInterfaces) {
+      iface.disconnect();
+    }
   }
 
   enableAll() {

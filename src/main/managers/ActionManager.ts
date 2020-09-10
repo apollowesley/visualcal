@@ -33,16 +33,21 @@ export class ActionManager extends EventEmitter {
   async start(opts: TriggerOptions) {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
     loadCommunicationConfiguration(opts.session);
+    global.visualCal.communicationInterfaceManager.enableAll();
+    await global.visualCal.communicationInterfaceManager.connectAll();
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
   }
 
   stop(opts: TriggerOptions) {
+    global.visualCal.communicationInterfaceManager.disconnectAll();
+    global.visualCal.communicationInterfaceManager.disableAll();
     nodeRed.stopVisualCalActionStartNode(opts.section, opts.action);
   }
 
-  stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState) {
+  stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState, opts?: TriggerOptions) {
     setImmediate(() => {
       if (!node.section) throw new Error(`indysoft-action-start node section property is not defined for node ${node.id}`);
+      if (state === 'stopped' && opts) this.stop(opts);
       ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });
     });
   }

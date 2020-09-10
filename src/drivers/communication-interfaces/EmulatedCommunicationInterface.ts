@@ -21,6 +21,7 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
 
   disconnect(): void {
     this.isConnectedInternal = false;
+    this.onDisconnected();
   }
 
   get isConnected(): boolean {

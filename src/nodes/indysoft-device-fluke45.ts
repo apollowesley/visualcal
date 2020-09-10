@@ -105,16 +105,6 @@ module.exports = (RED: NodeRed) => {
         }
         const devConfig = getDeviceConfig(this.deviceConfigNode.unitId);
         this.device.setCommunicationInterface(this.communicationInterface);
-        if (!this.communicationInterface.isConnected) {
-          this.status({ fill: 'blue', shape: 'ring', text: 'Connecting' });
-          try {
-            await this.communicationInterface.connect();
-          } catch (error) {
-            this.status({ fill: 'red', shape: 'dot', text: error.message });
-            send([error, null]);
-            return;
-          }
-        }
         try {
           const ibd = this.device as IControllableDevice;
           if (devConfig?.isGpib) {
