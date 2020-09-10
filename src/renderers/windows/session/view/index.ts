@@ -146,7 +146,7 @@ const deviceConfigHandler = new DeviceConfigHandler({
 
 deviceConfigHandler.on('selectedBenchConfigChanged', (config) => {
   // TODO: Finish
-  if (config) alert(config.name);
+  if (!config) return;
 });
 
 // ************************************************************************************************
