@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import Tabulator from 'tabulator-tables';
-import { IpcChannels } from '../../../constants';
+import { IpcChannels } from '../../../../constants';
 
 const getActiveUser = () => {
   if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user) return undefined;
