@@ -4,6 +4,7 @@ import { StateChangeInfo } from '../../../managers/RendererActionManager';
 import { DeviceConfigHandler } from './DeviceConfigHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
 import { IpcHandler } from './IpcHandler';
+import { MainLogHandler } from './MainLogHandler';
 import { ProcedureHandler } from './ProcedureHandler';
 import { ResultHandler } from './ResultHandler';
 import { StatusHandler } from './StatusHandler';
@@ -13,20 +14,7 @@ const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button'
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 
-const logEntries: any[] = [];
-let sessionLogTable = new Tabulator('#vc-session-log', {
-  data: logEntries,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Type', field: 'type' },
-    { title: 'Session', field: 'sessionId' },
-    { title: 'Run', field: 'runId' },
-    { title: 'Section', field: 'section' },
-    { title: 'Action', field: 'action' },
-    { title: 'State', field: 'state' },
-    { title: 'Message', field: 'message' }
-  ]
-});
+
 
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
@@ -92,10 +80,7 @@ const updateStartStopActionButton = (info?: StateChangeInfo) => {
 // ================================================================================================
 const ipc = new IpcHandler();
 
-ipc.on('mainLogEntry', async (entry) => {
-  logEntries.push(entry);
-  await sessionLogTable.setData(logEntries);
-});
+ipc.on('mainLogEntry', async (entry) => mainLog.add(entry));
 // ************************************************************************************************
 
 // ================================================================================================
@@ -110,8 +95,13 @@ const status = new StatusHandler({
 status.on('stateChanged', (info) => updateStartStopActionButton(info));
 // ************************************************************************************************
 
+const mainLog = new MainLogHandler({
+  clearButtonElementId: 'vc-clear-button',
+  tableId: 'vc-session-log'
+});
+
 // ================================================================================================
-//  Status handler
+//  Device log handler
 // ================================================================================================
 const deviceLog = new DeviceLogHandler({
   clearButtonElementId: 'vc-clear-device-log',

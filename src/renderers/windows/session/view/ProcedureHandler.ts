@@ -4,7 +4,7 @@ import { SelectHandler } from './SelectHandler';
 interface Events {
   actionChanged: (action?: ActionInfo) => void;
   runNameChanged: (name?: string) => void;
-  ready: (section: SectionInfo, action: ActionInfo, runName: string) => void;
+  ready: (section: SectionInfo, action: ActionInfo, runName?: string) => void;
   notReady: () => void;
 }
 
@@ -49,7 +49,7 @@ export class ProcedureHandler extends TypedEmitter<Events> {
   get isReady() { return this.sectionHandler.selectedItem && this.actionHandler.selectedItem && this.runName; }
 
   private onCheckRunStateAndNotify() {
-    if (this.sectionHandler.selectedItem && this.actionHandler.selectedItem && this.runName) this.emit('ready', this.sectionHandler.selectedItem, this.actionHandler.selectedItem, this.runName);
+    if (this.sectionHandler.selectedItem && this.actionHandler.selectedItem) this.emit('ready', this.sectionHandler.selectedItem, this.actionHandler.selectedItem, this.runName ? this.runName : undefined);
     else this.emit('notReady');
   }
 
