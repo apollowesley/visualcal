@@ -117,11 +117,15 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     });
   }
 
-  async connectAll() {
+  /**
+   * Connects all registered communication interfaces
+   * @param names Optional array of communication interfaces to connect
+   */
+  async connectAll(names?: string[]) {
     return new Promise(async (resolve, reject) => {
       try {
         for (const iface of this.fInterfaces) {
-          await iface.connect();
+          if (!names || (names && names.includes(iface.name))) await iface.connect();
         }
         return resolve();
       } catch (error) {
