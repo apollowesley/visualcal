@@ -1,21 +1,70 @@
-import { ipcRenderer } from 'electron';
 import Tabulator from 'tabulator-tables';
-import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
-import { IpcChannels } from '../../../../constants';
 import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
-import { ProcedureHandler } from './ProcedureHandler';
-import { StatusHandler } from './StatusHandler';
-import { DeviceLogHandler } from './DeviceLogHandler';
-import { ResultHandler } from './ResultHandler';
 import { StateChangeInfo } from '../../../managers/RendererActionManager';
+import { DeviceLogHandler } from './DeviceLogHandler';
+import { IpcHandler } from './IpcHandler';
+import { ProcedureHandler } from './ProcedureHandler';
+import { ResultHandler } from './ResultHandler';
+import { StatusHandler } from './StatusHandler';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
+const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
+
+const logEntries: any[] = [];
+let sessionLogTable = new Tabulator('#vc-session-log', {
+  data: logEntries,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Type', field: 'type' },
+    { title: 'Session', field: 'sessionId' },
+    { title: 'Run', field: 'runId' },
+    { title: 'Section', field: 'section' },
+    { title: 'Action', field: 'action' },
+    { title: 'State', field: 'state' },
+    { title: 'Message', field: 'message' }
+  ]
+});
 
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
-const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
+
+const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
+  const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
+  const foundDeviceConfig = deviceConfigurationNodeInfosForCurrentFlow.find(d => d.unitId === deviceInfo.unitId);
+  if (!foundDeviceConfig) throw new Error('Unable to find device config');
+  const retVal: Tabulator.SelectParams = {
+    values: foundDeviceConfig.availableDrivers.map(d => d.displayName)
+  };
+  return retVal;
+};
+
+const getBenchConfigurationInterfaces = () => {
+  if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user || !window.visualCal.initialLoadData.session || !window.visualCal.initialLoadData.session.configuration || !window.visualCal.initialLoadData.session.configuration.benchConfigName) return [];
+  const config = window.visualCal.initialLoadData.user?.benchConfigs.find(b => b.name === window.visualCal.initialLoadData?.session?.configuration?.benchConfigName);
+  if (!config) return [];
+  return config.interfaces;
+}
+
+const devicesTableGetCommInterfaces = () => {
+  if (!session.configuration || !session.configuration.benchConfigName) return [];
+  const retVal: Tabulator.SelectParams = {
+    values: getBenchConfigurationInterfaces().map(d => d.name)
+  };
+  return retVal;
+};
+
+const devicesTable = new Tabulator('#vc-devices-tabulator', {
+  data: devices,
+  layout: 'fitColumns',
+  columns: [
+    { title: 'Device Unit Id', field: 'unitId' },
+    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
+    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => devicesTableGetCommInterfaces() },
+    { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
+  ]
+});
 
 const updateStartStopActionButton = (info?: StateChangeInfo) => {
   let disabled = false;
@@ -36,6 +85,17 @@ const updateStartStopActionButton = (info?: StateChangeInfo) => {
     session.lastActionName = info.action;
   }
 }
+
+// ================================================================================================
+//  IPC handler
+// ================================================================================================
+const ipc = new IpcHandler();
+
+ipc.on('mainLogEntry', async (entry) => {
+  logEntries.push(entry);
+  await sessionLogTable.setData(logEntries);
+});
+// ************************************************************************************************
 
 // ================================================================================================
 //  Status handler
@@ -80,30 +140,6 @@ const procedure = new ProcedureHandler({
 procedure.on('ready', () => updateStartStopActionButton());
 procedure.on('notReady', () => updateStartStopActionButton());
 // ************************************************************************************************
-
-// ***** LOG *****
-
-const logEntries: any[] = [];
-let sessionLogTable = new Tabulator('#vc-session-log', {
-  data: logEntries,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Type', field: 'type' },
-    { title: 'Session', field: 'sessionId' },
-    { title: 'Run', field: 'runId' },
-    { title: 'Section', field: 'section' },
-    { title: 'Action', field: 'action' },
-    { title: 'State', field: 'state' },
-    { title: 'Message', field: 'message' }
-  ]
-});
-
-ipcRenderer.on(IpcChannels.log.all, async (_, entry: any) => {
-  logEntries.push(entry);
-  await sessionLogTable.setData(logEntries);
-});
-
-// ***** END LOG *****
 
 // ================================================================================================
 // Troubleshooting and reset
@@ -151,32 +187,6 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
 // ================================================================================================
 // Initialize
 // ================================================================================================
-window.visualCal.onInitialLoadData = (data) => {
-  if (data.sections) {
-    procedure.sectionHandler.items = data.sections;
-  }
-}
-
-ipcRenderer.on(IpcChannels.session.viewInfo.response, async (_, viewInfo: SessionViewWindowOpenIPCInfo) => {
-  session = viewInfo.session;
-  deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceConfigurationNodeInfosForCurrentFlow;
-  deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-    devices.push({
-      configNodeId: deviceInfo.configNodeId,
-      driverDisplayName: '',
-      gpibAddress: 1,
-      interfaceName: '',
-      unitId: deviceInfo.unitId
-    });
-  });
-  await devicesTable.setData(devices);
-  results.loadResultsForSession(session.name);
-});
-
-ipcRenderer.on(IpcChannels.session.viewInfo.error, (_, error: Error) => {
-  window.visualCal.electron.showErrorDialog(error);
-});
-
 startStopActionButtonElement.disabled = true;
 
 startStopActionButtonElement.addEventListener('click', (ev) => {
@@ -212,43 +222,26 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   }
 });
 
-ipcRenderer.send(IpcChannels.session.viewInfo.request);
-// ************************************************************************************************
-
-
-// TODO: Move the remaining code to it's own handler(s)
-const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
-  const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
-  const foundDeviceConfig = deviceConfigurationNodeInfosForCurrentFlow.find(d => d.unitId === deviceInfo.unitId);
-  if (!foundDeviceConfig) throw new Error('Unable to find device config');
-  const retVal: Tabulator.SelectParams = {
-    values: foundDeviceConfig.availableDrivers.map(d => d.displayName)
-  };
-  return retVal;
-};
-
-const getBenchConfigurationInterfaces = () => {
-  if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user || !window.visualCal.initialLoadData.session || !window.visualCal.initialLoadData.session.configuration || !window.visualCal.initialLoadData.session.configuration.benchConfigName) return [];
-  const config = window.visualCal.initialLoadData.user?.benchConfigs.find(b => b.name === window.visualCal.initialLoadData?.session?.configuration?.benchConfigName);
-  if (!config) return [];
-  return config.interfaces;
+const init = async () => {
+  try {
+    const info = await ipc.getViewInfo();
+    session = info.session;
+    deviceConfigurationNodeInfosForCurrentFlow = info.deviceConfigurationNodeInfosForCurrentFlow;
+    deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
+      devices.push({
+        configNodeId: deviceInfo.configNodeId,
+        driverDisplayName: '',
+        gpibAddress: 1,
+        interfaceName: '',
+        unitId: deviceInfo.unitId
+      });
+    });
+    await devicesTable.setData(devices);
+    results.loadResultsForSession(session.name);
+    procedure.sectionHandler.items = info.sections;
+  } catch (error) {
+    window.visualCal.electron.showErrorDialog(error);
+  }
 }
-
-const devicesTableGetCommInterfaces = () => {
-  if (!session.configuration || !session.configuration.benchConfigName) return [];
-  const retVal: Tabulator.SelectParams = {
-    values: getBenchConfigurationInterfaces().map(d => d.name)
-  };
-  return retVal;
-};
-
-const devicesTable = new Tabulator('#vc-devices-tabulator', {
-  data: devices,
-  layout: 'fitColumns',
-  columns: [
-    { title: 'Device Unit Id', field: 'unitId' },
-    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
-    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => devicesTableGetCommInterfaces() },
-    { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
-  ]
-});
+init();
+// ************************************************************************************************
