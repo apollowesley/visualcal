@@ -2,6 +2,7 @@ import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { Keysight34401A } from '../drivers/devices/digital-multimeters/Keysight34401A';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
+import { getDeviceConfig } from '../main/node-red/utils';
 
 export const NODE_TYPE = 'indysoft-device-keysight34401a';
 
@@ -80,10 +81,6 @@ module.exports = (RED: NodeRed) => {
     if (this.preDelay <= 0) this.preDelay = 1000;
     const reset = () => {
       this.status({});
-      if (this.communicationInterface) {
-        this.communicationInterface.disconnect();
-        this.communicationInterface = undefined;
-      }
     };
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
@@ -111,8 +108,15 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
+        const devConfig = getDeviceConfig(this.deviceConfigNode.unitId);
         this.device.setCommunicationInterface(this.communicationInterface);
         try {
+          const ibd = this.device as IControllableDevice;
+          if (devConfig && devConfig.isGpib) {
+            ibd.isGpib = true;
+            ibd.gpibPrimaryAddress = devConfig.gpibAddress;
+            await this.communicationInterface.setDeviceAddress(devConfig.gpibAddress);
+          }
           if (this.measure) {
             this.status({ fill: 'blue', shape: 'ring', text: 'Taking measurement' });
             const measurement = await this.device.getMeasurement({

@@ -72,10 +72,6 @@ module.exports = (RED: NodeRed) => {
     if (this.preDelay <= 0) this.preDelay = 1000;
     const reset = () => {
       this.status({});
-      if (this.communicationInterface) {
-        this.communicationInterface.disconnect();
-        this.communicationInterface = undefined;
-      }
     };
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
@@ -107,10 +103,10 @@ module.exports = (RED: NodeRed) => {
         this.device.setCommunicationInterface(this.communicationInterface);
         try {
           const ibd = this.device as IControllableDevice;
-          if (devConfig?.isGpib) {
+          if (devConfig && devConfig.isGpib) {
             ibd.isGpib = true;
             ibd.gpibPrimaryAddress = devConfig.gpibAddress;
-            this.communicationInterface.setDeviceAddress(devConfig.gpibAddress);
+            await this.communicationInterface.setDeviceAddress(devConfig.gpibAddress);
           }
           if (this.measure) {
             this.status({ fill: 'blue', shape: 'ring', text: 'Taking measurement' });

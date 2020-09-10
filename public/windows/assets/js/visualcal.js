@@ -58,7 +58,7 @@ if (window.require) {
                 require('../../dist/renderers/windows/update-app.js');
                 break;
             case 'bench-configurations-view':
-                require('../../dist/renderers/windows/bench-config/view.js');
+                require('../../dist/renderers/windows/bench-config/view/index.js');
                 break;
         }
         window.dispatchEvent(new Event('visualCalBootstrapLoaded'));

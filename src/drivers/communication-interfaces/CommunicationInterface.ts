@@ -200,7 +200,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const handler = (data: ArrayBuffer) => {
           const dataString = new TextDecoder().decode(data);
           this.emit('stringReceived', this, dataString);
@@ -209,7 +209,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
         const response: ReadQueueItem = {
           callback: handler
         };
-        this.writeString(data, encoding, response)
+        await this.writeString(data, encoding, response)
         //.then(() => resolve())
         .catch(error => {
           this.onError(error);

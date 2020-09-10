@@ -85,21 +85,6 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
     return !this.fConnecting && this.fSerialPort.isOpen && !this.fSerialPort.destroyed;
   }
 
-  async setDeviceAddress(address: number): Promise<void> {
-    log.debug(`Setting device GPIB address to ${address}`);
-    const data: string[] = ['++auto 0', `++addr ${address}`, '++auto 1'];
-    data.forEach(d => {
-      if (!this.fSerialPort) {
-        const errMsg = 'No connection';
-        const err = new Error(errMsg);
-        this.onError(err);
-        throw err;
-      }
-      this.fSerialPort.write(`${d}\n`);
-    });
-    log.debug(`Device GPIB address set to ${address}`);
-  }
-
   write(data: ArrayBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
       try {

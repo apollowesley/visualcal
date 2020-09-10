@@ -68,10 +68,6 @@ module.exports = (RED: NodeRed) => {
     }
     const reset = () => {
       this.status({});
-      if (this.communicationInterface) {
-        this.communicationInterface.disconnect();
-        this.communicationInterface = undefined;
-      }
     };
     this.on('input', async (msg: NodeRedNodeMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {

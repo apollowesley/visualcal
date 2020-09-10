@@ -1,5 +1,5 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { SelectHandler } from './SelectHandler';
+import { SelectHandler } from '../../../components/SelectHandler';
 
 interface Events {
   actionChanged: (action?: ActionInfo) => void;
