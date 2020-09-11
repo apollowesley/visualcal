@@ -23,13 +23,6 @@ interface DeviceCommunicationInterfaceNamePair {
 let driversPackagejson: DriversPackageJson;
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
-export const onComment = (_source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => {
-  console.debug(`[global.visualCal.nodeRed.app.settings.onComment] [${node.type}] [${node.id}] [${type}] ${comment}`);
-  if (type === 'error') {
-    dialog.showErrorBox('An error occured', comment);
-  }
-};
-
 export const getCommunicationInterfaceForDevice = (deviceName: string) => {
   const pair = deviceCommunicationInterfaces.find(dci => dci.deviceName.toLowerCase() === deviceName.toLowerCase());
   if (!pair) return undefined;

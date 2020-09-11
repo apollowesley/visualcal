@@ -48,7 +48,6 @@ export interface Settings {
   tcpMsgQueueSize?: number;
   currentProcedureShortName?: string;
   paletteCategories?: string[];
-  onComment: (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => void;
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
   getDriverForDevice: (deviceName: string) => Promise<IControllableDevice | null>;
   getAllNodes(): NodeRedRuntimeNode[];
