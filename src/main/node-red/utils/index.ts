@@ -195,33 +195,6 @@ export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) =>
   });
 };
 
-export const getProcedureStatus = () => {
-  const procedureNode = nodeRed.visualCalProcedureSidebarNode;
-  if (!procedureNode) return null;
-  const status: ProcedureStatus = {
-    name: procedureNode.runtime.name,
-    shortName: procedureNode.runtime.shortName,
-    sections: []
-  };
-  const sectionNodes = nodeRed.visualCalSectionConfigurationNodes;
-  sectionNodes.forEach(sectionNode => {
-    const actionStatuses: ActionStatus[] = [];
-    const actionNodesForSection = nodeRed.getVisualCalActionStartNodesForSection(sectionNode.runtime.shortName);
-    actionNodesForSection.forEach(actionNode => {
-      if (actionNode) actionStatuses.push({
-        name: actionNode.runtime.name,
-        isRunning: actionNode.runtime.isRunning
-      });
-    });
-    status.sections.push({
-      name: sectionNode.runtime.name,
-      shortName: sectionNode.runtime.shortName,
-      actions: actionStatuses
-    });
-  });
-  return status;
-};
-
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);

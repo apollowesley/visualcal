@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import type { Settings } from '../@types/logic-server';
-import { findNodeById, findNodesByType, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, getProcedureStatus, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
+import { findNodeById, findNodesByType, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig, resetConnectedInstructionNodes, resetAllConnectedNodes } from './node-red/utils';
 import electronLog from 'electron-log';
 
 const log = electronLog.scope('Logic server');
@@ -16,7 +16,6 @@ const settings: Settings = {
   getCommunicationInterfaceForDevice: getCommunicationInterfaceForDevice,
   getDriverForDevice: getDriverForDevice,
   getNodeConfig: getNodeConfig,
-  getProcedureStatus: getProcedureStatus,
   credentialSecret: 'IndySoft#927',
   resetAllConnectedInstructionNodes: resetConnectedInstructionNodes,
   resetAllConnectedNodes: resetAllConnectedNodes,

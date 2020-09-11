@@ -56,7 +56,6 @@ export interface Settings {
   getNodeConfig(id: string, configName: string): NodeRedRuntimeNode | undefined;
   resetAllConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions): void;
   resetAllConnectedInstructionNodes(startFrom: NodeRedRuntimeNode): void;
-  getProcedureStatus(): ProcedureStatus | null;
   functionGlobalContext: VisualCalContextGlobal;
   logging?: NodeRedLogging;
   editorTheme?: {
