@@ -168,8 +168,6 @@ export const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNod
   return findNodeById(configId);
 };
 
-<<<<<<< HEAD
-=======
 export const resetAllConnectedNodes = (startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) => {
   if (options && options.targetId !== startFrom.id) return;
   if (!startFrom.wires) return;
@@ -197,7 +195,6 @@ export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) =>
   });
 };
 
->>>>>>> production
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
