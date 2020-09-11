@@ -3,8 +3,7 @@ import { ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
 import { RuntimeNode as IndySoftActionStartRuntimeNode, TriggerOptions } from '../../nodes/indysoft-action-start-types';
 import NodeRed from '../node-red';
-import { loadCommunicationConfiguration } from '../node-red/utils';
-import { Device } from '../../drivers/devices/Device';
+import { loadDevices } from '../node-red/utils';
 
 const nodeRed = NodeRed();
 
@@ -33,7 +32,8 @@ export class ActionManager extends EventEmitter {
 
   async start(opts: TriggerOptions) {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
-    loadCommunicationConfiguration(opts.session);
+    global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
+    loadDevices(opts.session);
     global.visualCal.communicationInterfaceManager.enableAll();
     await global.visualCal.communicationInterfaceManager.connectAll();
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);

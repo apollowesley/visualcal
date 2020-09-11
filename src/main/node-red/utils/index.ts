@@ -229,7 +229,7 @@ export const getProcedureStatus = () => {
   return status;
 };
 
-const loadDevices = (session: Session) => {
+export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
   session.configuration.devices.forEach(deviceConfig => {
@@ -250,11 +250,6 @@ const loadDevices = (session: Session) => {
     // const driverDisplayName = deviceConfig.driver ? `${deviceConfig.driver.manufacturer} ${deviceConfig.driver.deviceModel}` : '';
     // assignDriverToDevice(deviceConfig.unitId, driverDisplayName);
   });
-}
-
-export const loadCommunicationConfiguration = (session: Session) => {
-  global.visualCal.communicationInterfaceManager.loadFromSession(session);
-  loadDevices(session);
 }
 
 export const init = () => {

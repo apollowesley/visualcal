@@ -6,7 +6,6 @@ import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
 import { NodeRed } from '../@types/logic-server';
-import { NodeRedFlowManager } from './managers/NodeRedFlowManager';
 import { ResultManager } from './managers/ResultManager';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
@@ -49,7 +48,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     windowManager: new WindowManager(),
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(userManager),
-    nodeRedFlowManager: new NodeRedFlowManager(),
     resultManager: new ResultManager(),
     actionManager: new ActionManager(),
     userInteractionManager: new UserInteractionManager(),
