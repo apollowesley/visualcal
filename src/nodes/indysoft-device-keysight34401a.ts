@@ -3,6 +3,7 @@ import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, 
 import { Keysight34401A } from '../drivers/devices/digital-multimeters/Keysight34401A';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
 import { getDeviceConfig } from '../main/node-red/utils';
+import { DeviceManager } from '../main/managers/DeviceManager';
 
 export const NODE_TYPE = 'indysoft-device-keysight34401a';
 
@@ -82,6 +83,7 @@ module.exports = (RED: NodeRed) => {
     const reset = () => {
       this.status({});
     };
+    this.device = DeviceManager.instance.get('Keysight 34401A', this.deviceConfigNode.unitId);
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
         if (!RED.settings.getCommunicationInterfaceForDevice) {
@@ -94,7 +96,6 @@ module.exports = (RED: NodeRed) => {
           });
           return;
         }
-        this.device = new Keysight34401A();
         this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;

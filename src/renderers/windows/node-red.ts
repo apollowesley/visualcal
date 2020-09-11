@@ -5,8 +5,8 @@ import { Red, Nodes, NodeProperties } from 'node-red';
 const _setImmediate = setImmediate
 const _clearImmediate = clearImmediate
 process.once('loaded', () => {
-  global.setImmediate = _setImmediate
-  global.clearImmediate = _clearImmediate
+  global.setImmediate = _setImmediate;
+  global.clearImmediate = _clearImmediate;
 });
 
 interface NodesModule extends Nodes {

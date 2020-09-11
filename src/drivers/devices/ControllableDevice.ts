@@ -20,12 +20,12 @@ export abstract class ControllableDevice extends Device implements IControllable
     if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
     if (typeof data === 'object') {
       await this.fCommunicationInterface.writeData(data, readHandler);
-      super.emit('write', this.fCommunicationInterface, data);
+      this.emit('write', this.fCommunicationInterface, data);
       return;
     }
     const dataArrayBuffer = new TextEncoder().encode(data);
     await this.fCommunicationInterface.writeData(dataArrayBuffer, readHandler);
-    super.emit('write', this.fCommunicationInterface, dataArrayBuffer);
+    this.emit('write', this.fCommunicationInterface, dataArrayBuffer);
   }
 
   async writeString(data: string) {
@@ -36,10 +36,10 @@ export abstract class ControllableDevice extends Device implements IControllable
     return new Promise<string>(async (resolve, reject) => {
       const readHandler: ReadQueueItem = {
         callback: (data, cancelled) => {
-          if (this.fCommunicationInterface) super.emit('dataReceived', this.fCommunicationInterface, data);
+          if (this.fCommunicationInterface) this.emit('dataReceived', this.fCommunicationInterface, data);
           if (cancelled) return reject();
           const dataString = new TextDecoder().decode(data);
-          if (this.fCommunicationInterface) super.emit('stringReceived', this.fCommunicationInterface, dataString);
+          if (this.fCommunicationInterface) this.emit('stringReceived', this.fCommunicationInterface, dataString);
           return resolve(dataString);
         },
         cancelCallback: () => {

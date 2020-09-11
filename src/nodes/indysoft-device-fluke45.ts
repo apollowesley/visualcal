@@ -3,6 +3,7 @@ import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, 
 import { Fluke45 } from '../drivers/devices/digital-multimeters/Fluke45';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
 import { getDeviceConfig } from '../main/node-red/utils';
+import { DeviceManager } from '../main/managers/DeviceManager';
 
 export const NODE_TYPE = 'indysoft-device-fluke45';
 
@@ -73,6 +74,7 @@ module.exports = (RED: NodeRed) => {
     const reset = () => {
       this.status({});
     };
+    this.device = DeviceManager.instance.get('Fluke 45', this.deviceConfigNode.unitId);
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
         if (!RED.settings.getCommunicationInterfaceForDevice) {
@@ -85,7 +87,6 @@ module.exports = (RED: NodeRed) => {
           });
           return;
         }
-        this.device = new Fluke45();
         this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;

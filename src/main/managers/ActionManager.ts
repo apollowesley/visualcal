@@ -34,12 +34,6 @@ export class ActionManager extends EventEmitter {
   async start(opts: TriggerOptions) {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
     loadCommunicationConfiguration(opts.session);
-    Device.devices.forEach(device => device.on('write', (_, data) => {
-      ipcMain.sendToAll(IpcChannels.log.all, data);
-    }));
-    Device.devices.forEach(device => device.on('stringReceived', (_, data) => {
-      ipcMain.sendToAll(IpcChannels.log.all, data);
-    }));
     global.visualCal.communicationInterfaceManager.enableAll();
     await global.visualCal.communicationInterfaceManager.connectAll();
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
@@ -48,8 +42,6 @@ export class ActionManager extends EventEmitter {
   stop(opts: TriggerOptions) {
     global.visualCal.communicationInterfaceManager.disconnectAll();
     global.visualCal.communicationInterfaceManager.disableAll();
-    Device.devices.forEach(device => () => device.removeAllListeners('write'));
-    Device.devices.forEach(device => () => device.removeAllListeners('stringReceived'));
     nodeRed.stopVisualCalActionStartNode(opts.section, opts.action);
   }
 

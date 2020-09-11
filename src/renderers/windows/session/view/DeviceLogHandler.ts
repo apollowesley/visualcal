@@ -1,11 +1,15 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
+import { ipcRenderer } from 'electron';
+import { IpcChannels } from '../../../../constants';
 
 interface CommInterfaceLogEntry {
   id?: string;
   name: string;
   message: string;
+  data?: ArrayBuffer;
+  deviceName?: string;
 }
 
 interface ConstructorOptions {
@@ -33,6 +37,7 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
       layout: 'fitColumns',
       columns: [
         { title: 'Interface Name', field: 'name' },
+        { title: 'Device name', field: 'deviceName' },
         { title: 'Message', field: 'message' }
       ]
     });
@@ -45,6 +50,13 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
     window.visualCal.communicationInterfaceManager.on('interfaceWrite', async (info) => {
       const dataString = new TextDecoder().decode(info.data);
       await this.add({ name: info.name, message: `Data sent: ${dataString}` });
+    });
+
+
+    ipcRenderer.on(IpcChannels.device.onReadString, async (_, info: { interfaceName: string, deviceName: string, data: string }) => await this.add({ name: info.interfaceName, deviceName: info.deviceName, message: `Data received: ${info.data}` }));
+    ipcRenderer.on(IpcChannels.device.onWrite, async (_, info: { interfaceName: string, deviceName: string, data: ArrayBuffer }) => {
+      const dataString = new TextDecoder().decode(info.data);
+      await this.add({ name: info.interfaceName, deviceName: info.deviceName, message: `Data sent: ${dataString}` });
     });
   }
 

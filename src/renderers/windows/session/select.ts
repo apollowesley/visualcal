@@ -19,7 +19,11 @@ const selectButtonClicked = (cell: Tabulator.CellComponent) => {
 const selectButtonTableCellFormatter = (cell: Tabulator.CellComponent) => {
   const btn = document.createElement('button');
   btn.innerText = 'Select';
-  btn.addEventListener('click', () => selectButtonClicked(cell));
+  btn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    btn.disabled = true;
+    selectButtonClicked(cell)
+  });
   return btn;
 };
 

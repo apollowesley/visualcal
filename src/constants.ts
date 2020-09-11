@@ -35,6 +35,10 @@ export interface IpcChannelCRUD {
 }
 
 export const IpcChannels = {
+  device: {
+    onWrite: 'device-on-write',
+    onReadString: 'device-on-read-string'
+  },
   ipc: {
     addRendererEventNames: 'ipc-add-renderer-event-names'
   },
