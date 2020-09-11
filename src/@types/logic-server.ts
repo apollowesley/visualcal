@@ -49,7 +49,7 @@ export interface Settings {
   currentProcedureShortName?: string;
   paletteCategories?: string[];
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
-  getDriverForDevice: (deviceName: string) => Promise<IControllableDevice | null>;
+  getDriverForDevice: (deviceName: string) => IControllableDevice | null;
   getAllNodes(): NodeRedRuntimeNode[];
   findNodesByType(type: string): NodeRedRuntimeNode[];
   findNodeById(id: string): NodeRedRuntimeNode | undefined;

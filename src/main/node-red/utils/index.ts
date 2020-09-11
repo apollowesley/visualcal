@@ -1,16 +1,9 @@
-import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, NodeResetOptions, DeviceConfigurationNode } from '../../../@types/logic-server';
-import { Node as NodeRedNode } from 'node-red';
+import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
 import fs from 'fs-extra';
 import path from 'path';
 import { DeviceNodeProperties } from '../../../@types/logic-nodes';
-import { Fluke5522A } from '../../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
-import { Fluke45 } from '../../../drivers/devices/digital-multimeters/Fluke45';
-import { Keysight34401A } from '../../../drivers/devices/digital-multimeters/Keysight34401A';
-import { dialog } from 'electron';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
-import NodeRed from '../index';
-
-const nodeRed = NodeRed();
+import { DeviceManager, DriverName } from '../../managers/DeviceManager';
 
 interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -34,34 +27,12 @@ const clearDeviceCommunicationInterfaces = () => {
   deviceCommunicationInterfaces.splice(0, deviceCommunicationInterfaces.length);
 };
 
-export const getDriverForDevice = async (deviceName: string) => {
+export const getDriverForDevice = (deviceName: string) => {
   const device = deviceCommunicationInterfaces.find(d => d.deviceName.toLocaleUpperCase() === deviceName.toUpperCase());
   if (!device || !device.deviceDriver) return null;
   const deviceDriver = driversPackagejson.visualcal.drivers.devices.find(d => d.manufacturer === device.deviceDriver?.manufacturer && d.model === device.deviceDriver.deviceModel);
   if (!deviceDriver) return null;
-  // const driverPath = path.join(config.dirBaseDrivers, deviceDriver.path);
-  try {
-    // const driver = await import(driverPath) as ControllableDevice;
-    switch (deviceDriver.displayName) {
-      case 'Fluke 45':
-        return new Fluke45();
-      case 'Keysight 34401A':
-        return new Keysight34401A();
-      case 'Fluke 5522A':
-        return new Fluke5522A();
-    }
-    return null;
-  } catch (error) {
-    console.error('Attempted to locate device driver', error);
-    return null;
-  }
-  // // TODO: Need to return a driver
-  // const tempDriver = new Fluke5522A();
-  // // const iface = getCommunicationInterfaceForDevice(deviceName);
-  // // if (!iface) throw new Error('No communication interface found for device');
-  // const iface = new EmulatedCommunicationInterface();
-  // tempDriver.setCommunicationInterface(iface);
-  // return tempDriver;
+  return DeviceManager.instance.getByDisplayName(deviceDriver.displayName as DriverName, device.deviceName) as IControllableDevice;
 };
 
 const findDeviceConfigurationNodeOwners = (configNodeId: string) => {

@@ -13,7 +13,7 @@ interface Events {
   deviceAdded: (name: string) => void;
 }
 
-type DriverName = 'Fluke 45' | 'Keysight 34401A' | 'Fluke 5522A';
+export type DriverName = 'Fluke 45' | 'Keysight 34401A' | 'Fluke 5522A';
 
 export class DeviceManager extends TypedEmitter<Events> {
 
@@ -61,6 +61,31 @@ export class DeviceManager extends TypedEmitter<Events> {
         this.addDevice(deviceName, fluke5522A);
         return fluke5522A;
     }
+    return undefined;
+  }
+
+  getByDisplayName(driverName: string, deviceName: string) {
+    switch (driverName) {
+      case 'Fluke 45':
+        if (this.fDevices.has(deviceName)) return this.fDevices.get(deviceName) as Fluke45;
+        const fluke45 = new Fluke45();
+        fluke45.name = deviceName;
+        this.addDevice(deviceName, fluke45);
+        return fluke45;
+      case 'Keysight 34401A':
+        if (this.fDevices.has(deviceName)) return this.fDevices.get(deviceName) as Keysight34401A;
+        const keysight34401A = new Keysight34401A();
+        keysight34401A.name = deviceName;
+        this.addDevice(deviceName, keysight34401A);
+        return keysight34401A;
+      case 'Fluke 5522A':
+        if (this.fDevices.has(deviceName)) return this.fDevices.get(deviceName) as Fluke5522A;
+        const fluke5522A = new Fluke5522A();
+        fluke5522A.name = deviceName;
+        this.addDevice(deviceName, fluke5522A);
+        return fluke5522A;
+    }
+    return undefined;
   }
 
   clear() {
