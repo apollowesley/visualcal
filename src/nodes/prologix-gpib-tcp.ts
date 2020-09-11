@@ -2,6 +2,7 @@ import Denque from 'denque';
 import { Socket } from 'net';
 import { NodeProperties } from 'node-red';
 import { NodeRedNodeMessage, NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
+import { NodeLogManager } from '../main/managers/NodeLogManager';
 
 export const NODE_TYPE = 'prologix-gpib-tcp';
 
@@ -116,7 +117,7 @@ module.exports = (RED: NodeRed) => {
         shape: 'dot',
         text: err.message
       });
-      RED.settings.onComment('logic', this, 'error', err.message);
+      NodeLogManager.instance.error(this, err);
     };
 
     const processMessageQueue = () => {
@@ -164,8 +165,9 @@ module.exports = (RED: NodeRed) => {
         disconnect();
         return;
       }
-      RED.settings.onComment('logic', this, 'debug', `Connected to ${this.host}:${this.port}`);
-      this.log(`Connected to ${this.host}:${this.port}`);
+      const onConnectedMsg = `Connected to ${this.host}:${this.port}`;
+      NodeLogManager.instance.debug(this, onConnectedMsg);
+      this.log(onConnectedMsg);
       this.send([{ host: this.host, port: this.port }, null, null, null]);
       this.status({
         fill: 'green',
@@ -184,8 +186,9 @@ module.exports = (RED: NodeRed) => {
         client.destroy();
         client = undefined;
         this.send([null, { host: this.host, port: this.port, hadError: hadError }, null, null]);
-        RED.settings.onComment('logic', this, 'debug', `Disconnected from ${this.host}:${this.port}`);
-        this.log(`Disconnected from ${this.host}:${this.port}`);
+        const onConnectedMsg = `Disconnected from ${this.host}:${this.port}`;
+        NodeLogManager.instance.debug(this, onConnectedMsg);
+        this.log(onConnectedMsg);
       }
       if (hadError) {
         this.status({
@@ -219,9 +222,9 @@ module.exports = (RED: NodeRed) => {
       if (getIsConnecting()) return;
       if (getIsConnected()) {
         this.warn('Already connected');
-        RED.settings.onComment('logic', this, 'warning', 'Received request to connect but the node is already connected');
+        NodeLogManager.instance.warn(this, 'Received request to connect but the node is already connected');
       }
-      RED.settings.onComment('logic', this, 'debug', `Connecting to ${this.host}:${this.port}`);
+      NodeLogManager.instance.debug(this, `Connecting to ${this.host}:${this.port}`);
       this.status({
         fill: 'blue',
         shape: 'ring',
@@ -255,7 +258,7 @@ module.exports = (RED: NodeRed) => {
     });
 
     this.on('close', (done?: () => void) => {
-      RED.settings.onComment('logic', this, 'debug', `Connection to ${this.host}:${this.port} closed`);
+      NodeLogManager.instance.debug(this, `Connection to ${this.host}:${this.port} closed`);
       this.isClosing = true;
       this.done = done;
       if (client) {

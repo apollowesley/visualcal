@@ -1,6 +1,7 @@
 import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { DigitalMultimeterDevice, DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
+import { NodeLogManager } from '../main/managers/NodeLogManager';
 
 export const NODE_TYPE = 'indysoft-device-digital-multimeter';
 
@@ -97,7 +98,7 @@ module.exports = (RED: NodeRed) => {
         this.device = await RED.settings.getDriverForDevice(this.deviceConfigNode.unitId) as DigitalMultimeterDevice;
         if (!this.device) {
           const errMsg = `Could not find driver for device '${this.deviceConfigNode.unitId}'`;
-          RED.settings.onComment('logic', this, 'error', errMsg);
+          NodeLogManager.instance.error(this, new Error(errMsg));
           this.error(errMsg, msg);
           this.status({
             fill: 'red',

@@ -5,6 +5,9 @@ import { Device } from '../../drivers/devices/Device';
 import { Fluke45 } from '../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../drivers/devices/digital-multimeters/Keysight34401A';
 import { Fluke5522A } from '../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('DeviceManager');
 
 interface Events {
   deviceAdded: (name: string) => void;
@@ -24,6 +27,7 @@ export class DeviceManager extends TypedEmitter<Events> {
 
   private constructor() {
     super();
+    log.info('Loaded');
   }
 
   private addDevice(deviceName: string, device: Device) {
