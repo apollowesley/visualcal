@@ -36,9 +36,14 @@ body {
 
 .card-bottom {
   min-height: 350px;
+  max-height: 350px;
 }
 
 select {
   height: 30px;
+}
+
+#vc-comm-interface-log {
+  max-height: 250px;
 }
 

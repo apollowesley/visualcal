@@ -19,12 +19,12 @@ import electronLog from 'electron-log';
 const log = electronLog.scope('VisualCal');
 
 let visualCal: VisualCalGlobalAugment;
-const userManager = new UserManager();
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
   const localDirs = dirs();
   const localFiles = files();
+  const userManager = new UserManager();
 
   visualCal = {
     logger: log,
@@ -46,7 +46,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
       warn: (msg: any) => log.warn(msg),
       error: (msg: any) => log.error(msg)
     },
-    applicationManager: new ApplicationManager(),
     windowManager: new WindowManager(),
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(userManager),

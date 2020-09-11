@@ -36,8 +36,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   get hasACFilter() { return true; }
 
   async getIdentity(): Promise<DeviceIdentity> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
-    const ident = await this.communicationInterface.queryString('*IDN?');
+    const ident = await this.queryString('*IDN?');
     const identSplit = ident.split(',');
     return {
       manufacturer: identSplit[0],
@@ -48,13 +47,12 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   }
 
   async getConfiguration(): Promise<Configuration> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     const config: Configuration = {
       mode: 'aac',
       rate: 0,
       range: 0
     };
-    const deviceConfig = (await this.communicationInterface.queryString('CONF?')).split(',');
+    const deviceConfig = (await this.queryString('CONF?')).split(',');
     const deviceMode = deviceConfig[0];
     const deviceRange = deviceConfig[1];
     switch (deviceMode) {
@@ -93,7 +91,6 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   }
 
   async getMeasurement(config: MeasurementConfiguration): Promise<number> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     function delay(duration: number) {
       return new Promise((resolve) => { 
         return setTimeout(resolve, duration);
@@ -134,17 +131,16 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
         break;
     }
     if (config.relative) {
-      await this.communicationInterface.writeString('CALC:FUNC NULL');
-      await this.communicationInterface.writeString('CALC:STATE ON');
+      await this.writeString('CALC:FUNC NULL');
+      await this.writeString('CALC:STATE ON');
       await delay(1000);
     }
-    if (config.acFilterHz) await this.communicationInterface.writeString(`DET:BAND ${config.acFilterHz}`);
-    const value = await this.communicationInterface.queryString(command);
+    if (config.acFilterHz) await this.writeString(`DET:BAND ${config.acFilterHz}`);
+    const value = await this.queryString(command);
     return parseFloat(value);
   }
 
   async setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number = 5): Promise<void> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     let rateLetter = 'M';
     let cmd = 'RANGE ';
     if (!mode) throw 'Mode required';
@@ -258,7 +254,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     }
     // Add rate if we're not using the default, Medium
     if (rateLetter !== 'M') cmd += ';RATE ' + rateLetter;
-    await this.communicationInterface.writeString(cmd);
+    await this.writeString(cmd);
   }
 
 }

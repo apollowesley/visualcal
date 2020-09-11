@@ -4,6 +4,7 @@ import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
+import { ApplicationManager } from '../managers/ApplicationManager';
 
 const log = electronLog.scope('UserManager');
 
@@ -280,7 +281,7 @@ export class UserManager extends TypedEmitter<Events> {
             this.emit('loggedIn', user);
           }
         } else {
-          global.visualCal.applicationManager.showErrorAndQuit('Critical error, the application cannot remain open', 'Expected login window to be created and shown, but it was not.');
+          ApplicationManager.instance.showErrorAndQuit('Critical error, the application cannot remain open', 'Expected login window to be created and shown, but it was not.');
         }
       } else {
         this.emit('loggedIn', user);

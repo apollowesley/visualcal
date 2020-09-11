@@ -34,18 +34,18 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   address = 0;
 
-  selectedDeviceClear(): Promise<void> {
-    return this.writeString('++clr');
+  async selectedDeviceClear(): Promise<void> {
+    await this.writeString('++clr');
   }
 
   async getEndOfInstruction(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const response = {
           tag: '++clr',
           callback: () => { return resolve(); }
         };
-        this.writeString('++clr', 'utf-8', response);
+        await this.writeString('++clr', 'utf-8', response);
       } catch (error) {
         return reject(error);
       }
@@ -97,17 +97,16 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async serialPoll(primaryAddress: number, secondaryAddress?: number | undefined): Promise<StatusByteRegisterValues> {
-    return new Promise((resolve, reject) => {
-      this.queryString(`++spoll ${primaryAddress}`)
-      .then(stringData => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let stringData = await this.queryString(`++spoll ${primaryAddress}`);
         stringData = stringData.replace('\n', '');
         const retVal = parseInt(stringData);
         return resolve(retVal);
-      })
-      .catch(error => {
+      } catch (error) {
         this.onError(error);
         return reject(error);
-      });
+      }
     });
   }
 
@@ -124,14 +123,15 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEventStatusEnable(values: EventStatusRegisterValues): Promise<void> {
-    return new Promise((resolve, reject) => {
-        this.writeString(`*ESE ${values}`)
-        .then(() => resolve())
-        .catch(error => {
-          this.onError(error);
-          return reject(error);
-        });
-      });
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.writeString(`*ESE ${values}`)
+        return resolve();
+      } catch (error) {
+        this.onError(error);
+        return reject(error);        
+      }
+    });
   }
 
   async clearEventStatusEnable(): Promise<void> {

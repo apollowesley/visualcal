@@ -19,8 +19,7 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
   get hasRearTerminals() { return true; }
 
   async getIdentity(): Promise<DeviceIdentity> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
-    const ident = await this.communicationInterface.queryString('*IDN?');
+    const ident = await this.queryString('*IDN?');
     const identSplit = ident.split(',');
     return {
       manufacturer: identSplit[0],
@@ -31,14 +30,13 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
   }
 
   async getConfiguration(): Promise<Configuration> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     const config: Configuration = {
       mode: 'aac',
       rate: 0,
       range: 0
     };
-    config.mode = (await this.communicationInterface.queryString('FUNC1?')) as DigitalMultimeterMode;
-    const rate = (await this.communicationInterface.queryString('RATE?')).toLowerCase();
+    config.mode = (await this.queryString('FUNC1?')) as DigitalMultimeterMode;
+    const rate = (await this.queryString('RATE?')).toLowerCase();
     switch (rate) {
       case 's':
         config.rate = 0;
@@ -47,14 +45,13 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
       case 'f':
         config.rate = 2;
     }
-    const range = await this.communicationInterface.queryString('RANGE?');
+    const range = await this.queryString('RANGE?');
     if (range.toLowerCase() === 'auto') config.range = 0;
     config.range = Number(range);
     return config;
   }
 
   async getMeasurement(config: MeasurementConfiguration): Promise<number> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     function delay(duration: number) {
       return new Promise(function(resolve) { 
         return setTimeout(resolve, duration);
@@ -100,17 +97,16 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
           break;
       }
     }
-    await this.communicationInterface.writeString(command);
+    await this.writeString(command);
     if (config.relative) {
-      await this.communicationInterface.writeString('REL');
+      await this.writeString('REL');
       await delay(1000);
     }
-    const value = await this.communicationInterface.queryString('MEAS?');
+    const value = await this.queryString('MEAS?');
     return parseFloat(value);
   }
   
   async setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number = 5): Promise<void> {
-    if (!this.communicationInterface) throw new Error('No communication interface');
     let rateLetter = 'M';
     let cmd = 'RANGE ';
     if (!mode) throw 'Mode required';
@@ -224,7 +220,7 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
     }
     // Add rate if we're not using the default, Medium
     if (rateLetter !== 'M') cmd += ';RATE ' + rateLetter;
-    await this.communicationInterface.writeString(cmd);
+    await this.writeString(cmd);
   }
 
 }

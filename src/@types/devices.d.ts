@@ -50,7 +50,7 @@ interface IDevice {
 }
 
 interface IControllableDevice extends IDevice {
-  getCommunicationInterface(): ICommunicationInterface | null;
+  communicationInterface?: ICommunicationInterface;
   setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
   isGpib?: boolean;
   gpibPrimaryAddress?: number;

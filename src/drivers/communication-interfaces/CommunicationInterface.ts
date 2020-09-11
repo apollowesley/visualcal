@@ -104,7 +104,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     }
   }
 
-  async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {
+  async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem) {
     // do not allow writes if we are disabled
     if (!this.isEnabled) return;
     if (readHandler) this.enqueue(readHandler);
@@ -112,7 +112,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await this.write(data);
   }
 
-  protected abstract async write(data: ArrayBuffer): Promise<void>;
+  protected abstract write(data: ArrayBuffer): Promise<void>;
 
   protected onData(data: ArrayBuffer) {
     if (this.fReadQueue && !this.fReadQueue.isEmpty()) {

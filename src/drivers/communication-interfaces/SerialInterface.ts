@@ -39,10 +39,10 @@ export class SerialInterface extends CommunicationInterface {
           dataBits: this.fPortOptions.dataBits || 8,
           stopBits: this.fPortOptions.stopBits || 1
         });
-        this.fPort.addListener('close', this.onDisconnected);
-        this.fPort.addListener('end', this.disconnect);
-        this.fPort.addListener('error', this.onError);
-        this.fPort.addListener('data', this.onData);
+        this.fPort.once('close', this.onDisconnected);
+        this.fPort.once('end', this.disconnect);
+        this.fPort.on('error', this.onError);
+        this.fPort.once('data', this.onData);
         this.fPort.open();
         this.onConnected();
         return resolve();
@@ -89,7 +89,7 @@ export class SerialInterface extends CommunicationInterface {
         resolve();
       } catch (error) {
         this.onError(error);
-        reject(error);
+        return reject(error);
       }
     });
   }

@@ -58,6 +58,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
   }
 
   disconnect(): void {
+    const wasConnected = this.isConnected;
     if (this.fClient) {
       this.fClient.removeAllListeners();
       try {
@@ -69,7 +70,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
         this.fClient = undefined;
       }
     }
-    this.onDisconnected();
+    if (wasConnected) this.onDisconnected();
   }
 
   configure(options: ConfigurationOptions) {

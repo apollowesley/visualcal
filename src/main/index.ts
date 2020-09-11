@@ -6,20 +6,19 @@ import fsExtra from 'fs-extra';
 import RED from 'node-red';
 import path from 'path';
 import { NodeRed as RealNodeRed } from '../@types/logic-server';
-import { AutoUpdater } from './auto-update';
 import { init as initGlobal } from './InitGlobal';
+import initIpcMonitor from './ipc';
+import { ApplicationManager } from './managers/ApplicationManager';
 import { init as initMainMenu } from './menu';
-import NodeRed, { destroy as destroyNodeRed } from './node-red';
+import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
-import initIpcMonitor, { saveComparison } from './ipc';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 
-const log = electronLog.scope('main');
 const nodeRed = NodeRed();
-const autoUpdater = new AutoUpdater();
+const log = electronLog.scope('main');
 
 electronLog.transports.file.level = 'debug';
 electronLog.transports.console.level = 'debug';
@@ -57,7 +56,7 @@ const sendToLoadingWindow = (text: string) => {
   if (!global.visualCal || !global.visualCal.windowManager) return;
   const loadingWindow = global.visualCal.windowManager.loadingWindow;
   if (!loadingWindow) return;
-  loadingWindow.webContents.send('update-loading-text', text);
+  setImmediate(() => loadingWindow.webContents.send('update-loading-text', text));
 };
 
 async function load() {
@@ -81,6 +80,7 @@ async function load() {
   sendToLoadingWindow('Initializing Logic Server utils ...');
   nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
+  initIpcMonitor();
 }
 
 async function testingOnly() {
@@ -90,41 +90,26 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
-  try {
-    await load();
-    initIpcMonitor();
-    const loginWindow = await global.visualCal.windowManager.ShowLogin();
-    global.visualCal.windowManager.close(VisualCalWindow.Loading);
-    loginWindow.once('closed', async () => {
-      try {
-        await autoUpdater.checkForUpdates();
-      } catch (error) {
-        log.error('Error checking for updates', error);
+  ApplicationManager.instance.on('readyToLoad', async () => {
+    try {
+      await load()
+      const loginWindow = await global.visualCal.windowManager.ShowLogin();
+      global.visualCal.windowManager.close(VisualCalWindow.Loading);
+      loginWindow.once('closed', async () => {
+        try {
+          await ApplicationManager.instance.checkForUpdates();
+        } catch (error) {
+          log.error('Error checking for updates', error);
+        }
+      });
+      if (isDev()) {
+        await testingOnly();
       }
-    });
-    if (isDev()) {
-      await testingOnly();
+    } catch (error) {
+      dialog.showErrorBox('Oops!  Something went wrong', error.message);
     }
-  } catch (error) {
-    dialog.showErrorBox('Oops!  Something went wrong', error.message);
-  }
-  app.on('activate', async () => { if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain(); });
+  });
+  ApplicationManager.instance.init();
 }
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('before-quit', async () => {
-  setNoUpdateNotifier(true);
-  autoUpdater.abort();
-  log.info('Destroying logic server');
-  await destroyNodeRed();
-  log.info('Logic server destroyed');
-  global.visualCal.userManager.logout();
-  if (isDev()) await saveComparison();
-});
 
 run();

@@ -12,12 +12,16 @@ interface Events {
 
 export abstract class Device extends TypedEmitter<Events> {
 
+  private static fDevices: Device[] = [];
+  static get devices() { return this.fDevices; }
+
   private fName: string = uuid();
   protected deviceDefinition: DeviceDefinition;
 
   protected constructor(definition: DeviceDefinition) {
     super();
     this.deviceDefinition = definition;
+    if (!Device.fDevices.find(d => d.name === this.name)) Device.fDevices.push(this);
   }
 
   get name() { return this.fName; }

@@ -1,6 +1,12 @@
-import { app, BrowserWindow, dialog, ipcMain, ipcRenderer } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../constants';
+import { AutoUpdater } from '../auto-update';
+import { saveComparison } from '../ipc';
+import { destroy as destroyNodeRed } from '../node-red';
+import { isDev } from '../utils/is-dev-mode';
+import { setNoUpdateNotifier } from '../utils/npm-update-notifier';
 
 interface QuitEventOptions {
   cancel?: boolean;
@@ -8,28 +14,66 @@ interface QuitEventOptions {
 }
 
 interface Events {
+  readyToLoad: () => void;
   quitting: (opts: QuitEventOptions) => void;
 }
 
+const log = electronLog.scope('ApplicationManager');
+
 export class ApplicationManager extends TypedEmitter<Events> {
 
-  constructor() {
+  private static fInstance: ApplicationManager;
+  static get instance() {
+    if (!ApplicationManager.fInstance) ApplicationManager.fInstance = new ApplicationManager();
+    return this.fInstance;
+  }
+
+  private fInitialized = false;
+  private fAutoUpdater = new AutoUpdater();
+
+  private constructor() {
     super();
-    ipcMain.on(IpcChannels.application.quit.request, (event) => {
-      const cancelled = this.quit();
+    log.info('Loaded');
+  }
+
+  private initIpcListeners() {
+    ipcMain.on(IpcChannels.application.quit.request, (event, opts: { reason: string, verify?: boolean; }) => {
+      const cancelled = this.quit(opts.reason, opts.verify);
       if (!cancelled) event.reply(IpcChannels.application.quit.response, cancelled);
     });
   }
 
-  quit(reason?: string, verify = true) {
+  private async onActivated() {
+    if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
+  }
+
+  private onAllWindowsClosed() {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  }
+
+  private async onBeforeQuit() {
+    setNoUpdateNotifier(true);
+    this.fAutoUpdater.abort();
+    log.info('Destroying logic server');
+    await destroyNodeRed();
+    log.info('Logic server destroyed');
+    global.visualCal.userManager.logout();
+    if (isDev()) await saveComparison();
+  }
+
+  quit(reason?: string, verify?: boolean) {
+    if (verify === undefined) verify = true;
     const opts: QuitEventOptions = {
-      reason: reason
+      reason: reason,
+      cancel: false
     };
     this.emit('quitting', opts); // Notify the main process managers that we are quitting and give them a chance to cancel
     const focusedWindow = BrowserWindow.getFocusedWindow();
     if (focusedWindow && verify) {
       // Ask the user in a dialog over the focuses window if they really want to quit
-      const dialogResult = dialog.showMessageBoxSync(focusedWindow, { message: 'Are you sure you want to quit?', title: 'Quitting', buttons: [ 'Yes', 'No' ], cancelId: 1, defaultId: 0, type: 'question' });
+      const dialogResult = dialog.showMessageBoxSync(focusedWindow, { message: 'Are you sure you want to quit?', title: 'Quitting', buttons: ['Yes', 'No'], cancelId: 1, defaultId: 0, type: 'question' });
       opts.cancel = dialogResult === 1;
     }
     if (opts.cancel) return false;
@@ -40,6 +84,22 @@ export class ApplicationManager extends TypedEmitter<Events> {
   showErrorAndQuit(title: string, message: string) {
     dialog.showErrorBox(title, message);
     this.quit(message, false);
+  }
+
+  async checkForUpdates() {
+    await this.fAutoUpdater.checkForUpdates();
+  }
+
+  init() {
+    if (this.fInitialized) throw new Error('Already initialized');
+    log.info('Initializing');
+    this.initIpcListeners();
+    app.on('activate', async () => await this.onActivated());
+    app.on('window-all-closed', () => this.onAllWindowsClosed());
+    app.on('before-quit', async () => await this.onBeforeQuit());
+    this.emit('readyToLoad');
+    log.info('Finished initializing');
+    this.fInitialized = true;
   }
 
 }

@@ -40,13 +40,14 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
       this.fConnecting = true;
       try {
         if (!this.fClientOptions) throw 'Not configured';
-        this.fSerialPort = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
+        this.fSerialPort = new SerialPort(this.fClientOptions.portName, { autoOpen: false, lock: true });
         const parser = this.fSerialPort.pipe(new ReadlineParser({ delimiter: '\n' }));
-        this.fSerialPort.on('close', () => this.disconnect());
-        this.fSerialPort.on('end', () => this.disconnect());
+        const textEncoder = new TextEncoder();
+        parser.on('data', (data: string) => this.onData(textEncoder.encode(data).buffer));
+        this.fSerialPort.once('close', () => this.disconnect());
+        this.fSerialPort.once('end', () => this.disconnect());
         this.fSerialPort.on('error', (err) => this.onError(err));
-        this.fSerialPort.on('timeout', () => this.disconnect());
-        parser.on('data', (data: string) => this.onData(new TextEncoder().encode(data).buffer));
+        this.fSerialPort.once('timeout', () => this.disconnect());
         this.fSerialPort.once('open', async () => {
           await super.onConnected();
           this.fConnecting = false;
@@ -58,12 +59,13 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
       } catch (error) {
         this.disconnect();
         this.onError(error);
-        reject(error);
+        return reject(error);
       }
     });
   }
   
   disconnect(): void {
+    const wasConnected = this.isConnected;
     this.fConnecting = false;
     if (this.fSerialPort) {
       this.fSerialPort.removeAllListeners();
@@ -73,11 +75,10 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         this.fSerialPort.destroy();
       } catch (error) {
         log.debug('Expected error: ' + error);
-      } finally {
-        this.fSerialPort = undefined;
       }
     }
-    this.onDisconnected();
+    this.fSerialPort = undefined;
+    if (wasConnected) this.onDisconnected();
   }
 
   get isConnected(): boolean {
@@ -95,12 +96,19 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         }
         const view = new Uint8Array(data);
         const dataString = new TextDecoder('utf-8').decode(view);
-        const result = this.fSerialPort.write(dataString);
-        if (result) return resolve();
-        else return reject('Error writing data to Prologix GPIB USB over socket');
+        this.fSerialPort.write(dataString);
+        this.fSerialPort.drain((err) => {
+          if (!err) return resolve();
+          else {
+            let errorMsg = `Error writing data to Prologix GPIB USB over serial port: ${err.message}`;
+            if (this.fClientOptions) errorMsg = `Error writing data to Prologix GPIB USB over serial port, ${this.fClientOptions.portName}: ${err.message}`;
+            this.onError(new Error(errorMsg));
+            return reject(errorMsg);
+          }
+        });
       } catch (error) {
         this.onError(error);
-        reject(error);
+        return reject(error);
       }
     });
   }

@@ -20,8 +20,9 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
   }
 
   disconnect(): void {
+    const wasConnected = this.isConnected;
     this.isConnectedInternal = false;
-    this.onDisconnected();
+    if (wasConnected) this.onDisconnected();
   }
 
   get isConnected(): boolean {
