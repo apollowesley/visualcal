@@ -1,7 +1,7 @@
 {
   "name": "indysoft-visualcal",
   "productName": "VisualCal",
-  "version": "0.1.0-alpha.50",
+  "version": "0.1.0-alpha.51",
   "description": "VisualCal",
   "private": true,
   "main": "dist/main/index.js",
@@ -148,7 +148,7 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": false,
       "runAfterFinish": true,
-      "deleteAppDataOnUninstall": true
+      "deleteAppDataOnUninstall": false
     }
   },
   "visualcal": {
