@@ -175,60 +175,6 @@ export const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNod
   return findNodeById(configId);
 };
 
-export const resetAllConnectedNodes = (startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) => {
-  if (options && options.targetId !== startFrom.id) return;
-  if (!startFrom.wires) return;
-  startFrom.wires.forEach(nodeId => {
-    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
-    if (currentNode) {
-      currentNode.emit('reset');
-      resetAllConnectedNodes(currentNode, options);
-    }
-  });
-};
-
-/**
- * Resets all instruction nodes (indysoft-instruction-, and currently indysoft-dialog-)
- * @param startFrom Node to start resetting from, not including this node
- */
-export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) => {
-  if (!startFrom.wires) return;
-  startFrom.wires.forEach(nodeId => {
-    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
-    if (currentNode) {
-      if (currentNode.type.startsWith('indysoft-instruction') || currentNode.type.startsWith('indysoft-dialog')) currentNode.emit('reset');
-      resetConnectedInstructionNodes(currentNode);
-    }
-  });
-};
-
-export const getProcedureStatus = () => {
-  const procedureNode = nodeRed.visualCalProcedureSidebarNode;
-  if (!procedureNode) return null;
-  const status: ProcedureStatus = {
-    name: procedureNode.runtime.name,
-    shortName: procedureNode.runtime.shortName,
-    sections: []
-  };
-  const sectionNodes = nodeRed.visualCalSectionConfigurationNodes;
-  sectionNodes.forEach(sectionNode => {
-    const actionStatuses: ActionStatus[] = [];
-    const actionNodesForSection = nodeRed.getVisualCalActionStartNodesForSection(sectionNode.runtime.shortName);
-    actionNodesForSection.forEach(actionNode => {
-      if (actionNode) actionStatuses.push({
-        name: actionNode.runtime.name,
-        isRunning: actionNode.runtime.isRunning
-      });
-    });
-    status.sections.push({
-      name: sectionNode.runtime.name,
-      shortName: sectionNode.runtime.shortName,
-      actions: actionStatuses
-    });
-  });
-  return status;
-};
-
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);

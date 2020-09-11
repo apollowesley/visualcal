@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import { createServer, Server } from 'http';
 import RED from 'node-red';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { NodeRed as NodeRedType, NodeRedRuntimeNode, Settings as NodeRedSettings } from '../../@types/logic-server';
+import { NodeRed as NodeRedType, NodeRedRuntimeNode, NodeResetOptions, Settings as NodeRedSettings } from '../../@types/logic-server';
 import { NodeRedFlow, NodeRedFlowNode } from '../../@types/node-red-info';
 import { IndySoftNodeTypeNames } from '../../constants';
 import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
@@ -191,6 +191,33 @@ class NodeRed extends TypedEmitter<Events> {
     startActionNode.runtime.emit('reset');
     this.emit('sectionActionReset', sectionName, actionName);
   }
+
+  /**
+   * Resets all instruction nodes (indysoft-instruction-, and currently indysoft-dialog-)
+   * @param startFrom Node to start resetting from, not including this node
+   */
+  resetConnectedInstructionNodes(startFrom: NodeRedRuntimeNode) {
+    if (!startFrom.wires) return;
+    startFrom.wires.forEach(nodeId => {
+      const currentNode = this.runtimeNodes.find(n => n.id === nodeId);
+      if (currentNode && currentNode.type === IndySoftNodeTypeNames.UserInput) {
+        currentNode.emit('reset');
+        this.resetConnectedInstructionNodes(currentNode);
+      }
+    });
+  };
+
+  resetConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) {
+    if (options && options.targetId !== startFrom.id) return;
+    if (!startFrom.wires) return;
+    startFrom.wires.forEach(nodeId => {
+      const currentNode = this.runtimeNodes.find(n => n.id === nodeId);
+      if (currentNode) {
+        currentNode.emit('reset');
+        this.resetConnectedNodes(currentNode, options);
+      }
+    });
+  };
 
 }
 

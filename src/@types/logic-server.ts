@@ -48,16 +48,12 @@ export interface Settings {
   tcpMsgQueueSize?: number;
   currentProcedureShortName?: string;
   paletteCategories?: string[];
-  onComment: (source: NotificationSource, node: NodeRedNode, type: NotificationCommentType, comment: string) => void;
   getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
   getDriverForDevice: (deviceName: string) => Promise<IControllableDevice | null>;
   getAllNodes(): NodeRedRuntimeNode[];
   findNodesByType(type: string): NodeRedRuntimeNode[];
   findNodeById(id: string): NodeRedRuntimeNode | undefined;
   getNodeConfig(id: string, configName: string): NodeRedRuntimeNode | undefined;
-  resetAllConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions): void;
-  resetAllConnectedInstructionNodes(startFrom: NodeRedRuntimeNode): void;
-  getProcedureStatus(): ProcedureStatus | null;
   functionGlobalContext: VisualCalContextGlobal;
   logging?: NodeRedLogging;
   editorTheme?: {

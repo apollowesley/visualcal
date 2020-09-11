@@ -353,5 +353,6 @@ export const enum IndySoftNodeTypeNames {
   Procedure = 'procedure-sidebar',
   SectionConfiguration = 'indysoft-section-configuration',
   ActionStart = 'indysoft-action-start',
-  DeviceConfiguration = 'indysoft-device-configuration'
+  DeviceConfiguration = 'indysoft-device-configuration',
+  UserInput = 'indysoft-user-input'
 }
