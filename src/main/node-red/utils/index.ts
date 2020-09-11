@@ -168,33 +168,6 @@ export const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNod
   return findNodeById(configId);
 };
 
-export const resetAllConnectedNodes = (startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) => {
-  if (options && options.targetId !== startFrom.id) return;
-  if (!startFrom.wires) return;
-  startFrom.wires.forEach(nodeId => {
-    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
-    if (currentNode) {
-      currentNode.emit('reset');
-      resetAllConnectedNodes(currentNode, options);
-    }
-  });
-};
-
-/**
- * Resets all instruction nodes (indysoft-instruction-, and currently indysoft-dialog-)
- * @param startFrom Node to start resetting from, not including this node
- */
-export const resetConnectedInstructionNodes = (startFrom: NodeRedRuntimeNode) => {
-  if (!startFrom.wires) return;
-  startFrom.wires.forEach(nodeId => {
-    const currentNode = global.visualCal.nodeRed.app.nodes.getNode(nodeId);
-    if (currentNode) {
-      if (currentNode.type.startsWith('indysoft-instruction') || currentNode.type.startsWith('indysoft-dialog')) currentNode.emit('reset');
-      resetConnectedInstructionNodes(currentNode);
-    }
-  });
-};
-
 export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
