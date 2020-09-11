@@ -1,0 +1,44 @@
+body {
+  height: 95vh;
+  width: 100vw;
+}
+
+.session-view-container {
+  height: 100%;
+  width: 100%;
+}
+
+.row-config-status {
+  position: relative;
+}
+
+.row-results {
+  position: relative;
+  top: 10px;
+  height: 516px;
+}
+
+.row-logs {
+  position: relative;
+}
+
+#vc-results-tabulator {
+  min-height: calc(10px - 40%);
+}
+
+.row {
+  margin: 5px;
+}
+
+.top-card {
+  min-height: 392px;
+}
+
+.card-bottom {
+  min-height: 350px;
+}
+
+select {
+  height: 30px;
+}
+

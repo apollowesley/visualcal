@@ -12,20 +12,32 @@
 </head>
 
 <body>
-    <div class="card h-100" id="vc-card-session-comm-ifaces">
-        <div class="card-body">
-            <div class="row">
-                <div class="col">
-                    <h4>Bench Configurations</h4>
+    <div class="container">
+        <div class="card h-100" id="vc-card-session-comm-ifaces">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h4>Bench Configurations</h4>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div id="vc-session-comm-ifaces-tabulator" class="tabulator-table design-visible"></div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group"><label for="vc-configs-select" style="margin: 16px;">Existing configurations</label><select id="vc-configs-select" style="min-width: 200px;"></select></div>
+                    </div>
                 </div>
-            </div>
-            <div class="row text-center">
-                <div class="col"><button class="btn btn-primary" id="vc-create-button" type="button">Create</button><button class="btn btn-light" id="vc-close-button" type="button">Close</button></div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Selected configuration communication interfaces</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="vc-selected-config-comm-ifaces-tabulator" class="tabulator-table design-visible"></div>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <div class="col"><button class="btn btn-primary" id="vc-create-button" type="button">Create</button><button class="btn btn-light" id="vc-close-button" type="button">Close</button></div>
+                </div>
             </div>
         </div>
     </div>

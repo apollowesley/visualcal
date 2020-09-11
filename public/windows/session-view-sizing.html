@@ -12,41 +12,42 @@
 </head>
 
 <body>
-    <div class="container-fluid session-view-container">
-        <div class="row row-config-status">
+    <div class="container-fluid main-container">
+        <div class="row main-row row-config-status">
             <div class="col">
-                <div class="card top-card">
+                <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Configuration</h4>
+                        <h4 class="card-title">Bench Configuration</h4>
                         <div class="row">
                             <div class="col">
                                 <div class="form-group"><label for="vc-bench-config-select">Select a bench configuration</label><select id="vc-bench-config-select" style="width: 100%;" required=""></select></div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <div id="vc-devices-tabulator" class="design-visible" style="min-height: 100px;max-height: 250px;"></div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+                <div class="card" id="vc-card-devices">
+                    <div class="card-body">
+                        <h4 class="card-title">Devices</h4>
+                        <div id="vc-devices-tabulator" class="design-visible" style="min-height: 100px;max-height: 250px;"></div>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card top-card" id="vc-card-sections">
+                <div class="card" id="vc-card-sections">
                     <div class="card-body">
                         <h4 class="card-title">Procedure</h4>
                         <div class="row" style="margin: 10px;">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" required="" style="width: 100%;"></select></div>
+                            <div class="col text-center">
+                                <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" style="width: 100%;" required=""></select></div>
                             </div>
                         </div>
                         <div class="row" style="margin: 10px;">
-                            <div class="col">
+                            <div class="col text-center">
                                 <div class="form-group"><label for="vc-action-select">Select an action</label><select id="vc-action-select" style="width: 100%;" required=""></select></div>
                             </div>
                         </div>
                         <div class="row" style="margin-right: 10px;margin-left: 10px;">
-                            <div class="col">
+                            <div class="col text-center">
                                 <div class="form-group"><label for="vc-run-name-text-input">Give this run a name (Defaults to date/time)</label><input type="text" id="vc-run-name-text-input" style="width: 100%;" required=""></div>
                             </div>
                         </div>
@@ -57,9 +58,9 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card top-card">
+                <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">State</h4>
+                        <h4 class="card-title">Procedure state</h4>
                         <!-- Start: Session Status Labels -->
                         <div class="col d-inline-flex">
                             <h4 class="status-label">Status:</h4>
@@ -82,19 +83,19 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card top-card">
+                <div class="card">
                     <div class="card-body">
                         <h4 class="text-left card-title">Troubleshooting</h4>
                         <h6>Action isn't starting?</h6><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
                 </div>
             </div>
         </div>
-        <div class="row row-results">
+        <div class="row main-row row-results">
             <div class="col-12 h-50">
                 <div class="card" id="vc-card-results">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-auto align-self-center">
+                            <div class="col-auto">
                                 <h4>Results</h4>
                             </div>
                             <div class="col">
@@ -111,18 +112,18 @@
                 </div>
             </div>
         </div>
-        <div class="row row-logs">
+        <div class="row main-row row-logs">
             <div class="col">
-                <div class="card card-bottom">
+                <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Main Log</h4>
-                        <div id="vc-session-log" class="design-visible"></div>
+                        <div id="vc-session-log" class="design-visible" style="max-height: 200px;height: 250px;min-height: 100px;"></div>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="card">
-                    <div class="card-body card-bottom">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 <h4>Communication Log</h4>
@@ -131,7 +132,7 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <div id="vc-comm-interface-log" class="design-visible"></div>
+                                <div id="vc-comm-interface-log" class="design-visible" style="max-height: 200px;height: 250px;min-height: 100px;"></div>
                             </div>
                         </div>
                     </div>

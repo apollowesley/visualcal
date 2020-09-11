@@ -15,6 +15,7 @@ import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 import initIpcMonitor, { saveComparison } from './ipc';
+import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 
 const log = electronLog.scope('main');
 const nodeRed = NodeRed();
@@ -60,6 +61,7 @@ const sendToLoadingWindow = (text: string) => {
 };
 
 async function load() {
+  setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
   sendToLoadingWindow('Initializing main menu ...');
   initMainMenu();
@@ -116,6 +118,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', async () => {
+  setNoUpdateNotifier(true);
   autoUpdater.abort();
   log.info('Destroying logic server');
   await destroyNodeRed();
