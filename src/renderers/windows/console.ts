@@ -2,6 +2,24 @@ import { ipcRenderer } from 'electron';
 import moment from 'moment';
 import Tabulator from 'tabulator-tables';
 
+interface LogicResultTableItem {
+  level: string;
+  unitId: string;
+  value: number;
+  timestamp: Date;
+  source: string;
+}
+
+interface Result {
+  timestamp: Date;
+  source: string;
+}
+
+interface LogicResultMessage extends LoggerMessage {
+  message: LogicResult
+}
+
+
 window.moment = moment;
 
 let entries: LogicResultTableItem[] = [];
