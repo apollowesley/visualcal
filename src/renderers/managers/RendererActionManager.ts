@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { IpcChannels } from '../../constants';
+import { ActionState, IpcChannels } from '../../constants';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
 

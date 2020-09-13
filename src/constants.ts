@@ -1,4 +1,5 @@
 export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
+export type ActionState = 'started' | 'stopped' | 'completed';
 
 export const CommunicationInterfaceTypes = [
   'National Instruments GPIB',
