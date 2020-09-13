@@ -1,5 +1,5 @@
 import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
-import fs from 'fs-extra';
+import { promises as fsPromises } from 'fs-extra';
 import path from 'path';
 import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
@@ -24,7 +24,7 @@ export const getCommunicationInterfaceForDevice = (deviceName: string) => {
 };
 
 const clearDeviceCommunicationInterfaces = () => {
-  deviceCommunicationInterfaces.splice(0, deviceCommunicationInterfaces.length);
+  deviceCommunicationInterfaces.length = 0;
 };
 
 export const getDriverForDevice = (deviceName: string) => {
@@ -32,8 +32,12 @@ export const getDriverForDevice = (deviceName: string) => {
   if (!device || !device.deviceDriver) return null;
   const deviceDriver = driversPackagejson.visualcal.drivers.devices.find(d => d.manufacturer === device.deviceDriver?.manufacturer && d.model === device.deviceDriver.deviceModel);
   if (!deviceDriver) return null;
-  return DeviceManager.instance.getByDisplayName(deviceDriver.displayName as DriverName, device.deviceName) as IControllableDevice;
+  return DeviceManager.instance.get(deviceDriver.displayName as DriverName, device.deviceName) as IControllableDevice;
 };
+
+export const getDeviceConfig = (unitId: string) => {
+  return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
+}
 
 const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
   const retVal: DeviceNodeProperties[] = [];
@@ -162,11 +166,8 @@ export const loadDevices = (session: Session) => {
   });
 }
 
-export const init = () => {
+export const init = async () => {
   const driversPackagejsonPath = path.join(global.visualCal.dirs.drivers.base, 'package.json');
-  driversPackagejson = fs.readJSONSync(driversPackagejsonPath);
+  const driversPackageJsonString = (await fsPromises.readFile(driversPackagejsonPath)).toString();
+  driversPackagejson = JSON.parse(driversPackageJsonString);
 };
-
-export const getDeviceConfig = (unitId: string) => {
-  return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
-}

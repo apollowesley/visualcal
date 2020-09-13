@@ -78,7 +78,7 @@ async function load() {
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   sendToLoadingWindow('Initializing Logic Server utils ...');
-  nodeRedUtilsInit();
+  await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
   initIpcMonitor();
 }
