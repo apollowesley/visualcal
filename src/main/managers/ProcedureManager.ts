@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
 import NodeRed from '../node-red';
 import { CrudManager } from './CrudManager';
 import electronLog from 'electron-log';

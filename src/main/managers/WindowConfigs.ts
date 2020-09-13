@@ -1,5 +1,6 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
+import { VisualCalWindow } from '../../constants';
 
 type HtmlPathType = 'bootstrap' | 'public' | 'url' | 'raw';
 

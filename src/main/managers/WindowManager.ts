@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import SerialPort from 'serialport';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
+import { CommunicationInterfaceTypes, IpcChannels, VisualCalWindow } from '../../constants';
 import * as WindowUtils from '../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';

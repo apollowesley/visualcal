@@ -1,5 +1,5 @@
 import { app, ipcMain } from 'electron';
-import { IpcChannels } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 

@@ -6,6 +6,7 @@ import fsExtra from 'fs-extra';
 import RED from 'node-red';
 import path from 'path';
 import { NodeRed as RealNodeRed } from '../@types/logic-server';
+import { VisualCalWindow } from '../constants';
 import { init as initGlobal } from './InitGlobal';
 import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';

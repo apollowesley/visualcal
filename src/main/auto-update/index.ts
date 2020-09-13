@@ -2,7 +2,7 @@ import { autoUpdater, CancellationToken, UpdateInfo } from '@imjs/electron-diffe
 import { ProgressInfo } from 'electron-builder';
 import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
 import { noop } from 'lodash';
 import { dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
