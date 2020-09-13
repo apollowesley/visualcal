@@ -9,7 +9,6 @@
       "indysoft-section-configuration": "indysoft-section-configuration.js",
       "indysoft-action-completed": "indysoft-action-completed.js",
       "indysoft-action-start": "indysoft-action-start.js",
-      "indysoft-command-sequence-builder": "indysoft-command-sequence-builder.js",
       "indysoft-device-result": "indysoft-device-result.js",
       "indysoft-device-configuration": "indysoft-device-configuration.js",
       "indysoft-device-fluke45": "indysoft-device-fluke45.js",
@@ -19,8 +18,6 @@
       "indysoft-mqtt-dynamic-topic-in": "indysoft-mqtt-dynamic-topic-in.js",
       "indysoft-user-input": "indysoft-user-input.js",
       "indysoft-testpoint": "indysoft-testpoint.js",
-      "prologix-gpib-tcp": "prologix-gpib-tcp.js",
-      "prologix-gpib-tcp-config": "prologix-gpib-tcp-config.js",
       "indysoft-communication-interface": "indysoft-communication-interface.js"
     }
   }

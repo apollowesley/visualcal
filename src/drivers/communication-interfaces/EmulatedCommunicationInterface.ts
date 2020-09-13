@@ -4,14 +4,6 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
 
   private isConnectedInternal: boolean = false;
 
-  get manufacturerModelType(): CommunicationInterfaceManufacturerModelType {
-    return {
-      manufacturer: 'IndySoft',
-      model: 'Emulated',
-      type: 'Emulated'
-    }
-  }
-
   async connect(): Promise<void> {
     this.onConnecting();
     this.isConnectedInternal = true;

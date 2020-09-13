@@ -377,16 +377,6 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
-				"indysoft-command-sequence-builder": {
-					"name": "indysoft-command-sequence-builder",
-					"types": [
-						"indysoft-command-sequence-builder"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-command-sequence-builder.js"
-				},
 				"indysoft-communication-interface": {
 					"name": "indysoft-communication-interface",
 					"types": [
@@ -516,26 +506,6 @@
 					"local": false,
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/procedure-sidebar.js"
-				},
-				"prologix-gpib-tcp-config": {
-					"name": "prologix-gpib-tcp-config",
-					"types": [
-						"prologix-gpib-tcp-config"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp-config.js"
-				},
-				"prologix-gpib-tcp": {
-					"name": "prologix-gpib-tcp",
-					"types": [
-						"prologix-gpib-tcp"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/prologix-gpib-tcp.js"
 				}
 			}
 		},

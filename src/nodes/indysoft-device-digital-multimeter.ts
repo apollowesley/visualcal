@@ -33,7 +33,6 @@ export interface RuntimeNodeInputEventMessagePayload {
   rate?: number;
   range?: number;
   address?: number;
-  operations?: InterfaceOperation[];
   section?: string;
   action?: string;
 }

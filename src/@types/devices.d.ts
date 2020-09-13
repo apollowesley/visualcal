@@ -1,5 +1,3 @@
-declare type CommunicationInterfaceEvents = 'connected' | 'connecting' | 'disconnected' | 'data' | 'error' | 'write';
-
 interface CommunicationInterfaceConfigurationOptions {
   id: string;
   connectTimeout?: number;
@@ -7,22 +5,8 @@ interface CommunicationInterfaceConfigurationOptions {
   writeTimeout?: number
 }
 
-interface ManufacturerModel {
-  manufacturer: string;
-  model: string;
-}
-
-interface DeviceInfo extends ManufacturerModel {
-  nomenclature: string;
-}
-
-interface CommunicationInterfaceManufacturerModelType extends ManufacturerModel {
-  type: import('../constants').CommunicationInterfaceType;
-}
-
 interface ICommunicationInterface {
   name: string;
-  manufacturerModelType: CommunicationInterfaceManufacturerModelType;
   setDeviceAddress(address: number): Promise<void>; // GPIB
   enable(): void;
   disable(): void;
@@ -45,49 +29,12 @@ interface ICommunicationInterface {
   queryString(data: string, encoding?: BufferEncoding): Promise<string>;
 }
 
-interface IDevice {
-  name: string;
-}
-
 interface IControllableDevice extends IDevice {
+  name: string;
   communicationInterface?: ICommunicationInterface;
   setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
   isGpib?: boolean;
   gpibPrimaryAddress?: number;
-}
-
-interface InterfaceOperation {
-  type: 'write' | 'query' | 'trigger' | 'delay' | 'reset' | 'command';
-  respondInBulk?: boolean;
-  commandType?: string;
-  unitId?: string;
-  readLength?: number;
-  useReadLength?: boolean;
-  responseTag?: string;
-  readDataType?: string;
-  writeData?: number | string | Uint8Array;
-  delay?: number;
-  resetType?: string;
-  interfaceId?: string;
-  triggerName?: string;
-  // eslint-disable-next-line
-  readTag?: any;
-  gpibAddress?: number;
-}
-
-interface InterfaceOperationInfo {
-  operation: InterfaceOperation;
-  section: string;
-  action: string;
-  readTag: string;
-}
-
-interface InterfaceOperationResponseMessage {
-  data: Uint8Array;
-  readOperation: InterfaceOperationInfo;
-  section: string;
-  action: string;
-  readTag: string;
 }
 
 interface ReadQueueItem {

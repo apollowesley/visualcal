@@ -26,8 +26,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   get name() { return this.fName; }
   set name(value: string) { this.fName = value; }
 
-  abstract get manufacturerModelType(): CommunicationInterfaceManufacturerModelType;
-
   async setDeviceAddress(address: number): Promise<void> {
     await Promise.resolve();
   }
