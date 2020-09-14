@@ -32,4 +32,5 @@ export interface TriggerOptions {
   action: string;
   runId: string;
   session?: Session;
+  interceptDeviceWrites?: boolean;
 }

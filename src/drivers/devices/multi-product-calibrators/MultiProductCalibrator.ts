@@ -1,6 +1,6 @@
-import { ControllableDevice } from '../ControllableDevice';
+import { Device } from '../Device';
 
-interface MultiProductCalibrator extends ControllableDevice {
+interface MultiProductCalibrator extends Device {
   turnOutputOn(): Promise<void>;
   turnOutputOff(): Promise<void>;
   setCurrentAC(current: number, frequency: number): Promise<void>;
@@ -11,7 +11,7 @@ interface MultiProductCalibrator extends ControllableDevice {
   setFrequency(volts: number, frequency: number): Promise<void>;
 }
 
-export abstract class MultiProductCalibratorDevice extends ControllableDevice implements MultiProductCalibrator {
+export abstract class MultiProductCalibratorDevice extends Device implements MultiProductCalibrator {
 
   public abstract async turnOutputOn(): Promise<void>;
   public abstract async turnOutputOff(): Promise<void>;

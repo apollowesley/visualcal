@@ -13,8 +13,7 @@ const startStopActionButtonElement = document.getElementById('vc-start-stop-butt
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
-
-
+const interceptDeviceWritesCheckbox = document.getElementById('vc-intercept-device-writes') as HTMLInputElement;
 
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
@@ -225,6 +224,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
+    opts.interceptDeviceWrites = interceptDeviceWritesCheckbox.checked;
     results.addRun(runName);
     window.visualCal.actionManager.start(opts);
     session.lastSectionName = section.name;

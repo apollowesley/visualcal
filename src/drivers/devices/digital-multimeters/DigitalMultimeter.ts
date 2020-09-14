@@ -1,4 +1,4 @@
-import { ControllableDevice } from '../ControllableDevice';
+import { Device } from '../Device';
 import { DeviceDefinition } from '../device-interfaces';
 
 type DigitalMultimeterDeviceDefinition = DeviceDefinition
@@ -26,7 +26,7 @@ export interface SetModeOptions {
   fourWire?: boolean;
 }
 
-export abstract class DigitalMultimeterDevice extends ControllableDevice {
+export abstract class DigitalMultimeterDevice extends Device {
 
   constructor(definition: DeviceDefinition) {
     super(definition);

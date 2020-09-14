@@ -60,6 +60,9 @@ if (window.require) {
             case 'bench-configurations-view':
                 require('../../dist/renderers/windows/bench-config/view/index.js');
                 break;
+            case 'device-before-write':
+                require('../../dist/renderers/windows/device-before-write.js');
+                break;
         }
         window.dispatchEvent(new Event('visualCalBootstrapLoaded'));
     });

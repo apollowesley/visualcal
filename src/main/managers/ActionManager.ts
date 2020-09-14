@@ -1,9 +1,11 @@
 import { EventEmitter } from 'events';
 import { ipcMain } from 'electron';
-import { ActionState, IpcChannels } from '../../constants';
+import { ActionState, IpcChannels, VisualCalWindow } from '../../constants';
 import { RuntimeNode as IndySoftActionStartRuntimeNode, TriggerOptions } from '../../nodes/indysoft-action-start-types';
 import NodeRed from '../node-red';
 import { loadDevices } from '../node-red/utils';
+import { DeviceManager } from './DeviceManager';
+import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 
 const nodeRed = NodeRed();
 
@@ -34,11 +36,37 @@ export class ActionManager extends EventEmitter {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
     await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
     loadDevices(opts.session);
+    if (opts.interceptDeviceWrites) {
+      for (const device of DeviceManager.instance.devices) {
+        device.once('writeCancelled', async () => await this.stop(opts));
+        device.onBeforeWriteString = async (device, iface, data) => {
+          return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
+            ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
+              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              return resolve(args);
+            });
+            ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
+              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              return reject(error);
+            });
+            ipcMain.once(IpcChannels.device.beforeWriteString.cancel, (_, args: { data: string, cancel: boolean }) => {
+              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              return resolve(args);
+            });
+            const deviceBeforeWriteWindow = await global.visualCal.windowManager.showDeviceBeforeWriteWindow();
+            deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: device.name, ifaceName: iface.name, data });
+          });
+        }
+      }
+    }
     await global.visualCal.communicationInterfaceManager.connectAll();
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
   }
 
   async stop(opts: TriggerOptions) {
+    for (const device of DeviceManager.instance.devices) {
+      device.onBeforeWriteString = undefined;
+    }
     await global.visualCal.communicationInterfaceManager.disconnectAll();
     nodeRed.stopVisualCalActionStartNode(opts.section, opts.action);
   }

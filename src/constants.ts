@@ -15,7 +15,8 @@ export const enum VisualCalWindow {
   SelectProcedure = 'select-procedure',
   SelectSession = 'select-session',
   UpdateApp = 'update-app',
-  BenchConfigView = 'bench-configurations-view'
+  BenchConfigView = 'bench-configurations-view',
+  DeviceBeforeWrite = 'device-before-write'
 }
 
 export const enum WindowPathType {
@@ -61,7 +62,13 @@ export interface IpcChannelCRUD {
 export const IpcChannels = {
   device: {
     onWrite: 'device-on-write',
-    onReadString: 'device-on-read-string'
+    onReadString: 'device-on-read-string',
+    beforeWriteString: {
+      request: 'device-before-write-string-request',
+      response: 'device-before-write-string-response',
+      cancel: 'device-before-write-string-cancel',
+      error: 'device-before-write-string-error'
+    }
   },
   ipc: {
     addRendererEventNames: 'ipc-add-renderer-event-names'

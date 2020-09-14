@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels } from '../../constants';
-import { Device } from '../../drivers/devices/Device';
+import { IpcChannels, VisualCalWindow } from '../../constants';
+import { BeforeWriteStringResult, Device } from '../../drivers/devices/Device';
 import { Fluke45 } from '../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../drivers/devices/digital-multimeters/Keysight34401A';
 import { Fluke5522A } from '../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
@@ -29,6 +29,8 @@ export class DeviceManager extends TypedEmitter<Events> {
     super();
     log.info('Loaded');
   }
+
+  get devices() { return Array.from(this.fDevices, ([_, value]) => (value)); }
 
   private addDevice(deviceName: string, device: Device) {
     if (this.fDevices.has(deviceName)) throw new Error(`Device, ${deviceName}, already exists`);
