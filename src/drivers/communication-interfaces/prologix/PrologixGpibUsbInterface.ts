@@ -3,6 +3,7 @@ import SerialPort from 'serialport';
 import ReadlineParser from '@serialport/parser-readline';
 import { TextDecoder, TextEncoder } from 'util';
 import electronLog from 'electron-log';
+import { writeFile } from 'fs';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
@@ -80,15 +81,18 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         }
         const view = new Uint8Array(data);
         const dataString = new TextDecoder('utf-8').decode(view);
-        this.fSerialPort.write(dataString);
-        this.fSerialPort.drain((err) => {
-          if (!err) return resolve();
-          else {
-            let errorMsg = `Error writing data to Prologix GPIB USB over serial port: ${err.message}`;
-            if (this.fClientOptions) errorMsg = `Error writing data to Prologix GPIB USB over serial port, ${this.fClientOptions.portName}: ${err.message}`;
-            this.onError(new Error(errorMsg));
-            return reject(errorMsg);
-          }
+        this.fSerialPort.write(dataString, (writeError) => {
+          if (writeError) return reject(writeError?.message);
+          if (!this.fSerialPort) return reject('fSerialPort is undefined');
+          this.fSerialPort.drain((drainError) => {
+            if (!drainError) return resolve();
+            else {
+              let errorMsg = `Error writing data to Prologix GPIB USB over serial port: ${drainError.message}`;
+              if (this.fClientOptions) errorMsg = `Error writing data to Prologix GPIB USB over serial port, ${this.fClientOptions.portName}: ${drainError.message}`;
+              this.onError(new Error(errorMsg));
+              return reject(errorMsg);
+            }
+          });
         });
       } catch (error) {
         this.onError(error);
