@@ -62,6 +62,9 @@ const settings: Settings = {
           // entry.level === 50 === info
           // entry.level === 50 === debug
           switch (entry.level) {
+            case 20: // Unknown, but it showed up when a comm interface erred with "No connecftion"
+              log.warn('warn >', entry.msg);
+              break;
             case 40: // info
               log.info('info >', entry.msg);
               break;
@@ -72,7 +75,7 @@ const settings: Settings = {
               log.verbose('trace >', entry.msg);
               break;
             default:
-              log.warn('unknown log level (default) ›', entry.msg);
+              log.warn('unknown log level (default) ›', entry.level, entry.msg);
           }
         };
       }

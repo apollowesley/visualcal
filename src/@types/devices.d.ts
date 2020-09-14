@@ -8,10 +8,8 @@ interface CommunicationInterfaceConfigurationOptions {
 interface ICommunicationInterface {
   name: string;
   setDeviceAddress(address: number): Promise<void>; // GPIB
-  enable(): void;
-  disable(): void;
   connect(options?: ICommunicationInterfaceConnectOptions): Promise<void>;
-  disconnect(): void;
+  disconnect(): Promise<void>;
   isConnected: boolean;
   configure(options: CommunicationInterfaceConfigurationOptions): void;
   writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void>;

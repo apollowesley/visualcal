@@ -4,17 +4,12 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
 
   private isConnectedInternal: boolean = false;
 
-  async connect(): Promise<void> {
-    this.onConnecting();
-    this.isConnectedInternal = true;
-    await this.onConnected();
+  async onConnect(): Promise<void> {
     await Promise.resolve();
   }
 
-  disconnect(): void {
-    const wasConnected = this.isConnected;
-    this.isConnectedInternal = false;
-    if (wasConnected) this.onDisconnected();
+  async onDisconnect(): Promise<void> {
+    await Promise.resolve();
   }
 
   get isConnected(): boolean {

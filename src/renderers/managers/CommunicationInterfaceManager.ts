@@ -5,6 +5,7 @@ import { IpcChannels } from '../../constants';
 interface Events {
   interfaceConnecting: (info: { name: string }) => void;
   interfaceConnected: (info: { name: string, err?: Error }) => void;
+  interfaceDisconnecting: (info: { name: string, err?: Error }) => void;
   interfaceDisconnected: (info: { name: string, err?: Error }) => void;
   interfaceDataReceived: (info: { name: string, data: ArrayBuffer }) => void;
   interfaceStringReceived: (info: { name: string, data: string }) => void;
@@ -23,6 +24,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
 
     ipcRenderer.on(IpcChannels.communicationInterface.connected, (_, info: { name: string, err?: Error }) => this.emit('interfaceConnected', info));
     ipcRenderer.on(IpcChannels.communicationInterface.connecting, (_, info: { name: string }) => this.emit('interfaceConnecting', info));
+
+    ipcRenderer.on(IpcChannels.communicationInterface.disconnecting, (_, info: { name: string, err?: Error }) => this.emit('interfaceDisconnecting', info));
     ipcRenderer.on(IpcChannels.communicationInterface.disconnected, (_, info: { name: string, err?: Error }) => this.emit('interfaceDisconnected', info));
 
     ipcRenderer.on(IpcChannels.communicationInterface.error, (_, info: { name: string, err: Error }) => this.emit('interfaceError', info));

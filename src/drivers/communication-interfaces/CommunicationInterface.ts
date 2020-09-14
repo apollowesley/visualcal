@@ -9,6 +9,7 @@ const log = electronLog.scope('CommunicationInterface');
 interface Events {
   connecting: (iface: ICommunicationInterface) => void;
   connected: (iface: ICommunicationInterface, err?: Error) => void;
+  disconnecting: (iface: ICommunicationInterface, err?: Error) => void;
   disconnected: (iface: ICommunicationInterface, err?: Error) => void;
   dataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   write: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
@@ -19,52 +20,98 @@ interface Events {
 export abstract class CommunicationInterface extends TypedEmitter<Events> implements ICommunicationInterface {
 
   private fName: string = uuid();
-  private isEnabled = false;
+  private fConnectTimeout = 3000;
+  private fConnectTimeoutTimerId?: NodeJS.Timeout;
+  private fIsConnecting = false;
+  private fIsDisconnecting = false;
   protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
+
+  async setDeviceAddress(address: number): Promise<void> {
+    // GPIB
+    await Promise.resolve();
+  }
 
   get name() { return this.fName; }
   set name(value: string) { this.fName = value; }
 
-  async setDeviceAddress(address: number): Promise<void> {
+  get connectTimeout() { return this.fConnectTimeout; }
+  set connectTimeout(value: number) {
+    if (value < 0) throw new Error('connectTimout cannot be less than zero');
+    if (value === this.fConnectTimeout) return;
+    this.fConnectTimeout = value;
+  }
+
+  get isConnecting() { return this.fIsConnecting; }
+  get isDisconnecting() { return this.fIsDisconnecting; }
+  abstract get isConnected(): boolean;
+
+  protected async onDisconnecting(): Promise<void> {
+    this.fIsConnecting = false;
+    this.fIsDisconnecting = true;
+    this.emit('disconnecting', this);
     await Promise.resolve();
   }
 
-  enable() {
-    this.isEnabled = true;
-  }
+  protected async onDisconnected(): Promise<void> {
+    this.fIsDisconnecting = false;
+    this.emit('disconnected', this);
+    await Promise.resolve();
+  };
 
-  disable() {
-    this.isEnabled = false;
-    this.disconnect();
-  }
+  protected abstract onDisconnect(): Promise<void>;
 
-  abstract async connect(): Promise<void>;
-
-  protected onConnecting() {
-    this.emit('connecting', this);
-  }
-
-  protected async onConnected() {
-    this.emit('connected', this);
-    return await Promise.resolve();
-  }
-
-  abstract disconnect(): void;
-
-  protected onDisconnected() {
+  async disconnect() {
+    if (!this.isConnected || this.isDisconnecting) return; // Already disconnected or disconnecting
+    await this.onDisconnecting();
+    await this.onDisconnect();
     if (this.fReadQueue) {
       for (let index = 0; index < this.fReadQueue.length; index++) {
         const handler = this.fReadQueue.get(index);
-        if (handler?.cancelCallback) handler.cancelCallback();
+        if (handler && handler.cancelCallback) handler.cancelCallback();
       }
       this.fReadQueue.clear();
       this.fReadQueue = undefined;
     }
-    this.emit('disconnected', this);
+    await this.onDisconnected();
   }
 
-  abstract get isConnected(): boolean;
+  protected onConnecting(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.fIsConnecting = true;
+      this.fIsDisconnecting = false;
+      this.emit('connecting', this);
+      this.fConnectTimeoutTimerId = setTimeout(async () => {
+        await this.disconnect();
+        return reject(new Error(`${this.name} failed to connect within ${this.connectTimeout} ms`));
+      }, this.connectTimeout);
+      return resolve();
+    });
+  }
+
+  protected async onConnected(): Promise<void> {
+    if (this.fConnectTimeoutTimerId) clearTimeout(this.fConnectTimeoutTimerId);
+    this.fIsConnecting = false;
+    this.emit('connected', this);
+    return await Promise.resolve();
+  }
+
+  protected abstract onConnect(): Promise<void>;
+
+  async connect(): Promise<void> {
+    if (this.fIsConnecting) {
+      throw new Error('Already connecting');
+    }
+    await this.onConnecting();
+    try {
+      await this.onConnect();
+      await this.onConnected();
+    } catch (error) {
+      await this.disconnect();
+      this.onError(error);
+      throw error;
+    }
+  }
 
   addErrorHandler(handler: ErrorEventHandler) {
     this.on('error', handler);
@@ -80,13 +127,9 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   configure(options: CommunicationInterfaceConfigurationOptions) {
     if (this.isConnected) {
-      try {
-        this.disconnect();
-        throw 'Cannot configure while connected';
-      } catch (error) {
-        if (error instanceof Error) this.onError(error);
-        else this.onError(new Error(error));
-      }
+      const err = new Error('Cannot configure while connected');
+      this.onError(err);
+      throw err;
     } else {
       this.fOptions = options;
     }
@@ -103,8 +146,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem) {
-    // do not allow writes if we are disabled
-    if (!this.isEnabled) return;
     if (readHandler) this.enqueue(readHandler);
     this.emit('write', this, data);
     await this.write(data);

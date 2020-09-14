@@ -377,16 +377,6 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
-				"indysoft-communication-interface": {
-					"name": "indysoft-communication-interface",
-					"types": [
-						"indysoft-communication-interface"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-communication-interface.js"
-				},
 				"indysoft-device-configuration": {
 					"name": "indysoft-device-configuration",
 					"types": [

@@ -127,6 +127,7 @@ export const IpcChannels = {
   communicationInterface: {
     connected: 'communication-interface-connected',
     connecting: 'communication-interface-connecting',
+    disconnecting: 'communication-interface-disconnecting',
     disconnected: 'communication-interface-disconnected',
     error: 'communication-interface-error',
     dataReceived: 'communication-interface-data-received',

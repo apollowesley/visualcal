@@ -20,7 +20,7 @@ export class SerialInterface extends CommunicationInterface {
     return this.fPort.isOpen;
   }
 
-  async connect(): Promise<void> {
+  protected onConnect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         if (!this.fPortOptions) throw 'No configured';
@@ -31,15 +31,13 @@ export class SerialInterface extends CommunicationInterface {
           dataBits: this.fPortOptions.dataBits || 8,
           stopBits: this.fPortOptions.stopBits || 1
         });
-        this.fPort.once('close', this.onDisconnected);
-        this.fPort.once('end', this.disconnect);
+        this.fPort.once('close', async () => await this.onDisconnected());
+        this.fPort.once('end', async () => await this.disconnect());
         this.fPort.on('error', this.onError);
         this.fPort.once('data', this.onData);
         this.fPort.open();
-        this.onConnected();
         return resolve();
       } catch (error) {
-        this.disconnect();
         this.onError(error);
         return reject(error);
       }
@@ -51,17 +49,18 @@ export class SerialInterface extends CommunicationInterface {
     this.fPortOptions = options;
   }
 
-  disconnect(): void {
-    if (!this.fPort) return;
-    this.fPort.removeAllListeners();
-    try {
-      if (this.isConnected) this.fPort.close();
-    } catch (error) {
-      this.onError(error);
-    } finally {
+  protected onDisconnect(): Promise<void> {
+    return new Promise((resolve) => {
+      if (!this.fPort) return resolve();
+      try {
+        this.fPort.removeAllListeners();
+        if (this.isConnected) this.fPort.close();
+      } catch (error) {
+        this.onError(error);
+      }
       this.fPort = undefined;
-      this.onDisconnected();
-    }
+      return resolve();
+    });
   }
 
   write(data: ArrayBuffer): Promise<void> {

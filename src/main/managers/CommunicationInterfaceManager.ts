@@ -9,6 +9,7 @@ import { ipcMain } from 'electron';
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
   interfaceConnected: (iface: ICommunicationInterface, err?: Error) => void;
+  interfaceDisconnecting: (iface: ICommunicationInterface, err?: Error) => void; 
   interfaceDisconnected: (iface: ICommunicationInterface, err?: Error) => void;
   interfaceDataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   interfaceStringReceived: (iface: ICommunicationInterface, data: string) => void;
@@ -35,6 +36,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('connecting', this.onInterfaceConnecting);
     communicationInterface.on('dataReceived', this.onInterfaceDataReceived);
     communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
+    communicationInterface.on('disconnecting', this.onInterfaceDisconnecting);
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
     communicationInterface.on('write', this.onInterfaceWrite);
     communicationInterface.on('error', this.onInterfaceError);
@@ -49,6 +51,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('connecting');
     communicationInterface.removeAllListeners('dataReceived');
     communicationInterface.removeAllListeners('stringReceived');
+    communicationInterface.removeAllListeners('disconnecting');
     communicationInterface.removeAllListeners('disconnected');
     communicationInterface.removeAllListeners('write');
     communicationInterface.removeAllListeners('error');
@@ -64,10 +67,9 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     return this.fInterfaces.find(i => i.name.toLocaleUpperCase() === name.toLocaleUpperCase());
   }
 
-  clear() {
+  async clear() {
     try {
-      this.disableAll();
-      this.disconnectAll();
+      await this.disconnectAll();
     } catch (error) {
       throw error;
     } finally {
@@ -106,8 +108,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     return iface;
   }
 
-  loadFromSession(session: Session) {
-    this.clear();
+  async loadFromSession(session: Session) {
+    await this.clear();
     if (!session.configuration || !session.configuration.benchConfigName) throw new Error(`Session, ${session.name}, does not have a configuration or bench configuration name`);
     const config = global.visualCal.userManager.getBenchConfig(session.username, session.configuration.benchConfigName);
     if (!config) throw new Error(`Bench configuration, ${session.configuration.benchConfigName}, does not exist in session, ${session.name}`);
@@ -129,24 +131,16 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
         }
         return resolve();
       } catch (error) {
-        this.disconnectAll();
+        await this.disconnectAll();
         return reject(error.message);
       }
     });
   }
 
-  disconnectAll() {
+  async disconnectAll() {
     for (const iface of this.fInterfaces) {
-      iface.disconnect();
+      await iface.disconnect();
     }
-  }
-
-  enableAll() {
-    this.fInterfaces.forEach(i => i.enable());
-  }
-
-  disableAll() {
-    this.fInterfaces.forEach(i => i.disable());
   }
 
   private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
@@ -174,6 +168,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     this.emit('interfaceStringReceived', communicationInterface, data);
     setImmediate(() => {
       ipcMain.sendToAll(IpcChannels.communicationInterface.stringReceived, { name: communicationInterface.name, data: data });
+    });
+  }
+
+  private onInterfaceDisconnecting(communicationInterface: ICommunicationInterface, err?: Error) {
+    this.emit('interfaceDisconnecting', communicationInterface, err);
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnecting, { name: communicationInterface.name, err: err });
     });
   }
 

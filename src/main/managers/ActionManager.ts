@@ -20,9 +20,9 @@ export class ActionManager extends EventEmitter {
       }
     });
 
-    ipcMain.on(IpcChannels.actions.stop.request, (event, opts: TriggerOptions) => {
+    ipcMain.on(IpcChannels.actions.stop.request, async (event, opts: TriggerOptions) => {
       try {
-        this.stop(opts);
+        await this.stop(opts);
         event.reply(IpcChannels.actions.stop.response);
       } catch (error) {
         event.reply(IpcChannels.actions.stop.error, { opts: opts, err: error });
@@ -32,23 +32,21 @@ export class ActionManager extends EventEmitter {
 
   async start(opts: TriggerOptions) {
     if (!opts.session) throw new Error('A session is required to start and action trigger');
-    global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
+    await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
     loadDevices(opts.session);
-    global.visualCal.communicationInterfaceManager.enableAll();
     await global.visualCal.communicationInterfaceManager.connectAll();
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
   }
 
-  stop(opts: TriggerOptions) {
-    global.visualCal.communicationInterfaceManager.disconnectAll();
-    global.visualCal.communicationInterfaceManager.disableAll();
+  async stop(opts: TriggerOptions) {
+    await global.visualCal.communicationInterfaceManager.disconnectAll();
     nodeRed.stopVisualCalActionStartNode(opts.section, opts.action);
   }
 
   stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState, opts?: TriggerOptions) {
-    setImmediate(() => {
+    setImmediate(async () => {
       if (!node.section) throw new Error(`indysoft-action-start node section property is not defined for node ${node.id}`);
-      if (state === 'stopped' && opts) this.stop(opts);
+      if (state === 'stopped' && opts) await this.stop(opts);
       ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });
     });
   }
