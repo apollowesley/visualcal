@@ -24,6 +24,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   private fConnectTimeoutTimerId?: NodeJS.Timeout;
   private fIsConnecting = false;
   private fIsDisconnecting = false;
+  private fEndOfStringTerminator: EndOfStringTerminator = 'CrLf';
   protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
 
@@ -35,6 +36,15 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   get name() { return this.fName; }
   set name(value: string) { this.fName = value; }
 
+  async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
+    return await Promise.resolve(this.fEndOfStringTerminator);
+  }
+
+  async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
+    this.fEndOfStringTerminator = eos;
+    await Promise.resolve();
+  }
+
   get connectTimeout() { return this.fConnectTimeout; }
   set connectTimeout(value: number) {
     if (value < 0) throw new Error('connectTimout cannot be less than zero');
@@ -45,6 +55,8 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   get isConnecting() { return this.fIsConnecting; }
   get isDisconnecting() { return this.fIsDisconnecting; }
   abstract get isConnected(): boolean;
+
+
 
   protected async onDisconnecting(): Promise<void> {
     this.fIsConnecting = false;

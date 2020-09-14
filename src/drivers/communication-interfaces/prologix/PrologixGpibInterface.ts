@@ -12,11 +12,51 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   async onConnected() {
     await this.writeString('++savecfg 0');
+    await this.setEndOfStringTerminator('Lf');
     await this.writeString('++mode 1');
     await this.writeString('++auto 0');
     await this.writeString('++ifc');
     log.debug('Prologix GPIB connected');
     await super.onConnected();
+  }
+
+  getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
+    return new Promise(async (resolve, reject) => {
+      const readHandler: ReadQueueItem = {
+        callback: (data, cancelled) => {
+          if (cancelled) return reject('Cancelled');
+          const eos = Number(data);
+          switch (eos) {
+            case 0:
+              return resolve('CrLf');
+            case 1:
+              return resolve('Cr');
+            case 2:
+              return resolve('Lf');
+            case 3:
+              return resolve('none');
+          }
+        }
+      }
+      await this.writeString('++eos', 'utf-8', readHandler);
+    });
+  }
+
+  async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
+    switch (eos) {
+      case 'CrLf':
+        await this.writeString('++eos 0');
+        break;
+      case 'Cr':
+        await this.writeString('++eos 1');
+        break;
+      case 'Lf':
+        await this.writeString('++eos 2');
+        break;
+      case 'none':
+        await this.writeString('++eos 3');
+        break;
+    }
   }
 
   async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void> {
@@ -53,14 +93,6 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEndOfInstruction(enable: boolean): Promise<void> {
-    return Promise.reject('Method not implemented.');
-  }
-
-  async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
-    return Promise.reject('Method not implemented.');
-  }
-
-  async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
     return Promise.reject('Method not implemented.');
   }
 

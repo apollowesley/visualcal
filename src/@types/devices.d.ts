@@ -12,6 +12,8 @@ interface ICommunicationInterface {
   disconnect(): Promise<void>;
   isConnected: boolean;
   configure(options: CommunicationInterfaceConfigurationOptions): void;
+  getEndOfStringTerminator(): Promise<EndOfStringTerminator>;
+  setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void>;
   writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void>;
   writeInt8(data: number, readHandler?: ReadQueueItem): Promise<void>;
   writeUInt8(data: number, readHandler?: ReadQueueItem): Promise<void>;
@@ -71,8 +73,6 @@ interface GpibInterface extends ICommunicationInterface {
   selectedDeviceClear(address?: number): Promise<void>;
   getEndOfInstruction(): Promise<boolean>;
   setEndOfInstruction(enable: boolean): Promise<void>;
-  getEndOfStringTerminator(): Promise<EndOfStringTerminator>;
-  setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void>;
   getEndOfTransmission(): Promise<EndOfTransmissionOptions>;
   setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void>;
   becomeControllerInCharge(): Promise<void>;

@@ -130,6 +130,8 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
         if (config.range) command += ' ' + VoltsDCRangeCommands[config.range];
         break;
     }
+    if (!this.communicationInterface) throw new Error('Communication interface is undefined');
+    await this.communicationInterface.setEndOfStringTerminator('Lf');
     if (config.relative) {
       await this.writeString('CALC:FUNC NULL');
       await this.writeString('CALC:STATE ON');
