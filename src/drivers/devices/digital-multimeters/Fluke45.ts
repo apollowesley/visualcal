@@ -57,6 +57,8 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
         return setTimeout(resolve, duration);
       });
     }
+    if (!this.communicationInterface) throw new Error('Communication interface is undefined');
+    await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';
     switch (config.mode) {
       case 'aac':
@@ -97,8 +99,6 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
           break;
       }
     }
-    if (!this.communicationInterface) throw new Error('Communication interface is undefined');
-    await this.communicationInterface.setEndOfStringTerminator('Lf');
     await this.writeString(command);
     if (config.relative) {
       await this.writeString('REL');
