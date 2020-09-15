@@ -20,6 +20,7 @@ body {
 
 .row-logs {
   position: relative;
+  top: 10px;
 }
 
 #vc-results-tabulator {
@@ -31,7 +32,7 @@ body {
 }
 
 .top-card {
-  min-height: 392px;
+  min-height: 432px;
 }
 
 .card-bottom {
