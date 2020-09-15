@@ -63,7 +63,7 @@ export abstract class Device extends TypedEmitter<Events> {
   async readString() {
     if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
     const data = await this.fCommunicationInterface.readString();
-    if (this.fCommunicationInterface) this.emit('stringReceived', this.fCommunicationInterface, data);
+    this.emit('stringReceived', this.fCommunicationInterface, data);
     return data;
   }
 
@@ -84,8 +84,8 @@ export abstract class Device extends TypedEmitter<Events> {
   };
 
   async queryString(data: ArrayBuffer | string) {
-    if (typeof data === 'object') await this.write(data);
-    else await this.writeString(data);
+    const dataString = typeof data === 'string' ? data : new TextDecoder().decode(data);
+    await this.writeString(dataString);
     return await this.readString();
   }
 

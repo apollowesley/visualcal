@@ -3,6 +3,7 @@ import SerialPort from 'serialport';
 import ReadlineParser from '@serialport/parser-readline';
 import { TextDecoder, TextEncoder } from 'util';
 import electronLog from 'electron-log';
+import { sleep } from '../../utils';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
@@ -69,6 +70,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         this.fReadlineParser.off('data', handleData);
         data = data.trim();
         const retVal = this.fTextEncoder.encode(data);
+        console.info(`PrologixGpibUsbInterface.read`, data);
         return resolve(retVal);
       }
       this.fReadlineParser.on('data', handleData);
@@ -77,16 +79,18 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   }
 
   write(data: ArrayBuffer): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async(resolve, reject) => {
       if (!this.fSerialPort) return reject('serialPort is undefined');
       const dataString = this.fTextDecoder.decode(data);
       this.fSerialPort.write(`${dataString}\n`, (writeErr) => {
         if (writeErr) return reject(writeErr.message);
         if (!this.fSerialPort) return reject('serialPort is undefined');
-        this.fSerialPort.drain((drainErr) => {
+        this.fSerialPort.drain(async (drainErr) => {
           if (drainErr) {
             return reject(drainErr.message);
           }
+          console.info(`PrologixGpibUsbInterface.write`, dataString);
+          await sleep(100);
           return resolve();
         });
       });

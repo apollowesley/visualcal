@@ -101,34 +101,34 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     let command = '';
     switch (config.mode) {
       case 'aac':
-        command += 'CONF:CURR:AC?';
+        command += 'MEAS:CURR:AC?';
         if (config.range) command += ' ' + CurrentACRangeCommands[config.range];
         break;
       case 'adc':
-        command += 'CONF:CURR:DC?';
+        command += 'MEAS:CURR:DC?';
         if (config.range) command += ' ' + CurrentDCRangeCommands[config.range];
         break;
       case 'diode':
-        command += 'CONF:DIOD?';
+        command += 'MEAS:DIOD?';
         break;
       case 'freq':
-        command += 'CONF:FREQ?';
+        command += 'MEAS:FREQ?';
         if (config.range) command += ' ' + FreqRangeCommands[config.range];
         break;
       case 'ohms':
-        command += 'CONF:RES?';
+        command += 'MEAS:RES?';
         if (config.range) command += ' ' + OhmsRangeCommands[config.range];
         break;
       case 'ohms4':
-        command += 'CONF:FRES?';
+        command += 'MEAS:FRES?';
         if (config.range) command += ' ' + OhmsRangeCommands[config.range];
         break;
       case 'vac':
-        command += 'CONF:VOLT:AC?';
+        command += 'MEAS:VOLT:AC?';
         if (config.range) command += ' ' + VoltsACRangeCommands[config.range];
         break;
       case 'vdc':
-        command += 'CONF:VOLT:DC?';
+        command += 'MEAS:VOLT:DC?';
         if (config.range) command += ' ' + VoltsDCRangeCommands[config.range];
         break;
     }
@@ -138,9 +138,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
       await delay(1000);
     }
     if (config.acFilterHz) await this.writeString(`DET:BAND ${config.acFilterHz}`);
-    await this.writeString(command);
-    await this.writeString('TRIG:SOUR IMM');
-    const value = await this.queryString('READ?');
+    const value = await this.queryString(command);
     return parseFloat(value);
   }
 
