@@ -265,6 +265,7 @@ export class WindowManager extends TypedEmitter<Events> {
   async ShowMain() {
     const onClosed = () => this.closeAll();
     const w = await this.createWindow(VisualCalWindow.Main, undefined, true, undefined, onClosed);
+    w.maximize();
     return w;
   }
 
@@ -287,6 +288,7 @@ export class WindowManager extends TypedEmitter<Events> {
   // Node-red editor window
   async ShowNodeRedEditor() {
     const w = await this.createWindow(VisualCalWindow.NodeRedEditor, undefined, true);
+    w.maximize();
     return w;
   }
 

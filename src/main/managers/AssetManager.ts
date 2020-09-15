@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import path from 'path';
-import { promises as fsPromises } from 'fs';
+import fs, { promises as fsPromises } from 'fs';
 import { ipcMain } from 'electron';
 import { IpcChannels } from '../../constants';
 
@@ -46,6 +46,7 @@ export class AssetManager extends EventEmitter {
 
   async saveToProcedure(procedureName: string, filename: string, contents: ArrayBuffer) {
     const assetsDirPath = this.getDirPathForProcedure(procedureName);
+    if (!fs.existsSync(assetsDirPath)) fs.mkdirSync(assetsDirPath, { recursive: true });
     const filePath = path.join(assetsDirPath, filename);
     const fileContents = new Uint8Array(contents);
     await fsPromises.writeFile(filePath, fileContents);

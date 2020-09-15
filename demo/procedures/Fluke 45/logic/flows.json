@@ -2545,7 +2545,7 @@
 		"append": "mV",
 		"dataType": "integer",
 		"showImage": true,
-		"assetFilename": "Del Taco Inside.jpg",
+		"assetFilename": "IndySoftLogo.png",
 		"x": 530,
 		"y": 180,
 		"wires": [
