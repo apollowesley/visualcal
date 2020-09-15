@@ -16,12 +16,12 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
     return this.isConnectedInternal;
   }
 
-  protected async write(data: ArrayBuffer): Promise<void> {
+  async read(): Promise<ArrayBufferLike> {
+    return Promise.resolve(new TextEncoder().encode((Math.random() * 100.0).toString()));
+  }
+
+  async write(data: ArrayBuffer): Promise<void> {
     await Promise.resolve();
   } 
-
-  async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
-    return await Promise.resolve((Math.random() * 100.0).toString());
-  }
 
 }

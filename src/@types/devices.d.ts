@@ -14,19 +14,22 @@ interface ICommunicationInterface {
   configure(options: CommunicationInterfaceConfigurationOptions): void;
   getEndOfStringTerminator(): Promise<EndOfStringTerminator>;
   setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void>;
-  writeData(data: ArrayBuffer, readHandler?: ReadQueueItem): Promise<void>;
-  writeInt8(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeUInt8(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeInt16(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeUInt16(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeInt32(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeUInt32(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeInt64(data: bigint, readHandler?: ReadQueueItem): Promise<void>;
-  writeUInt64(data: bigint, readHandler?: ReadQueueItem): Promise<void>;
-  writeFloat32(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeFloat64(data: number, readHandler?: ReadQueueItem): Promise<void>;
-  writeString(data: string, encoding?: BufferEncoding, readHandler?: ReadQueueItem): Promise<void>;
+  writeData(data: ArrayBuffer): Promise<void>;
+  writeInt8(data: number): Promise<void>;
+  writeUInt8(data: number): Promise<void>;
+  writeInt16(data: number): Promise<void>;
+  writeUInt16(data: number): Promise<void>;
+  writeInt32(data: number): Promise<void>;
+  writeUInt32(data: number): Promise<void>;
+  writeInt64(data: bigint): Promise<void>;
+  writeUInt64(data: bigint): Promise<void>;
+  writeFloat32(data: number): Promise<void>;
+  writeFloat64(data: number): Promise<void>;
+  writeString(data: string, encoding?: BufferEncoding): Promise<void>;
   queryString(data: string, encoding?: BufferEncoding): Promise<string>;
+  write(data: ArrayBufferLike): Promise<void>;
+  read(): Promise<ArrayBufferLike>;
+  readString(): Promise<string>;
 }
 
 interface IControllableDevice extends IDevice {

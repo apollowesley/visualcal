@@ -25,7 +25,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   private fIsConnecting = false;
   private fIsDisconnecting = false;
   private fEndOfStringTerminator: EndOfStringTerminator = 'CrLf';
-  protected fReadQueue?: Denque<ReadQueueItem> = undefined;
   protected fOptions?: CommunicationInterfaceConfigurationOptions = undefined;
 
   async setDeviceAddress(address: number): Promise<void> {
@@ -56,8 +55,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   get isDisconnecting() { return this.fIsDisconnecting; }
   abstract get isConnected(): boolean;
 
-
-
   protected async onDisconnecting(): Promise<void> {
     this.fIsConnecting = false;
     this.fIsDisconnecting = true;
@@ -77,14 +74,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     if (!this.isConnected || this.isDisconnecting) return; // Already disconnected or disconnecting
     await this.onDisconnecting();
     await this.onDisconnect();
-    if (this.fReadQueue) {
-      for (let index = 0; index < this.fReadQueue.length; index++) {
-        const handler = this.fReadQueue.get(index);
-        if (handler && handler.cancelCallback) handler.cancelCallback();
-      }
-      this.fReadQueue.clear();
-      this.fReadQueue = undefined;
-    }
     await this.onDisconnected();
   }
 
@@ -147,126 +136,97 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     }
   }
 
-  private enqueue(readHandler: ReadQueueItem) {
-    if (!this.fReadQueue) this.fReadQueue = new Denque<ReadQueueItem>();
-    const handlerQueueIndex = this.fReadQueue.push(readHandler);
-    readHandler.cancelCallback = () => {
-      log.debug('enqueue::readHandler.cancelCallback called');
-      if (this.fReadQueue) this.fReadQueue.removeOne(handlerQueueIndex);
-      (readHandler as any).callback = undefined;
-    }
-  }
-
-  async writeData(data: ArrayBuffer, readHandler?: ReadQueueItem) {
-    if (readHandler) this.enqueue(readHandler);
+  async writeData(data: ArrayBuffer) {
     this.emit('write', this, data);
     await this.write(data);
   }
 
-  protected abstract write(data: ArrayBuffer): Promise<void>;
+  abstract write(data: ArrayBuffer): Promise<void>;
+  abstract read(): Promise<ArrayBufferLike>;
 
-  protected onData(data: ArrayBuffer) {
-    if (this.fReadQueue && !this.fReadQueue.isEmpty()) {
-      const handler = this.fReadQueue.shift();
-      if (handler) handler.callback(data);
-    } else if (this.fReadQueue && this.fReadQueue.isEmpty()) {
-      throw 'Received data without a handler in the queue: ' + data;
-    }
-    this.emit('dataReceived', this, data);
+  async readString(): Promise<string> {
+    const data = await this.read();
+    return new TextDecoder().decode(data);
   }
 
-  async writeInt8(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeInt8(data: number): Promise<void> {
     const buffer = new ArrayBuffer(8);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setInt8(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeUInt8(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeUInt8(data: number): Promise<void> {
     const buffer = new ArrayBuffer(8);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setUint8(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeInt16(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeInt16(data: number): Promise<void> {
     const buffer = new ArrayBuffer(16);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setInt16(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeUInt16(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeUInt16(data: number): Promise<void> {
     const buffer = new ArrayBuffer(16);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setUint16(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeInt32(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeInt32(data: number): Promise<void> {
     const buffer = new ArrayBuffer(32);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setInt32(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeUInt32(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeUInt32(data: number): Promise<void> {
     const buffer = new ArrayBuffer(32);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setUint32(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeInt64(data: bigint, readHandler?: ReadQueueItem): Promise<void> {
+  async writeInt64(data: bigint): Promise<void> {
     const buffer = new ArrayBuffer(64);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setBigInt64(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeUInt64(data: bigint, readHandler?: ReadQueueItem): Promise<void> {
+  async writeUInt64(data: bigint): Promise<void> {
     const buffer = new ArrayBuffer(64);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setBigUint64(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeFloat32(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeFloat32(data: number): Promise<void> {
     const buffer = new ArrayBuffer(64);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setFloat32(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeFloat64(data: number, readHandler?: ReadQueueItem): Promise<void> {
+  async writeFloat64(data: number): Promise<void> {
     const buffer = new ArrayBuffer(64);
     const view = new DataView(buffer, 0, buffer.byteLength);
     view.setFloat64(0, data);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
-  async writeString(data: string, encoding: BufferEncoding = 'utf-8', readHandler?: ReadQueueItem): Promise<void> {
+  async writeString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<void> {
     const buffer = Buffer.from(data, encoding);
-    await this.writeData(buffer, readHandler);
+    await this.writeData(buffer);
   }
 
   async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-        const handler = (data: ArrayBuffer) => {
-          const dataString = new TextDecoder().decode(data);
-          this.emit('stringReceived', this, dataString);
-          return resolve(dataString);
-        };
-        const response: ReadQueueItem = {
-          callback: handler
-        };
-        await this.writeString(data, encoding, response)
-        //.then(() => resolve())
-        .catch(error => {
-          this.onError(error);
-          return reject(error);
-        });
-      });
+    await this.writeString(data);
+    return await this.readString();
   }
 
 }

@@ -3,7 +3,6 @@ import SerialPort from 'serialport';
 import ReadlineParser from '@serialport/parser-readline';
 import { TextDecoder, TextEncoder } from 'util';
 import electronLog from 'electron-log';
-import { writeFile } from 'fs';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
@@ -15,6 +14,9 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
 
   private fSerialPort?: SerialPort = undefined;
   private fClientOptions?: ConfigurationOptions = undefined;
+  private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'utf-8' });
+  private fTextEncoder = new TextEncoder();
+  private fTextDecoder = new TextDecoder();
 
   configure(options: ConfigurationOptions) {
     super.configure(options);
@@ -22,45 +24,34 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   }
 
   protected onConnect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        if (!this.fClientOptions) throw 'Not configured';
-        this.fSerialPort = new SerialPort(this.fClientOptions.portName, { autoOpen: false, lock: true });
-        const parser = this.fSerialPort.pipe(new ReadlineParser({ delimiter: '\n' }));
-        const textEncoder = new TextEncoder();
-        parser.on('data', (data: string) => this.onData(textEncoder.encode(data).buffer));
-        this.fSerialPort.once('close', async () => await this.disconnect());
-        this.fSerialPort.once('end', async () => await this.disconnect());
-        this.fSerialPort.on('error', (err) => this.onError(err));
-        this.fSerialPort.once('timeout', async () => await this.disconnect());
-        this.fSerialPort.once('open', () => {
-          log.debug('Prologix GPIB USB connected');
-          return resolve();
-        });
-        this.fSerialPort.open((err) => {
-          if (!err) return resolve();
-          this.onError(err);
-          return reject(err);
-        });
-      } catch (error) {
-        this.onError(error);
-        return reject(error);
-      }
+    return new Promise<void>((resolve, reject) => {
+      if (!this.fClientOptions) return reject('fClientOptions is undefined');
+      console.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
+      this.fSerialPort = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
+      this.fSerialPort.setEncoding('utf-8');
+      this.fSerialPort.pipe(this.fReadlineParser);
+      this.fSerialPort.once('end', () => this.fSerialPort = undefined);
+      this.fSerialPort.on('error', (err) => console.error(err));
+      this.fSerialPort.open((err) => {
+        if (err) {
+          if (this.fSerialPort) this.fSerialPort.close();
+          return reject(err.message);
+        }
+        if (this.fSerialPort) {
+          this.fSerialPort.flush(async () => {
+            return resolve();
+          });
+        } else {
+          return reject('fSerialPort is undefined');
+        }
+      });
     });
   }
   
   protected onDisconnect(): Promise<void> {
-    return new Promise((resolve) => {
-      if (this.fSerialPort) {
-        try {
-          this.fSerialPort.removeAllListeners();
-          this.fSerialPort.close();
-          this.fSerialPort.end();
-          this.fSerialPort.destroy();
-        } catch (error) {
-          log.debug('Expected possible error: ' + error);
-        }
-      }
+    return new Promise<void>((resolve) => {
+      if (!this.fSerialPort) return resolve();
+      if (this.fSerialPort.isOpen) this.fSerialPort.close();
       this.fSerialPort = undefined;
       return resolve();
     });
@@ -71,33 +62,34 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
     return !this.isConnecting && this.fSerialPort.isOpen && !this.fSerialPort.destroyed;
   }
 
-  write(data: ArrayBuffer): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        if (!this.fSerialPort) {
-          const errMsg = 'No connection';
-          this.onError(new Error(errMsg));
-          return reject(errMsg);
-        }
-        const view = new Uint8Array(data);
-        const dataString = new TextDecoder('utf-8').decode(view);
-        this.fSerialPort.write(dataString, (writeError) => {
-          if (writeError) return reject(writeError?.message);
-          if (!this.fSerialPort) return reject('fSerialPort is undefined');
-          this.fSerialPort.drain((drainError) => {
-            if (!drainError) return resolve();
-            else {
-              let errorMsg = `Error writing data to Prologix GPIB USB over serial port: ${drainError.message}`;
-              if (this.fClientOptions) errorMsg = `Error writing data to Prologix GPIB USB over serial port, ${this.fClientOptions.portName}: ${drainError.message}`;
-              this.onError(new Error(errorMsg));
-              return reject(errorMsg);
-            }
-          });
-        });
-      } catch (error) {
-        this.onError(error);
-        return reject(error);
+  read(): Promise<ArrayBufferLike> {
+    return new Promise<ArrayBufferLike>(async (resolve, reject) => {
+      if (!this.fSerialPort) return reject('serialPort is undefined');
+      const handleData = (data: string) => {
+        this.fReadlineParser.off('data', handleData);
+        data = data.trim();
+        const retVal = this.fTextEncoder.encode(data);
+        return resolve(retVal);
       }
+      this.fReadlineParser.on('data', handleData);
+      await this.writeString('++read');
+    });
+  }
+
+  write(data: ArrayBuffer): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (!this.fSerialPort) return reject('serialPort is undefined');
+      const dataString = this.fTextDecoder.decode(data);
+      this.fSerialPort.write(`${dataString}\n`, (writeErr) => {
+        if (writeErr) return reject(writeErr.message);
+        if (!this.fSerialPort) return reject('serialPort is undefined');
+        this.fSerialPort.drain((drainErr) => {
+          if (drainErr) {
+            return reject(drainErr.message);
+          }
+          return resolve();
+        });
+      });
     });
   }
   

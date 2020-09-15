@@ -1,5 +1,6 @@
 import SerialPort from 'serialport';
 import { CommunicationInterface } from './CommunicationInterface';
+import ReadlineParser from '@serialport/parser-readline';
 
 interface ConfigurationOptions extends CommunicationInterfaceConfigurationOptions {
   portName: string;
@@ -14,6 +15,7 @@ export class SerialInterface extends CommunicationInterface {
 
   private fPort?: SerialPort = undefined;
   private fPortOptions?: ConfigurationOptions = undefined;
+  private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'utf-8' });
 
   get isConnected(): boolean {
     if (!this.fPort) return false;
@@ -31,10 +33,10 @@ export class SerialInterface extends CommunicationInterface {
           dataBits: this.fPortOptions.dataBits || 8,
           stopBits: this.fPortOptions.stopBits || 1
         });
+        this.fPort.pipe(this.fReadlineParser);
         this.fPort.once('close', async () => await this.onDisconnected());
         this.fPort.once('end', async () => await this.disconnect());
         this.fPort.on('error', this.onError);
-        this.fPort.once('data', this.onData);
         this.fPort.open();
         return resolve();
       } catch (error) {
@@ -60,6 +62,26 @@ export class SerialInterface extends CommunicationInterface {
       }
       this.fPort = undefined;
       return resolve();
+    });
+  }
+
+  read(): Promise<ArrayBufferLike> {
+    return new Promise<ArrayBufferLike>((resolve, reject) => {
+      if (!this.fPort || !this.isConnected) return reject('Not connected or fPort is undefined');
+      const textEncoder = new TextEncoder();
+      const handleError = (err: Error) => {
+        if (!this.fPort) return reject(err.message);
+        this.fPort.removeListener('error', handleError);
+        this.fReadlineParser.removeListener('data', handleData);
+      }
+      const handleData = (data: string) => {
+        if (this.fPort) this.fPort.removeListener('error', handleError);
+        this.fReadlineParser.removeListener('data', handleData);
+        const retVal = textEncoder.encode(data).buffer;
+        return resolve(retVal);
+      }
+      this.fPort.addListener('error', handleError);
+      this.fReadlineParser.addListener('data', handleData);
     });
   }
 

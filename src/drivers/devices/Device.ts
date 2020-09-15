@@ -48,16 +48,23 @@ export abstract class Device extends TypedEmitter<Events> {
     this.fCommunicationInterface = communicationInterface as CommunicationInterface;
   }
 
-  private async write(data: ArrayBuffer | string, readHandler?: ReadQueueItem) {
+  private async write(data: ArrayBuffer | string) {
     if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
     if (typeof data === 'object') {
-      await this.fCommunicationInterface.writeData(data, readHandler);
+      await this.fCommunicationInterface.writeData(data);
       this.emit('write', this.fCommunicationInterface, data);
       return;
     }
     const dataArrayBuffer = new TextEncoder().encode(data);
-    await this.fCommunicationInterface.writeData(dataArrayBuffer, readHandler);
+    await this.fCommunicationInterface.writeString(data);
     this.emit('write', this.fCommunicationInterface, dataArrayBuffer);
+  }
+
+  async readString() {
+    if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
+    const data = await this.fCommunicationInterface.readString();
+    if (this.fCommunicationInterface) this.emit('stringReceived', this.fCommunicationInterface, data);
+    return data;
   }
 
   onBeforeWriteString?: (device: Device, iface: ICommunicationInterface, data: string) => Promise<BeforeWriteStringResult>;
@@ -76,33 +83,10 @@ export abstract class Device extends TypedEmitter<Events> {
     await this.write(data);
   };
 
-  queryString(data: ArrayBuffer | string) {
-    return new Promise<string>(async (resolve, reject) => {
-      const readHandler: ReadQueueItem = {
-        callback: (data, cancelled) => {
-          if (this.fCommunicationInterface) this.emit('dataReceived', this.fCommunicationInterface, data);
-          if (cancelled) return reject();
-          const dataString = new TextDecoder().decode(data);
-          if (this.fCommunicationInterface) this.emit('stringReceived', this.fCommunicationInterface, dataString);
-          return resolve(dataString);
-        },
-        cancelCallback: () => {
-          return reject();
-        }
-      };
-      let writeDataString = typeof data === 'string' ? data : new TextDecoder().decode(data);
-      if (this.onBeforeWriteString) {
-        if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
-        const result = await this.onBeforeWriteString(this, this.fCommunicationInterface, writeDataString);
-        if (result.cancel) {
-          this.emit('writeCancelled', this, this.fCommunicationInterface, writeDataString);
-          return;
-        }
-        writeDataString = result.data;
-        data = new TextEncoder().encode(writeDataString);
-      }
-      await this.write(data, readHandler);
-    });
+  async queryString(data: ArrayBuffer | string) {
+    if (typeof data === 'object') await this.write(data);
+    else await this.writeString(data);
+    return await this.readString();
   }
 
 }
