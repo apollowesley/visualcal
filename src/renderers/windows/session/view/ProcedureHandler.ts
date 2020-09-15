@@ -9,6 +9,7 @@ interface Events {
 }
 
 interface ConstructorOptions {
+  titleElementId: string;
   sectionElementId: string;
   actionElementId: string;
   runTimeElementId: string;
@@ -16,6 +17,7 @@ interface ConstructorOptions {
 
 export class ProcedureHandler extends TypedEmitter<Events> {
 
+  private fTitleElement: HTMLHeadingElement;
   private fSectionHandler: SelectHandler<SectionInfo>;
   private fActionHandler: SelectHandler<ActionInfo>;
 
@@ -25,6 +27,8 @@ export class ProcedureHandler extends TypedEmitter<Events> {
 
   constructor(opts: ConstructorOptions) {
     super();
+    this.fTitleElement = document.getElementById(opts.titleElementId) as HTMLHeadingElement;
+
     this.fSectionHandler = new SelectHandler({ elementId: opts.sectionElementId });
     this.fSectionHandler.on('changed', (section) => this.onSectionChanged(section));
 
@@ -47,6 +51,10 @@ export class ProcedureHandler extends TypedEmitter<Events> {
   }
 
   get isReady() { return this.sectionHandler.selectedItem && this.actionHandler.selectedItem; }
+
+  setTitle(title: string) {
+    this.fTitleElement.textContent = title;
+  }
 
   private onCheckRunStateAndNotify() {
     if (this.sectionHandler.selectedItem && this.actionHandler.selectedItem) this.emit('ready', this.sectionHandler.selectedItem, this.actionHandler.selectedItem, this.runName ? this.runName : undefined);

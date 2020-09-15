@@ -15,7 +15,7 @@ body {
 .row-results {
   position: relative;
   top: 10px;
-  height: 516px;
+  min-height: 250px;
 }
 
 .row-logs {

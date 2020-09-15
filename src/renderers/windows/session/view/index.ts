@@ -126,6 +126,7 @@ const results = new ResultHandler({
 //  Procedure handler
 // ================================================================================================
 const procedure = new ProcedureHandler({
+  titleElementId: 'vc-procedure-title',
   sectionElementId: 'vc-section-select',
   actionElementId: 'vc-action-select',
   runTimeElementId: 'vc-run-name-text-input'
@@ -235,6 +236,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
 const init = async () => {
   try {
     const info = await ipc.getViewInfo();
+    procedure.setTitle(info.procedure.name);
     session = info.session;
     deviceConfigurationNodeInfosForCurrentFlow = info.deviceNodes;
     deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {

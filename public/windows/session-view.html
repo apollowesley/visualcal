@@ -34,7 +34,14 @@
             <div class="col">
                 <div class="card top-card" id="vc-card-sections">
                     <div class="card-body">
-                        <h4 class="card-title">Procedure</h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4>Procedure:&nbsp;</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-procedure-title">title&nbsp;</h4>
+                            </div>
+                        </div>
                         <div class="row" style="margin: 10px;">
                             <div class="col">
                                 <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" required="" style="width: 100%;"></select></div>
@@ -65,24 +72,30 @@
                 <div class="card top-card">
                     <div class="card-body">
                         <h4 class="card-title">State</h4>
-                        <!-- Start: Session Status Labels -->
-                        <div class="col d-inline-flex">
-                            <h4 class="status-label">Status:</h4>
-                            <h4 id="vc-procedure-status" class="status-value">Ready</h4>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Status:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-procedure-status" class="status-value">Ready</h4>
+                            </div>
                         </div>
-                        <!-- End: Session Status Labels -->
-                        <!-- Start: Session Status Labels -->
-                        <div class="col d-inline-flex">
-                            <h4 class="status-label">Section:</h4>
-                            <h4 id="vc-running-section" class="status-value">None</h4>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Section:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-running-section" class="status-value">None</h4>
+                            </div>
                         </div>
-                        <!-- End: Session Status Labels -->
-                        <!-- Start: Session Status Labels -->
-                        <div class="col d-inline-flex">
-                            <h4 class="status-label">Action:</h4>
-                            <h4 id="vc-running-action" class="status-value">None</h4>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Action:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-running-action" class="status-value">None</h4>
+                            </div>
                         </div>
-                        <!-- End: Session Status Labels -->
                     </div>
                 </div>
             </div>
