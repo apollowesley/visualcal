@@ -13,11 +13,12 @@ export class Ipc extends TypedEmitter<Events> {
 
   private get ipcRenderer() { return window.electron.ipcRenderer; }
 
-  send(channel: string, ...args: any[]) {
+
+  send(channel: string, ...args: unknown[]) {
     this.ipcRenderer.send(channel, args);
   }
 
-  request<TReturn, TError>(requestChannel: string, responseChannel: string, errorChannel: string, ...args: any[]) {
+  request<TReturn, TError>(requestChannel: string, responseChannel: string, errorChannel: string, ...args: unknown[]) {
     return new Promise<TReturn>((resolve, reject) => {
       this.ipcRenderer.once(errorChannel, (_, err: TError) => {
         reject(err);
@@ -30,7 +31,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async getAllSessions() {
-    return await window.ipc.request<Session, string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
+    return await window.ipc.request<Session[], string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
   }
 
 }
