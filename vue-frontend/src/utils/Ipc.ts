@@ -1,5 +1,6 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { Session } from '../types/session';
+import { User } from '../types/user';
 
 interface Events {
   temp: () => void;
@@ -28,6 +29,10 @@ export class Ipc extends TypedEmitter<Events> {
       });
       this.send(requestChannel, args);
     });
+  }
+
+  async getCurrentUser() {
+    return await window.ipc.request<User | null, string>('user-active-request', 'user-active-response', 'user-active-error');
   }
 
   async getAllSessions() {

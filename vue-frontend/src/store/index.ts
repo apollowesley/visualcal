@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { Session } from '../types/session';
 import Vuetify from '@/plugins/vuetify';
+import { User } from '../types/user';
 
 interface State {
   darkMode: boolean;
-  sessions: Session[];
+  user: User | null;
 }
 
 Vue.use(Vuex);
@@ -21,26 +21,27 @@ const {
   state: (): State => {
     return {
       darkMode: false,
-      sessions: []
+      user: null
     }
   },
   getters: {
-    darkMode: (state) => state.darkMode
+    darkMode: (state) => state.darkMode,
+    sessions: (state) => state.user ? state.user.sessions : []
   },
   mutations: {
     setDarkMode(state, value: boolean) {
       state.darkMode = value;
       Vuetify.framework.theme ? Vuetify.framework.theme.dark = value : Vuetify.userPreset.theme = { dark: value };
     },
-    setSessions(state, value: Session[]) {
-      state.sessions = value;
+    setUser(state, value: User | null) {
+      state.user = value;
     }
   },
   actions: {
-    async refreshSessions(context) {
+    async refreshUser(context) {
       const { commit } = rootActionContext(context);
-      const sessions = await window.ipc.getAllSessions();
-      commit.setSessions(sessions);
+      const user = await window.ipc.getCurrentUser();
+      commit.setUser(user);
     }
   }
 })
