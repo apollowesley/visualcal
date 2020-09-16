@@ -1,5 +1,6 @@
 import { DigitalMultimeterDevice, DigitalMultimeterMode, SetModeOptions, MeasurementConfiguration, Configuration } from './DigitalMultimeter';
 import { Identifiable, DeviceIdentity } from '../../IIdentifiable';
+import { sleep } from '../../utils';
 
 // Volt ranges (volts)
 const VoltsACRangeCommands: string[] = ['AUTO ON', '0.1', '1', '10', '100', '750' ];
@@ -91,51 +92,46 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
   }
 
   async getMeasurement(config: MeasurementConfiguration): Promise<number> {
-    function delay(duration: number) {
-      return new Promise((resolve) => { 
-        return setTimeout(resolve, duration);
-      });
-    }
     if (!this.communicationInterface) throw new Error('Communication interface is undefined');
     await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';
     switch (config.mode) {
       case 'aac':
-        command += 'MEAS:CURR:AC?';
-        if (config.range) command += ' ' + CurrentACRangeCommands[config.range];
+        command = 'MEAS:CURR:AC?';
+        if (config.range) command = `${command} ${CurrentACRangeCommands[config.range]}`;
         break;
       case 'adc':
-        command += 'MEAS:CURR:DC?';
-        if (config.range) command += ' ' + CurrentDCRangeCommands[config.range];
+        command = 'MEAS:CURR:DC?';
+        if (config.range) command = `${command} ${CurrentDCRangeCommands[config.range]}`;
         break;
       case 'diode':
-        command += 'MEAS:DIOD?';
+        command = 'MEAS:DIOD?';
         break;
       case 'freq':
-        command += 'MEAS:FREQ?';
-        if (config.range) command += ' ' + FreqRangeCommands[config.range];
+        command = 'MEAS:FREQ?';
+        if (config.range) command = `${command} ${FreqRangeCommands[config.range]}`;
         break;
       case 'ohms':
-        command += 'MEAS:RES?';
-        if (config.range) command += ' ' + OhmsRangeCommands[config.range];
+        command = 'MEAS:RES?';
+        if (config.range) command = `${command} ${OhmsRangeCommands[config.range]}`;
         break;
       case 'ohms4':
-        command += 'MEAS:FRES?';
-        if (config.range) command += ' ' + OhmsRangeCommands[config.range];
+        command = 'MEAS:FRES?';
+        if (config.range) command = `${command} ${OhmsRangeCommands[config.range]}`;
         break;
       case 'vac':
-        command += 'MEAS:VOLT:AC?';
-        if (config.range) command += ' ' + VoltsACRangeCommands[config.range];
+        command = 'MEAS:VOLT:AC?';
+        if (config.range) command = `${command} ${VoltsACRangeCommands[config.range]}`;
         break;
       case 'vdc':
-        command += 'MEAS:VOLT:DC?';
-        if (config.range) command += ' ' + VoltsDCRangeCommands[config.range];
+        command = 'MEAS:VOLT:DC?';
+        if (config.range) command = `${command} ${VoltsDCRangeCommands[config.range]}`;
         break;
     }
     if (config.relative) {
       await this.writeString('CALC:FUNC NULL');
       await this.writeString('CALC:STATE ON');
-      await delay(1000);
+      await sleep(1000);
     }
     if (config.acFilterHz) await this.writeString(`DET:BAND ${config.acFilterHz}`);
     const value = await this.queryString(command);

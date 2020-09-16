@@ -83,9 +83,8 @@ export abstract class Device extends TypedEmitter<Events> {
     await this.write(data);
   };
 
-  async queryString(data: ArrayBuffer | string) {
-    const dataString = typeof data === 'string' ? data : new TextDecoder().decode(data);
-    await this.writeString(dataString);
+  async queryString(data: string) {
+    await this.writeString(data);
     return await this.readString();
   }
 
