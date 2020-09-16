@@ -15,6 +15,7 @@ import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
+import { testVue } from './test-vue';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 
@@ -84,6 +85,8 @@ async function load() {
   initIpcMonitor();
 }
 
+let vueWindow: BrowserWindow;
+
 async function testingOnly() {
   // TODO: TESTING ONLY!!!
   return Promise.resolve();
@@ -106,6 +109,7 @@ const run = async () => {
       if (isDev()) {
         await testingOnly();
       }
+      vueWindow = await testVue();
     } catch (error) {
       dialog.showErrorBox('Oops!  Something went wrong', error.message);
     }

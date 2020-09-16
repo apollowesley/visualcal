@@ -15,10 +15,7 @@
 			"script": "copynodes",
 			"problemMatcher": [],
 			"label": "npm: copynodes",
-			"detail": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales",
-			"dependsOn": [
-				"tsc: build - tsconfig.json"
-			]
+			"detail": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales"
 		},
 		{
 			"type": "npm",

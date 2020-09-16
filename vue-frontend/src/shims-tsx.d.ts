@@ -1,6 +1,8 @@
 import Vue, { VNode } from 'vue'
+import { ipcRenderer } from 'electron';
 
 declare global {
+
   namespace JSX {
     // tslint:disable no-empty-interface
     interface Element extends VNode {}
@@ -10,4 +12,11 @@ declare global {
       [elem: string]: any;
     }
   }
+
+  interface Window {
+    electron: {
+      ipcRenderer: typeof ipcRenderer
+    };
+  }
+
 }
