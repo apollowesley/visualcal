@@ -7,7 +7,7 @@ Vue.use(VueRouter);
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: () => import(/* webpackChunkName: "view-home" */ '../views/Home.vue')
   }
 ];
@@ -18,8 +18,9 @@ const router = new VueRouter({
   routes
 });
 
-router.beforeEach(async () => {
+router.beforeEach(async (_from, _to, next) => {
   await store.dispatch.refreshSessions();
+  next();
 });
 
 export default router;

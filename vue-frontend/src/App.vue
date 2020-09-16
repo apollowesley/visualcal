@@ -31,7 +31,7 @@
         fluid
       >
         <v-row
-          align="center"
+          align="start"
           justify="center"
         >
           <v-col>
@@ -45,6 +45,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import "tabulator-tables/dist/css/tabulator.min.css"; //import Tabulator stylesheet
 
 @Component
 export default class App extends Vue {
@@ -54,3 +55,7 @@ export default class App extends Vue {
 
 }
 </script>
+
+<style>
+
+</style>
