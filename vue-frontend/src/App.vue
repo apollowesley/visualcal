@@ -7,34 +7,23 @@
     >
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
           alt="Vuetify Name"
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          src="@/assets/indysoft-logo.svg"
           width="100"
+          style="margin-right: 5px"
         />
+        <h3>VisualCal</h3>
       </div>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-switch
+        v-model="darkMode"
+        label="Dark mode"
+      />
     </v-app-bar>
 
     <v-main>
@@ -59,6 +48,9 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class App extends Vue {
+
+  get darkMode() { return this.$store.direct.getters.darkMode; }
+  set darkMode(value: boolean) { this.$store.direct.commit.setDarkMode(value); }
 
 }
 </script>

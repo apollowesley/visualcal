@@ -2,8 +2,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import { Session } from '../types/session';
+import Vuetify from '@/plugins/vuetify';
 
 interface State {
+  darkMode: boolean;
   sessions: Session[];
 }
 
@@ -18,10 +20,18 @@ const {
 } = createDirectStore({
   state: (): State => {
     return {
+      darkMode: false,
       sessions: []
     }
   },
+  getters: {
+    darkMode: (state) => state.darkMode
+  },
   mutations: {
+    setDarkMode(state, value: boolean) {
+      state.darkMode = value;
+      Vuetify.framework.theme ? Vuetify.framework.theme.dark = value : Vuetify.userPreset.theme = { dark: value };
+    },
     setSessions(state, value: Session[]) {
       state.sessions = value;
     }

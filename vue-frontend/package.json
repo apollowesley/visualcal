@@ -15,6 +15,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "direct-vuex": "^0.12.0",
+    "tabulator-tables": "^4.8.1",
     "tiny-typed-emitter": "^2.0.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
