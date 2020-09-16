@@ -8,7 +8,7 @@ interface UserInputRequest {
   title: string;
   text: string;
   append?: string;
-  dataType: 'string' | 'float' | 'integer' | 'boolean';
+  dataType: 'none' | 'string' | 'float' | 'integer' | 'boolean';
   showImage: boolean;
   assetFilename?: string;
   fileBase64Contents?: string;

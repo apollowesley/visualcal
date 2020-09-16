@@ -80,6 +80,9 @@ const onUserInputRequest = (request: UserInputRequest) => {
   handleImage(request);
   inputRowElement.classList.remove('collapse');
   switch (request.dataType) {
+    case 'none':
+      inputRowElement.classList.add('collapse');
+      break;
     case 'boolean':
       inputElement.type = 'checkbox';
       break;
