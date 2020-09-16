@@ -29,6 +29,7 @@
     <v-main>
       <v-container
         fluid
+        class="pl-7 pr-7"
       >
         <v-row
           align="start"
@@ -61,8 +62,16 @@ export default class App extends Vue {
 }
 </script>
 
-<style sass>
-  .v-card.theme--light {
-    background-color: #ebebeb
+<style>
+
+  .v-card.v-sheet.theme--light {
+    background-color: #ebebeb;
+    min-width: 250px;
   }
+
+  .v-card.v-sheet.theme--dark {
+    background-color: #525252;
+    min-width: 250px;
+  }
+
 </style>

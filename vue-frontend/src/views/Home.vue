@@ -10,23 +10,7 @@
             <v-card-title primary-title>
               Communication
             </v-card-title>
-            <SessionProcedureComponent />
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card>
-            <v-card-title primary-title>
-              Procedure
-            </v-card-title>
-            <SessionProcedureComponent />
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card>
-            <v-card-title primary-title>
-              Status
-            </v-card-title>
-            <SessionProcedureComponent />
+            <SessionCommunicationComponent />
           </v-card>
         </v-col>
         <v-col>
@@ -42,9 +26,19 @@
         <v-col>
           <v-card>
             <v-card-title primary-title>
+              Procedure
+            </v-card-title>
+            <SessionProcedureComponent />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-card-title primary-title>
               Results
             </v-card-title>
-            <Results />
+            <SessionResultsComponent />
           </v-card>
         </v-col>
       </v-row>
@@ -54,13 +48,16 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import SessionCommunicationComponent from '@/components/session/Communication.vue';
 import SessionProcedureComponent from '@/components/session/Procedure.vue';
-import Results from '@/components/session/Results.vue';
+import SessionResultsComponent from '@/components/session/Results.vue';
+
 
 @Component({
   components: {
+    SessionCommunicationComponent,
     SessionProcedureComponent,
-    Results
+    SessionResultsComponent
   }
 })
 export default class SessionView extends Vue {
