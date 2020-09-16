@@ -38,25 +38,27 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <v-container
+        fluid
+      >
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col>
+            <router-view />
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
 
-@Component({
-  components: {
-    HelloWorld
-  }
-})
+@Component
 export default class App extends Vue {
-
-  mounted() {
-    window.electron.ipcRenderer.send('test', 'Hi!');
-  }
 
 }
 </script>

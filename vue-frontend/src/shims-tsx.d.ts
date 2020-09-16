@@ -1,5 +1,6 @@
 import Vue, { VNode } from 'vue'
 import { ipcRenderer } from 'electron';
+import { Ipc } from '@/utils/Ipc';
 
 declare global {
 
@@ -17,6 +18,7 @@ declare global {
     electron: {
       ipcRenderer: typeof ipcRenderer
     };
+    ipc: Ipc
   }
 
 }

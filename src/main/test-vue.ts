@@ -1,7 +1,12 @@
 import { BrowserWindow } from 'electron';
 import path from 'path';
+import VueDevTools from 'vue-devtools';
 
-export const testVue = async () => {
+export const testVue = async (getLoadUrl: () => string) => {
+  if (process.env.NODE_ENV !== 'production') {
+    VueDevTools.install();
+  }
+
   const window = new BrowserWindow({
     webPreferences: {
       nodeIntegration: false,
@@ -9,6 +14,6 @@ export const testVue = async () => {
     }
   });
   
-  await window.loadURL('http://127.0.0.1:18880/vue');
+  await window.loadURL(getLoadUrl());
   return window;
 }
