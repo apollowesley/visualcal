@@ -7,7 +7,7 @@
     >
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Name"
+          alt="IndySoft"
           class="shrink mt-1 hidden-sm-and-down"
           contain
           min-width="100"
@@ -33,9 +33,14 @@
         <v-row
           align="start"
           justify="center"
+          no-gutters
         >
           <v-col>
-            <router-view />
+            <v-content
+              class="pt-0"
+            >
+              <router-view />
+            </v-content>
           </v-col>
         </v-row>
       </v-container>
@@ -56,6 +61,8 @@ export default class App extends Vue {
 }
 </script>
 
-<style>
-
+<style sass>
+  .v-card.theme--light {
+    background-color: #ebebeb
+  }
 </style>

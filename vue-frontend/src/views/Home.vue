@@ -1,5 +1,6 @@
 <template>
   <v-row
+    align="start"
     no-gutters
   >
     <v-col>
@@ -39,7 +40,12 @@
       </v-row>
       <v-row>
         <v-col>
-          <Results />
+          <v-card>
+            <v-card-title primary-title>
+              Results
+            </v-card-title>
+            <Results />
+          </v-card>
         </v-col>
       </v-row>
     </v-col>
