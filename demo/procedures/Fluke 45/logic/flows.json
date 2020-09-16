@@ -2543,10 +2543,10 @@
 		"title": "Connection",
 		"text": "Connect a short",
 		"append": "mV",
-		"dataType": "integer",
+		"dataType": "none",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 530,
+		"x": 520,
 		"y": 180,
 		"wires": [
 			[
