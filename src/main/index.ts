@@ -95,10 +95,10 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
-  if (process.env.NODE_ENV !== 'production') {
-    const VueDevTools = await import('vue-devtools');
-    VueDevTools.install();
-  }
+  // if (process.env.NODE_ENV !== 'production') {
+  //   const VueDevTools = await import('vue-devtools');
+  //   VueDevTools.install();
+  // }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
       await load()
