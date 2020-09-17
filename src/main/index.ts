@@ -17,7 +17,6 @@ import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
-import VueDevTools from 'vue-devtools';
 import { VueManager } from './managers/VueManager';
 
 const nodeRed = NodeRed();
@@ -97,6 +96,7 @@ async function testingOnly() {
 const run = async () => {
   await app.whenReady();
   if (process.env.NODE_ENV !== 'production') {
+    const VueDevTools = await import('vue-devtools');
     VueDevTools.install();
   }
   ApplicationManager.instance.on('readyToLoad', async () => {

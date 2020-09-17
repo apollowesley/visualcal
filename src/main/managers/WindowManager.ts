@@ -374,6 +374,7 @@ export class WindowManager extends TypedEmitter<Events> {
   async showVueTestWindow() {
     const vueWindow = await this.createWindow(VisualCalWindow.VueTestWindow);
     vueWindow.maximize();
+    vueWindow.webContents.reload();
     return vueWindow;
   }
 
