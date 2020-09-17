@@ -1,7 +1,7 @@
 {
   "name": "indysoft-visualcal",
   "productName": "VisualCal",
-  "version": "0.1.0-alpha.60",
+  "version": "0.1.0-alpha.61",
   "description": "VisualCal",
   "private": true,
   "main": "dist/main/index.js",
@@ -71,8 +71,7 @@
     "tingodb": "^0.6.1",
     "tiny-typed-emitter": "^2.0.2",
     "udp-discovery": "^2.0.1",
-    "uuid": "^8.3.0",
-    "vue": "^2.6.12"
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.5.0",
