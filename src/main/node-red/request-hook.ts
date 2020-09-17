@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import path from 'path';
-import fs, { promises as fsPromises } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { isDev } from '../utils/is-dev-mode';
 
 export default (app: Express, apiBasePath = '/red') => {
@@ -45,4 +45,5 @@ export default (app: Express, apiBasePath = '/red') => {
     }
     return next();
   });
+
 }

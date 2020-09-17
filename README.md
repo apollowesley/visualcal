@@ -5,3 +5,13 @@
 [![Build Status](https://dev.azure.com/indysoftdev/VisualCal/_apis/build/status/production/production?branchName=production)](https://dev.azure.com/indysoftdev/VisualCal/_build/latest?definitionId=15&branchName=production)
 
 ## How to set up for development
+
+- Open main ```visualcal``` directory in VSCode Insiders
+- Open ```visualcal/frontend-vue``` directory in another VSCode Insiders window
+- Update ```visualcal/src``` files for the main Electron app
+- Update ```visualcal/frontend-vue``` files for the Vue.js app
+- The frontend-vue app can be run in dev mode, and the main app is coded to accomidate running it that way
+- In the VisualCal main window, open the Vue Test Window from the Development menu
+- To build, first build the frontend-vue app so the files end up in ```visualcal/public/vue```, then deploy as usual since the public directory and it's contents are included during publish
+
+*** NOTE: THE ABOVE DOCUMENT HAS NOT BEEN TESTED WITH PUBLISH ***

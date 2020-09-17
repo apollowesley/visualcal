@@ -17,6 +17,8 @@ import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
+import VueDevTools from 'vue-devtools';
+import { VueManager } from './managers/VueManager';
 
 const nodeRed = NodeRed();
 const log = electronLog.scope('main');
@@ -82,7 +84,10 @@ async function load() {
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
   initIpcMonitor();
+  VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
+
+let vueWindow: BrowserWindow;
 
 async function testingOnly() {
   // TODO: TESTING ONLY!!!
@@ -91,6 +96,9 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
+  if (process.env.NODE_ENV !== 'production') {
+    VueDevTools.install();
+  }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
       await load()

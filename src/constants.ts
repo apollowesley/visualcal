@@ -16,7 +16,8 @@ export const enum VisualCalWindow {
   SelectSession = 'select-session',
   UpdateApp = 'update-app',
   BenchConfigView = 'bench-configurations-view',
-  DeviceBeforeWrite = 'device-before-write'
+  DeviceBeforeWrite = 'device-before-write',
+  VueTestWindow = 'vue-test-window'
 }
 
 export const enum WindowPathType {

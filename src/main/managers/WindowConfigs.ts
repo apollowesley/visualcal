@@ -1,6 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
 import { VisualCalWindow } from '../../constants';
+import { isDev } from '../utils/is-dev-mode';
 
 type HtmlPathType = 'bootstrap' | 'public' | 'url' | 'raw';
 
@@ -34,6 +35,7 @@ const selectSessionWindow = () => createWindowOptions(VisualCalWindow.SelectSess
 const updateAppWindow = () => createWindowOptions(VisualCalWindow.UpdateApp, 'update-app.html', 'bootstrap', { height: 750, width: 1000, title: 'Update' });
 const benchConfigView = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.BenchConfigView, 'bench-configurations-view.html', 'bootstrap', { height: 850, width: 1200, title: 'Bench Configurations', parent, modal: true });
 const deviceBeforeWrite = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.DeviceBeforeWrite, 'device-before-write.html', 'bootstrap', { height: 850, width: 1200, title: 'Device - Before write', parent, modal: true });
+const vueTestWindow = () => createWindowOptions(VisualCalWindow.VueTestWindow, isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue', 'url', { title: 'VisualCal', webPreferences: { preload: path.join(global.visualCal.dirs.renderers.base, 'vue', 'preload.js') } });
 
 export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
   switch (id) {
@@ -70,6 +72,8 @@ export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
     case VisualCalWindow.DeviceBeforeWrite:
       if (!parent) throw new Error('Parent window is required');
       return deviceBeforeWrite(parent);
+    case VisualCalWindow.VueTestWindow:
+      return vueTestWindow();
     default:
       throw new Error(`Invalid window Id, ${id}`);
   }
