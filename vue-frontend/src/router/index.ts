@@ -26,7 +26,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, _from, next) => {
   if (to.name === 'wait-for-visualcal') return next();
   try {
-    await store.dispatch.refreshUser();
+    await store.dispatch.refreshViewInfo();
   } catch (error) {
     console.warn('Attempted to refresh sessions, but VisualCal was\'t ready');
     return next({

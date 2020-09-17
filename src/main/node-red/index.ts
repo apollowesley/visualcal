@@ -46,7 +46,7 @@ class NodeRed extends TypedEmitter<Events> {
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
       this.fExpress.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
         // TODO: Reorg code so express is standalone and the rest of the app uses it, instead of having this be in node-red dir
-      this.fExpress.use('/vue', express.static(path.join(__dirname, '..', '..', '..', 'vue-frontend', 'dist')));
+      this.fExpress.use('/vue', express.static(path.join(global.visualCal.dirs.public, 'vue'))); // Vue.js app
       this.fHttpServer.listen(port, 'localhost', async () => {
         if (!this.fNodeRed) {
           await this.stop();

@@ -1,6 +1,6 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { Session } from '../types/session';
-import { User } from '../types/user';
+import { ViewInfo } from '../types/session';
+import { SessionViewRequestResponseInfo } from '../types/session-view-info';
 
 interface Events {
   temp: () => void;
@@ -31,12 +31,12 @@ export class Ipc extends TypedEmitter<Events> {
     });
   }
 
-  async getCurrentUser() {
-    return await window.ipc.request<User | null, string>('user-active-request', 'user-active-response', 'user-active-error');
+  async getViewInfo() {
+    return await window.ipc.request<ViewInfo | null, string>('session-view-info-request', 'session-view-info-response', 'session-view-info-error');
   }
 
-  async getAllSessions() {
-    return await window.ipc.request<Session[], string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
+  async getSessionViewInfo() {
+    return await window.ipc.request<SessionViewRequestResponseInfo | null, Error>('session-view-info-request', 'session-view-info-response', 'session-view-info-error');
   }
 
 }

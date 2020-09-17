@@ -23,7 +23,12 @@ export default class SessionCommunicationComponent extends Vue {
 
   private fDriversTable?: Tabulator;
 
+  get user() { return this.$store.direct.getters.user; }
+  get activeSession() { return this.$store.direct.getters.activeSession; }
+  get activeBenchConfig() { return this.$store.direct.getters.activeBenchConfig; }
+
   mounted() {
+    if (!this.activeSession) return;
     this.fDriversTable = new Tabulator(this.$refs.driversTable as HTMLDivElement, {
       layout: 'fitColumns',
       columns: [
@@ -33,6 +38,7 @@ export default class SessionCommunicationComponent extends Vue {
         { title: 'GPIB Address (if required)' },
       ]
     });
+    if (this.activeBenchConfig) this.fDriversTable.setData(this.activeBenchConfig);
   }
 
 }

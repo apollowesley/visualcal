@@ -2,11 +2,12 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import Vuetify from '@/plugins/vuetify';
-import { User } from '../types/user';
+import { User, ViewInfo } from '../types/session';
 
 interface State {
   darkMode: boolean;
-  user: User | null;
+  viewInfo: ViewInfo | null;
+  activeSessionName?: string;
 }
 
 Vue.use(Vuex);
@@ -21,27 +22,30 @@ const {
   state: (): State => {
     return {
       darkMode: false,
-      user: null
+      viewInfo: null
     }
   },
   getters: {
     darkMode: (state) => state.darkMode,
-    sessions: (state) => state.user ? state.user.sessions : []
+    user: (state): User | null => (state.viewInfo && state.viewInfo.user) ? state.viewInfo.user : null,
+    sessions: (state) => (state.viewInfo && state.viewInfo.user) ? state.viewInfo.user.sessions : [],
+    activeSession: (state) => (state.viewInfo && state.viewInfo.session) ? state.viewInfo.session : null,
+    activeBenchConfig: (state) => (state.viewInfo && state.viewInfo.benchConfig) ? state.viewInfo.benchConfig : null
   },
   mutations: {
     setDarkMode(state, value: boolean) {
       state.darkMode = value;
       Vuetify.framework.theme ? Vuetify.framework.theme.dark = value : Vuetify.userPreset.theme = { dark: value };
     },
-    setUser(state, value: User | null) {
-      state.user = value;
+    setViewInfo(state, value: ViewInfo | null) {
+      state.viewInfo = value;
     }
   },
   actions: {
-    async refreshUser(context) {
+    async refreshViewInfo(context) {
       const { commit } = rootActionContext(context);
-      const user = await window.ipc.getCurrentUser();
-      commit.setUser(user);
+      const info = await window.ipc.getViewInfo();
+      commit.setViewInfo(info);
     }
   }
 })
