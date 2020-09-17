@@ -12,7 +12,6 @@ import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
 import { UserManager } from './managers/UserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
-import { ApplicationManager } from './managers/ApplicationManager';
 import electronLog from 'electron-log';
 
 const log = electronLog.scope('VisualCal');

@@ -15,9 +15,10 @@ import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
-import { testVue } from './test-vue';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
+import VueDevTools from 'vue-devtools';
+import { VueManager } from './managers/VueManager';
 
 const nodeRed = NodeRed();
 const log = electronLog.scope('main');
@@ -83,6 +84,7 @@ async function load() {
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
   initIpcMonitor();
+  VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
 
 let vueWindow: BrowserWindow;
@@ -94,6 +96,9 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
+  if (process.env.NODE_ENV !== 'production') {
+    VueDevTools.install();
+  }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
       await load()
@@ -109,7 +114,6 @@ const run = async () => {
       if (isDev()) {
         await testingOnly();
       }
-      vueWindow = await testVue(() => isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue');
     } catch (error) {
       dialog.showErrorBox('Oops!  Something went wrong', error.message);
     }

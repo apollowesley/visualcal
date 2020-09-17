@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "ESNext",
     "module": "CommonJS",
     "moduleResolution": "Node",
@@ -9,22 +10,14 @@
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "outDir": "dist",
+    "outDir": "../../dist/common",
     "baseUrl": ".",
+    "rootDir": "../../",
     "skipLibCheck": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "typeRoots": [
-      "node_modules/@types",
-      "src/@types"
-    ]
+    "noUnusedParameters": false
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "common",
-    "vue-frontend",
+    "./**/*"
   ]
 }

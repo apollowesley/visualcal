@@ -28,7 +28,6 @@ export default class SessionCommunicationComponent extends Vue {
   get activeBenchConfig() { return this.$store.direct.getters.activeBenchConfig; }
 
   mounted() {
-    if (!this.activeSession) return;
     this.fDriversTable = new Tabulator(this.$refs.driversTable as HTMLDivElement, {
       layout: 'fitColumns',
       columns: [
@@ -38,7 +37,8 @@ export default class SessionCommunicationComponent extends Vue {
         { title: 'GPIB Address (if required)' },
       ]
     });
-    if (this.activeBenchConfig) this.fDriversTable.setData(this.activeBenchConfig);
+    if (!this.activeSession) return;
+    // if (this.activeBenchConfig) this.fDriversTable.setData(this.activeBenchConfig);
   }
 
 }

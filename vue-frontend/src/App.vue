@@ -26,26 +26,22 @@
       />
     </v-app-bar>
 
-    <v-main>
-      <v-container
-        fluid
-        class="pl-7 pr-7"
+    <v-container
+      fluid
+      class="pl-7 pr-7"
+    >
+      <v-row
+        align="start"
+        justify="center"
+        no-gutters
       >
-        <v-row
-          align="start"
-          justify="center"
-          no-gutters
-        >
-          <v-col>
-            <v-content
-              class="pt-0"
-            >
-              <router-view />
-            </v-content>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
+        <v-col>
+          <v-main>
+            <router-view />
+          </v-main>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 

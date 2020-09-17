@@ -32,7 +32,6 @@ export interface CommunicationInterfaceDeviceNodeConfiguration {
   unitId: string;
   interfaceName: string;
   gpib?: GpibDeviceConfiguration;
-  gpibAddress: number;
   driverDisplayName: string;
   isGeneric?: boolean;
   driver?: DeviceDriverInfo;

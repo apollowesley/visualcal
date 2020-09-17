@@ -120,6 +120,7 @@ export class WindowManager extends TypedEmitter<Events> {
   get updateAppWindow() { return this.get(VisualCalWindow.UpdateApp); }
   get benchConfigViewWindow() { return this.get(VisualCalWindow.BenchConfigView); }
   get deviceBeforeWriteWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
+  get vueTestWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
 
   private checkWindowExists(id: VisualCalWindow) {
     const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
@@ -368,6 +369,12 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     const w = await this.createWindow(VisualCalWindow.DeviceBeforeWrite, this.mainWindow);
     return w;
+  }
+
+  async showVueTestWindow() {
+    const vueWindow = await this.createWindow(VisualCalWindow.VueTestWindow);
+    vueWindow.maximize();
+    return vueWindow;
   }
 
 }

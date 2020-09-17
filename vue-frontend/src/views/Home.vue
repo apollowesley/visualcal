@@ -52,7 +52,6 @@ import SessionCommunicationComponent from '@/components/session/Communication.vu
 import SessionProcedureComponent from '@/components/session/Procedure.vue';
 import SessionResultsComponent from '@/components/session/Results.vue';
 
-
 @Component({
   components: {
     SessionCommunicationComponent,
@@ -61,6 +60,11 @@ import SessionResultsComponent from '@/components/session/Results.vue';
   }
 })
 export default class SessionView extends Vue {
+
+  async mounted() {
+    const info = await window.ipc.getSessionViewInfo();
+    console.info(info);
+  }
 
 }
 </script>

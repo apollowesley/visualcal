@@ -180,6 +180,12 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         click(_, focusedWindow) {
           if (focusedWindow) focusedWindow.webContents.toggleDevTools();
         }
+      },
+      {
+        label: 'Vue Test Window',
+        click: async () => {
+          await global.visualCal.windowManager.showVueTestWindow();
+        }
       }
     ]
   })

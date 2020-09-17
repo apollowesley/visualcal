@@ -1,6 +1,6 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { ViewInfo } from '../types/session';
-import { SessionViewRequestResponseInfo } from '../types/session-view-info';
+import { SessionViewRequestResponseInfo } from '../../../common/types/session-view-info';
 
 interface Events {
   temp: () => void;
@@ -36,7 +36,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async getSessionViewInfo() {
-    return await window.ipc.request<SessionViewRequestResponseInfo | null, Error>('session-view-info-request', 'session-view-info-response', 'session-view-info-error');
+    return await window.ipc.request<SessionViewRequestResponseInfo | null, Error>('vue-session-view-info-request', 'vue-session-view-info-response', 'vue-session-view-info-error');
   }
 
 }
