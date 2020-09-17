@@ -1,3 +1,9 @@
+export enum IpcChannels {
+  Request = 'vue-session-view-info-request',
+  Response = 'vue-session-view-info-response',
+  Error = 'vue-session-view-info-error'
+};
+
 interface Author {
   name: string;
 }

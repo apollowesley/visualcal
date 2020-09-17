@@ -10,7 +10,7 @@ import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as In
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
-import path from 'path';
+import { hook as frontendVueRequestHook } from './frontend-vue-request-hook';
 
 interface Events {
   starting: () => void;
@@ -45,11 +45,7 @@ class NodeRed extends TypedEmitter<Events> {
       this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
       this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
       this.fExpress.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-
-        // TODO: Reorg code so express is standalone and the rest of the app uses it, instead of having this be in node-red dir
-      this.fExpress.use('/vue', express.static(path.join(global.visualCal.dirs.public, 'vue'))); // Vue.js app
-      this.fExpress.use(`/vue${path.join(__dirname, )}/vue`, express.static(path.join(global.visualCal.dirs.renderers.base, 'vue'))); // Vue.js app TS maps
-
+      frontendVueRequestHook(this.fExpress);
       this.fHttpServer.listen(port, 'localhost', async () => {
         if (!this.fNodeRed) {
           await this.stop();

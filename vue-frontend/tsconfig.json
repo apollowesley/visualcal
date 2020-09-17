@@ -39,8 +39,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "references": [
-    { "path": "../common/types" }
   ]
 }

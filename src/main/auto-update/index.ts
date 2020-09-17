@@ -86,10 +86,10 @@ export class AutoUpdater extends TypedEmitter<Events> {
     });
     ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
       global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
+      throw new Error('Cancelled');
     });
     this.emit('updateAvailable', info);
     await this.windowManager.showUpdateAppWindow();
-    this.windowManager.closeAllBut(VisualCalWindow.UpdateApp);
     if (this.updateWindow) this.updateWindow.webContents.once('did-finish-load', () => {
       this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
     });
@@ -126,12 +126,17 @@ export class AutoUpdater extends TypedEmitter<Events> {
     autoUpdater.allowPrerelease = true;
     autoUpdater.on('error', (error: Error) => this.onUpdateError(error));
     autoUpdater.on('checking-for-update', () => this.onCheckingForUpdateStarted());
-    autoUpdater.on('update-available', (info: UpdateInfo) => this.onUpdateAvailable(info));
+    autoUpdater.on('update-available', async (info: UpdateInfo) => {
+      try {
+        await this.onUpdateAvailable(info);
+      } catch (error) {
+        if (error.message && error.message === 'Cancelled') return;
+      }
+    });
     autoUpdater.on('update-not-available', (info: UpdateInfo) => this.onUpdateNotAvailable(info));
     autoUpdater.on('download-progress', (progress: ProgressInfo) => this.onDownloadProgressChanged(progress));
     autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
     if (isDev()) {
-      noop(); // Do nothing, for now
       await Promise.resolve();
     } else {
       log.info('Checking for updates');

@@ -124,9 +124,14 @@ export class WindowManager extends TypedEmitter<Events> {
   get deviceBeforeWriteWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
   get vueTestWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
 
+  isWindowLoaded(id: VisualCalWindow) {
+    const exists = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
+    return exists;
+  }
+
   private checkWindowExists(id: VisualCalWindow) {
-    const browserWindow = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
-    if (browserWindow) throw new Error(`Duplicate window Id, ${id}`);
+    const exists = this.isWindowLoaded(id);
+    if (exists) throw new Error(`Duplicate window Id, ${id}`);
   }
 
   add(browserWindow: BrowserWindow) {
@@ -375,6 +380,7 @@ export class WindowManager extends TypedEmitter<Events> {
 
   async showVueTestWindow() {
     return new Promise<BrowserWindow>(async (resolve, reject) => {
+      if (this.isWindowLoaded(VisualCalWindow.VueTestWindow)) return reject('Already opened');
       try {
         const vueWindow = new BrowserWindow({
           show: false,

@@ -13,6 +13,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "common": "file:../common",
     "core-js": "^3.6.5",
     "direct-vuex": "^0.12.0",
     "tabulator-tables": "^4.8.1",
