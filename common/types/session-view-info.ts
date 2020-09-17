@@ -1,4 +1,4 @@
-export enum IpcChannels {
+export const enum IpcChannels {
   Request = 'vue-session-view-info-request',
   Response = 'vue-session-view-info-response',
   Error = 'vue-session-view-info-error'

@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
+import { IpcChannels } from 'visualcal-common/types/session-view-info';
 
 interface Events {
   loaded: () => void;
@@ -18,7 +19,7 @@ export class VueManager extends TypedEmitter<Events> {
   }
 
   private initIpcHandlers() {
-    ipcMain.on('vue-session-view-info-request', async (event) => {
+    ipcMain.on(IpcChannels.Request, async (event) => {
       event.reply('vue-session-view-info-response', null);
     });
   }
