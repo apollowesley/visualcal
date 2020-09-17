@@ -3,7 +3,6 @@ import SerialPort from 'serialport';
 import ReadlineParser from '@serialport/parser-readline';
 import { TextDecoder, TextEncoder } from 'util';
 import electronLog from 'electron-log';
-import { sleep } from '../../utils';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
@@ -90,7 +89,6 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
             return reject(drainErr.message);
           }
           console.info(`PrologixGpibUsbInterface.write`, dataString);
-          await sleep(100);
           return resolve();
         });
       });

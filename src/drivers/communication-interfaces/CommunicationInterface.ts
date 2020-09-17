@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import electronLog from 'electron-log';
+import { sleep } from '../utils';
 
 const log = electronLog.scope('CommunicationInterface');
 
@@ -137,6 +138,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async writeData(data: ArrayBuffer) {
+    await sleep(500);
     this.emit('write', this, data);
     await this.write(data);
   }

@@ -183,9 +183,7 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       },
       {
         label: 'Vue Test Window',
-        click: async () => {
-          await global.visualCal.windowManager.showVueTestWindow();
-        }
+        click: async () => await global.visualCal.windowManager.showVueTestWindow()
       }
     ]
   })

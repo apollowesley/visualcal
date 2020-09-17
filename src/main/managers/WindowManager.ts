@@ -6,6 +6,8 @@ import * as WindowUtils from '../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
 import visualCalNodeRed from '../node-red';
+import path from 'path';
+import { isDev } from '../utils/is-dev-mode';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -372,10 +374,31 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   async showVueTestWindow() {
-    const vueWindow = await this.createWindow(VisualCalWindow.VueTestWindow);
-    vueWindow.maximize();
-    vueWindow.webContents.reload();
-    return vueWindow;
+    return new Promise<BrowserWindow>(async (resolve, reject) => {
+      try {
+        const vueWindow = new BrowserWindow({
+          show: false,
+          title: 'VisualCal',
+          webPreferences: {
+            nodeIntegration: false,
+            preload: path.join(global.visualCal.dirs.renderers.base, 'vue', 'preload.js')
+          }
+        });
+        vueWindow.visualCal = { id: VisualCalWindow.VueTestWindow };
+        this.add(vueWindow);
+        vueWindow.webContents.once('did-finish-load' , async () => {
+          WindowUtils.centerWindowOnNearestCurorScreen(vueWindow);
+          vueWindow.maximize();
+          vueWindow.show();
+          vueWindow.focus();
+          await vueWindow.loadURL(isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue');
+          return resolve(vueWindow);
+        });
+        await vueWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'dummy-for-maximize.html'));
+      } catch (error) {
+        return reject(error.message);
+      }
+  });
   }
 
 }
