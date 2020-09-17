@@ -117,6 +117,7 @@
     "productName": "VisualCal",
     "copyright": "Copyright © 2020 IndySoft",
     "asar": false,
+    "npmRebuild": false,
     "files": [
       "dist/**/*",
       "public/**/*",
