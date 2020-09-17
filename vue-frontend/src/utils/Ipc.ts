@@ -36,7 +36,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async getSessionViewInfo() {
-    return await window.ipc.request<SessionViewRequestResponseInfo | null, Error>(IpcChannels.Request, IpcChannels.Response, IpcChannels.Error);
+    return await window.ipc.request<SessionViewRequestResponseInfo | null, string>(IpcChannels.Request, IpcChannels.Response, IpcChannels.Error);
   }
 
 }

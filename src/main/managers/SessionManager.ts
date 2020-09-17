@@ -85,10 +85,7 @@ export class SessionManager extends TypedEmitter<Events> {
         event.reply(IpcChannels.session.viewInfo.error, new Error(`Procedure, ${activeSession.procedureName}, does not exist`));
         return;
       }
-      const sections: SectionInfo[] = nodeRed.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
-      sections.forEach(s => {
-        s.actions = nodeRed.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
-      });
+      const sections = nodeRed.visualCalSections;
       const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
       const viewInfo: SessionViewWindowOpenIPCInfo = {
         user: this.fUserManager.activeUser,

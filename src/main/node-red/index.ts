@@ -145,6 +145,14 @@ class NodeRed extends TypedEmitter<Events> {
 
   get visualCalActionStartNodes() { return this.findTypedNodesByType<IndySoftActionStartEditorNode, IndySoftActionStartRuntimeNode>(IndySoftNodeTypeNames.ActionStart); }
 
+  get visualCalSections() {
+    const sections: SectionInfo[] = this.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+    sections.forEach(s => {
+      s.actions = this.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+    });
+    return sections;
+  }
+
   getVisualCalActionStartNodesForSection = (sectionName: string) => {
     let actionStartNodes = this.visualCalActionStartNodes;
     actionStartNodes = actionStartNodes.filter(n => n.runtime.section !== undefined && n.runtime.section.shortName.toLocaleUpperCase() === sectionName.toLocaleUpperCase());

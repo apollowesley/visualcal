@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export const enum IpcChannels {
   Request = 'vue-session-view-info-request',
   Response = 'vue-session-view-info-response',
@@ -5,7 +6,9 @@ export const enum IpcChannels {
 };
 
 interface Author {
-  name: string;
+  nameFirst: string;
+  nameLast: string;
+  email?: string;
 }
 
 interface ProcedureAction {
@@ -18,9 +21,9 @@ interface ProcedureSection {
   actions: ProcedureAction[];
 }
 
-interface Procedure {
+export interface Procedure {
   name: string;
-  companyName: string;
+  authorOrganization: string;
   authors?: Author[];
   sections: ProcedureSection[];
 }
@@ -47,7 +50,7 @@ interface Device {
 
 export interface SessionViewRequestResponseInfo {
   procedure: Procedure;
-  communication: {
+  communication?: {
     devices: Device[];
     interfaces: CommunicationInterface[];
     availableDeviceDrivers: AvailableDeviceDriver[];
