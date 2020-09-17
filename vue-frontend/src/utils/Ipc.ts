@@ -1,6 +1,6 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { ViewInfo } from '../types/session';
-import { IpcChannels, SessionViewRequestResponseInfo } from 'common/types/session-view-info';
+import { IpcChannels, SessionViewRequestResponseInfo } from 'visucal-common/types/session-view-info';
 
 interface Events {
   temp: () => void;

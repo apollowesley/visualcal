@@ -12,9 +12,21 @@
 		},
 		{
 			"type": "npm",
+			"script": "build",
+			"label": "npm: build",
+			"detail": "npm run build",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"type": "npm",
 			"script": "copynodes",
 			"label": "npm: copynodes",
-			"detail": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales"
+			"detail": "npm run copynodes:packagejson && npm run copynodes:html && npm run copynodes:examples && npm run copynodes:icons && npm run copynodes:locales",
+			"dependsOn": [
+				"npm: build"
+			]
 		},
 		{
 			"type": "npm",

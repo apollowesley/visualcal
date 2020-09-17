@@ -10,6 +10,7 @@
     "pack": "electron-builder --dir",
     "release": "electron-builder build -p never",
     "release:publish": "electron-builder build -p always",
+    "preinstall": "cd common && tsc",
     "postinstall": "electron-builder install-app-deps && patch-package",
     "build": "tsc",
     "watch": "tsc -w",
@@ -71,7 +72,8 @@
     "tingodb": "^0.6.1",
     "tiny-typed-emitter": "^2.0.2",
     "udp-discovery": "^2.0.1",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "visualcal-common": "file:common"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.5.0",
