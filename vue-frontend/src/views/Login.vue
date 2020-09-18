@@ -12,10 +12,11 @@
             <v-col>
               <v-text-field
                 v-model="fUsername"
+                :rules="[ passwordRules.required, passwordRules.email ]"
                 autofocus
                 class="pa-15"
                 label="Username"
-                hint="Email address"
+                hint="Email address (Use demo@indysoft.com for now)"
                 persistent-hint
               />
             </v-col>
@@ -29,6 +30,8 @@
                 :rules="[ passwordRules.required, passwordRules.min ]"
                 class="pa-15"
                 label="Password"
+                hint="Enter any password of at least 8 characters.  Passwords are not checked currently."
+                persistent-hint
                 @click:append="fPasswordVisible = !fPasswordVisible"
               />
             </v-col>
@@ -52,6 +55,7 @@
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { passwordRules as vuetifyPasswordRules } from "@/utils/vuetify-input-rules";
 import { LoginCredentials } from "visualcal-common/types/user";
+import { isValidEmailAddress } from '../utils/validation';
 
 @Component
 export default class LoginView extends Vue {
@@ -77,7 +81,7 @@ export default class LoginView extends Vue {
 
   private updateIsLoginButtonDisabled() {
     this.fIsLoginButtonDisabled =
-      this.fUsername.length <= 0 || this.fPassword.length <= 0;
+      this.fUsername.length <= 0 || !isValidEmailAddress(this.fUsername) || this.fPassword.length <= 0;
   }
 
   async onLoginButtonClicked() {

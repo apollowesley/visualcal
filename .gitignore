@@ -20,3 +20,4 @@ html/common
 html/renderers
 # This shouldn't exist
 html/main
+!vue-frontend/views/Error.vue
