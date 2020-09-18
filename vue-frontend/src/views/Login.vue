@@ -2,45 +2,47 @@
   <v-container fluid fill-height class="grey">
     <v-row>
       <v-col>
-        <h1 class="text-center">Login to VisualCal</h1>
-      </v-col>
-    </v-row>
-    <v-row no-gutters>
-      <v-col>
-        <v-text-field
-          v-model="fUsername"
-          autofocus
-          class="pa-15"
-          label="Username"
-          hint="Email address"
-          persistent-hint
-        />
-      </v-col>
-    </v-row>
-    <v-row no-gutters>
-      <v-col>
-        <v-text-field
-          v-model="fPassword"
-          :append-icon="passwordVisible ? 'mdi-eye' : 'mdi-eye-off'"
-          :type="passwordVisible ? 'text' : 'password'"
-          :rules="[ passwordRules.required, passwordRules.min ]"
-          class="pa-15"
-          label="Password"
-          @click:append="passwordVisible = !passwordVisible"
-        />
-      </v-col>
-    </v-row>
-    <v-row
-      class="text-center"
-      no-gutters
-    >
-      <v-col>
-        <v-btn
-          :disabled="fIsLoginButtonDisabled"
-          @click="onLoginButtonClicked"
-        >
-          Login
-        </v-btn>
+        <v-form>
+          <v-row>
+            <v-col>
+              <h1 class="text-center">Login to VisualCal</h1>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col>
+              <v-text-field
+                v-model="fUsername"
+                autofocus
+                class="pa-15"
+                label="Username"
+                hint="Email address"
+                persistent-hint
+              />
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col>
+              <v-text-field
+                v-model="fPassword"
+                :append-icon="fPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="fPasswordVisible ? 'text' : 'password'"
+                :rules="[ passwordRules.required, passwordRules.min ]"
+                class="pa-15"
+                label="Password"
+                @click:append="fPasswordVisible = !fPasswordVisible"
+              />
+            </v-col>
+          </v-row>
+          <v-row class="text-center" no-gutters>
+            <v-col>
+              <v-btn
+                :disabled="fIsLoginButtonDisabled"
+                type="submit"
+                @click.prevent="onLoginButtonClicked"
+              >Login</v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-col>
     </v-row>
   </v-container>
@@ -49,37 +51,41 @@
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { passwordRules as vuetifyPasswordRules } from "@/utils/vuetify-input-rules";
-import { LoginCredentials } from 'visualcal-common/types/user';
+import { LoginCredentials } from "visualcal-common/types/user";
 
 @Component
 export default class LoginView extends Vue {
 
-  passwordVisible = false;
+  fPasswordVisible = false;
   fIsLoginButtonDisabled = true;
-  fUsername = '';
-  fPassword = '';
+  fUsername = "";
+  fPassword = "";
 
   get passwordRules() {
     return vuetifyPasswordRules;
   }
 
-  @Watch('fUsername')
+  @Watch("fUsername")
   private onUsernameChanged() {
     this.updateIsLoginButtonDisabled();
   }
 
-  @Watch('fPassword')
+  @Watch("fPassword")
   private onPasswordChanged() {
     this.updateIsLoginButtonDisabled();
   }
 
   private updateIsLoginButtonDisabled() {
-    this.fIsLoginButtonDisabled = (this.fUsername.length <= 0 || this.fPassword.length <= 0);
+    this.fIsLoginButtonDisabled =
+      this.fUsername.length <= 0 || this.fPassword.length <= 0;
   }
 
   async onLoginButtonClicked() {
     this.fIsLoginButtonDisabled = true;
-    const creds: LoginCredentials = { username: this.fUsername, password: this.fPassword };
+    const creds: LoginCredentials = {
+      username: this.fUsername,
+      password: this.fPassword,
+    };
     try {
       await this.$store.direct.dispatch.login(creds);
     } catch (error) {
@@ -88,14 +94,11 @@ export default class LoginView extends Vue {
     }
     this.fIsLoginButtonDisabled = false;
   }
-
 }
 </script>
 
 <style>
-
 ::-webkit-scrollbar {
   display: none;
 }
-
 </style>

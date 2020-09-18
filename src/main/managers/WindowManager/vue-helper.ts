@@ -18,7 +18,7 @@ const defaultWindowConstructorOptions = {
 }
 
 const setWindowSize = (windowId: VisualCalWindow, opts?: BrowserWindowConstructorOptions) => {
-  if (!opts) return opts;
+  if (!opts) return;
   switch (windowId) {
     case VisualCalWindow.Login:
       opts.height = 600;
@@ -56,9 +56,8 @@ export const showWindow = async (id: VisualCalWindow, opts: { subPath?: string; 
     }
     try {
       const vueWindow = new BrowserWindow(opts.windowOpts);
-      setWindowSize(id);
-      vueWindow.visualCal = { id: id };
-      global.visualCal.windowManager.add(vueWindow);
+      setWindowSize(id, opts.windowOpts);
+      global.visualCal.windowManager.add(vueWindow, id);
       vueWindow.webContents.once('did-finish-load' , async () => {
         WindowUtils.centerWindowOnNearestCurorScreen(vueWindow, opts.maximize);
         if (opts.maximize) {

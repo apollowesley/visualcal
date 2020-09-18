@@ -38,8 +38,7 @@ export interface RuntimeNodeInputEventMessagePayload {
   range?: number;
   section?: string;
   action?: string;
-  rawData: string;
-  value: number;
+  value: NumericMeasurement;
 }
 
 export interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {
@@ -116,15 +115,19 @@ module.exports = (RED: NodeRed) => {
               range: this.range,
               relative: this.relative
             });
-            this.status({ fill: 'green', shape: 'dot', text: `Last measurement = Mode: ${this.mode} - Value: ${measurement.toString()}` });
+            this.status({ fill: 'green', shape: 'dot', text: `Last measurement = Mode: ${this.mode} - Raw value: ${measurement.raw}` });
             // [done, error, measurement]
             if (msg.payload) {
-              msg.payload.rawData = measurement.toString();
-              msg.payload.value = measurement;
+              msg.payload.value = { 
+                raw: measurement.raw,
+                value: measurement.value
+              }
             } else {
               msg.payload = {
-                rawData: measurement.toString(),
-                value: measurement
+                value: {
+                  raw: measurement.raw,
+                  value: measurement.value
+                }
               };
             }
             send([null, msg]);

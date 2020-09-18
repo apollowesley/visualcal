@@ -41,6 +41,6 @@ export abstract class DigitalMultimeterDevice extends Device {
 
   abstract async setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number): Promise<void>;
 
-  abstract async getMeasurement(config: MeasurementConfiguration): Promise<number>;
+  abstract async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement>;
 
 }

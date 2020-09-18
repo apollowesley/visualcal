@@ -12,7 +12,7 @@ import { StatusHandler } from './StatusHandler';
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
 const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
-const devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
+let devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 const interceptDeviceWritesCheckbox = document.getElementById('vc-intercept-device-writes') as HTMLInputElement;
 
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
@@ -170,7 +170,7 @@ resetButton.addEventListener('click', () => {
 // Action errors
 // ================================================================================================
 window.visualCal.actionManager.on('startError', (args) => {
-  if (args.err.message) {
+  if (args.err && typeof args.err === 'object') {
     alert(args.err.message);
   } else {
     alert(args.err);
@@ -250,6 +250,7 @@ const init = async () => {
         unitId: deviceInfo.unitId
       });
     });
+    if (session.configuration && session.configuration.devices) devices = session.configuration.devices;
     await devicesTable.setData(devices);
     results.loadResultsForSession(session.name);
     procedure.sectionHandler.items = info.sections;

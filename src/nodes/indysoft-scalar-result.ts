@@ -35,7 +35,7 @@ export interface InputMessagePayload {
   runId: string;
   section: string;
   action: string;
-  value: any;
+  value: string | number | NumericMeasurement;
 }
 
 export interface InputMessage extends NodeRedNodeMessage {
@@ -68,8 +68,13 @@ module.exports = (RED: NodeRed) => {
         return;
       }
       let measuredValue = 0;
+      let rawValue: string = measuredValue.toString();
       if (typeof msg.payload.value === 'string') measuredValue = parseFloat(msg.payload.value);
       else if(typeof msg.payload.value === 'number') measuredValue = msg.payload.value;
+      else if(typeof msg.payload.value === 'object') {
+        measuredValue = msg.payload.value.value;
+        rawValue = msg.payload.value.raw;
+      };
       const result: LogicResult = {
         sessionId: msg.payload.sessionId,
         runId: msg.payload.runId,
@@ -84,7 +89,7 @@ module.exports = (RED: NodeRed) => {
         inputLevel: this.inputValue,
         minimum: this.min,
         maximum: this.max,
-        rawValue: msg.payload.value,
+        rawValue: rawValue,
         measuredValue: measuredValue,
         passed: false
       };

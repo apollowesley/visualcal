@@ -133,7 +133,8 @@ export class WindowManager extends TypedEmitter<Events> {
     if (exists) throw new Error(`Duplicate window Id, ${id}`);
   }
 
-  add(browserWindow: BrowserWindow) {
+  add(browserWindow: BrowserWindow, id?: VisualCalWindow) {
+    if (id) browserWindow.visualCal = { id: id };
     log.info('Adding window', { windowId: browserWindow.visualCal.id });
     if (!browserWindow.visualCal || !browserWindow.visualCal.id) throw new Error(`Attempting to add a BrowserWindow without a VisualCal.id or an unused BrowserWindow detected with ID, ${browserWindow.visualCal.id}`);
     this.checkWindowExists(browserWindow.visualCal.id);

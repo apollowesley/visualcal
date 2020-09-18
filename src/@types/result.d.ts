@@ -1,3 +1,12 @@
+interface Measurement {
+  raw: any;
+}
+
+interface NumericMeasurement extends Measurement {
+  raw: string;
+  value: number;
+}
+
 interface LogicResultPassedCallback {
   (): boolean;
 }

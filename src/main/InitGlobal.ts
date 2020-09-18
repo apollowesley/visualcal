@@ -46,7 +46,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(userManager),
     resultManager: new ResultManager(),
-    actionManager: new ActionManager(),
+    actionManager: new ActionManager(userManager),
     userInteractionManager: new UserInteractionManager(),
     assetManager: new AssetManager(),
     userManager: userManager,

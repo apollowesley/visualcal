@@ -6,13 +6,17 @@ import NodeRed from '../node-red';
 import { loadDevices } from '../node-red/utils';
 import { DeviceManager } from './DeviceManager';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
+import { UserManager } from './UserManager';
 
 const nodeRed = NodeRed();
 
 export class ActionManager extends EventEmitter {
 
-  constructor() {
+  private fUserManager: UserManager
+
+  constructor(userManager: UserManager) {
     super();
+    this.fUserManager = userManager;
     ipcMain.on(IpcChannels.actions.start.request, async (event, opts: TriggerOptions) => {
       try {
         await this.start(opts);
@@ -61,6 +65,7 @@ export class ActionManager extends EventEmitter {
     }
     if (opts.deviceConfig) {
       const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
+      this.fUserManager.setDeviceConfigs(opts.session.username, opts.session.name, opts.deviceConfig);
       await global.visualCal.communicationInterfaceManager.connectAll(interfaceNames);
     } else {
       await global.visualCal.communicationInterfaceManager.connectAll();
