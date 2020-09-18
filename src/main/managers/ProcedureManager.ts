@@ -6,6 +6,7 @@ import NodeRed from '../node-red';
 import { CrudManager } from './CrudManager';
 import electronLog from 'electron-log';
 import VisualCalNodeRedSettings from '../node-red-settings';
+import { ExpressServer } from '../servers/express';
 
 const log = electronLog.scope('ProcedureManager');
 const nodeRed = NodeRed();
@@ -18,13 +19,13 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     ipcMain.on(IpcChannels.procedures.setActive.request, async (event, procedureName: string) => {
       try {
         await this.setActive(procedureName);
-        nodeRed.once('started', async (port) => {
-          log.info(`Logic server started on port ${port}`);
+        nodeRed.once('started', async () => {
+          log.info(`Logic server started`);
           event.reply(IpcChannels.procedures.setActive.response, procedureName);
           await global.visualCal.windowManager.showSelectSessionWindow();
           global.visualCal.windowManager.closeAllBut(VisualCalWindow.SelectSession);
         });
-        await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
+        await nodeRed.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
       } catch (error) {
         event.reply(IpcChannels.procedures.setActive.error, error);
       }

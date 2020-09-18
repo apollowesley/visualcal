@@ -1,5 +1,4 @@
-import express, { Express } from 'express';
-import { createServer, Server } from 'http';
+import express from 'express';
 import RED from 'node-red';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { NodeRed as NodeRedType, NodeRedRuntimeNode, NodeResetOptions, Settings as NodeRedSettings } from '../../@types/logic-server';
@@ -10,11 +9,11 @@ import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as In
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
-import { hook as frontendVueRequestHook } from './frontend-vue-request-hook';
+import { ExpressServer } from '../servers/express';
 
 interface Events {
   starting: () => void;
-  started: (port: number) => void;
+  started: () => void;
   stopping: () => void;
   stopped: () => void;
   sectionActionStarted: (sectionName: string, actionName: string, runId: string) => void;
@@ -26,45 +25,36 @@ class NodeRed extends TypedEmitter<Events> {
 
   public static USER = 'VisualCal';
 
-  private fExpress?: Express;
-  private fHttpServer?: Server;
   private fNodeRed?: NodeRedType;
   private fIsRunning = false;
 
   get isRunning() { return this.fIsRunning; }
 
-  start(settings: NodeRedSettings, nodeScriptsDirPath: string, port: number) {
-    return new Promise<number | Error>((resolve, reject) => {
+  start(server: ExpressServer, settings: NodeRedSettings, nodeScriptsDirPath: string) {
+    return new Promise<Error | void>(async (resolve, reject) => {
       if (this.isRunning) return reject(new Error('Already running'));
+      if (!server.expressInstance || !server.httpInstance) return reject('ExpressServer is not running');
       this.emit('starting');
-      this.fExpress = express();
-      this.fHttpServer = createServer(this.fExpress);
       this.fNodeRed = RED as NodeRedType;
-      this.fNodeRed.init(this.fHttpServer, settings);
-      nodeRedRequestHook(this.fExpress);
-      this.fExpress.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
-      this.fExpress.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
-      this.fExpress.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-      frontendVueRequestHook(this.fExpress);
-      this.fHttpServer.listen(port, 'localhost', async () => {
-        if (!this.fNodeRed) {
-          await this.stop();
-          return reject(new Error('node-red must be defined'));
-        }
-        await this.fNodeRed.start();
-        this.emit('started', port);
-        this.fIsRunning = true;
-        return resolve(port);
-      });
+      this.fNodeRed.init(server.httpInstance, settings);
+      nodeRedRequestHook(server.expressInstance);
+      server.expressInstance.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
+      server.expressInstance.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
+      server.expressInstance.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
+      if (!this.fNodeRed) {
+        await this.stop();
+        return reject(new Error('node-red must be defined'));
+      }
+      await this.fNodeRed.start();
+      this.fIsRunning = true;
+      this.emit('started');
+      return resolve();
     });
   }
 
   async stop() {
     if (this.fNodeRed) await this.fNodeRed.stop();
-    if (this.fHttpServer) this.fHttpServer.close();
     this.fNodeRed = undefined;
-    this.fHttpServer = undefined;
-    this.fExpress = undefined;
     this.fIsRunning = false;
   }
 

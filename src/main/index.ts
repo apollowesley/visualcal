@@ -18,6 +18,7 @@ import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
+import { ExpressServer } from './servers/express';
 
 NodeRed();
 const log = electronLog.scope('main');
@@ -85,13 +86,12 @@ async function load() {
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   sendToLoadingWindow('Initializing Logic Server utils ...');
+  await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
   initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
-
-let vueWindow: BrowserWindow;
 
 async function testingOnly() {
   // TODO: TESTING ONLY!!!
