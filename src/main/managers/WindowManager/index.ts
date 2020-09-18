@@ -210,10 +210,19 @@ export class WindowManager extends TypedEmitter<Events> {
     let w = this.get(id);
     if (w) {
       w.show();
+      this.emit('windowShown', w.visualCal.id, w);
       return w;
     }
     const config = getWindowConfig(id, parent);
     w = this.createBrowserWindow(config);
+    w.once('show', () => {
+      if (!w) return;
+      this.emit('windowShown', w.visualCal.id, w);
+      if (onShow) onShow(w);
+    });
+    w.once('closed', () => {
+      if (onClosed) onClosed();
+    });
     w.webContents.once('did-start-loading', () => {
       if (!w) return;
       WindowUtils.centerWindowOnNearestCurorScreen(w, maximize);
@@ -239,13 +248,6 @@ export class WindowManager extends TypedEmitter<Events> {
       };
       w.webContents.send(IpcChannels.windows.initialLoadData, initialLoadData);
       if (onWebContentsDidFinishLoading) onWebContentsDidFinishLoading(w);
-    });
-    w.once('show', () => {
-      if (!w) return;
-      if (onShow) onShow(w);
-    });
-    w.once('closed', () => {
-      if (onClosed) onClosed();
     });
     if (config.htmlPathType === 'url') await w.loadURL(config.htmlPath)
     else await w.loadFile(config.htmlPath);

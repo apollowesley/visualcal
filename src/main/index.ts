@@ -65,7 +65,6 @@ async function load() {
   setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
   sendToLoadingWindow('Initializing main menu ...');
-  initMainMenu();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
@@ -73,6 +72,12 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
+  const windowShown = (id: VisualCalWindow) => {
+    if (id !== VisualCalWindow.Main) return;
+    global.visualCal.windowManager.removeListener('windowShown', windowShown);
+    initMainMenu();
+  };
+  global.visualCal.windowManager.addListener('windowShown', windowShown);
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);

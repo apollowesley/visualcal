@@ -16,15 +16,13 @@ import electronLog from 'electron-log';
 
 const log = electronLog.scope('VisualCal');
 
-let visualCal: VisualCalGlobalAugment;
-
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
   const localDirs = dirs();
   const localFiles = files();
   const userManager = new UserManager();
 
-  visualCal = {
+  global.visualCal = {
     logger: log,
     isMac: process.platform === 'darwin',
     isDev: isDev(),
@@ -55,6 +53,5 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     communicationInterfaceManager: new CommunicationInterfaceManager()
   };
 
-  global.visualCal = visualCal;
   NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
 }
