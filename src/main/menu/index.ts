@@ -1,7 +1,7 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, Menu } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions, Menu, dialog } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
-import * as path from 'path';
 import { VisualCalWindow } from '../../constants';
+import { showWindow } from '../managers/WindowManager/vue-helper';
 
 interface Options {
   start?: any;
@@ -158,14 +158,20 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       },
       {
         label: 'Toggle Developer Tools',
-        accelerator: process.platform === 'darwin' ? 'F12' : 'F12',
+        accelerator: 'F12',
         click(_, focusedWindow) {
           if (focusedWindow) focusedWindow.webContents.toggleDevTools();
         }
       },
       {
         label: 'Vue Window',
-        click: async () => await global.visualCal.windowManager.showVueWindow(VisualCalWindow.VueTestWindow)
+        click: async () => {
+          try {
+            if (!global.visualCal.windowManager.isWindowLoaded(VisualCalWindow.VueTestWindow)) await showWindow(VisualCalWindow.VueTestWindow);
+          } catch (error) {
+            console.warn('Error showing Vue window:', error);
+          }
+        }
       }
     ]
   })

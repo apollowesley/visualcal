@@ -6,9 +6,7 @@ import * as WindowUtils from '../../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
 import visualCalNodeRed from '../../node-red';
-import path from 'path';
-import { isDev } from '../../utils/is-dev-mode';
-import * as VueHelper from './vue-helper';
+import { getSubPath, showWindow as showVueWindow } from './vue-helper';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -266,10 +264,9 @@ export class WindowManager extends TypedEmitter<Events> {
       await this.showSelectProcedureWindow();
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
-    // const w = await this.createWindow(VisualCalWindow.Login);
-    const w = await this.showVueWindow(VisualCalWindow.Login, {
+    const w = await showVueWindow(VisualCalWindow.Login, {
       maximize: false,
-      subPath: '/login'
+      subPath: getSubPath(VisualCalWindow.Login)
     });
     return w;
   }
@@ -381,40 +378,6 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     const w = await this.createWindow(VisualCalWindow.DeviceBeforeWrite, this.mainWindow);
     return w;
-  }
-
-  async showVueWindow(id: VisualCalWindow, opts: { subPath?: string; maximize?: boolean; windowOpts?: BrowserWindowConstructorOptions; } = { windowOpts: VueHelper.defaultWindowConstructorOptions }) {
-    return new Promise<BrowserWindow>(async (resolve, reject) => {
-      if (this.isWindowLoaded(id)) return reject('Already opened');
-      let isSized = VisualCalWindow.Login;
-      if (opts && !opts.windowOpts) {
-        opts.windowOpts = VueHelper.defaultWindowConstructorOptions;
-      } else if (opts && opts.windowOpts) {
-        opts.windowOpts = VueHelper.coerceWindowConstructorOptions(opts.windowOpts);
-      } else {
-        opts = { windowOpts: VueHelper.defaultWindowConstructorOptions }
-      }
-      try {
-        const vueWindow = new BrowserWindow(opts.windowOpts);
-        VueHelper.setWindowSize(id);
-        vueWindow.visualCal = { id: id };
-        this.add(vueWindow);
-        vueWindow.webContents.once('did-finish-load' , async () => {
-          WindowUtils.centerWindowOnNearestCurorScreen(vueWindow, opts.maximize);
-          if (opts.maximize) {
-            vueWindow.maximize();
-          }
-          vueWindow.show();
-          vueWindow.focus();
-          return resolve(vueWindow);
-        });
-        let url = isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue';
-        if (opts && opts.subPath) url = `${url}${opts.subPath}`;
-        await vueWindow.loadURL(url);
-      } catch (error) {
-        return reject(error.message);
-      }
-    });
   }
 
 }
