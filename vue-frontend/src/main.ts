@@ -9,9 +9,11 @@ window.ipc = new Ipc();
 
 Vue.config.productionTip = false
 
-new Vue({
+const app = new Vue({
   router,
   store: store.original,
   vuetify,
   render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
+
+window.app = app;

@@ -34,7 +34,6 @@ export class VueManager extends TypedEmitter<Events> {
           authors: activeProcedure.authors,
           sections: visualCalNodeRed.visualCalSections
         }
-        activeProcedure.sections.forEach(s => procedure.sections.push({ name: s.name, actions: [] }));
         const response: SessionViewRequestResponseInfo = {
           procedure: procedure
         }

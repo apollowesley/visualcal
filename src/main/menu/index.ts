@@ -1,6 +1,7 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, Menu } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import * as path from 'path';
+import { VisualCalWindow } from '../../constants';
 
 interface Options {
   start?: any;
@@ -122,25 +123,6 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
     ]
   },
   {
-    label: 'System',
-    submenu: [
-      {
-        label: 'Info',
-        async click() {
-          const systemInfoWindow = new BrowserWindow({
-            title: 'System Info',
-            center: true,
-            webPreferences: {
-              nodeIntegration: true
-            }
-          });
-          systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
-          await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'SystemInfo.html'));
-        }
-      }
-    ]
-  },
-  {
     label: 'Configuration',
     submenu: [
       {
@@ -182,8 +164,8 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         }
       },
       {
-        label: 'Vue Test Window',
-        click: async () => await global.visualCal.windowManager.showVueTestWindow()
+        label: 'Vue Window',
+        click: async () => await global.visualCal.windowManager.showVueWindow(VisualCalWindow.VueTestWindow)
       }
     ]
   })

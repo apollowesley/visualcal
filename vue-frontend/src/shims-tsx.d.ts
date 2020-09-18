@@ -15,6 +15,7 @@ declare global {
   }
 
   interface Window {
+    app: Vue;
     electron: {
       ipcRenderer: typeof ipcRenderer
     };

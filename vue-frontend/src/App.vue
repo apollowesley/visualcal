@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-app-bar
+      v-if="isLoggedIn"
       app
       color="primary"
       dark
@@ -20,28 +21,23 @@
 
       <v-spacer></v-spacer>
 
+      <h3
+        v-if="procedureName"
+      >
+        Procedure: {{ procedureName }}
+      </h3>
+
+      <v-spacer></v-spacer>
+
       <v-switch
         v-model="darkMode"
         label="Dark mode"
       />
     </v-app-bar>
 
-    <v-container
-      fluid
-      class="pl-7 pr-7"
-    >
-      <v-row
-        align="start"
-        justify="center"
-        no-gutters
-      >
-        <v-col>
-          <v-main>
-            <router-view />
-          </v-main>
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
 
@@ -55,10 +51,21 @@ export default class App extends Vue {
   get darkMode() { return this.$store.direct.getters.darkMode; }
   set darkMode(value: boolean) { this.$store.direct.commit.setDarkMode(value); }
 
+  get isLoggedIn() { return this.$store.direct.getters.isLoggedIn; }
+
+  get procedureName() {
+    if (!this.$store.direct.state.sessionViewInfo || !this.$store.direct.state.sessionViewInfo.procedure) return '';
+    return this.$store.direct.state.sessionViewInfo.procedure.name;
+  }
+
 }
 </script>
 
 <style>
+
+  .theme--dark.v-application {
+    background-color: #2b2b2b !important;
+  }
 
   .v-card.v-sheet.theme--light {
     background-color: #ebebeb;

@@ -5,18 +5,18 @@ export const enum IpcChannels {
   Error = 'vue-session-view-info-error'
 };
 
-interface Author {
+export interface Author {
   nameFirst: string;
   nameLast: string;
   email?: string;
 }
 
-interface ProcedureAction {
+export interface ProcedureAction {
   name: string;
   lastRun?: Date;
 }
 
-interface ProcedureSection {
+export interface ProcedureSection {
   name: string;
   actions: ProcedureAction[];
 }
@@ -28,19 +28,19 @@ export interface Procedure {
   sections: ProcedureSection[];
 }
 
-interface AvailableInterfaceDriver {
+export interface AvailableInterfaceDriver {
   name: string;
 }
 
-interface AvailableDeviceDriver {
+export interface AvailableDeviceDriver {
   name: string;
 }
 
-interface CommunicationInterface {
+export interface CommunicationInterface {
   name: string;
 }
 
-interface Device {
+export interface Device {
   name: string;
   selectedDeviceDriverName?: string;
   selectedCommunicationInterfaceName?: string;

@@ -19,7 +19,7 @@ import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
 
-const nodeRed = NodeRed();
+NodeRed();
 const log = electronLog.scope('main');
 
 electronLog.transports.file.level = 'debug';
@@ -95,10 +95,15 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
-  // if (process.env.NODE_ENV !== 'production') {
-  //   const VueDevTools = await import('vue-devtools');
-  //   VueDevTools.install();
-  // }
+  if (isDev()) {
+    try {
+      const VueDevTools = require('vue-devtools');
+      VueDevTools.install();
+    } catch (error) {
+      console.warn('The following error from vue-devtools can be ignored.  It is only loaded in development.');
+      console.error(error.message);
+    }
+  }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
       await load()
