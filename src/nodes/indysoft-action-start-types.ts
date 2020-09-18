@@ -33,4 +33,6 @@ export interface TriggerOptions {
   runId: string;
   session?: Session;
   interceptDeviceWrites?: boolean;
+  deviceConfig?: CommunicationInterfaceDeviceNodeConfiguration[];
+
 }

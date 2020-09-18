@@ -59,7 +59,12 @@ export class ActionManager extends EventEmitter {
         }
       }
     }
-    await global.visualCal.communicationInterfaceManager.connectAll();
+    if (opts.deviceConfig) {
+      const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
+      await global.visualCal.communicationInterfaceManager.connectAll(interfaceNames);
+    } else {
+      await global.visualCal.communicationInterfaceManager.connectAll();
+    }
     nodeRed.startVisualCalActionStartNode(opts.section, opts.action, opts.runId);
   }
 

@@ -56,9 +56,9 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
 
 const updateStartStopActionButton = (info?: StateChangeInfo) => {
   let disabled = false;
-  disabled = disabled || !procedure.isReady;
-  // disabled = disabled || !getSelectedBenchconfig();
-  disabled = disabled || !procedure.runName || results.getDoesRunExist(procedure.runName);
+  // disabled = disabled || !procedure.isReady;
+  // // disabled = disabled || !getSelectedBenchconfig();
+  // disabled = disabled || !procedure.runName || results.getDoesRunExist(procedure.runName);
   startStopActionButtonElement.disabled = disabled;
 
   if (!info) return;
@@ -226,6 +226,8 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     session.lastActionName = undefined;
   } else {
     opts.interceptDeviceWrites = interceptDeviceWritesCheckbox.checked;
+    const deviceConfigs = devicesTable.getData() as CommunicationInterfaceDeviceNodeConfiguration[];
+    opts.deviceConfig = deviceConfigs;
     results.addRun(runName);
     window.visualCal.actionManager.start(opts);
     session.lastSectionName = section.name;
