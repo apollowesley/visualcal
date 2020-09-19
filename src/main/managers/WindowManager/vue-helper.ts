@@ -27,6 +27,14 @@ const setWindowSize = (windowId: VisualCalWindow, opts?: BrowserWindowConstructo
   }
 }
 
+const getWindowTitle = (windowId: VisualCalWindow) => {
+  switch (windowId) {
+    case VisualCalWindow.Login:
+      return 'VisualCal Login'
+  }
+  return 'VisualCal';
+}
+
 export const getSubPath = (windowId: VisualCalWindow) => {
   switch (windowId) {
     case VisualCalWindow.Login:
@@ -35,8 +43,9 @@ export const getSubPath = (windowId: VisualCalWindow) => {
   return '/';
 }
 
-const coerceWindowConstructorOptions = (opts: BrowserWindowConstructorOptions) => {
+const coerceWindowConstructorOptions = (windowId: VisualCalWindow, opts: BrowserWindowConstructorOptions) => {
   opts.show = false;
+  opts.title = getWindowTitle(windowId);
   if (opts.webPreferences) {
     opts.webPreferences.nodeIntegration = false;
     opts.webPreferences.preload = preloadFilePath;
@@ -50,7 +59,7 @@ export const showWindow = async (id: VisualCalWindow, opts: { subPath?: string; 
     if (opts && !opts.windowOpts) {
       opts.windowOpts = defaultWindowConstructorOptions;
     } else if (opts && opts.windowOpts) {
-      opts.windowOpts = coerceWindowConstructorOptions(opts.windowOpts);
+      opts.windowOpts = coerceWindowConstructorOptions(id, opts.windowOpts);
     } else {
       opts = { windowOpts: defaultWindowConstructorOptions }
     }
@@ -60,6 +69,7 @@ export const showWindow = async (id: VisualCalWindow, opts: { subPath?: string; 
       global.visualCal.windowManager.add(vueWindow, id);
       vueWindow.webContents.once('did-finish-load' , async () => {
         WindowUtils.centerWindowOnNearestCurorScreen(vueWindow, opts.maximize);
+        vueWindow.setTitle(getWindowTitle(id));
         if (opts.maximize) {
           vueWindow.maximize();
         }
