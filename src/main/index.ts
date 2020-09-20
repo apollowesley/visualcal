@@ -73,16 +73,7 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
-  if (isDev()) {
-    initMainMenu();
-  } else {
-    const windowShown = (id: VisualCalWindow) => {
-      if (id !== VisualCalWindow.Main) return;
-      global.visualCal.windowManager.removeListener('windowShown', windowShown);
-      initMainMenu();
-    };
-    global.visualCal.windowManager.addListener('windowShown', windowShown);
-  }
+  initMainMenu();
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
