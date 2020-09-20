@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-app-bar
-      v-if="isLoggedIn"
+      v-if="showAppBar"
       app
       color="primary"
       dark
@@ -51,7 +51,7 @@ export default class App extends Vue {
   get darkMode() { return this.$store.direct.getters.darkMode; }
   set darkMode(value: boolean) { this.$store.direct.commit.setDarkMode(value); }
 
-  get isLoggedIn() { return this.$store.direct.getters.isLoggedIn; }
+  get showAppBar() { return this.$route.name === 'Session'; }
 
   get procedureName() {
     if (!this.$store.direct.state.sessionViewInfo || !this.$store.direct.state.sessionViewInfo.procedure) return '';

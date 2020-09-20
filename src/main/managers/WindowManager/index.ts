@@ -6,7 +6,8 @@ import * as WindowUtils from '../../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
 import visualCalNodeRed from '../../node-red';
-import { getSubPath, showWindow as showVueWindow } from './vue-helper';
+import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOptions, setWindowSize, getWindowTitle } from './vue-helper';
+import { isDev } from '../../utils/is-dev-mode';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -23,7 +24,6 @@ interface Events {
 export class WindowManager extends TypedEmitter<Events> {
 
   private fWindows: Set<BrowserWindow>;
-  private fClosingAll: boolean = false;
 
   constructor() {
     super();
@@ -91,12 +91,12 @@ export class WindowManager extends TypedEmitter<Events> {
       this.close(VisualCalWindow.CreateProcedure);
     });
 
-    ipcMain.on(IpcChannels.session.cancelSelect, async () => {
+    ipcMain.on(IpcChannels.session.cancelCreate, async () => {
       await this.showSelectProcedureWindow();
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
 
-    ipcMain.on(IpcChannels.session.cancelCreate, () => {
+    ipcMain.on(IpcChannels.session.cancelSelect, () => {
       this.close(VisualCalWindow.CreateSession);
     });
   }
@@ -181,8 +181,8 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   closeAll() {
-    this.fClosingAll = true;
     this.fWindows.forEach(browserWindow => this.close(browserWindow.visualCal.id));
+    this.emit('allWindowsClosed');
     this.fWindows.clear();
   }
 
@@ -200,6 +200,7 @@ export class WindowManager extends TypedEmitter<Events> {
     log.info('Creating window', { windowId: options.id });
     this.checkWindowExists(options.id);
     const newWindow = new BrowserWindow(options.browserWindow);
+    this.emit('windowCreated', options.id, newWindow);
     newWindow.visualCal = {
       id: options.id
     };
@@ -216,7 +217,7 @@ export class WindowManager extends TypedEmitter<Events> {
     }
     const config = getWindowConfig(id, parent);
     w = this.createBrowserWindow(config);
-    w.once('show', () => {
+    w.on('show', () => {
       if (!w) return;
       this.emit('windowShown', w.visualCal.id, w);
       if (onShow) onShow(w);
@@ -255,6 +256,54 @@ export class WindowManager extends TypedEmitter<Events> {
     return w;
   }
 
+  async showVueWindow(
+      id: VisualCalWindow, 
+      opts: { subPath?: string; maximize?: boolean; windowOpts?: BrowserWindowConstructorOptions; } = { maximize: true, windowOpts: defaultWindowConstructorOptions },
+      onDidFinishLoading?: (bw: BrowserWindow) => void,
+      onShow?: (bw: BrowserWindow) => void
+    ) {
+    return new Promise<BrowserWindow>(async (resolve, reject) => {
+      if (global.visualCal.windowManager.isWindowLoaded(id)) return reject('Already opened');
+      if (opts && !opts.windowOpts) {
+        opts.windowOpts = defaultWindowConstructorOptions;
+      } else if (opts && opts.windowOpts) {
+        opts.windowOpts = coerceWindowConstructorOptions(id, opts.windowOpts);
+      } else {
+        opts = { windowOpts: defaultWindowConstructorOptions }
+      }
+      try {
+        opts.windowOpts = setWindowSize(id, opts.windowOpts);
+        const vueWindow = new BrowserWindow(opts.windowOpts);
+        this.emit('windowCreated', id, vueWindow);
+        global.visualCal.windowManager.add(vueWindow, id);
+        vueWindow.on('show', () => {
+          this.emit('windowShown', id, vueWindow);
+          if (onShow) onShow(vueWindow);
+        });
+        vueWindow.webContents.once('did-finish-load' , async () => {
+          if (onDidFinishLoading) onDidFinishLoading(vueWindow);
+          WindowUtils.centerWindowOnNearestCurorScreen(vueWindow, opts.maximize);
+          vueWindow.setTitle(getWindowTitle(id));
+          if (opts.maximize) {
+            vueWindow.maximize();
+          }
+          vueWindow.show();
+          vueWindow.focus();
+          return resolve(vueWindow);
+        });
+        let url = isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue';
+        if (opts && opts.subPath) {
+          url = `${url}${opts.subPath}`;
+        } else if (!opts || !opts.subPath) {
+          url = `${url}${getSubPath(id)}`;
+        }
+        await vueWindow.loadURL(url);
+      } catch (error) {
+        return reject(error);
+      }
+    });
+  }
+
   // Loading window
   async ShowLoading() {
     const w = await this.createWindow(VisualCalWindow.Loading);
@@ -267,7 +316,7 @@ export class WindowManager extends TypedEmitter<Events> {
       await this.showSelectProcedureWindow();
       this.closeAllBut(VisualCalWindow.SelectProcedure);
     });
-    const w = await showVueWindow(VisualCalWindow.Login, {
+    const w = await this.showVueWindow(VisualCalWindow.Login, {
       maximize: false,
       subPath: getSubPath(VisualCalWindow.Login)
     });
@@ -336,9 +385,15 @@ export class WindowManager extends TypedEmitter<Events> {
 
   // Select procedure window
   async showSelectProcedureWindow() {
-    const procedures = await global.visualCal.procedureManager.getAll();
-    const onDidFinishLoading = (bw: BrowserWindow) => bw.webContents.send(IpcChannels.procedures.selectData, procedures);
-    const w = await this.createWindow(VisualCalWindow.SelectProcedure, undefined, false, undefined, undefined, onDidFinishLoading);
+    global.visualCal.procedureManager.once('activeSet', async () => {
+      await this.showSelectSessionWindow();
+      this.closeAllBut(VisualCalWindow.SelectSession);
+    });
+    // const w = await this.createWindow(VisualCalWindow.SelectProcedure, undefined, false, undefined, undefined, onDidFinishLoading);
+    const w = await this.showVueWindow(VisualCalWindow.SelectProcedure, {
+      maximize: false,
+      subPath: getSubPath(VisualCalWindow.SelectProcedure)
+    });
     return w;
   }
 

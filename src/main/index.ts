@@ -73,12 +73,16 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
-  const windowShown = (id: VisualCalWindow) => {
-    if (id !== VisualCalWindow.Main) return;
-    global.visualCal.windowManager.removeListener('windowShown', windowShown);
+  if (isDev()) {
     initMainMenu();
-  };
-  global.visualCal.windowManager.addListener('windowShown', windowShown);
+  } else {
+    const windowShown = (id: VisualCalWindow) => {
+      if (id !== VisualCalWindow.Main) return;
+      global.visualCal.windowManager.removeListener('windowShown', windowShown);
+      initMainMenu();
+    };
+    global.visualCal.windowManager.addListener('windowShown', windowShown);
+  }
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
@@ -111,16 +115,16 @@ const run = async () => {
   }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
-      await load()
-      const loginWindow = await global.visualCal.windowManager.ShowLogin();
-      global.visualCal.windowManager.close(VisualCalWindow.Loading);
-      loginWindow.once('closed', async () => {
+      await load();
+      global.visualCal.userManager.once('loggedIn', async () => {
         try {
           await ApplicationManager.instance.checkForUpdates();
         } catch (error) {
           log.error('Error checking for updates', error);
         }
       });
+      await global.visualCal.windowManager.ShowLogin();
+      global.visualCal.windowManager.close(VisualCalWindow.Loading);
       if (isDev()) {
         await testingOnly();
       }

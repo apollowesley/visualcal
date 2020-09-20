@@ -4,10 +4,12 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import { Ipc } from './utils/Ipc';
+import VueDebounce from 'vue-debounce';
+
+Vue.config.productionTip = false;
 
 window.ipc = new Ipc();
-
-Vue.config.productionTip = false
+Vue.use(VueDebounce);
 
 const app = new Vue({
   router,
