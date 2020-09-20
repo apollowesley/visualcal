@@ -18,8 +18,9 @@ import { init as nodeRedUtilsInit } from './node-red/utils';
 import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
+import { ExpressServer } from './servers/express';
 
-const nodeRed = NodeRed();
+NodeRed();
 const log = electronLog.scope('main');
 
 electronLog.transports.file.level = 'debug';
@@ -65,7 +66,6 @@ async function load() {
   setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
   sendToLoadingWindow('Initializing main menu ...');
-  initMainMenu();
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
@@ -73,6 +73,16 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
+  if (isDev()) {
+    initMainMenu();
+  } else {
+    const windowShown = (id: VisualCalWindow) => {
+      if (id !== VisualCalWindow.Main) return;
+      global.visualCal.windowManager.removeListener('windowShown', windowShown);
+      initMainMenu();
+    };
+    global.visualCal.windowManager.addListener('windowShown', windowShown);
+  }
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
@@ -80,13 +90,12 @@ async function load() {
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   sendToLoadingWindow('Initializing Logic Server utils ...');
+  await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
   initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
-
-let vueWindow: BrowserWindow;
 
 async function testingOnly() {
   // TODO: TESTING ONLY!!!
@@ -95,22 +104,27 @@ async function testingOnly() {
 
 const run = async () => {
   await app.whenReady();
-  // if (process.env.NODE_ENV !== 'production') {
-  //   const VueDevTools = await import('vue-devtools');
-  //   VueDevTools.install();
-  // }
+  if (isDev()) {
+    try {
+      const VueDevTools = require('vue-devtools');
+      VueDevTools.install();
+    } catch (error) {
+      console.warn('The following error from vue-devtools can be ignored.  It is only loaded in development.');
+      console.error(error.message);
+    }
+  }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
-      await load()
-      const loginWindow = await global.visualCal.windowManager.ShowLogin();
-      global.visualCal.windowManager.close(VisualCalWindow.Loading);
-      loginWindow.once('closed', async () => {
+      await load();
+      global.visualCal.userManager.once('loggedIn', async () => {
         try {
           await ApplicationManager.instance.checkForUpdates();
         } catch (error) {
           log.error('Error checking for updates', error);
         }
       });
+      await global.visualCal.windowManager.ShowLogin();
+      global.visualCal.windowManager.close(VisualCalWindow.Loading);
       if (isDev()) {
         await testingOnly();
       }

@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import { IpcChannelCRUD } from '../../constants';
 import path from 'path';
 import fs, { promises as fsPromises } from 'fs';
@@ -40,6 +40,8 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     ipcMain.on(this.fChannelNames.create.request, async (event, item: TCreate) => {
       try {
         const retVal = await this.create(item);
+        const window = BrowserWindow.fromWebContents(event.sender);
+        if (!window || window.isDestroyed()) return;
         event.reply(this.fChannelNames.create.response, retVal);
       } catch (error) {
         event.reply(this.fChannelNames.create.error, error);
@@ -191,6 +193,10 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     return retVal;
   }
   
+  protected onCreated(item: TCreated) {
+    this.emit('created', item);
+  }
+
   async create(createItem: TCreate) {
     const sanitizedName = sanitizeFilename(createItem.name);
     this.checkNotExists(sanitizedName);
@@ -200,14 +206,14 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await this.onCreatedItemDir(itemDirPath, sanitizedName);
     await this.saveItemJson(createItem.name, createItem);
     const retVal = this.getCreatedItem(createItem);
-    this.emit('created', retVal);
+    this.onCreated(retVal);
     ipcMain.sendToAll(this.fChannelNames.create.response, retVal);
     return retVal;
   }
 
   protected async onCreatedItemDir(itemDirPath: string, sanitizedName: string): Promise<void> {
     // Allow children to perform any follow-up work after creating an item directory
-    return Promise.resolve();
+    await Promise.resolve();
   };
 
   protected abstract getCreatedItem(createItem: TCreate): TCreated;
@@ -254,7 +260,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   
   protected async onSetActive(name: string) {
     // Override if needed
-    return Promise.resolve();
+    await Promise.resolve();
   }
 
   async update(item: TItem) {

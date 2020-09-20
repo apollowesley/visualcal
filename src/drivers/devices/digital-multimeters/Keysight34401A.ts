@@ -91,7 +91,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     return config;
   }
 
-  async getMeasurement(config: MeasurementConfiguration): Promise<number> {
+  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement> {
     if (!this.communicationInterface) throw new Error('Communication interface is undefined');
     await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';
@@ -135,7 +135,10 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     }
     if (config.acFilterHz) await this.writeString(`DET:BAND ${config.acFilterHz}`);
     const value = await this.queryString(command);
-    return parseFloat(value);
+    return {
+      raw: value,
+      value: parseFloat(value)
+    };
   }
 
   async setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number = 5): Promise<void> {

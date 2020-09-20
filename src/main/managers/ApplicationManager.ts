@@ -5,6 +5,7 @@ import { IpcChannels } from '../../constants';
 import { AutoUpdater } from '../auto-update';
 import { saveComparison } from '../ipc';
 import { destroy as destroyNodeRed } from '../node-red';
+import { ExpressServer } from '../servers/express';
 import { isDev } from '../utils/is-dev-mode';
 import { setNoUpdateNotifier } from '../utils/npm-update-notifier';
 
@@ -59,6 +60,9 @@ export class ApplicationManager extends TypedEmitter<Events> {
     log.info('Destroying logic server');
     await destroyNodeRed();
     log.info('Logic server destroyed');
+    log.info('Destroying web server');
+    await ExpressServer.instance.stop();
+    log.info('Web server destroyed');
     global.visualCal.userManager.logout();
     if (isDev()) await saveComparison();
   }

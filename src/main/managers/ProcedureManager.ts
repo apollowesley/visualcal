@@ -6,6 +6,7 @@ import NodeRed from '../node-red';
 import { CrudManager } from './CrudManager';
 import electronLog from 'electron-log';
 import VisualCalNodeRedSettings from '../node-red-settings';
+import { ExpressServer } from '../servers/express';
 
 const log = electronLog.scope('ProcedureManager');
 const nodeRed = NodeRed();
@@ -18,13 +19,12 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     ipcMain.on(IpcChannels.procedures.setActive.request, async (event, procedureName: string) => {
       try {
         await this.setActive(procedureName);
-        nodeRed.once('started', async (port) => {
-          log.info(`Logic server started on port ${port}`);
-          event.reply(IpcChannels.procedures.setActive.response, procedureName);
-          await global.visualCal.windowManager.showSelectSessionWindow();
-          global.visualCal.windowManager.closeAllBut(VisualCalWindow.SelectSession);
+        nodeRed.once('started', async () => {
+          log.info(`Logic server started`);
+          // Don't reply since we close the window as soon as we set the active procedure
+          // event.reply(IpcChannels.procedures.setActive.response, procedureName);
         });
-        await nodeRed.start(VisualCalNodeRedSettings, global.visualCal.dirs.html.js, global.visualCal.config.httpServer.port);
+        await nodeRed.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
       } catch (error) {
         event.reply(IpcChannels.procedures.setActive.error, error);
       }
@@ -36,13 +36,26 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
 
   static PROCEDURE_LOGIC_FOLDER_NAME = 'logic';
   static PROCEDURE_JSON_FILE_NAME = 'procedure.json';
- 
+  
+  static PROCEDURES_ASSETS_FOLDER_NAME = 'assets';
+  static PROCEDURES_ASSETS_GITKEEP_FILE_NAME = '.gitkeep';
+
   async createProcedureLogicDir(name: string) { await fsPromises.mkdir(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME)); };
+  async createProcedureAssetsDir(name: string) { await fsPromises.mkdir(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURES_ASSETS_FOLDER_NAME)); };
+  async createProcedureAssetsGitKeepFile(name: string) { await fsPromises.writeFile(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURES_ASSETS_FOLDER_NAME, ProcedureManager.PROCEDURES_ASSETS_GITKEEP_FILE_NAME), ''); };
   async createProcedureLogicFile(name: string) { await fsPromises.writeFile(path.join(ProcedureManager.getProcedureDirPath(name), ProcedureManager.PROCEDURE_LOGIC_FOLDER_NAME, 'flows.json'), JSON.stringify([])); };
 
   protected async onCreatedItemDir(itemDirPath: string, sanitizedName: string): Promise<void> {
+    await this.createProcedureAssetsDir(sanitizedName);
+    await this.createProcedureAssetsGitKeepFile(sanitizedName);
     await this.createProcedureLogicDir(sanitizedName);
     await this.createProcedureLogicFile(sanitizedName);
+    await super.onCreatedItemDir(itemDirPath, sanitizedName);
+  }
+
+  protected onCreated(item: CreatedProcedureInfo) {
+    super.onCreated(item);
+    this.setActive(item.name);
   }
 
   protected getCreatedItem(createItem: CreateProcedureInfo) {

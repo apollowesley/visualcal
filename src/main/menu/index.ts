@@ -1,6 +1,6 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, Menu } from 'electron';
+import { BrowserWindow, shell, MenuItemConstructorOptions, Menu, dialog } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
-import * as path from 'path';
+import { VisualCalWindow } from '../../constants';
 
 interface Options {
   start?: any;
@@ -122,25 +122,6 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
     ]
   },
   {
-    label: 'System',
-    submenu: [
-      {
-        label: 'Info',
-        async click() {
-          const systemInfoWindow = new BrowserWindow({
-            title: 'System Info',
-            center: true,
-            webPreferences: {
-              nodeIntegration: true
-            }
-          });
-          systemInfoWindow.webContents.on('did-finish-load', () => systemInfoWindow.show());
-          await systemInfoWindow.loadFile(path.join(global.visualCal.dirs.html.windows, 'SystemInfo.html'));
-        }
-      }
-    ]
-  },
-  {
     label: 'Configuration',
     submenu: [
       {
@@ -176,14 +157,20 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       },
       {
         label: 'Toggle Developer Tools',
-        accelerator: process.platform === 'darwin' ? 'F12' : 'F12',
+        accelerator: 'F12',
         click(_, focusedWindow) {
           if (focusedWindow) focusedWindow.webContents.toggleDevTools();
         }
       },
       {
-        label: 'Vue Test Window',
-        click: async () => await global.visualCal.windowManager.showVueTestWindow()
+        label: 'Vue Window',
+        click: async () => {
+          try {
+            if (!global.visualCal.windowManager.isWindowLoaded(VisualCalWindow.VueTestWindow)) await global.visualCal.windowManager.showVueWindow(VisualCalWindow.VueTestWindow);
+          } catch (error) {
+            console.warn('Error showing Vue window:', error);
+          }
+        }
       }
     ]
   })

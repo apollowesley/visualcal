@@ -51,7 +51,7 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
     return config;
   }
 
-  async getMeasurement(config: MeasurementConfiguration): Promise<number> {
+  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement> {
     function delay(duration: number) {
       return new Promise(function(resolve) { 
         return setTimeout(resolve, duration);
@@ -105,7 +105,10 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
       await delay(1000);
     }
     const value = await this.queryString('MEAS?');
-    return parseFloat(value);
+    return {
+      raw: value,
+      value: parseFloat(value)
+    };
   }
   
   async setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number = 5): Promise<void> {

@@ -12,7 +12,7 @@ export interface StateChangeInfo {
 
 interface Events {
   started: () => void;
-  startError: (args: { opts: TriggerOptions, err: Error }) => void;
+  startError: (args: { opts: TriggerOptions, err: Error | string }) => void;
   stopped: () => void;
   stopError: (err: Error) => void;
   reset: () => void;
@@ -26,7 +26,7 @@ export class RendererActionManager extends TypedEmitter<Events> {
   constructor() {
     super();
     ipcRenderer.on(IpcChannels.actions.start.response, () => this.emit('started'));
-    ipcRenderer.on(IpcChannels.actions.start.error, (_, args: { opts: TriggerOptions, err: Error }) => this.emit('startError', args));
+    ipcRenderer.on(IpcChannels.actions.start.error, (_, args: { opts: TriggerOptions, err: Error | string }) => this.emit('startError', args));
 
     ipcRenderer.on(IpcChannels.actions.stop.response, () => this.emit('stopped'));
     ipcRenderer.on(IpcChannels.actions.stop.error, (_, err: Error) => this.emit('stopError', err));

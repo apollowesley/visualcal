@@ -1,6 +1,7 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
+import { arg } from 'mathjs';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
@@ -124,6 +125,17 @@ export class UserManager extends TypedEmitter<Events> {
     return config;
   }
 
+  getDeviceConfigs(email: string, sessionName: string) {
+    const session = this.getSession(email, sessionName);
+    if (!session) throw new Error(`Session, ${sessionName}, does not exist for user email, ${email}`);
+    if (!session.configuration) return [];
+    return session.configuration.devices;
+  }
+
+  getDeviceConfigsFromSession(session: Session) {
+    return this.getDeviceConfigs(session.username, session.name);
+  }
+
   add(user: User) {
     const existing = this.getOne(user.email);
     if (existing) throw new Error(`User, ${user.email}, already exists`);
@@ -144,10 +156,20 @@ export class UserManager extends TypedEmitter<Events> {
   addBenchConfig(config: BenchConfig) {
     const user = this.getOne(config.username);
     if (!user) throw new Error(`Unable to add bench configuration since user, ${config.username}, does not exist`);
-    const existingSession = this.getBenchConfig(config.username, config.name);
-    if (existingSession) throw new Error(`A bench configuration named, ${config.name}, already exists for user, ${config.username}`);
+    const existingBenchConfig = this.getBenchConfig(config.username, config.name);
+    if (existingBenchConfig) throw new Error(`A bench configuration named, ${config.name}, already exists for user, ${config.username}`);
     if (!user.benchConfigs) user.benchConfigs = [];
     user.benchConfigs.push({ ...config, username: config.username.toLocaleLowerCase() });
+    this.fStore.set('users', this.all);
+  }
+
+  setDeviceConfigs(email: string, sessionName: string, configs: CommunicationInterfaceDeviceNodeConfiguration[]) {
+    const user = this.getOne(email);
+    if (!user) throw new Error(`Unable to set device configurations since user, ${email}, does not exist`);
+    const existingSession = user.sessions.find(s => s.name.toLocaleUpperCase() === sessionName.toLocaleUpperCase());
+    if (!existingSession) throw new Error(`Session, ${sessionName}, does not exist for user email, ${email}`);
+    if (!existingSession.configuration) existingSession.configuration = { devices: [] };
+    existingSession.configuration.devices = configs;
     this.fStore.set('users', this.all);
   }
 
@@ -287,6 +309,15 @@ export class UserManager extends TypedEmitter<Events> {
         this.emit('loggedIn', user);
       }
     });
+
+    ipcMain.on(IpcChannels.user.active.request, (event) => {
+      try {
+        const user = this.activeUser;
+        event.reply(IpcChannels.user.active.response, user);
+      } catch (error) {
+        return event.reply(IpcChannels.user.active.error, error);
+      }
+    });
   }
 
   private initSessionIpcHandlers() {
@@ -294,6 +325,15 @@ export class UserManager extends TypedEmitter<Events> {
       const activeUser = this.activeUser;
       if (!activeUser) return event.reply(IpcChannels.session.getAllForActiveUser.error, 'Unable to get sessions for the active user because no active user is set');
       event.reply(IpcChannels.session.getAllForActiveUser.response, activeUser.sessions || []);
+    });
+
+    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string }) => {
+      try {
+        const exists = this.getSession(args.email, args.sessionName) !== undefined;
+        event.reply(IpcChannels.session.getExists.response, exists);
+      } catch (error) {
+        return event.reply(IpcChannels.session.getExists.error, error);
+      }
     });
 
     ipcMain.on(IpcChannels.session.setActive.request, (event, name: string) => {
