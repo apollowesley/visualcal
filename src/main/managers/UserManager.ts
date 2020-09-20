@@ -1,6 +1,7 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
+import { arg } from 'mathjs';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
@@ -308,6 +309,15 @@ export class UserManager extends TypedEmitter<Events> {
         this.emit('loggedIn', user);
       }
     });
+
+    ipcMain.on(IpcChannels.user.active.request, (event) => {
+      try {
+        const user = this.activeUser;
+        event.reply(IpcChannels.user.active.response, user);
+      } catch (error) {
+        return event.reply(IpcChannels.user.active.error, error);
+      }
+    });
   }
 
   private initSessionIpcHandlers() {
@@ -315,6 +325,15 @@ export class UserManager extends TypedEmitter<Events> {
       const activeUser = this.activeUser;
       if (!activeUser) return event.reply(IpcChannels.session.getAllForActiveUser.error, 'Unable to get sessions for the active user because no active user is set');
       event.reply(IpcChannels.session.getAllForActiveUser.response, activeUser.sessions || []);
+    });
+
+    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string }) => {
+      try {
+        const exists = this.getSession(args.email, args.sessionName) !== undefined;
+        event.reply(IpcChannels.session.getExists.response, exists);
+      } catch (error) {
+        return event.reply(IpcChannels.session.getExists.error, error);
+      }
     });
 
     ipcMain.on(IpcChannels.session.setActive.request, (event, name: string) => {

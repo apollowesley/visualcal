@@ -28,6 +28,12 @@ export interface Procedure {
   sections: ProcedureSection[];
 }
 
+export interface Session {
+  name: string;
+  procedureName: string;
+  email: string;
+}
+
 export interface AvailableInterfaceDriver {
   name: string;
 }

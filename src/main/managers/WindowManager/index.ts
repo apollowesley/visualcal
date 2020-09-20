@@ -406,10 +406,14 @@ export class WindowManager extends TypedEmitter<Events> {
   async showSelectSessionWindow() {
     const activeProcedureName = await global.visualCal.procedureManager.getActive();
     if (!activeProcedureName) throw new Error('Active procedure is not set');
-    const w = await this.createWindow(VisualCalWindow.SelectSession, undefined, false);
+    // const w = await this.createWindow(VisualCalWindow.SelectSession, undefined, false);
     global.visualCal.userManager.once('activeSessionChanged', async () => {
       await this.ShowMain();
       this.closeAllBut(VisualCalWindow.Main);
+    });
+    const w = await this.showVueWindow(VisualCalWindow.SelectSession, {
+      maximize: false,
+      subPath: getSubPath(VisualCalWindow.SelectSession)
     });
     return w;
   }

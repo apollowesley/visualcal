@@ -30,6 +30,12 @@ export const setWindowSize = (windowId: VisualCalWindow, opts?: BrowserWindowCon
       opts.height = 600;
       opts.width = 800;
       break;
+    case VisualCalWindow.SelectSession:
+      opts.resizable = false;
+      opts.maximizable = false;
+      opts.height = 600;
+      opts.width = 800;
+      break;
   }
   return opts;
 }
@@ -40,6 +46,8 @@ export const getWindowTitle = (windowId: VisualCalWindow) => {
       return 'VisualCal Login'
     case VisualCalWindow.SelectProcedure:
       return 'VisualCal Procedure Selection';
+    case VisualCalWindow.SelectSession:
+      return 'VisualCal Session Selection';
   }
   return 'VisualCal';
 }
@@ -50,6 +58,8 @@ export const getSubPath = (windowId: VisualCalWindow) => {
       return '/login';
     case VisualCalWindow.SelectProcedure:
       return '/procedure-select';
+    case VisualCalWindow.SelectSession:
+      return '/session-select';
   }
   return '/';
 }

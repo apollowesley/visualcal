@@ -2,10 +2,11 @@ import { ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
-import { CommunicationInterfaceTypes, IpcChannels } from '../../constants';
+import { IpcChannels } from '../../constants';
 import NodeRed from '../node-red';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
+import { SessionForCreate } from 'visualcal-common/types/session';
 
 const log = electronLog.scope('SessionManager');
 const nodeRed = NodeRed();
@@ -41,6 +42,12 @@ export class SessionManager extends TypedEmitter<Events> {
     const active = this.fUserManager.activeSession;
     if (!active) return false;
     return active.name.toLocaleUpperCase() === name.toLocaleUpperCase();
+  }
+
+  setActive(email: string, name: string) {
+    const session = this.fUserManager.getSession(email, name);
+    if (!session) throw new Error(`Session, ${name}, does not exist for user, ${email}`);
+    this.fUserManager.activeSession = session;
   }
 
   getOne(name: string) {
@@ -96,6 +103,16 @@ export class SessionManager extends TypedEmitter<Events> {
         deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
       };
       event.reply(IpcChannels.session.viewInfo.response, viewInfo);
+    });
+
+    ipcMain.on(IpcChannels.session.create.request, async (event, session: SessionForCreate) => {
+      try {
+        const newSession = this.fUserManager.addSession(session);
+        this.setActive(session.username, session.name);
+        return event.reply(IpcChannels.session.create.response, newSession);
+      } catch (error) {
+        return event.reply(IpcChannels.session.create.error, error);
+      }
     });
   }
 
