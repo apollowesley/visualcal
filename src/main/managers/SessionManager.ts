@@ -77,6 +77,17 @@ export class SessionManager extends TypedEmitter<Events> {
       }
     });
 
+    ipcMain.on(IpcChannels.session.getAllForActiveUser.request, (event) => {
+      try {
+        const activeUser = this.fUserManager.activeUser;
+        if (!activeUser) return event.reply(IpcChannels.session.getAllForActiveUser.error, new Error('No active user'));
+        const retVal = this.getAllForUser(activeUser.email);
+        event.reply(IpcChannels.session.getAllForActiveUser.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.session.getAllForActiveUser.error, error);
+      }
+    })
+
     ipcMain.on(IpcChannels.session.viewInfo.request, async (event) => {
       if (!this.fUserManager.activeUser) {
         event.reply(IpcChannels.session.viewInfo.error, new Error('No active user'));

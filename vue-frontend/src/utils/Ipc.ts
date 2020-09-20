@@ -68,7 +68,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async getSessions() {
-    return await this.request<Session[], string>('getAll-sessions-request', 'getAll-sessions-response', 'getAll-sessions-error');
+    return await this.request<Session[], string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
   }
 
   async getSessionExists(email: string, sessionName: string) {
