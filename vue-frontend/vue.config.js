@@ -5,7 +5,7 @@ module.exports = {
   transpileDependencies: [
     "vuetify"
   ],
-  publicPath: process.env.NODE_ENV === 'production' ? '' : '',
+  publicPath: process.env.NODE_ENV === 'production' ? '/vue/' : '/vue/',
   outputDir: path.join(__dirname, '..', 'public', 'vue'),
   devServer: {
     proxy: {

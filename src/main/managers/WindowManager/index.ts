@@ -291,7 +291,7 @@ export class WindowManager extends TypedEmitter<Events> {
           vueWindow.focus();
           return resolve(vueWindow);
         });
-        let url = isDev() ? 'http://127.0.0.1:8080' : 'http://127.0.0.1:18880/vue';
+        let url = isDev() ? 'http://127.0.0.1:8080/vue' : 'http://127.0.0.1:18880/vue';
         if (opts && opts.subPath) {
           url = `${url}${opts.subPath}`;
         } else if (!opts || !opts.subPath) {
