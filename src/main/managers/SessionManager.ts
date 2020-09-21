@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
-import { IpcChannels } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
 import NodeRed from '../node-red';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
@@ -77,32 +77,24 @@ export class SessionManager extends TypedEmitter<Events> {
       }
     });
 
+    ipcMain.on(IpcChannels.session.getAllForActiveUser.request, (event) => {
+      try {
+        const activeUser = this.fUserManager.activeUser;
+        if (!activeUser) return event.reply(IpcChannels.session.getAllForActiveUser.error, new Error('No active user'));
+        const retVal = this.getAllForUser(activeUser.email);
+        event.reply(IpcChannels.session.getAllForActiveUser.response, retVal);
+      } catch (error) {
+        event.reply(IpcChannels.session.getAllForActiveUser.error, error);
+      }
+    })
+
     ipcMain.on(IpcChannels.session.viewInfo.request, async (event) => {
-      if (!this.fUserManager.activeUser) {
-        event.reply(IpcChannels.session.viewInfo.error, new Error('No active user'));
-        return;
+      try {
+        const viewInfo = await this.getSessionViewInfo();
+        event.reply(IpcChannels.session.viewInfo.response, viewInfo);
+      } catch (error) {
+        event.reply(IpcChannels.session.viewInfo.error, error);
       }
-      const activeSession = this.fUserManager.activeSession;
-      if (!activeSession) {
-        event.reply(IpcChannels.session.viewInfo.error, new Error('No active session'));
-        return;
-      }
-      const procedure = await global.visualCal.procedureManager.getOne(activeSession.procedureName);
-      if (!procedure) {
-        event.reply(IpcChannels.session.viewInfo.error, new Error(`Procedure, ${activeSession.procedureName}, does not exist`));
-        return;
-      }
-      const sections = nodeRed.visualCalSections;
-      const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
-      const viewInfo: SessionViewWindowOpenIPCInfo = {
-        user: this.fUserManager.activeUser,
-        session: activeSession,
-        procedure: procedure,
-        sections: sections,
-        benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
-        deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
-      };
-      event.reply(IpcChannels.session.viewInfo.response, viewInfo);
     });
 
     ipcMain.on(IpcChannels.session.create.request, async (event, session: SessionForCreate) => {
@@ -114,6 +106,37 @@ export class SessionManager extends TypedEmitter<Events> {
         return event.reply(IpcChannels.session.create.error, error);
       }
     });
+  }
+
+  // TODO: Temp function to send updated information to the session view window when node-red deploys
+  async getSessionViewInfo() {
+    if (!this.fUserManager.activeUser) {
+      throw new Error('No active user');
+    }
+    const activeSession = this.fUserManager.activeSession;
+    if (!activeSession) {
+      throw new Error('No active session');
+    }
+    const procedure = await global.visualCal.procedureManager.getOne(activeSession.procedureName);
+    if (!procedure) {
+      throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
+    }
+    const sections = nodeRed.visualCalSections;
+    const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
+    const viewInfo: SessionViewWindowOpenIPCInfo = {
+      user: this.fUserManager.activeUser,
+      session: activeSession,
+      procedure: procedure,
+      sections: sections,
+      benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
+      deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
+    };
+    return viewInfo;
+  }
+
+  async sendSessionViewInfoToAllWindows() {
+    const viewInfo = await this.getSessionViewInfo();
+    ipcMain.sendToAll(IpcChannels.session.viewInfo.response, viewInfo);
   }
 
 }

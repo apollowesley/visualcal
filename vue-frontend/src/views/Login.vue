@@ -28,6 +28,7 @@
                 :append-icon="fPasswordVisible ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="fPasswordVisible ? 'text' : 'password'"
                 :rules="[ passwordRules.required, passwordRules.min ]"
+                autocomplete="current-password"
                 class="pa-15"
                 label="Password"
                 hint="Enter any password of at least 8 characters.  Passwords are not checked currently."

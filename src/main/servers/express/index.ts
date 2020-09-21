@@ -31,9 +31,9 @@ export class ExpressServer extends TypedEmitter<Events> {
     const doStart = async (resolve: (value?: void | PromiseLike<void> | undefined) => void, reject: (reason?: any) => void) => {
       try {
         this.fExpress = express();
-        frontendVueRequestHook(this.fExpress);
         this.fServer = http.createServer(this.fExpress);
         this.emit('starting', this.fExpress, this.fServer);
+        frontendVueRequestHook(this.fExpress);
         this.fServer.listen(port, '127.0.0.1', () => {
           this.emit('started', port);
           return resolve();

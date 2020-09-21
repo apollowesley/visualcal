@@ -5,12 +5,14 @@ import { IpcChannels } from '../../../../constants';
 
 interface Events {
   mainLogEntry: (entry: any) => void;
+  viewInfoReceived: (viewInfo: SessionViewWindowOpenIPCInfo) => void;
 }
 
 export class IpcHandler extends TypedEmitter<Events> {
 
   constructor() {
     super();
+    ipcRenderer.on(IpcChannels.session.viewInfo.response, (_, viewInfo: SessionViewWindowOpenIPCInfo) => this.emit('viewInfoReceived', viewInfo));
     this.initMainLogHandlers();
   }
 

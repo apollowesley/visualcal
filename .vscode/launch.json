@@ -12,6 +12,7 @@
       "windows": {
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
+      "args": ["--disable-gpu"],
       "program": "${workspaceFolder}/src/main/index.ts",
       "preLaunchTask": "npm: copydrivers:packagejson",
       "sourceMaps": true,

@@ -46,6 +46,7 @@ import { User } from '@/types/session';
 })
 export default class SessionSelectView extends Vue {
 
+  procedureName = '';
   user?: User;
   fSessions: Session[] = [];
   fSelectSessionButtons: HTMLButtonElement[] = [];
@@ -60,7 +61,7 @@ export default class SessionSelectView extends Vue {
 
   private async onSelectSessionButtonClicked(sessionName: string) {
     this.setSelectSessionButtonsDisabled(true);
-    await window.ipc.setActiveSession(this.userEmail, sessionName);
+    await window.ipc.setActiveSession(sessionName);
     this.setSelectSessionButtonsDisabled(false);
   }
 
@@ -88,7 +89,8 @@ export default class SessionSelectView extends Vue {
   async mounted() {
     const user = await window.ipc.getCurrentUser();
     this.user = user ? user : undefined;
-    this.fSessions = await window.ipc.getSessions();
+    this.procedureName = await window.ipc.getActiveProcedureName();
+    this.fSessions = (await window.ipc.getSessions()).filter(s => s.procedureName === this.procedureName);
   }
 
 }
