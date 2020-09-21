@@ -215,11 +215,6 @@ export class WindowManager extends TypedEmitter<Events> {
 
   async createWindow(id: VisualCalWindow, parent?: BrowserWindow, maximize: boolean = false, onShow?: (bw: BrowserWindow) => void, onClosed?: () => void, onWebContentsDidFinishLoading?: (bw: BrowserWindow) => void) {
     let w = this.get(id);
-    if (w) {
-      w.show();
-      this.emit('windowShown', w.visualCal.id, w);
-      return w;
-    }
     const config = getWindowConfig(id, parent);
     w = this.createBrowserWindow(config);
     w.on('show', () => {
@@ -233,6 +228,11 @@ export class WindowManager extends TypedEmitter<Events> {
     w.webContents.once('did-start-loading', () => {
       if (!w) return;
       WindowUtils.centerWindowOnNearestCurorScreen(w, maximize);
+    });
+    w.once('ready-to-show', () => {
+      if (!w) return;
+      w.show();
+      return w;
     });
     w.webContents.once('did-finish-load', async () => {
       if (!w) return;
@@ -428,7 +428,6 @@ export class WindowManager extends TypedEmitter<Events> {
   // Create session window 
   async ShowCreateSessionWindow() {
     const w = await this.createWindow(VisualCalWindow.CreateSession);
-    w.show();
     return w;
   }
 
