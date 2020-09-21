@@ -109,22 +109,25 @@ export class SessionManager extends TypedEmitter<Events> {
   }
 
   // TODO: Temp function to send updated information to the session view window when node-red deploys
-  async getSessionViewInfo() {
+  async getSessionViewInfo(throwOnError: boolean = true) {
     if (!this.fUserManager.activeUser) {
-      throw new Error('No active user');
+      if (throwOnError) throw new Error('No active user');
     }
     const activeSession = this.fUserManager.activeSession;
     if (!activeSession) {
-      throw new Error('No active session');
+      if (throwOnError) throw new Error('No active session');
     }
+    const user = this.fUserManager.activeUser;
+    if (!user || !activeSession) return undefined;
     const procedure = await global.visualCal.procedureManager.getOne(activeSession.procedureName);
     if (!procedure) {
-      throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
+      if (throwOnError) throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
     }
+    if (!procedure) return undefined;
     const sections = nodeRed.visualCalSections;
     const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
-      user: this.fUserManager.activeUser,
+      user: user,
       session: activeSession,
       procedure: procedure,
       sections: sections,
@@ -135,7 +138,8 @@ export class SessionManager extends TypedEmitter<Events> {
   }
 
   async sendSessionViewInfoToAllWindows() {
-    const viewInfo = await this.getSessionViewInfo();
+    const viewInfo = await this.getSessionViewInfo(false);
+    if (!viewInfo) return;
     ipcMain.sendToAll(IpcChannels.session.viewInfo.response, viewInfo);
   }
 

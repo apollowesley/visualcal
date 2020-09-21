@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 import history from 'connect-history-api-fallback';
+import { isDev } from '../../utils/is-dev-mode';
 
 export const hook = (app: express.Express) => {
   const distRenderersVuePath = path.join(global.visualCal.dirs.renderers.base, 'vue');
@@ -26,7 +27,7 @@ export const hook = (app: express.Express) => {
 
   // TODO: Reorg code so express is standalone and the rest of the app uses it, instead of having this be in node-red dir
   app.use('/vue', history({
-    verbose: true
+    verbose: isDev()
   }));
 
   app.use('/vue', express.static(path.join(global.visualCal.dirs.public, 'vue'))); // Vue.js app

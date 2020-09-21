@@ -36,7 +36,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '*',
-    component: () => import(/* webpackChunkName: "view-error" */ '@/views/Error.vue')
+    component: () => import(/* webpackChunkName: "view-no-route" */ '@/views/NoRoute.vue')
   }
 ];
 
