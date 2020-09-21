@@ -1,6 +1,7 @@
 import { BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
 import { VisualCalWindow } from '../../../constants';
+import { isDev } from '../../utils/is-dev-mode';
 
 const renderersBaseDirPath = path.join(__dirname, '..', '..', '..', 'renderers');
 const renderersVueBaseDirPath = path.join(renderersBaseDirPath, 'vue');
@@ -15,28 +16,12 @@ export const defaultWindowConstructorOptions = {
   }
 }
 
-export const setWindowSize = (windowId: VisualCalWindow, opts?: BrowserWindowConstructorOptions) => {
+export const setWindowSize = (_: VisualCalWindow, opts?: BrowserWindowConstructorOptions) => {
   if (!opts) return;
-  switch (windowId) {
-    case VisualCalWindow.Login:
-      opts.resizable = false;
-      opts.maximizable = false;
-      opts.height = 600;
-      opts.width = 800;
-      break;
-    case VisualCalWindow.SelectProcedure:
-      opts.resizable = false;
-      opts.maximizable = false;
-      opts.height = 600;
-      opts.width = 800;
-      break;
-    case VisualCalWindow.SelectSession:
-      opts.resizable = false;
-      opts.maximizable = false;
-      opts.height = 600;
-      opts.width = 800;
-      break;
-  }
+  opts.resizable = isDev();
+  opts.maximizable = isDev();
+  opts.height = 600;
+  opts.width = 800;
   return opts;
 }
 
