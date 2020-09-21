@@ -1,5 +1,6 @@
 import { DigitalMultimeterDevice, DigitalMultimeterMode, MeasurementConfiguration, Configuration } from './DigitalMultimeter';
 import { Identifiable, DeviceIdentity } from '../../IIdentifiable';
+import { sleep } from '../../utils';
 
 export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
 
@@ -52,11 +53,6 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
   }
 
   async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement> {
-    function delay(duration: number) {
-      return new Promise(function(resolve) { 
-        return setTimeout(resolve, duration);
-      });
-    }
     if (!this.communicationInterface) throw new Error('Communication interface is undefined');
     await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';
@@ -102,7 +98,7 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
     await this.writeString(command);
     if (config.relative) {
       await this.writeString('REL');
-      await delay(1000);
+      await sleep(1000);
     }
     const value = await this.queryString('MEAS?');
     return {
