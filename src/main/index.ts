@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron';
 import electronIpcLog from 'electron-ipc-log';
 import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
@@ -10,7 +10,6 @@ import { VisualCalWindow } from '../constants';
 import { init as initGlobal } from './InitGlobal';
 import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';
-import { init as initMainMenu } from './menu';
 import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
@@ -73,7 +72,6 @@ async function load() {
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   sendToLoadingWindow('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
-  initMainMenu();
   await global.visualCal.windowManager.ShowLoading();
   sendToLoadingWindow('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
@@ -106,6 +104,7 @@ const run = async () => {
   }
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
+      Menu.setApplicationMenu(null);
       await load();
       global.visualCal.userManager.once('loggedIn', async () => {
         try {

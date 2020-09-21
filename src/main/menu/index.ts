@@ -59,62 +59,35 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
     submenu: [
       {
         label: 'Import Flow',
-        accelerator: "Shift+CmdOrCtrl+O",
+        accelerator: "CmdOrCtrl+Shift+O",
         click: async () => { if (global.visualCal.windowManager.mainWindow) await openFlow(global.visualCal.windowManager.mainWindow); }
       },
       {
         label: 'Save Flow As',
-        accelerator: "Shift+CmdOrCtrl+S",
+        accelerator: "CmdOrCtrl+Shift+S",
         click: async () => { if (global.visualCal.windowManager.mainWindow) await saveFlow(global.visualCal.windowManager.mainWindow); }
       },
       { type: 'separator' },
       {
         label: 'Console',
-        accelerator: "Shift+CmdOrCtrl+C",
+        accelerator: "CmdOrCtrl+Shift+C",
         click: async () => {
-          console.info('Create console window');
           await global.visualCal.windowManager.ShowConsole();
         }
       },
       {
-        label: 'Dashboard',
-        accelerator: "Shift+CmdOrCtrl+D",
-        click: async () => {
-          await global.visualCal.windowManager.ShowMain();
-        }
-      },
-      {
         label: 'Editor',
-        accelerator: "Shift+CmdOrCtrl+E",
+        accelerator: "CmdOrCtrl+Shift+E",
         click: async () => {
           await global.visualCal.windowManager.ShowNodeRedEditor();
         }
       },
       {
         label: 'Interactive Device Control',
-        accelerator: 'Shift+CmdOrCtrl+I',
+        accelerator: 'CmdOrCtrl+Shift+I',
         click: async () => {
           await global.visualCal.windowManager.showInteractiveDeviceControlWindow();
         }
-      },
-      {
-        label: 'Worldmap',
-        accelerator: "Shift+CmdOrCtrl+M",
-        click: async () => { if (global.visualCal.windowManager.mainWindow) await global.visualCal.windowManager.mainWindow.loadURL("http://localhost:" + global.visualCal.config.httpServer.port + '/map'); }
-      },
-      { type: 'separator' },
-      { type: 'separator' },
-      {
-        label: 'Documentation',
-        click: async () => { await shell.openExternal('https://nodered.org/docs'); }
-      },
-      {
-        label: 'Flows and Nodes',
-        click: async () => { await shell.openExternal('https://flows.nodered.org'); }
-      },
-      {
-        label: 'Discourse Forum',
-        click: async () => { await shell.openExternal('https://discourse.nodered.org/'); }
       },
       { type: 'separator' },
       { role: 'togglefullscreen' },
@@ -136,21 +109,13 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
     ]
   });
 
-  // Top and tail menu on Mac
-  if (process.platform === 'darwin') {
-    const subMenu = template[0].submenu as MenuItemConstructorOptions[];
-    subMenu.unshift({ type: 'separator' });
-    subMenu.unshift({ label: "About VisualCal" });
-    subMenu.unshift({ type: 'separator' });
-    subMenu.unshift({ type: 'separator' });
-  }
-
   // Add Dev menu if in dev mode
   template.push({
     label: 'Development',
     submenu: [
       {
-        label: 'Reload', accelerator: 'CmdOrCtrl+R',
+        label: 'Reload',
+        accelerator: 'CmdOrCtrl+R',
         click(_, focusedWindow) {
           if (focusedWindow) focusedWindow.reload();
         }
@@ -160,16 +125,6 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         accelerator: 'F12',
         click(_, focusedWindow) {
           if (focusedWindow) focusedWindow.webContents.toggleDevTools();
-        }
-      },
-      {
-        label: 'Vue Window',
-        click: async () => {
-          try {
-            if (!global.visualCal.windowManager.isWindowLoaded(VisualCalWindow.VueTestWindow)) await global.visualCal.windowManager.showVueWindow(VisualCalWindow.VueTestWindow);
-          } catch (error) {
-            console.warn('Error showing Vue window:', error);
-          }
         }
       }
     ]

@@ -22,6 +22,7 @@ export const setWindowSize = (_: VisualCalWindow, opts?: BrowserWindowConstructo
   opts.maximizable = isDev();
   opts.height = 600;
   opts.width = 800;
+  opts.titleBarStyle = 'hidden';
   return opts;
 }
 
