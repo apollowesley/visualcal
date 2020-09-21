@@ -102,7 +102,7 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         submenu: [
           {
             label: 'Bench Configurations',
-            click: async () => global.visualCal.windowManager.showBenchConfigViewWindow()
+            click: async () => await global.visualCal.windowManager.showBenchConfigViewWindow()
           }
         ]
       }
