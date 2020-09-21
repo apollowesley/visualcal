@@ -57,7 +57,7 @@ export default class ProcedureSelectView extends Vue {
   private async onSelectProcedureButtonClicked(procedureName: string) {
     this.setSelectProcedureButtonsDisabled(true);
     await window.ipc.setActiveProcedure(procedureName);
-    this.setSelectProcedureButtonsDisabled(false);
+    this.$router.push({ name: 'ProcedureLoadingServices' });
   }
 
   private createSelectProcedureColumnButton(cell: Tabulator.CellComponent) {

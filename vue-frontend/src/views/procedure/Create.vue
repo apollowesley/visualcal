@@ -99,6 +99,7 @@ export default class ProcedureCreateView extends Vue {
 
   async onCreateButtonClicked() {
     await window.ipc.createProcedure(this.procedure);
+    this.$router.push({ name: 'ProcedureLoadingServices' });
   }
 
 }

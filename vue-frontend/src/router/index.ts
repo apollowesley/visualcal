@@ -25,6 +25,11 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-procedure-create" */ '@/views/procedure/Create.vue')
   },
   {
+    path: '/procedure-loading-services',
+    name: 'ProcedureLoadingServices',
+    component: () => import(/* webpackChunkName: "view-procedure-loading-services" */ '@/views/procedure/LoadingServices.vue')
+  },
+  {
     path: '/session-select',
     name: 'SessionSelect',
     component: () => import(/* webpackChunkName: "view-session-select" */ '@/views/session/Select.vue')
