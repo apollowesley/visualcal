@@ -8,6 +8,8 @@ import electronLog from 'electron-log';
 import visualCalNodeRed from '../../node-red';
 import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOptions, setWindowSize, getWindowTitle } from './vue-helper';
 import { isDev } from '../../utils/is-dev-mode';
+import { ExpressServer } from '../../servers/express';
+import VisualCalNodeRedSettings from '../../node-red-settings';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -386,6 +388,7 @@ export class WindowManager extends TypedEmitter<Events> {
   // Select procedure window
   async showSelectProcedureWindow() {
     global.visualCal.procedureManager.once('activeSet', async () => {
+      await nodeRed.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
       await this.showSelectSessionWindow();
       this.closeAllBut(VisualCalWindow.SelectSession);
     });

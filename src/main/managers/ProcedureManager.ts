@@ -1,15 +1,12 @@
 import { ipcMain } from 'electron';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { IpcChannels, VisualCalWindow } from '../../constants';
+import { IpcChannels } from '../../constants';
 import NodeRed from '../node-red';
 import { CrudManager } from './CrudManager';
 import electronLog from 'electron-log';
-import VisualCalNodeRedSettings from '../node-red-settings';
-import { ExpressServer } from '../servers/express';
 
 const log = electronLog.scope('ProcedureManager');
-const nodeRed = NodeRed();
 
 export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedProcedureInfo, ProcedureFile, Procedure> {
 
@@ -19,12 +16,8 @@ export class ProcedureManager extends CrudManager<CreateProcedureInfo, CreatedPr
     ipcMain.on(IpcChannels.procedures.setActive.request, async (event, procedureName: string) => {
       try {
         await this.setActive(procedureName);
-        nodeRed.once('started', async () => {
-          log.info(`Logic server started`);
-          // Don't reply since we close the window as soon as we set the active procedure
-          // event.reply(IpcChannels.procedures.setActive.response, procedureName);
-        });
-        await nodeRed.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
+        // Don't reply since we close the window as soon as we set the active procedure
+        // event.reply(IpcChannels.procedures.setActive.response, procedureName);
       } catch (error) {
         event.reply(IpcChannels.procedures.setActive.error, error);
       }
