@@ -75,8 +75,8 @@ export class Ipc extends TypedEmitter<Events> {
     return await this.request<boolean, string>('get-exists-session-request', 'get-exists-session-response', 'get-exists-session-error', { email: email, sessionName: sessionName });
   }
 
-  async setActiveSession(email: string, sessionName: string) {
-    return await this.request<Session, string>('set-active-session-request', 'set-active-session-response', 'set-active-session-error', { email: email, sessionName: sessionName });
+  async setActiveSession(sessionName: string) {
+    return await this.request<Session, string>('session-set-active-request', 'session-set-active-response', 'session-set-active-error', sessionName);
   }
 
   async createSession(session: SessionForCreate) {

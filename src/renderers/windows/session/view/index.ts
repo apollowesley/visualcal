@@ -8,6 +8,7 @@ import { MainLogHandler } from './MainLogHandler';
 import { ProcedureHandler } from './ProcedureHandler';
 import { ResultHandler } from './ResultHandler';
 import { StatusHandler } from './StatusHandler';
+import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
@@ -235,12 +236,11 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   }
 });
 
-const init = async () => {
+const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   try {
-    const info = await ipc.getViewInfo();
-    procedure.setTitle(info.procedure.name);
-    session = info.session;
-    deviceConfigurationNodeInfosForCurrentFlow = info.deviceNodes;
+    procedure.setTitle(viewInfo.procedure.name);
+    session = viewInfo.session;
+    deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceNodes;
     deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
       devices.push({
         configNodeId: deviceInfo.configNodeId,
@@ -253,8 +253,22 @@ const init = async () => {
     if (session.configuration && session.configuration.devices) devices = session.configuration.devices;
     await devicesTable.setData(devices);
     results.loadResultsForSession(session.name);
-    procedure.sectionHandler.items = info.sections;
-    deviceConfigHandler.benchConfigHandler.items = info.user.benchConfigs;
+    procedure.sectionHandler.items = viewInfo.sections;
+    deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
+  } catch (error) {
+    window.visualCal.electron.showErrorDialog(error);
+  }
+}
+
+const onReceivedViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
+  await updateViewInfo(viewInfo);
+}
+
+const init = async () => {
+  try {
+    const info = await ipc.getViewInfo();
+    await updateViewInfo(info);
+    ipc.on('viewInfoReceived', async (viewInfo) => await updateViewInfo(viewInfo));
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
   }

@@ -22,6 +22,8 @@ export const hook = (app: express.Express) => {
     return res.send(filePath);
   });
 
+  app.use('/vue/preload.map.js', express.static(path.join(global.visualCal.dirs.renderers.base, 'vue', 'preload.map.js')));
+
   // TODO: Reorg code so express is standalone and the rest of the app uses it, instead of having this be in node-red dir
   app.use('/vue', history({
     verbose: true

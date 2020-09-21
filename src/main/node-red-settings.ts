@@ -67,6 +67,9 @@ const settings: Settings = {
               break;
             case 40: // info
               log.info('info >', entry.msg);
+              if (entry.msg === 'Started flows') {
+                global.visualCal.sessionManager.sendSessionViewInfoToAllWindows().then(() => console.info('Sent updated view info to all windows')).catch((error: Error) => console.error(error));
+              }
               break;
             case 50: // debug
               log.debug('debug >', entry.msg);
