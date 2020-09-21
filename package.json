@@ -93,7 +93,7 @@
     "@types/toastr": "^2.1.38",
     "@types/uuid": "^8.3.0",
     "@types/when": "^2.4.33",
-    "electron": "^10.1.2",
+    "electron": "11.0.0-beta.7",
     "electron-builder": "^22.8.1",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^2.0.3",

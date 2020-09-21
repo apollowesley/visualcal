@@ -64,12 +64,14 @@ export class WindowManager extends TypedEmitter<Events> {
     ipcMain.on(IpcChannels.windows.showCreateCommIface, (_, sessionName: string) => this.showCreateCommIfaceWindow(sessionName));
     ipcMain.on(IpcChannels.windows.showOpenFileDialog.request, (event, opts: OpenDialogOptions) => {
       const browserWindow = BrowserWindow.fromId(event.sender.id);
+      if (!browserWindow) return event.reply(IpcChannels.windows.showOpenFileDialog.error, `BrowserWindow was not found, ${event.sender.id}`);
       const result = dialog.showOpenDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showOpenFileDialog.response, result);
     });
 
     ipcMain.on(IpcChannels.windows.showSaveFileDialog.request, (event, opts: SaveDialogOptions) => {
       const browserWindow = BrowserWindow.fromId(event.sender.id);
+      if (!browserWindow) return event.reply(IpcChannels.windows.showSaveFileDialog.error, `BrowserWindow was not found, ${event.sender.id}`);
       const result = dialog.showSaveDialogSync(browserWindow, opts);
       event.reply(IpcChannels.windows.showSaveFileDialog.response, result);
     });

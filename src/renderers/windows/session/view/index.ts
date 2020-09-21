@@ -49,7 +49,7 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   layout: 'fitColumns',
   columns: [
     { title: 'Device Unit Id', field: 'unitId' },
-    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell) => devicesTableGetDrivers(cell) },
+    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell: Tabulator.CellComponent) => devicesTableGetDrivers(cell) },
     { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => devicesTableGetCommInterfaces() },
     { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]
@@ -250,7 +250,7 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
         unitId: deviceInfo.unitId
       });
     });
-    if (session.configuration && session.configuration.devices) devices = session.configuration.devices;
+    if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) devices = session.configuration.devices;
     await devicesTable.setData(devices);
     results.loadResultsForSession(session.name);
     procedure.sectionHandler.items = viewInfo.sections;
@@ -258,10 +258,6 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
   }
-}
-
-const onReceivedViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
-  await updateViewInfo(viewInfo);
 }
 
 const init = async () => {
