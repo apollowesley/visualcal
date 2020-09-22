@@ -41,6 +41,7 @@
     "denque": "^1.4.1",
     "directory-tree": "^2.2.4",
     "electron-cfg": "^1.2.5",
+    "electron-edge-js": "^12.16.3",
     "electron-ipc-log": "^3.0.1",
     "electron-is-dev": "^1.2.0",
     "electron-log": "^4.2.4",

@@ -5,4 +5,12 @@
     <RootNamespace>ni_gpib_dotnet_core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="NationalInstruments.NI4882">
+      <HintPath>..\..\ni-gpib-assemblies\NationalInstruments.NI4882.dll</HintPath>
+    </Reference>
+    <Reference Include="NationalInstruments.Common">
+      <HintPath>..\..\ni-gpib-assemblies\NationalInstruments.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

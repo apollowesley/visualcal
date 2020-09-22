@@ -18,6 +18,7 @@ import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
 import { ExpressServer } from './servers/express';
+import edge from 'electron-edge-js';
 
 NodeRed();
 const log = electronLog.scope('main');
@@ -88,7 +89,26 @@ async function load() {
 
 async function testingOnly() {
   // TODO: TESTING ONLY!!!
-  return Promise.resolve();
+  try {
+    if (process.platform !== 'win32') return await Promise.resolve();
+    (process.env.EDGE_USE_CORECLR as any) = 1;
+    process.env.EDGE_APP_ROOT = path.join(__dirname, '..', '..', 'ni-gpib-dotnet-core', 'ni-gpib-dotnet-core', 'bin', 'Debug' , 'netcoreapp3.1');
+    const assemblyFile = path.join(__dirname, '..', '..', 'ni-gpib-dotnet-core', 'ni-gpib-dotnet-core', 'bin', 'Debug' , 'netcoreapp3.1', 'ni-gpib-dotnet-core.dll');
+    const exists = fs.existsSync(assemblyFile);
+    console.info(exists);
+    const clrMethod = edge.func({
+      assemblyFile: assemblyFile,
+      typeName: 'ni_gpib_dotnet_core.Driver',
+      methodName: 'Connect' // This must be Func<object,Task<object>>
+    });
+     clrMethod('', (err) => {
+      if (err) console.error(err);
+      else console.info('Done!');
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  await Promise.resolve();
 }
 
 const run = async () => {
