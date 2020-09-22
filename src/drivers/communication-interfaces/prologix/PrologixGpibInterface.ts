@@ -1,5 +1,4 @@
 import { CommunicationInterface } from '../CommunicationInterface';
-import { TextEncoder, TextDecoder } from 'util';
 import electronLog from 'electron-log';
 
 const log = electronLog.scope('PrologixGpibInterface');

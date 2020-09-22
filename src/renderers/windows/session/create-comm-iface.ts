@@ -90,6 +90,9 @@ const init = () => {
       case CommunicationInterfaceTypesEnum.Emulated:
         break;
       case CommunicationInterfaceTypesEnum.NationalInstrumentsGPIB:
+          iface.gpib = {
+            address: 0
+          }
         break;
       case CommunicationInterfaceTypesEnum.PrologixGPIBTCP:
         iface.tcp = {

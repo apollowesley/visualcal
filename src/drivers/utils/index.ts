@@ -6,7 +6,7 @@ export const getSerialPorts = async () => {
 };
 
 export const sleep = (ms: number) => {
-  return new Promise((resolve) => {
+  return new Promise<void>((resolve) => {
     setTimeout(() => {
       return resolve();
     }, ms);
