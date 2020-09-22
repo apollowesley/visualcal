@@ -26,5 +26,6 @@
     "dist",
     "common",
     "vue-frontend",
+    "ni-gpib-dotnet-core"
   ]
 }
