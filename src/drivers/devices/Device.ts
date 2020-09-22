@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterface } from '../communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
+import { reject } from 'lodash';
 
 const log = electronLog.scope('Device');
 
@@ -49,15 +50,22 @@ export abstract class Device extends TypedEmitter<Events> {
   }
 
   private async write(data: ArrayBuffer | string) {
-    if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
-    if (typeof data === 'object') {
-      await this.fCommunicationInterface.writeData(data);
-      this.emit('write', this.fCommunicationInterface, data);
-      return;
-    }
-    const dataArrayBuffer = new TextEncoder().encode(data);
-    await this.fCommunicationInterface.writeString(data);
-    this.emit('write', this.fCommunicationInterface, dataArrayBuffer);
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        if (!this.fCommunicationInterface) throw new Error('Communication interface must be set');
+        if (typeof data === 'object') {
+          await this.fCommunicationInterface.writeData(data);
+          this.emit('write', this.fCommunicationInterface, data);
+          return resolve();
+        }
+        const dataArrayBuffer = new TextEncoder().encode(data);
+        await this.fCommunicationInterface.writeString(data);
+        this.emit('write', this.fCommunicationInterface, dataArrayBuffer);
+        return resolve();
+      } catch (error) {
+        return reject(error);
+      }
+    });
   }
 
   async readString() {

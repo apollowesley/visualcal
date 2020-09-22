@@ -12,9 +12,11 @@
       "windows": {
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
+      "env": {
+        "VUE_SERVER": "http://10.0.0.70:8080/vue"
+      },
       "args": ["--disable-gpu"],
       "program": "${workspaceFolder}/src/main/index.ts",
-      "preLaunchTask": "npm: copydrivers:packagejson",
       "sourceMaps": true,
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "outputCapture": "std"

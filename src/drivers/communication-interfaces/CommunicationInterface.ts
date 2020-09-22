@@ -151,9 +151,9 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async writeData(data: ArrayBuffer) {
-    await sleep(500);
     this.emit('write', this, data);
     await this.write(data);
+    await sleep(500);
   }
 
   abstract write(data: ArrayBuffer): Promise<void>;
