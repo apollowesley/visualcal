@@ -30,7 +30,7 @@ interface ReadFromDeviceInput {
 
 export class NationalInstrumentsGpibInterface extends CommunicationInterface implements GpibInterface {
 
-  private fNiGpibDotNetDllFilePath = path.join(__dirname, '..', '..', '..', '..', 'ni-gpib-dotnet-core', 'ni-gpib-dotnet-core', 'ni-gpib-dotnet-core', 'bin', 'Debug' , 'ni-gpib-dotnet-core.dll');
+  private fNiGpibDotNetDllFilePath = path.join(__dirname, '..', '..', '..', '..', 'ni-gpib-dotnet', 'ni-gpib-dotnet', 'bin', 'Debug' , 'ni-gpib-dotnet.dll');
   private fHandle?: string = undefined;
   private fAddress: number = 0;
   private fDeviceAddress = 0;
@@ -173,11 +173,16 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     return new Promise<void>((resolve, reject) => {
       try {
         if (!this.fHandle) return reject('No connected');
+        const dataUint8Arr = new Uint8Array(data);
+        const terminators = new Uint8Array(Buffer.from(this.getEndOfStringTerminatorChars()));
+        const dataWithTerminators = new Uint8Array(dataUint8Arr.length + terminators.length);
+        dataWithTerminators.set(dataUint8Arr);
+        if (terminators.length > 0) dataWithTerminators.set(terminators, dataUint8Arr.length);
         const edigeWriteToDevice = this.getEdgeFunction<WriteToDeviceInput, boolean>('WriteToDevice');
         edigeWriteToDevice({
           handle: this.fHandle,
           deviceAddress: this.fDeviceAddress,
-          data: data
+          data: dataWithTerminators
         }, (err) => {
           if (err) return reject(err);
           return resolve();

@@ -54,31 +54,24 @@ function copyDemo(userHomeDataDirPath: string) {
   fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
 }
 
-const sendToLoadingWindow = (text: string) => {
-  if (!global.visualCal || !global.visualCal.windowManager) return;
-  const loadingWindow = global.visualCal.windowManager.loadingWindow;
-  if (!loadingWindow) return;
-  setImmediate(() => loadingWindow.webContents.send('update-loading-text', text));
-};
-
 async function load() {
   setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
-  sendToLoadingWindow('Initializing main menu ...');
+  log.info('Initializing main menu ...');
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
-  sendToLoadingWindow('Ensuring Logic Server examples folder exists ...');
+  log.info('Ensuring Logic Server examples folder exists ...');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
-  sendToLoadingWindow('Initializing global ...');
+  log.info('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   await global.visualCal.windowManager.ShowLoading();
-  sendToLoadingWindow('Ensuring demo exists in user folder ...');
+  log.info('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
   VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
-  sendToLoadingWindow('Initializing Logic Server utils ...');
+  log.info('Initializing Logic Server utils ...');
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
@@ -119,7 +112,9 @@ const run = async () => {
         await testingOnly();
       }
     } catch (error) {
-      dialog.showErrorBox('Oops!  Something went wrong', error.message);
+      log.error(error.message);
+      log.error(error);
+      dialog.showErrorBox('Oops!  Something went wrong - See log file for details', error.message);
     }
   });
   ApplicationManager.instance.init();

@@ -1,24 +1,18 @@
 
-dist
-lib
-node_modules
-logs
+dist/
+lib/
+node_modules/
+logs/
 .config.json
 .electronflow*
 .sessions.json
-*darwin-x64*
-*linux-x64*
-*win32-x64*
-*.back*
-*.log
-*lock*
-*error*
 .DS_Store
-lib
 .env
+.env.local
 html/common
 html/renderers
 # This shouldn't exist
 html/main
-!vue-frontend/views/Error.vue
-.env.local
+.vs/
+obj/
+package-lock.json

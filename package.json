@@ -128,7 +128,7 @@
       "public/**/*",
       "demo/**/*",
       "common/**/*",
-      "ni-gpib-dotnet-core/**/*",
+      "ni-gpib-dotnet/**/*",
       "package.json"
     ],
     "win": {

@@ -40,6 +40,19 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     return await Promise.resolve(this.fEndOfStringTerminator);
   }
 
+  protected getEndOfStringTerminatorChars() {
+    switch (this.fEndOfStringTerminator) { 
+      case 'Cr':
+        return '\r';
+      case 'CrLf':
+        return '\r\n';
+      case 'Lf':
+        return '\n';
+      case 'none':
+        return '';
+    }
+  }
+
   async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
     this.fEndOfStringTerminator = eos;
     await Promise.resolve();
