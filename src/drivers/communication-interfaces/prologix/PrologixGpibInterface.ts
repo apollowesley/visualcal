@@ -19,6 +19,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.writeString('++savecfg 0');
     await this.writeString('++auto 0');
     await this.writeString('++mode 1');
+    await this.writeString('++read_tmo_ms 3000');
     await this.writeString('++ifc');
     await this.setEndOfStringTerminator('Lf');
     log.debug('Prologix GPIB connected');
