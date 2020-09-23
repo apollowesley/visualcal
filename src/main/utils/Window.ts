@@ -11,7 +11,7 @@ export const centerWindowOnNearestCurorScreen = (window: BrowserWindow, maximize
   try {
     workArea = getNearestScreenToCursor().workArea;
   } catch (error) {
-    console.warn('Error getting nearest screen to curor.  Possibly running in a VM that is not fullscreen.  This can be safetly ignored.');
+    console.warn('Error getting nearest screen to curor.  Possibly running in a VM that is not fullscreen.  This can be safely ignored.');
   }
   try {
     if (!maximize) {
@@ -23,6 +23,6 @@ export const centerWindowOnNearestCurorScreen = (window: BrowserWindow, maximize
     window.setBounds(workArea);
     window.center();
   } catch (error) {
-    console.warn('Error setting window work area.  Possibly running in a VM that is not fullscreen.  This can be safetly ignored.');
+    console.warn('Error setting window work area.  Possibly running in a VM that is not fullscreen.  This can be safely ignored.');
   }
 }
