@@ -1,10 +1,16 @@
+import ReadlineParser from '@serialport/parser-readline';
 import { CommunicationInterface } from '../CommunicationInterface';
 import electronLog from 'electron-log';
+import { GpibInterface, StatusByteRegister, EventStatusRegister, StatusByteRegisterValues, EventStatusRegisterValues } from '../GPIB';
+import * as Stream from 'stream';
 
 const log = electronLog.scope('PrologixGpibInterface');
 
 export abstract class PrologixGpibInterface extends CommunicationInterface implements GpibInterface {
   
+  private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'ascii' });
+  private fTextEncoder = new TextEncoder();
+
   async setDeviceAddress(address: number): Promise<void> {
     await this.writeString(`++addr ${address}`);
   }
@@ -17,6 +23,29 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.setEndOfStringTerminator('Lf');
     log.debug('Prologix GPIB connected');
     await super.onConnected();
+  }
+
+  protected get readLineParser() { return this.fReadlineParser; }
+  protected abstract get duplexClient(): Stream.Duplex | undefined;
+
+  read(): Promise<ArrayBufferLike> {
+    return new Promise<ArrayBufferLike>(async (resolve, reject) => {
+      if (!this.duplexClient || !this.isConnected) return reject('Not connected or client is undefined');
+      const handleError = (err: Error) => {
+        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
+        this.fReadlineParser.off('data', handleData);
+        if (!this.duplexClient) return reject(err.message);
+      }
+      const handleData = (data: string) => {
+        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
+        this.fReadlineParser.off('data', handleData);
+        const retVal = this.fTextEncoder.encode(data).buffer;
+        return resolve(retVal);
+      }
+      this.duplexClient.once('error', handleError);
+      this.fReadlineParser.on('data', handleData);
+      await this.writeString('++read');
+    });
   }
 
   async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
@@ -99,20 +128,13 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return Promise.reject('Method not implemented.');
   }
 
-  async serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegisterValues> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let stringData = await this.queryString(`++spoll ${primaryAddress}`);
-        const retVal = parseInt(stringData);
-        return resolve(retVal);
-      } catch (error) {
-        this.onError(error);
-        return reject(error);
-      }
-    });
+  async serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister> {
+    let valueString = await this.queryString(`++spoll ${primaryAddress}`);
+    const value = parseInt(valueString) as StatusByteRegisterValues;
+    return new StatusByteRegister(value);
   }
 
-  async readStatusByte(): Promise<StatusByteRegisterValues> {
+  async readStatusByte(): Promise<StatusByteRegister> {
     return Promise.reject('Method not implemented.');
   }
 
@@ -120,16 +142,16 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.writeString('*CLS');
   }
 
-  async readEventStatusRegister(): Promise<EventStatusRegisterValues> {
+  async readEventStatusRegister(): Promise<EventStatusRegister> {
     const valueString = await this.queryString(`*ESR?`);
     const value = parseInt(valueString) as EventStatusRegisterValues;
-    return value;
+    return new EventStatusRegister(value);
   }
 
-  async getEventStatusEnable(): Promise<EventStatusRegisterValues> {
+  async getEventStatusEnable(): Promise<EventStatusRegister> {
     const valueString = await this.queryString(`*ESE?`);
     const value = parseInt(valueString) as EventStatusRegisterValues;
-    return value;
+    return new EventStatusRegister(value);
   }
 
   async setEventStatusEnable(values: EventStatusRegisterValues): Promise<void> {

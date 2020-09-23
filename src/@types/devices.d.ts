@@ -52,51 +52,6 @@ interface EndOfTransmissionOptions {
   character: number;
 }
 
-declare const enum StatusByteRegisterValues {
-  None = 0,
-  ErrorEventQueueSummary = 1 << 2,
-  DataQuestionable = 1 << 3,
-  MessageAvailable = 1 << 4,
-  StandardEventSummary = 1 << 5,
-  RequestingServiceOrMasterSummaryStatus = 1 << 6,
-  OperationStatusSummary = 1 << 7
-}
-
-declare const enum EventStatusRegisterValues {
-  None = 0,
-  OperationComplete = 1 << 0,
-  RequestingControl = 1 << 1,
-  QueryError = 1 << 2,
-  DeviceSpecificError = 1 << 3,
-  ExecutionError = 1 << 4,
-  CommandError = 1 << 5,
-  UserRequest = 1 << 6,
-  PoweredOn = 1 << 7
-}
-
-interface GpibInterface extends ICommunicationInterface {
-  address: number;
-  selectedDeviceClear(address?: number): Promise<void>;
-  getEndOfInstruction(): Promise<boolean>;
-  setEndOfInstruction(enable: boolean): Promise<void>;
-  getEndOfTransmission(): Promise<EndOfTransmissionOptions>;
-  setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void>;
-  becomeControllerInCharge(): Promise<void>;
-  gotToRemote(address: number): Promise<void>;
-  goToLocal(address: number): Promise<void>;
-  getListenOnly(): Promise<boolean>;
-  setListenOnly(enable: boolean): Promise<void>;
-  reset(): Promise<void>;
-  serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegisterValues>;
-  readStatusByte(): Promise<StatusByteRegisterValues>;
-  readEventStatusRegister(): Promise<EventStatusRegisterValues>;
-  getEventStatusEnable(): Promise<EventStatusRegisterValues>;
-  setEventStatusEnable(values: EventStatusRegisterValues): Promise<void>;
-  clearEventStatusEnable(): Promise<void>;
-  clearStatusByte(): Promise<void>;
-  trigger(addresses: number | number[]): Promise<void>;
-}
-
 interface ConnectingEventHandler {
   (iface: ICommunicationInterface): void;
 }

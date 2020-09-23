@@ -1,6 +1,7 @@
 import { CommunicationInterface } from '../CommunicationInterface';
 import path from 'path';
 import edge from 'electron-edge-js';
+import { EventStatusRegister, EventStatusRegisterValues, GpibInterface, StatusByteRegister } from '../GPIB';
 
 interface ConnectInput {
   board: number;
@@ -121,11 +122,11 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     throw new Error('Method not implemented.');
   }
 
-  serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegisterValues> {
+  serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister> {
     throw new Error('Method not implemented.');
   }
 
-  readStatusByte(): Promise<StatusByteRegisterValues> {
+  readStatusByte(): Promise<StatusByteRegister> {
     throw new Error('Method not implemented.');
   }
 
@@ -133,11 +134,11 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     throw new Error('Method not implemented.');
   }
 
-  readEventStatusRegister(): Promise<EventStatusRegisterValues> {
+  readEventStatusRegister(): Promise<EventStatusRegister> {
     throw new Error('Method not implemented.');
   }
 
-  getEventStatusEnable(): Promise<EventStatusRegisterValues> {
+  getEventStatusEnable(): Promise<EventStatusRegister> {
     throw new Error('Method not implemented.');
   }
 

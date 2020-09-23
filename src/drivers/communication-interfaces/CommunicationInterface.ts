@@ -1,4 +1,3 @@
-import Denque from 'denque';
 import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
 import { TypedEmitter } from 'tiny-typed-emitter';

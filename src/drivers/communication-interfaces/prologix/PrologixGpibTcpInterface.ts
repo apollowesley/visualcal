@@ -1,7 +1,6 @@
-import { PrologixGpibInterface } from './PrologixGpibInterface';
-import { Socket } from 'net';
 import electronLog from 'electron-log';
-import ReadlineParser from '@serialport/parser-readline';
+import { Socket } from 'net';
+import { PrologixGpibInterface } from './PrologixGpibInterface';
 
 const log = electronLog.scope('PrologixGpibTcpInterface');
 
@@ -14,28 +13,32 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
   
   private fClient?: Socket = undefined;
   private fClientOptions?: ConfigurationOptions = undefined;
-  private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'utf-8' });
+
+  protected get duplexClient() { return this.fClient; };
+
+  configure(options: ConfigurationOptions) {
+    super.configure(options);
+    this.fClientOptions = options;
+  }
 
   protected onConnect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         if (!this.fClientOptions) throw 'Not configured';
         this.fClient = new Socket();
-        this.fClient.pipe(this.fReadlineParser);
-        this.fClient.on('close', async () => await this.disconnect());
-        this.fClient.on('end', async () => await this.disconnect());
-        this.fClient.on('error', (err) => this.onError(err));
-        this.fClient.on('timeout', async () => await this.disconnect());
-        this.fClient.once('connect', () => {
-          log.debug('Prologix GPIB TCP connected');
+        this.fClient.pipe(this.readLineParser);
+        this.fClient.once('end', () => this.fClient = undefined);
+        this.fClient.on('timeout', async () => {
+          this.onError(new Error('Timeout'));
+          await this.disconnect();
+        });
+        this.fClient.connect(this.fClientOptions.port, this.fClientOptions.host, () => {
+          if (!this.fClient) return reject('Client is not defined');
           return resolve();
         });
-        this.fClient.connect({
-          host: this.fClientOptions.host,
-          port: this.fClientOptions.port
-        });
       } catch (error) {
-        reject(error);
+        this.onError(error);
+        return reject(error);
       }
     });
   }
@@ -56,44 +59,18 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
     });
   }
 
-  configure(options: ConfigurationOptions) {
-    super.configure(options);
-    this.fClientOptions = options;
-  }
-
   get isConnected(): boolean {
     if (!this.fClient) return false;
     return !this.isConnecting && !this.fClient.connecting && !this.fClient.destroyed;
-  }
-
-  read(): Promise<ArrayBufferLike> {
-    return new Promise<ArrayBufferLike>(async (resolve, reject) => {
-      if (!this.fClient || !this.isConnected) return reject('Not connected or fClient is undefined');
-      const textEncoder = new TextEncoder();
-      const handleError = (err: Error) => {
-        if (!this.fClient) return reject(err.message);
-        this.fClient.removeListener('error', handleError);
-        this.fReadlineParser.off('data', handleData);
-      }
-      const handleData = (data: string) => {
-        if (this.fClient) this.fClient.removeListener('error', handleError);
-        this.fReadlineParser.off('data', handleData);
-        const retVal = textEncoder.encode(data).buffer;
-        return resolve(retVal);
-      }
-      this.fClient.addListener('error', handleError);
-      this.fReadlineParser.on('data', handleData);
-      await this.writeString('++read');
-    });
   }
 
   write(data: ArrayBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         if (!this.fClient) {
-          const errMsg = 'No connection';
-          this.onError(new Error(errMsg));
-          return reject(errMsg);
+          const err = new Error('No connection');
+          this.onError(err);
+          return reject(err);
         }
         const view = new Uint8Array(data);
         const result = this.fClient.write(view);

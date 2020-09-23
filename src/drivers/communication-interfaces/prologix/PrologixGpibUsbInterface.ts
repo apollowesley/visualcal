@@ -1,8 +1,7 @@
-import { PrologixGpibInterface } from './PrologixGpibInterface';
-import SerialPort from 'serialport';
-import ReadlineParser from '@serialport/parser-readline';
-import { TextDecoder, TextEncoder } from 'util';
 import electronLog from 'electron-log';
+import SerialPort from 'serialport';
+import { TextDecoder, TextEncoder } from 'util';
+import { PrologixGpibInterface } from './PrologixGpibInterface';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
 
@@ -12,10 +11,8 @@ interface ConfigurationOptions extends CommunicationInterfaceConfigurationOption
 
 export class PrologixGpibUsbInterface extends PrologixGpibInterface {
 
-  private fSerialPort?: SerialPort = undefined;
+  private fClient?: SerialPort = undefined;
   private fClientOptions?: ConfigurationOptions = undefined;
-  private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'utf-8' });
-  private fTextEncoder = new TextEncoder();
   private fTextDecoder = new TextDecoder();
 
   configure(options: ConfigurationOptions) {
@@ -23,72 +20,62 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
     this.fClientOptions = options;
   }
 
+  protected get duplexClient() { return this.fClient; };
+
   protected onConnect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (!this.fClientOptions) return reject('fClientOptions is undefined');
-      console.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
-      this.fSerialPort = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
-      this.fSerialPort.setEncoding('utf-8');
-      this.fSerialPort.pipe(this.fReadlineParser);
-      this.fSerialPort.once('end', () => this.fSerialPort = undefined);
-      this.fSerialPort.on('error', (err) => console.error(err));
-      this.fSerialPort.open((err) => {
-        if (err) {
-          if (this.fSerialPort) this.fSerialPort.close();
-          return reject(err.message);
-        }
-        if (this.fSerialPort) {
-          this.fSerialPort.flush(async () => {
-            return resolve();
-          });
-        } else {
-          return reject('fSerialPort is undefined');
-        }
-      });
+      try {
+        if (!this.fClientOptions) throw 'Not configured';
+        log.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
+        this.fClient = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
+        this.fClient.pipe(this.readLineParser);
+        this.fClient.once('end', () => this.fClient = undefined);
+        this.fClient.open((err) => {
+          if (err) {
+            if (this.fClient) this.fClient.close();
+            return reject(err.message);
+          }
+          if (this.fClient) {
+            this.fClient.flush(async () => {
+              return resolve();
+            });
+          } else {
+            return reject('Client is undefined');
+          }
+        });
+      } catch (error) {
+        this.onError(error);
+        return reject(error);
+      }
     });
   }
   
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve) => {
-      if (!this.fSerialPort) return resolve();
-      if (this.fSerialPort.isOpen) this.fSerialPort.close();
-      this.fSerialPort = undefined;
+      if (!this.fClient) return resolve();
+      if (this.fClient.isOpen) this.fClient.close();
+      this.fClient = undefined;
       return resolve();
     });
   }
 
   get isConnected(): boolean {
-    if (!this.fSerialPort) return false;
-    return !this.isConnecting && this.fSerialPort.isOpen && !this.fSerialPort.destroyed;
-  }
-
-  read(): Promise<ArrayBufferLike> {
-    return new Promise<ArrayBufferLike>(async (resolve, reject) => {
-      if (!this.fSerialPort) return reject('serialPort is undefined');
-      const handleData = (data: string) => {
-        this.fReadlineParser.off('data', handleData);
-        data = data.trim();
-        const retVal = this.fTextEncoder.encode(data);
-        console.info(`PrologixGpibUsbInterface.read`, data);
-        return resolve(retVal);
-      }
-      this.fReadlineParser.on('data', handleData);
-      await this.writeString('++read');
-    });
+    if (!this.fClient) return false;
+    return !this.isConnecting && this.fClient.isOpen && !this.fClient.destroyed;
   }
 
   write(data: ArrayBuffer): Promise<void> {
-    return new Promise<void>(async(resolve, reject) => {
-      if (!this.fSerialPort) return reject('serialPort is undefined');
+    return new Promise<void>((resolve, reject) => {
+      if (!this.fClient) return reject('client is undefined');
       const dataString = this.fTextDecoder.decode(data);
-      this.fSerialPort.write(`${dataString}\n`, (writeErr) => {
-        if (writeErr) return reject(writeErr.message);
-        if (!this.fSerialPort) return reject('serialPort is undefined');
-        this.fSerialPort.drain(async (drainErr) => {
+      this.fClient.write(`${dataString}\n`, (writeErr) => {
+        if (writeErr) return reject(writeErr);
+        if (!this.fClient) return reject('client is undefined');
+        this.fClient.drain((drainErr) => {
           if (drainErr) {
-            return reject(drainErr.message);
+            return reject(drainErr);
           }
-          console.info(`PrologixGpibUsbInterface.write`, dataString);
+          log.info(`PrologixGpibUsbInterface.write`, dataString);
           return resolve();
         });
       });
