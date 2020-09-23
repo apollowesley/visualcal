@@ -28,6 +28,11 @@ interface ReadFromDeviceInput {
   deviceAddress: number;
 }
 
+interface SelectedDeviceClearInput {
+  handle: string;
+  deviceAddress: number;
+}
+
 export class NationalInstrumentsGpibInterface extends CommunicationInterface implements GpibInterface {
 
   private fNiGpibDotNetDllFilePath = path.join(__dirname, '..', '..', '..', '..', 'ni-gpib-dotnet', 'ni-gpib-dotnet', 'bin', 'Debug' , 'ni-gpib-dotnet.dll');
@@ -57,7 +62,23 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
   }
 
   selectedDeviceClear(address?: number): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        if (!this.fHandle) return reject('Not connected');
+        const input: SelectedDeviceClearInput = {
+          handle: this.fHandle,
+          deviceAddress: address ? address : this.fDeviceAddress
+        }
+        if (address) await this.setDeviceAddress(address);
+        const edgeSelectedDeviceClear = this.getEdgeFunction<SelectedDeviceClearInput, boolean>('SelectedDeviceClear');
+        edgeSelectedDeviceClear(input, (err) => {
+          if (err) return reject(err);
+          return resolve();
+        });
+      } catch (error) {
+        return reject(error);
+      }
+    });
   }
 
   getEndOfInstruction(): Promise<boolean> {
@@ -108,6 +129,10 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     throw new Error('Method not implemented.');
   }
 
+  async clearStatusByte(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   readEventStatusRegister(): Promise<EventStatusRegisterValues> {
     throw new Error('Method not implemented.');
   }
@@ -135,7 +160,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        if (!this.fHandle) return reject('No connected');
+        if (!this.fHandle) return reject('Not connected');
         const edgeDisconnect = this.getEdgeFunction<DisconnectInput, boolean>('Disconnect');
         edgeDisconnect({
           handle: this.fHandle
@@ -172,7 +197,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
   write(data: ArrayBuffer): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        if (!this.fHandle) return reject('No connected');
+        if (!this.fHandle) return reject('Not connected');
         const dataUint8Arr = new Uint8Array(data);
         const terminators = new Uint8Array(Buffer.from(this.getEndOfStringTerminatorChars()));
         const dataWithTerminators = new Uint8Array(dataUint8Arr.length + terminators.length);
@@ -196,7 +221,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>((resolve, reject) => {
       try {
-        if (!this.fHandle) return reject('No connected');
+        if (!this.fHandle) return reject('Not connected');
         const edigeReadFromDevice = this.getEdgeFunction<ReadFromDeviceInput, ArrayBufferLike>('ReadFromDevice');
         edigeReadFromDevice({
           handle: this.fHandle,

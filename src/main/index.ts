@@ -43,12 +43,24 @@ function copyDemo(userHomeDataDirPath: string) {
   fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
 }
 
+async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
+  if (isDev()) return; // We use the demo directory, in this repo, during dev.  So, prevent copying over the same directory/files.
+  const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
+  if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
+    log.info('node-red nodes examples directory does not exist, creating');
+    await fsPromises.mkdir(nodeRedNodeExamplesDirPath);
+  } else {
+    log.info('node-red nodes examples directory exists');
+  }
+}
+
 async function load() {
   setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
   log.info('Initializing main menu ...');
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
+  await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
   log.info('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);

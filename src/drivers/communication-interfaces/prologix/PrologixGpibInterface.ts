@@ -54,7 +54,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   address = 0;
 
-  async selectedDeviceClear(): Promise<void> {
+  async selectedDeviceClear(address?: number): Promise<void> {
+    if (address) await this.setDeviceAddress(address);
     await this.writeString('++clr');
   }
 
@@ -63,7 +64,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEndOfInstruction(enable: boolean): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    await this.writeString(`++eoi ${enable ? '1' : '0'}`);
   }
 
   async getEndOfTransmission(): Promise<EndOfTransmissionOptions> {
@@ -98,11 +99,10 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return Promise.reject('Method not implemented.');
   }
 
-  async serialPoll(primaryAddress: number, secondaryAddress?: number | undefined): Promise<StatusByteRegisterValues> {
+  async serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegisterValues> {
     return new Promise(async (resolve, reject) => {
       try {
         let stringData = await this.queryString(`++spoll ${primaryAddress}`);
-        stringData = stringData.replace('\n', '');
         const retVal = parseInt(stringData);
         return resolve(retVal);
       } catch (error) {
@@ -116,28 +116,28 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return Promise.reject('Method not implemented.');
   }
 
+  async clearStatusByte(): Promise<void> {
+    await this.writeString('*CLS');
+  }
+
   async readEventStatusRegister(): Promise<EventStatusRegisterValues> {
-    return Promise.reject('Method not implemented.');
+    const valueString = await this.queryString(`*ESR?`);
+    const value = parseInt(valueString) as EventStatusRegisterValues;
+    return value;
   }
 
   async getEventStatusEnable(): Promise<EventStatusRegisterValues> {
-    return Promise.reject('Method not implemented.');
+    const valueString = await this.queryString(`*ESE?`);
+    const value = parseInt(valueString) as EventStatusRegisterValues;
+    return value;
   }
 
   async setEventStatusEnable(values: EventStatusRegisterValues): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.writeString(`*ESE ${values}`)
-        return resolve();
-      } catch (error) {
-        this.onError(error);
-        return reject(error);        
-      }
-    });
+    await this.writeString(`*ESE ${values}`);
   }
 
   async clearEventStatusEnable(): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    await this.writeString('*ESE 0');
   }
 
   // eslint-disable-next-line

@@ -58,6 +58,26 @@ namespace ni_gpib_dotnet_core
       }
     }
 
+    public async Task<object> SelectedDeviceClear(dynamic input)
+    {
+      IDictionary<string, object> inputIDictionary = (IDictionary<string, object>)input;
+      if (!inputIDictionary.ContainsKey("handle")) throw new Exception("Missing handle");
+      if (!inputIDictionary.ContainsKey("deviceAddress")) throw new Exception("Missing deviceAddress");
+      string handle = (string)input.handle;
+      Address deviceAddress = new Address((byte)input.deviceAddress);
+      Board board = Boards[handle];
+      if (board == null) throw new Exception($"Board with handle, {handle}, does not exist");
+      try
+      {
+        board.Clear(deviceAddress);
+        return await Task.FromResult(true);
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+    }
+
     public async Task<object> WriteToDevice(dynamic input)
     {
       IDictionary<string, object> inputIDictionary = (IDictionary<string, object>)input;

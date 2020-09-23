@@ -54,9 +54,12 @@ interface EndOfTransmissionOptions {
 
 declare const enum StatusByteRegisterValues {
   None = 0,
+  ErrorEventQueueSummary = 1 << 2,
+  DataQuestionable = 1 << 3,
   MessageAvailable = 1 << 4,
-  EventSummary = 1 << 5,
-  RequestingService = 1 << 6
+  StandardEventSummary = 1 << 5,
+  RequestingServiceOrMasterSummaryStatus = 1 << 6,
+  OperationStatusSummary = 1 << 7
 }
 
 declare const enum EventStatusRegisterValues {
@@ -90,6 +93,7 @@ interface GpibInterface extends ICommunicationInterface {
   getEventStatusEnable(): Promise<EventStatusRegisterValues>;
   setEventStatusEnable(values: EventStatusRegisterValues): Promise<void>;
   clearEventStatusEnable(): Promise<void>;
+  clearStatusByte(): Promise<void>;
   trigger(addresses: number | number[]): Promise<void>;
 }
 
