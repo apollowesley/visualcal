@@ -35,17 +35,6 @@ electronIpcLog((event: ElectronIpcLogEvent) => {
   log.info(...args);
 });
 
-async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
-  if (isDev()) return; // We use the demo directory, in this repo, during dev.  So, prevent copying over the same directory/files.
-  const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
-  if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
-    log.info('node-red nodes examples directory does not exist, creating');
-    await fsPromises.mkdir(nodeRedNodeExamplesDirPath);
-  } else {
-    log.info('node-red nodes examples directory exists');
-  }
-}
-
 function copyDemo(userHomeDataDirPath: string) {
   const demoDirPath = path.join(global.visualCal.dirs.base, 'demo');
   const demoDirExists = fs.existsSync(userHomeDataDirPath);
@@ -61,8 +50,6 @@ async function load() {
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
-  log.info('Ensuring Logic Server examples folder exists ...');
-  await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
   log.info('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   await global.visualCal.windowManager.ShowLoading();
