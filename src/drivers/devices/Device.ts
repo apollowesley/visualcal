@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterface } from '../communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
-import { reject } from 'lodash';
 
 const log = electronLog.scope('Device');
 
