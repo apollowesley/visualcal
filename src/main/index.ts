@@ -20,8 +20,6 @@ import { VueManager } from './managers/VueManager';
 import { ExpressServer } from './servers/express';
 import indySoftNiGpib from 'indysoft-ni-gpib';
 
-indySoftNiGpib();
-
 NodeRed();
 const log = electronLog.scope('main');
 
