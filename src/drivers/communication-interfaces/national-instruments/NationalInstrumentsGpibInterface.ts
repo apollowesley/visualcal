@@ -36,7 +36,7 @@ interface SelectedDeviceClearInput {
 
 export class NationalInstrumentsGpibInterface extends CommunicationInterface implements GpibInterface {
 
-  private fNiGpibDotNetDllFilePath = path.join(__dirname, '..', '..', '..', '..', 'ni-gpib-dotnet', 'ni-gpib-dotnet', 'bin', 'Debug' , 'ni-gpib-dotnet.dll');
+  private fNiGpibDotNetDllFilePath = path.join(__dirname, '..', '..', '..', '..', 'ni-gpib','dotnet-driver', 'dotnet-driver', 'bin', 'Debug' , 'dotnet-driver.dll');
   private fHandle?: string = undefined;
   private fAddress: number = 0;
   private fDeviceAddress = 0;
