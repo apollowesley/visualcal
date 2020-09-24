@@ -18,7 +18,10 @@ import { isDev } from './utils/is-dev-mode';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
 import { ExpressServer } from './servers/express';
-import indySoftNiGpib from 'indysoft-ni-gpib';
+import IndySoftNIGPIB from 'indysoft-ni-gpib';
+
+const ident = IndySoftNIGPIB();
+console.info(ident);
 
 NodeRed();
 const log = electronLog.scope('main');

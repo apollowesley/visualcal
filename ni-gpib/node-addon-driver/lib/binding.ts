@@ -1,3 +1,7 @@
 const addon = require('../build/Release/indysoft-ni-gpib-native');
 
-export = addon.IndysoftNiGpib
+interface IndySoftNIGPIB {
+  (): string;
+}
+
+export = addon.IndysoftNiGpib as IndySoftNIGPIB;
