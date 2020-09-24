@@ -17,11 +17,12 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   async onConnected() {
     await this.writeString('++savecfg 0');
-    await this.writeString('++auto 0');
     await this.writeString('++mode 1');
+    await this.writeString('++auto 0');
+    await this.setEndOfStringTerminator('Lf');
+    await this.setEndOfInstruction(true);
     await this.writeString('++read_tmo_ms 3000');
     await this.writeString('++ifc');
-    await this.setEndOfStringTerminator('Lf');
     log.debug('Prologix GPIB connected');
     await super.onConnected();
   }
@@ -32,6 +33,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
       if (!this.duplexClient || !this.isConnected) return reject('Not connected or client is undefined');
+      this.duplexClient.removeAllListeners('error');
       const handleError = (err: Error) => {
         if (this.duplexClient) this.duplexClient.removeAllListeners('error');
         this.fReadlineParser.off('data', handleData);
@@ -45,7 +47,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
       }
       this.duplexClient.once('error', handleError);
       this.fReadlineParser.on('data', handleData);
-      await this.writeString('++read');
+      await this.writeString('++read eoi');
     });
   }
 
