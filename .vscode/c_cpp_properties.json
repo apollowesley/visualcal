@@ -4,7 +4,7 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/ni-gpib/node-addon-driver/**",
-                "${workspaceFolder}/ni-gpib/node-addon-driver/ni4882/**",
+                "/Library/Frameworks/NI4882.framework/Versions/2/**",
                 "${workspaceFolder}/ni-gpib/node-addon-driver/node_modules/node-addon-api/**"
             ],
             "defines": [],

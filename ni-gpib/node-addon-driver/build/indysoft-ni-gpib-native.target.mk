@@ -172,7 +172,7 @@ LIBTOOLFLAGS_Release := \
 	-Wl,-search_paths_first
 
 LIBS := \
-	-l/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o
+	/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o
 
 $(builddir)/indysoft-ni-gpib-native.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(builddir)/indysoft-ni-gpib-native.node: LIBS := $(LIBS)

@@ -9,7 +9,7 @@
         ],
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
       'libraries' : [
-        "-l/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o"
+        "/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o"
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],

@@ -6,7 +6,7 @@ assert(IndysoftNiGpib, "The expected function is undefined");
 function testBasic()
 {
     const result =  IndysoftNiGpib("hello");
-    assert.strictEqual(result, "world", "Unexpected value returned");
+    assert.strictEqual(result, "FLUKE, 45, 8081019, \x01", "Unexpected value returned");
 }
 
 assert.doesNotThrow(testBasic, undefined, "testBasic threw an expection");
