@@ -2,5 +2,9 @@
   "vetur.experimental.templateInterpolationService": true,
   "typescript.format.semicolons": "insert",
   "typescript.preferences.quoteStyle": "single",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.associations": {
+    "new": "c"
+  },
+  "python.pythonPath": "/usr/local/bin/python3"
 }
