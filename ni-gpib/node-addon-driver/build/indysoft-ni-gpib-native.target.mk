@@ -55,7 +55,8 @@ INCS_Debug := \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/uv/include \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/zlib \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/v8/include \
-	-I/Users/scottpage/Documents/projects/visualcal/ni-gpib/node-addon-driver/node_modules/node-addon-api
+	-I/Users/scottpage/Documents/projects/visualcal/ni-gpib/node-addon-driver/node_modules/node-addon-api \
+	-I/Library/Frameworks/NI4882.framework/Versions/2/headers
 
 DEFS_Release := \
 	'-DNODE_GYP_MODULE_NAME=indysoft-ni-gpib-native' \
@@ -107,7 +108,8 @@ INCS_Release := \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/uv/include \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/zlib \
 	-I/Users/scottpage/Library/Caches/node-gyp/14.11.0/deps/v8/include \
-	-I/Users/scottpage/Documents/projects/visualcal/ni-gpib/node-addon-driver/node_modules/node-addon-api
+	-I/Users/scottpage/Documents/projects/visualcal/ni-gpib/node-addon-driver/node_modules/node-addon-api \
+	-I/Library/Frameworks/NI4882.framework/Versions/2/headers
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/indysoft_ni_gpib.o
@@ -169,7 +171,8 @@ LIBTOOLFLAGS_Release := \
 	-Wl,-no_pie \
 	-Wl,-search_paths_first
 
-LIBS :=
+LIBS := \
+	-l/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o
 
 $(builddir)/indysoft-ni-gpib-native.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(builddir)/indysoft-ni-gpib-native.node: LIBS := $(LIBS)

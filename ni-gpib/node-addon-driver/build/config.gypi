@@ -172,7 +172,7 @@
     "cache_lock_stale": "60000",
     "prefer_offline": "",
     "version": "",
-    "cache_min": "86400",
+    "cache_min": "10",
     "otp": "",
     "cache": "/Users/scottpage/.npm",
     "searchexclude": "",
