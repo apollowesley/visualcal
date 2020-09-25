@@ -5,11 +5,11 @@
       'sources': [ 'src/indysoft_ni_gpib.cc' ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
-        "/Library/Frameworks/NI4882.framework/Versions/2/headers"
+        "./ni-gpib/headers"
         ],
       'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
       'libraries' : [
-        "/Library/Frameworks/NI4882.framework/Versions/2/Resources/ni4882.o"
+        "-Wl,-rpath,./ni-gpib/Resources/ni4882.o"
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
