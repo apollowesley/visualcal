@@ -1,7 +1,7 @@
 {
   "name": "indysoft-visualcal",
   "productName": "VisualCal",
-  "version": "0.1.0-alpha.75",
+  "version": "0.1.0-alpha.76",
   "description": "VisualCal",
   "private": true,
   "main": "dist/main/index.js",
@@ -129,7 +129,7 @@
       "public/**/*",
       "demo/**/*",
       "common/**/*",
-      "ni-gpib-dotnet/**/*",
+      "ni-gpib/dotnet-driver/**/*",
       "package.json"
     ],
     "win": {
