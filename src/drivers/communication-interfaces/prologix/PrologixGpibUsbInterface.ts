@@ -40,7 +40,9 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
               return resolve();
             });
           } else {
-            return reject('Client is undefined');
+            const clientUndefinedError = new Error('Client is undefined');
+            this.onError(clientUndefinedError);
+            return reject(clientUndefinedError);
           }
         });
       } catch (error) {
@@ -52,7 +54,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve) => {
-      if (this.fClient && this.fClient.isOpen) {
+      if (this.fClient && this.getIsConnected()) {
         try {
           this.fClient.close();
         } catch (error) {
@@ -72,13 +74,14 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
 
   write(data: ArrayBuffer): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (!this.fClient) return reject('client is undefined');
+      if (!this.fClient) return reject(new Error('client is undefined'));
       const dataString = this.fTextDecoder.decode(data);
       this.fClient.write(`${dataString}\n`, (writeErr) => {
         if (writeErr) return reject(writeErr);
-        if (!this.fClient) return reject('client is undefined');
+        if (!this.fClient) return reject(new Error('client is undefined'));
         this.fClient.drain((drainErr) => {
           if (drainErr) {
+            this.onError(drainErr);
             return reject(drainErr);
           }
           log.info(`PrologixGpibUsbInterface.write`, dataString);

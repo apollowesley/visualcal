@@ -22,7 +22,10 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async onConnected() {
+    await super.onConnected();
     await this.reset();
+    await sleep(1000);
+    const version = await this.getVersion();
     await this.writeString('++savecfg 0');
     await this.setMode(Mode.Controller);
     await this.setAutoReadAfterWrite(false);
@@ -30,8 +33,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.setEndOfInstruction(true);
     await this.writeString('++read_tmo_ms 3000');
     await this.interfaceClear();
-    log.debug('Prologix GPIB connected');
-    await super.onConnected();
+    log.info(`Connected to Prologix controller, version ${version}`);
   }
 
   protected get readLineParser() { return this.fReadlineParser; }
@@ -39,12 +41,17 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
-      if (!this.duplexClient || !this.isConnected) return reject('Not connected or client is undefined');
+      if (!this.duplexClient || !this.isConnected) {
+        const error = new Error('Not connected or client is undefined');
+        this.onError(error);
+        return reject(error);
+      };
       this.duplexClient.removeAllListeners('error');
       const handleError = (err: Error) => {
         if (this.duplexClient) this.duplexClient.removeAllListeners('error');
         this.fReadlineParser.off('data', handleData);
-        if (!this.duplexClient) return reject(err.message);
+        this.onError(err);
+        return reject(err);
       }
       const handleData = (data: string) => {
         if (this.duplexClient) this.duplexClient.removeAllListeners('error');
@@ -56,6 +63,10 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
       this.fReadlineParser.on('data', handleData);
       await this.writeString('++read eoi');
     });
+  }
+
+  async getVersion() {
+    return await this.queryString('++ver');
   }
 
   async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
@@ -103,6 +114,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   async interfaceClear() {
     await this.writeString('++ifc');
+    await sleep(150); // Manual says 150 microseconds, but we can't sleep that short of time
   }
 
   async selectedDeviceClear(address?: number): Promise<void> {
@@ -130,7 +142,6 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   async setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void> {
     await this.writeString(`++eot_char ${options.character}`);
     await this.writeString(`++eot_enable ${options.enabled ? '1' : '0'}`);
-    return Promise.reject('Method not implemented.');
   }
 
   async becomeControllerInCharge(): Promise<void> {
@@ -160,7 +171,9 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister> {
-    let valueString = await this.queryString(`++spoll ${primaryAddress}`);
+    if (secondaryAddress && (secondaryAddress < 96 || secondaryAddress > 126)) throw new Error(`Supplied secondary address, ${secondaryAddress}, is outside the range of valid values, 96-126`);
+    const secondaryAddressString = secondaryAddress ? ` ${secondaryAddress}` : '';
+    let valueString = await this.queryString(`++spoll ${primaryAddress}${secondaryAddressString}`);
     const value = parseInt(valueString) as StatusByteRegisterValues;
     return new StatusByteRegister(value);
   }

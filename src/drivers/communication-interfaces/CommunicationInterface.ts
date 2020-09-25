@@ -69,7 +69,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   protected abstract getIsConnected(): boolean;
 
-  get isConnected() { return !this.isConnecting && this.getIsConnected() };
+  get isConnected() { return !this.fIsConnecting && this.getIsConnected() };
 
   protected async onDisconnecting(): Promise<void> {
     this.fIsConnecting = false;
@@ -100,7 +100,9 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
       this.emit('connecting', this);
       this.fConnectTimeoutTimerId = setTimeout(async () => {
         await this.disconnect();
-        return reject(new Error(`${this.name} failed to connect within ${this.connectTimeout} ms`));
+        const err = new Error(`${this.name} failed to connect within ${this.connectTimeout} ms`);
+        this.onError(err);
+        return reject(err);
       }, this.connectTimeout);
       return resolve();
     });
@@ -108,6 +110,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   protected async onConnected(): Promise<void> {
     if (this.fConnectTimeoutTimerId) clearTimeout(this.fConnectTimeoutTimerId);
+    this.fConnectTimeoutTimerId = undefined;
     this.fIsConnecting = false;
     this.emit('connected', this);
     return await Promise.resolve();
@@ -155,7 +158,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   async writeData(data: ArrayBuffer) {
     this.emit('write', this, data);
     await this.write(data);
-    await sleep(500);
+    // await sleep(500);
   }
 
   abstract write(data: ArrayBuffer): Promise<void>;
