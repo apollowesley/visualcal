@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ni_gpib_dotnet_core</RootNamespace>
-    <AssemblyName>ni-gpib-dotnet</AssemblyName>
+    <AssemblyName>dotnet-driver</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
