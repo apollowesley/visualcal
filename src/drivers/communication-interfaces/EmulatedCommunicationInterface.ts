@@ -25,7 +25,7 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
     return Promise.resolve(new TextEncoder().encode((Math.random() * 100.0).toString()));
   }
 
-  async write(data: ArrayBuffer): Promise<void> {
+  async write(data: ArrayBufferLike): Promise<void> {
     await Promise.resolve();
   } 
 

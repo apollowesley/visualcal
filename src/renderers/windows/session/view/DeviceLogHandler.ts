@@ -48,11 +48,14 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
     window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await this.add({ name: info.name, message: 'Disconnected' }));
     window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await this.add({ name: info.name, message: `Error:  ${info.err.message}` }));
     window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await this.add({ name: info.name, message: `Data received: ${info.data}` }));
-    window.visualCal.communicationInterfaceManager.on('interfaceWrite', async (info) => {
+    window.visualCal.communicationInterfaceManager.on('interfaceBeforeWrite', async (info) => {
+      const dataString = new TextDecoder().decode(info.data);
+      await this.add({ name: info.name, message: `Sending data: ${dataString}` });
+    });
+    window.visualCal.communicationInterfaceManager.on('interfaceAfterWrite', async (info) => {
       const dataString = new TextDecoder().decode(info.data);
       await this.add({ name: info.name, message: `Data sent: ${dataString}` });
     });
-
 
     ipcRenderer.on(IpcChannels.device.onReadString, async (_, info: { interfaceName: string, deviceName: string, data: string }) => await this.add({ name: info.interfaceName, deviceName: info.deviceName, message: `Data received: ${info.data}` }));
     ipcRenderer.on(IpcChannels.device.onWrite, async (_, info: { interfaceName: string, deviceName: string, data: ArrayBuffer }) => {

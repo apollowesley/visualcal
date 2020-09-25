@@ -27,7 +27,6 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
         if (!this.fClientOptions) throw 'Not configured';
         this.fClient = new Socket();
         this.fClient.pipe(this.readLineParser);
-        this.fClient.once('end', () => this.fClient = undefined);
         this.fClient.on('timeout', async () => {
           this.onError(new Error('Timeout'));
           await this.disconnect();
@@ -64,23 +63,4 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
     return !this.fClient.connecting && !this.fClient.destroyed;
   }
 
-  write(data: ArrayBuffer): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        if (!this.fClient) {
-          const err = new Error('No connection');
-          this.onError(err);
-          return reject(err);
-        }
-        const view = new Uint8Array(data);
-        const result = this.fClient.write(view);
-        if (result) return resolve();
-        else return reject('Error writing data to Prologix GPIB TCP over socket');
-      } catch (error) {
-        this.onError(error);
-        reject(error);
-      }
-    });
-  }
-  
 }

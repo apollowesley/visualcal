@@ -126,7 +126,11 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     throw new Error('Method not implemented.');
   }
 
-  serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister> {
+  checkSRQ(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  serialPoll(primaryAddress?: number, secondaryAddress?: number): Promise<StatusByteRegister> {
     throw new Error('Method not implemented.');
   }
 
@@ -199,7 +203,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     });
   }
 
-  write(data: ArrayBuffer): Promise<void> {
+  write(data: ArrayBufferLike): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
         if (!this.fHandle) return reject('Not connected');

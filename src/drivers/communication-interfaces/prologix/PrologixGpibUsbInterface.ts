@@ -13,8 +13,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
 
   private fClient?: SerialPort = undefined;
   private fClientOptions?: ConfigurationOptions = undefined;
-  private fTextDecoder = new TextDecoder();
-
+  
   configure(options: ConfigurationOptions) {
     super.configure(options);
     this.fClientOptions = options;
@@ -72,23 +71,21 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
     return !this.fClient.isOpen || !this.fClient.destroyed;
   }
 
-  write(data: ArrayBuffer): Promise<void> {
+  protected onPrologixDataSent() {
     return new Promise<void>((resolve, reject) => {
-      if (!this.fClient) return reject(new Error('client is undefined'));
-      const dataString = this.fTextDecoder.decode(data);
-      this.fClient.write(`${dataString}\n`, (writeErr) => {
-        if (writeErr) return reject(writeErr);
-        if (!this.fClient) return reject(new Error('client is undefined'));
-        this.fClient.drain((drainErr) => {
-          if (drainErr) {
-            this.onError(drainErr);
-            return reject(drainErr);
-          }
-          log.info(`PrologixGpibUsbInterface.write`, dataString);
-          return resolve();
-        });
+      if (!this.fClient) {
+        const err = new Error('Client is undefined');
+        this.onError(err);
+        return reject(err);
+      }
+      this.fClient.drain((drainErr) => {
+        if (drainErr) {
+          this.onError(drainErr);
+          return reject(drainErr);
+        }
+        return resolve();
       });
     });
   }
-  
+ 
 }

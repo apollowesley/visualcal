@@ -17,7 +17,8 @@ interface Events {
   interfaceError: (iface: ICommunicationInterface, err: Error) => void;
   interfaceAdded: (iface: ICommunicationInterface) => void;
   interfaceRemoved: (name: string) => void;
-  interfaceWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  interfaceBeforeWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  interfaceAfterWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
 }
 
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
@@ -39,7 +40,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
     communicationInterface.on('disconnecting', this.onInterfaceDisconnecting);
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
-    communicationInterface.on('write', this.onInterfaceWrite);
+    communicationInterface.on('beforeWrite', this.onInterfaceBeforeWrite);
+    communicationInterface.on('afterWrite', this.onInterfaceAfterWrite);
     communicationInterface.on('error', this.onInterfaceError);
     this.emit('interfaceAdded', communicationInterface);
     ipcMain.sendToAll(IpcChannels.communicationInterface.added, { name: communicationInterface.name });
@@ -54,7 +56,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('stringReceived');
     communicationInterface.removeAllListeners('disconnecting');
     communicationInterface.removeAllListeners('disconnected');
-    communicationInterface.removeAllListeners('write');
+    communicationInterface.removeAllListeners('beforeWrite');
+    communicationInterface.removeAllListeners('afterWrite');
     communicationInterface.removeAllListeners('error');
     this.emit('interfaceRemoved', communicationInterface.name);
     ipcMain.sendToAll(IpcChannels.communicationInterface.removed, { name: communicationInterface.name });
@@ -195,10 +198,17 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     });
   }
 
-  private onInterfaceWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
-    this.emit('interfaceWrite', communicationInterface, data);
+  private onInterfaceBeforeWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
+    this.emit('interfaceBeforeWrite', communicationInterface, data);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.write, { name: communicationInterface.name, data: data });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.beforeWrite, { name: communicationInterface.name, data: data });
+    });
+  }
+
+  private onInterfaceAfterWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
+    this.emit('interfaceAfterWrite', communicationInterface, data);
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.communicationInterface.afterWrite, { name: communicationInterface.name, data: data });
     });
   }
 

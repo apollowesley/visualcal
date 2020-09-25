@@ -23,6 +23,7 @@ export const enum EventStatusRegisterValues {
 
 export interface GpibInterface extends ICommunicationInterface {
   address: number;
+  checkSRQ(): Promise<boolean>;
   interfaceClear(): Promise<void>;
   selectedDeviceClear(address?: number): Promise<void>;
   getEndOfInstruction(): Promise<boolean>;
@@ -35,7 +36,7 @@ export interface GpibInterface extends ICommunicationInterface {
   getListenOnly(): Promise<boolean>;
   setListenOnly(enable: boolean): Promise<void>;
   reset(): Promise<void>;
-  serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister>;
+  serialPoll(primaryAddress?: number, secondaryAddress?: number): Promise<StatusByteRegister>;
   readStatusByte(): Promise<StatusByteRegister>;
   readEventStatusRegister(): Promise<EventStatusRegister>;
   getEventStatusEnable(): Promise<EventStatusRegister>;
@@ -62,6 +63,7 @@ abstract class EnumFlags<TEnum extends number> {
   }
 
   get isEmpty() { return this.fValue === 0; }
+  get value() { return this.fValue; }
 
 }
 

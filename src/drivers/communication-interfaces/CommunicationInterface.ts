@@ -2,7 +2,6 @@ import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import electronLog from 'electron-log';
-import { sleep } from '../utils';
 
 const log = electronLog.scope('CommunicationInterface');
 
@@ -12,7 +11,8 @@ interface Events {
   disconnecting: (iface: ICommunicationInterface, err?: Error) => void;
   disconnected: (iface: ICommunicationInterface, err?: Error) => void;
   dataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
-  write: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  beforeWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  afterWrite:  (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   stringReceived: (iface: ICommunicationInterface, data: string) => void;
   error: (iface: ICommunicationInterface, err: Error) => void;
 }
@@ -155,14 +155,25 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     }
   }
 
-  async writeData(data: ArrayBuffer) {
-    this.emit('write', this, data);
-    await this.write(data);
-    // await sleep(500);
+  abstract write(data: ArrayBufferLike): Promise<void>;
+  abstract read(): Promise<ArrayBufferLike>;
+
+  protected async onBeforeWrite(data: ArrayBufferLike) {
+    this.emit('beforeWrite', this, data);
+    await Promise.resolve();
   }
 
-  abstract write(data: ArrayBuffer): Promise<void>;
-  abstract read(): Promise<ArrayBufferLike>;
+  protected async onAfterWrite(data: ArrayBufferLike) {
+    this.emit('afterWrite', this, data);
+    await Promise.resolve();
+  }
+
+  async writeData(data: ArrayBufferLike) {
+    await this.onBeforeWrite(data);
+    await this.write(data);
+    await this.onAfterWrite(data);
+    // await sleep(500);
+  }
 
   async readString(): Promise<string> {
     const data = await this.read();
@@ -245,7 +256,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
-    await this.writeString(data);
+    await this.writeString(data, encoding);
     return await this.readString();
   }
 
