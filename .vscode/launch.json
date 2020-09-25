@@ -15,7 +15,7 @@
       "env": {
         "VUE_SERVER": "http://10.0.0.70:8080/vue"
       },
-      "preLaunchTask": "tsc: build - tsconfig.json",
+      "preLaunchTask": "npm: copydrivers:packagejson",
       "args": ["--disable-gpu"],
       "program": "${workspaceFolder}/src/main/index.ts",
       "sourceMaps": true,
