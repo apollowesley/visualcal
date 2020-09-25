@@ -1,6 +1,6 @@
 import electronLog from 'electron-log';
 import SerialPort from 'serialport';
-import { TextDecoder, TextEncoder } from 'util';
+import { TextDecoder } from 'util';
 import { PrologixGpibInterface } from './PrologixGpibInterface';
 
 const log = electronLog.scope('PrologixGpibUsbInterface');
@@ -29,11 +29,11 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
         log.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
         this.fClient = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
         this.fClient.pipe(this.readLineParser);
-        this.fClient.once('end', () => this.fClient = undefined);
-        this.fClient.open((err) => {
+        this.fClient.open(async (err) => {
           if (err) {
-            if (this.fClient) this.fClient.close();
-            return reject(err.message);
+            await this.disconnect();
+            this.onError(err);
+            return reject(err);
           }
           if (this.fClient) {
             this.fClient.flush(async () => {
@@ -52,16 +52,22 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve) => {
-      if (!this.fClient) return resolve();
-      if (this.fClient.isOpen) this.fClient.close();
+      if (this.fClient && this.fClient.isOpen) {
+        try {
+          this.fClient.close();
+        } catch (error) {
+          log.warn('Error closing serial port.  We are disconnecting anyway, so this error can be ignored.');
+          log.error(error);
+        }
+      }
       this.fClient = undefined;
       return resolve();
     });
   }
 
-  get isConnected(): boolean {
+  protected getIsConnected(): boolean {
     if (!this.fClient) return false;
-    return !this.isConnecting && this.fClient.isOpen && !this.fClient.destroyed;
+    return !this.fClient.isOpen || !this.fClient.destroyed;
   }
 
   write(data: ArrayBuffer): Promise<void> {

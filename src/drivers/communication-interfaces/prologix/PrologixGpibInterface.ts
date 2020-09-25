@@ -3,8 +3,14 @@ import { CommunicationInterface } from '../CommunicationInterface';
 import electronLog from 'electron-log';
 import { GpibInterface, StatusByteRegister, EventStatusRegister, StatusByteRegisterValues, EventStatusRegisterValues } from '../GPIB';
 import * as Stream from 'stream';
+import { sleep } from '../../utils';
 
 const log = electronLog.scope('PrologixGpibInterface');
+
+const enum Mode {
+  Device,
+  Controller
+}
 
 export abstract class PrologixGpibInterface extends CommunicationInterface implements GpibInterface {
   
@@ -16,13 +22,14 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async onConnected() {
+    await this.reset();
     await this.writeString('++savecfg 0');
-    await this.writeString('++mode 1');
-    await this.writeString('++auto 0');
+    await this.setMode(Mode.Controller);
+    await this.setAutoReadAfterWrite(false);
     await this.setEndOfStringTerminator('Lf');
     await this.setEndOfInstruction(true);
     await this.writeString('++read_tmo_ms 3000');
-    await this.writeString('++ifc');
+    await this.interfaceClear();
     log.debug('Prologix GPIB connected');
     await super.onConnected();
   }
@@ -86,6 +93,18 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   address = 0;
 
+  async setMode(mode: Mode) {
+    await this.writeString(`++mode ${ mode === Mode.Device ? '0' : '1' }`);
+  }
+
+  async setAutoReadAfterWrite(enable: boolean) {
+    await this.writeString(`++auto ${enable ? '1' : '0'}`);
+  }
+
+  async interfaceClear() {
+    await this.writeString('++ifc');
+  }
+
   async selectedDeviceClear(address?: number): Promise<void> {
     if (address) await this.setDeviceAddress(address);
     await this.writeString('++clr');
@@ -100,10 +119,17 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async getEndOfTransmission(): Promise<EndOfTransmissionOptions> {
-    return Promise.reject('Method not implemented.');
+    const character = parseInt(await this.queryString('++eot_char'));
+    const enabled = parseInt(await this.queryString('++eot_enable')) === 1;
+    return {
+      character: character,
+      enabled: enabled
+    };
   }
 
   async setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void> {
+    await this.writeString(`++eot_char ${options.character}`);
+    await this.writeString(`++eot_enable ${options.enabled ? '1' : '0'}`);
     return Promise.reject('Method not implemented.');
   }
 
@@ -128,7 +154,9 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async reset(): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    log.info('Reseting');
+    await this.writeString('++rst');
+    await sleep(6000);
   }
 
   async serialPoll(primaryAddress: number, secondaryAddress?: number): Promise<StatusByteRegister> {

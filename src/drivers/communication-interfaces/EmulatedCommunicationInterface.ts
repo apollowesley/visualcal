@@ -9,10 +9,15 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
   }
 
   async onDisconnect(): Promise<void> {
+    this.isConnectedInternal = false;
     await Promise.resolve();
   }
 
   get isConnected(): boolean {
+    return this.isConnectedInternal;
+  }
+
+  protected getIsConnected() {
     return this.isConnectedInternal;
   }
 

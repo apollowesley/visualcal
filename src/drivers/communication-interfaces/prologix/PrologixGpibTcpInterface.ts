@@ -10,7 +10,7 @@ interface ConfigurationOptions extends CommunicationInterfaceConfigurationOption
 }
 
 export class PrologixGpibTcpInterface extends PrologixGpibInterface {
-  
+
   private fClient?: Socket = undefined;
   private fClientOptions?: ConfigurationOptions = undefined;
 
@@ -59,9 +59,9 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
     });
   }
 
-  get isConnected(): boolean {
+  protected getIsConnected(): boolean {
     if (!this.fClient) return false;
-    return !this.isConnecting && !this.fClient.connecting && !this.fClient.destroyed;
+    return !this.fClient.connecting && !this.fClient.destroyed;
   }
 
   write(data: ArrayBuffer): Promise<void> {

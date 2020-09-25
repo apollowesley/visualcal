@@ -23,6 +23,7 @@ export const enum EventStatusRegisterValues {
 
 export interface GpibInterface extends ICommunicationInterface {
   address: number;
+  interfaceClear(): Promise<void>;
   selectedDeviceClear(address?: number): Promise<void>;
   getEndOfInstruction(): Promise<boolean>;
   setEndOfInstruction(enable: boolean): Promise<void>;

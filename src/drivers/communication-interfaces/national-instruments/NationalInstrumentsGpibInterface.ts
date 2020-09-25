@@ -62,6 +62,10 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     await Promise.resolve();
   }
 
+  async interfaceClear() {
+    throw new Error('Method not implemented.');
+  }
+
   selectedDeviceClear(address?: number): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
@@ -154,7 +158,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     throw new Error('Method not implemented.');
   }
 
-  get isConnected(): boolean {
+  protected getIsConnected(): boolean {
     return this.fHandle !== undefined;
   }
 

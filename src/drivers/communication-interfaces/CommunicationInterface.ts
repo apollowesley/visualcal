@@ -66,7 +66,10 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   get isConnecting() { return this.fIsConnecting; }
   get isDisconnecting() { return this.fIsDisconnecting; }
-  abstract get isConnected(): boolean;
+
+  protected abstract getIsConnected(): boolean;
+
+  get isConnected() { return !this.isConnecting && this.getIsConnected() };
 
   protected async onDisconnecting(): Promise<void> {
     this.fIsConnecting = false;
