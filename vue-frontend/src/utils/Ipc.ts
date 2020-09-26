@@ -5,9 +5,19 @@ import { IpcChannels as LoginIpcChannels, LoginCredentials } from 'visualcal-com
 // import { IpcChannels as ProcedureIpcChannels } from 'visualcal-common/types/procedure';
 import { ProcedureForCreate } from 'visualcal-common/types/procedure';
 import { SessionForCreate } from 'visualcal-common/types/session';
+import { IpcChannels as AutoUpdateIpcChannels, ProgressInfo, UpdateInfo } from 'visualcal-common/types/auto-update';
 
-interface Events {
-  temp: () => void;
+interface AutoUpdateEvents {
+  updateError: (error: Error) => void;
+  checkingForUpdatesStarted: () => void;
+  updateAvailable: (info: UpdateInfo) => void;
+  updateNotAvailable: (info: UpdateInfo) => void;
+  downloadProgressChanged: (progress: ProgressInfo) => void;
+  updateDownloaded: (info: UpdateInfo) => void;
+}
+
+interface Events extends AutoUpdateEvents {
+  error: (error: Error) => void;
 }
 
 export class Ipc extends TypedEmitter<Events> {
@@ -16,8 +26,9 @@ export class Ipc extends TypedEmitter<Events> {
     super();
   }
 
-  private get ipcRenderer() { return window.electron.ipcRenderer; }
-
+  private get ipcRenderer() {
+    return window.electron.ipcRenderer;
+  }
 
   send(channel: string, ...args: unknown[]) {
     this.ipcRenderer.send(channel, ...args);
@@ -85,6 +96,26 @@ export class Ipc extends TypedEmitter<Events> {
 
   async getSessionViewInfo() {
     return await this.request<SessionViewRequestResponseInfo | null, string>(SessionViewIpcChannels.Request, SessionViewIpcChannels.Response, SessionViewIpcChannels.Error);
+  }
+
+  listenForAutoUpdateEvents() {
+    if (!window.electron) return;
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.DownloadProgressChanged, (_, progress: ProgressInfo) => this.emit('downloadProgressChanged', progress));
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.Error, (_, err: Error) => this.emit('error', err));
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.StartedChecking, () => this.emit('checkingForUpdatesStarted'));
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.UpdateAvailable, (_, info: UpdateInfo) => this.emit('updateAvailable', info));
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.UpdateDownloaded, (_, info: UpdateInfo) => this.emit('updateDownloaded', info));
+    window.electron.ipcRenderer.on(AutoUpdateIpcChannels.UpdateNotAvailable, (_, info: UpdateInfo) => this.emit('updateNotAvailable', info));
+  }
+
+  removeAutoUpdateEventListeners() {
+    if (!window.electron) return;
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.DownloadProgressChanged);
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.Error);
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.StartedChecking);
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.UpdateAvailable);
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.UpdateDownloaded);
+    window.electron.ipcRenderer.removeAllListeners(AutoUpdateIpcChannels.UpdateNotAvailable);
   }
 
 }

@@ -40,6 +40,11 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-session-create" */ '@/views/session/Create.vue')
   },
   {
+    path: '/auto-update',
+    name: 'AutoUpdate',
+    component: () => import(/* webpackChunkName: "view-auto-update" */ '@/views/AutoUpdate.vue')
+  },
+  {
     path: '*',
     component: () => import(/* webpackChunkName: "view-no-route" */ '@/views/NoRoute.vue')
   }

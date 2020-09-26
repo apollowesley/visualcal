@@ -34,6 +34,8 @@ export const getWindowTitle = (windowId: VisualCalWindow) => {
       return 'VisualCal Procedure Selection';
     case VisualCalWindow.SelectSession:
       return 'VisualCal Session Selection';
+    case VisualCalWindow.UpdateApp:
+      return 'VisualCal Update';
   }
   return 'VisualCal';
 }
@@ -46,6 +48,8 @@ export const getSubPath = (windowId: VisualCalWindow) => {
       return '/procedure-select';
     case VisualCalWindow.SelectSession:
       return '/session-select';
+    case VisualCalWindow.UpdateApp:
+      return '/auto-update';
   }
   return '/';
 }

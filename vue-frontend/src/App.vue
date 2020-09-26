@@ -36,6 +36,7 @@
     </v-app-bar>
 
     <v-main>
+      <h1 v-if="!isRunningInVisualCal" class="text-center red">Not running in VisualCal</h1>
       <router-view />
     </v-main>
   </v-app>
@@ -47,6 +48,8 @@ import "tabulator-tables/dist/css/tabulator.min.css"; //import Tabulator stylesh
 
 @Component
 export default class App extends Vue {
+
+  get isRunningInVisualCal() { return window.electron !== undefined; }
 
   get darkMode() { return this.$store.direct.getters.darkMode; }
   set darkMode(value: boolean) { this.$store.direct.commit.setDarkMode(value); }

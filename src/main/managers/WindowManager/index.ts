@@ -432,7 +432,10 @@ export class WindowManager extends TypedEmitter<Events> {
   }
 
   async showUpdateAppWindow() {
-    const w = await this.createWindow(VisualCalWindow.UpdateApp);
+    const w = await this.showVueWindow(VisualCalWindow.UpdateApp, {
+      maximize: false,
+      subPath: getSubPath(VisualCalWindow.UpdateApp)
+    });
     return w;
   }
 

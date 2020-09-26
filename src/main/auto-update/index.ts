@@ -2,26 +2,17 @@ import { autoUpdater, CancellationToken, UpdateInfo } from '@imjs/electron-diffe
 import { ProgressInfo } from 'electron-builder';
 import { isDev } from '../utils/is-dev-mode';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels, VisualCalWindow } from '../../constants';
+import { VisualCalWindow } from '../../constants';
 import { dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
+import { AutoUpdateEvents, IpcChannels } from 'visualcal-common/types/auto-update';
 
 const autoUpdateLogger = electronLog.create('auto-update');
 autoUpdateLogger.transports.file.level = false;
 autoUpdateLogger.transports.console.level = 'info';
 const log = autoUpdateLogger.scope('auto-update');
 
-interface Events {
-  error: (error: Error) => void;
-  updateError: (error: Error) => void;
-  checkingForUpdatesStarted: () => void;
-  updateAvailable: (info: UpdateInfo) => void;
-  updateNotAvailable: (info: UpdateInfo) => void;
-  downloadProgressChanged: (progress: ProgressInfo) => void;
-  updateDownloaded: (info: UpdateInfo) => void;
-}
-
-export class AutoUpdater extends TypedEmitter<Events> {
+export class AutoUpdater extends TypedEmitter<AutoUpdateEvents> {
 
   fAborted = false;
   fCancellationToken?: CancellationToken;
@@ -60,7 +51,7 @@ export class AutoUpdater extends TypedEmitter<Events> {
     log.info('onUpdateError');
     if (this.fAborted) return;
     this.emit('updateError', error);
-    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.error, error);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.Error, error);
     this.onError(error); // Send last so other notifications have a chance to get sent before main process reacts
   }
 
@@ -68,13 +59,13 @@ export class AutoUpdater extends TypedEmitter<Events> {
     log.info('onCheckingForUpdateStarted');
     if (this.fAborted) return;
     this.emit('checkingForUpdatesStarted');
-    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.startedChecking);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.StartedChecking);
   }
 
   private async onUpdateAvailable(info: UpdateInfo) {
     log.info('onUpdateAvailable');
     if (this.fAborted) return;
-    ipcMain.once(IpcChannels.autoUpdate.downloadAndInstallRequest, async () => {
+    ipcMain.once(IpcChannels.DownloadAndInstallRequest, async () => {
       this.fCancellationToken = new CancellationToken();
       try {
         await autoUpdater.downloadUpdate(this.fCancellationToken);
@@ -83,14 +74,13 @@ export class AutoUpdater extends TypedEmitter<Events> {
         dialog.showErrorBox('An error occured attempting to download the update', err.message);
       }
     });
-    ipcMain.once(IpcChannels.autoUpdate.cancelRequest, () => {
+    ipcMain.once(IpcChannels.CancelRequest, () => {
       global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
       throw new Error('Cancelled');
     });
     this.emit('updateAvailable', info);
-    await this.windowManager.showUpdateAppWindow();
     if (this.updateWindow) this.updateWindow.webContents.once('did-finish-load', () => {
-      this.sendToUpdateWindow(IpcChannels.autoUpdate.updateAvailable, info);
+      this.sendToUpdateWindow(IpcChannels.UpdateAvailable, info);
     });
   }
 
@@ -98,31 +88,34 @@ export class AutoUpdater extends TypedEmitter<Events> {
     log.info('onUpdateNotAvailable');
     if (this.fAborted) return;
     this.emit('updateNotAvailable', info);
-    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateNotAvailable, info);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.UpdateNotAvailable, info);
   }
 
   private onDownloadProgressChanged(progress: ProgressInfo) {
     log.info('onDownloadProgressChanged');
     if (this.fAborted) return;
     // this.emit('downloadProgressChanged', progress);
-    this.sendToUpdateWindow(IpcChannels.autoUpdate.downloadProgressChanged, progress);
+    this.sendToUpdateWindow(IpcChannels.DownloadProgressChanged, progress);
   }
 
   private onUpdateDownloaded(info: UpdateInfo) {
     log.info('onUpdateDownloaded');
     if (this.fAborted) return;
     this.emit('updateDownloaded', info);
-    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.autoUpdate.updateDownloaded, info);
+    if (this.updateWindow) this.sendToUpdateWindow(IpcChannels.UpdateDownloaded, info);
     autoUpdater.quitAndInstall();
   }
 
   public async checkForUpdates() {
+    await this.windowManager.showUpdateAppWindow();
+    this.windowManager.closeAllBut(VisualCalWindow.UpdateApp);
     this.fAborted = false;
     // autoUpdater.logger = log;
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
     autoUpdater.allowDowngrade = false;
     autoUpdater.allowPrerelease = true;
+    autoUpdater.logger = log;
     autoUpdater.on('error', (error: Error) => this.onUpdateError(error));
     autoUpdater.on('checking-for-update', () => this.onCheckingForUpdateStarted());
     autoUpdater.on('update-available', async (info: UpdateInfo) => {
