@@ -7,6 +7,7 @@ import { loadDevices } from '../node-red/utils';
 import { DeviceManager } from './DeviceManager';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { UserManager } from './UserManager';
+import { WindowManager } from './WindowManager';
 
 const nodeRed = NodeRed();
 
@@ -46,18 +47,18 @@ export class ActionManager extends EventEmitter {
         device.onBeforeWriteString = async (device, iface, data) => {
           return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
             ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
-              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return resolve(args);
             });
             ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
-              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return reject(error);
             });
             ipcMain.once(IpcChannels.device.beforeWriteString.cancel, (_, args: { data: string, cancel: boolean }) => {
-              global.visualCal.windowManager.close(VisualCalWindow.DeviceBeforeWrite);
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return resolve(args);
             });
-            const deviceBeforeWriteWindow = await global.visualCal.windowManager.showDeviceBeforeWriteWindow();
+            const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
             deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: device.name, ifaceName: iface.name, data });
           });
         }

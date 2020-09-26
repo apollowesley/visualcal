@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
-import { isDev } from '../utils/is-dev-mode';
+import { isDev } from '../utils';
 
 export default (app: Express, apiBasePath = '/red') => {
   const distPath = path.join(global.visualCal.dirs.base, 'dist');

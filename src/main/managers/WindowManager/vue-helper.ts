@@ -1,7 +1,7 @@
 import { BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
 import { VisualCalWindow } from '../../../constants';
-import { isDev } from '../../utils/is-dev-mode';
+import { isDev } from '../../utils';
 
 const renderersBaseDirPath = path.join(__dirname, '..', '..', '..', 'renderers');
 const renderersVueBaseDirPath = path.join(renderersBaseDirPath, 'vue');

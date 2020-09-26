@@ -1,7 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
 import { VisualCalWindow } from '../../../constants';
-import { isDev } from '../../utils/is-dev-mode';
+import { isDev } from '../../utils';
 
 type HtmlPathType = 'bootstrap' | 'public' | 'url' | 'raw';
 

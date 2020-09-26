@@ -6,6 +6,7 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
 import { ApplicationManager } from '../managers/ApplicationManager';
+import { WindowManager } from './WindowManager';
 
 const log = electronLog.scope('UserManager');
 
@@ -289,8 +290,8 @@ export class UserManager extends TypedEmitter<Events> {
       const nameFirst = usernameSplit[0];
       const nameLast = usernameSplit[1];
       if (!user) {
-        if (global.visualCal.windowManager.loginWindow) {
-          const askIfUserShouldBeCreatedResponse = await dialog.showMessageBox(global.visualCal.windowManager.loginWindow, {
+        if (WindowManager.instance.loginWindow) {
+          const askIfUserShouldBeCreatedResponse = await dialog.showMessageBox(WindowManager.instance.loginWindow, {
             title: 'User does not exist',
             message: `The user, ${credentials.username}, does not exist.  Do you want to create the user?`,
             type: 'question',

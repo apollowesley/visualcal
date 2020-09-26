@@ -1,6 +1,6 @@
 import { serverListenPort } from '../common/global-window-info';
 import { ipcRenderer, SaveDialogOptions, OpenDialogOptions } from 'electron';
-import { isDev } from '../main/utils/is-dev-mode';
+import { isDev } from '../main/utils';
 import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels, VisualCalWindow } from '../constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';

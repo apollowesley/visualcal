@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 import history from 'connect-history-api-fallback';
-import { isDev } from '../../utils/is-dev-mode';
+import { isDev } from '../../utils';
 
 export const hook = (app: express.Express) => {
   const distRenderersVuePath = path.join(global.visualCal.dirs.renderers.base, 'vue');

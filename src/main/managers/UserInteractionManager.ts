@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { ipcMain, dialog } from 'electron';
 import { IpcChannels } from '../../constants';
+import { WindowManager } from './WindowManager';
 
 export class UserInteractionManager extends EventEmitter {
 
@@ -24,7 +25,7 @@ export class UserInteractionManager extends EventEmitter {
         console.error(error.message);
       }
     }
-    await global.visualCal.windowManager.ShowUserInputWindow(request);
+    await WindowManager.instance.ShowUserInputWindow(request);
   }
 
 }

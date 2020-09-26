@@ -14,10 +14,11 @@ import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
-import { isDev } from './utils/is-dev-mode';
+import { isDev } from './utils';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { VueManager } from './managers/VueManager';
 import { ExpressServer } from './servers/express';
+import { WindowManager } from './managers/WindowManager';
 
 // *** TESTING NI-GPIB DRIVER ***
 // import IndySoftNIGPIB from 'indysoft-ni-gpib';
@@ -70,7 +71,7 @@ async function load() {
   if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
   log.info('Initializing global ...');
   initGlobal(appBaseDirPath, userHomeDataDirPath);
-  await global.visualCal.windowManager.ShowLoading();
+  await WindowManager.instance.ShowLoading();
   log.info('Ensuring demo exists in user folder ...');
   copyDemo(userHomeDataDirPath);
   VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
@@ -111,8 +112,8 @@ const run = async () => {
           log.error('Error checking for updates', error);
         }
       });
-      await global.visualCal.windowManager.ShowLogin();
-      global.visualCal.windowManager.close(VisualCalWindow.Loading);
+      await WindowManager.instance.ShowLogin();
+      WindowManager.instance.close(VisualCalWindow.Loading);
       if (isDev()) {
         await testingOnly();
       }

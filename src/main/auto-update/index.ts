@@ -1,11 +1,12 @@
 import { autoUpdater, CancellationToken, UpdateInfo } from '@imjs/electron-differential-updater';
 import { ProgressInfo } from 'electron-builder';
-import { isDev } from '../utils/is-dev-mode';
+import { isDev } from '../utils';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { VisualCalWindow } from '../../constants';
 import { dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { AutoUpdateEvents, IpcChannels } from 'visualcal-common/types/auto-update';
+import { WindowManager } from '../managers/WindowManager';
 
 const autoUpdateLogger = electronLog.create('auto-update');
 autoUpdateLogger.transports.file.level = false;
@@ -21,7 +22,7 @@ export class AutoUpdater extends TypedEmitter<AutoUpdateEvents> {
     super();
   }
 
-  private get windowManager() { return global.visualCal.windowManager; }
+  private get windowManager() { return WindowManager.instance; }
   private get updateWindow() { return this.windowManager.updateAppWindow; }
 
   private onError(error: Error) {
@@ -75,7 +76,6 @@ export class AutoUpdater extends TypedEmitter<AutoUpdateEvents> {
       }
     });
     ipcMain.once(IpcChannels.CancelRequest, () => {
-      global.visualCal.windowManager.close(VisualCalWindow.UpdateApp);
       throw new Error('Cancelled');
     });
     this.emit('updateAvailable', info);

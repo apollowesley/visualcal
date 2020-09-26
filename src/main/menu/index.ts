@@ -1,6 +1,6 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, Menu, dialog } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
-import { VisualCalWindow } from '../../constants';
+import { WindowManager } from '../managers/WindowManager';
 
 interface Options {
   start?: any;
@@ -60,33 +60,33 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Import Flow',
         accelerator: "CmdOrCtrl+Shift+O",
-        click: async () => { if (global.visualCal.windowManager.mainWindow) await openFlow(global.visualCal.windowManager.mainWindow); }
+        click: async () => { if (WindowManager.instance.mainWindow) await openFlow(WindowManager.instance.mainWindow); }
       },
       {
         label: 'Save Flow As',
         accelerator: "CmdOrCtrl+Shift+S",
-        click: async () => { if (global.visualCal.windowManager.mainWindow) await saveFlow(global.visualCal.windowManager.mainWindow); }
+        click: async () => { if (WindowManager.instance.mainWindow) await saveFlow(WindowManager.instance.mainWindow); }
       },
       { type: 'separator' },
       {
         label: 'Console',
         accelerator: "CmdOrCtrl+Shift+C",
         click: async () => {
-          await global.visualCal.windowManager.ShowConsole();
+          await WindowManager.instance.ShowConsole();
         }
       },
       {
         label: 'Editor',
         accelerator: "CmdOrCtrl+Shift+E",
         click: async () => {
-          await global.visualCal.windowManager.ShowNodeRedEditor();
+          await WindowManager.instance.ShowNodeRedEditor();
         }
       },
       {
         label: 'Interactive Device Control',
         accelerator: 'CmdOrCtrl+Shift+I',
         click: async () => {
-          await global.visualCal.windowManager.showInteractiveDeviceControlWindow();
+          await WindowManager.instance.showInteractiveDeviceControlWindow();
         }
       },
       { type: 'separator' },
@@ -102,7 +102,7 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         submenu: [
           {
             label: 'Bench Configurations',
-            click: async () => await global.visualCal.windowManager.showBenchConfigViewWindow()
+            click: async () => await WindowManager.instance.showBenchConfigViewWindow()
           }
         ]
       }

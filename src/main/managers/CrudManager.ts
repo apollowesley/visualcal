@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import { IpcChannelCRUD } from '../../constants';
 import path from 'path';
 import fs, { promises as fsPromises } from 'fs';
@@ -42,83 +42,88 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
         const retVal = await this.create(item);
         const window = BrowserWindow.fromWebContents(event.sender);
         if (!window || window.isDestroyed()) return;
-        event.reply(this.fChannelNames.create.response, retVal);
+        this.replyToWindow(event, this.fChannelNames.create.response, retVal);
       } catch (error) {
-        event.reply(this.fChannelNames.create.error, error);
+        this.replyToWindow(event, this.fChannelNames.create.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.getActive.request, async (event) => {
       try {
         const retVal = await this.getActive();
-        event.reply(this.fChannelNames.getActive.response, retVal);
+        this.replyToWindow(event, this.fChannelNames.getActive.response, retVal);
       } catch (error) {
-        event.reply(this.fChannelNames.getActive.error, error);
+        this.replyToWindow(event, this.fChannelNames.getActive.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.getAll.request, async (event) => {
       try {
         const retVal = await this.getAll();
-        event.reply(this.fChannelNames.getAll.response, retVal);
+        this.replyToWindow(event, this.fChannelNames.getAll.response, retVal);
       } catch (error) {
-        event.reply(this.fChannelNames.getAll.error, error);
+        this.replyToWindow(event, this.fChannelNames.getAll.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.getExists.request, async (event, name: string) => {
       try {
         const retVal = await this.exists(name);
-        event.reply(this.fChannelNames.getExists.response, retVal);
+        this.replyToWindow(event, this.fChannelNames.getExists.response, retVal);
       } catch (error) {
-        event.reply(this.fChannelNames.getExists.error, error);
+        this.replyToWindow(event, this.fChannelNames.getExists.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.getOne.request, async (event, name: string) => {
       try {
         const retVal = await this.getOne(name);
-        event.reply(this.fChannelNames.getOne.response, retVal);
+        this.replyToWindow(event, this.fChannelNames.getOne.response, retVal);
       } catch (error) {
-        event.reply(this.fChannelNames.getOne.error, error);
+        this.replyToWindow(event, this.fChannelNames.getOne.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.remove.request, async (event, name: string) => {
       try {
         await this.remove(name);
-        event.reply(this.fChannelNames.remove.response, name);
+        this.replyToWindow(event, this.fChannelNames.remove.response, name);
       } catch (error) {
-        event.reply(this.fChannelNames.remove.error, error);
+        this.replyToWindow(event, this.fChannelNames.remove.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.rename.request, async (event, oldName: string, newName: string) => {
       try {
         await this.rename(oldName, newName);
-        event.reply(this.fChannelNames.rename.response, { oldName, newName });
+        this.replyToWindow(event, this.fChannelNames.rename.response, { oldName, newName });
       } catch (error) {
-        event.reply(this.fChannelNames.rename.error, error);
+        this.replyToWindow(event, this.fChannelNames.rename.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.setActive.request, async (event, name: string) => {
       try {
         await this.setActive(name);
-        event.reply(this.fChannelNames.setActive.response, name);
+        this.replyToWindow(event, this.fChannelNames.setActive.response, name);
       } catch (error) {
-        event.reply(this.fChannelNames.setActive.error, error);
+        this.replyToWindow(event, this.fChannelNames.setActive.error, error);
       }
     });
 
     ipcMain.on(this.fChannelNames.update.request, async (event, item: TItem) => {
       try {
         await this.update(item);
-        event.reply(this.fChannelNames.update.response, item);
+        this.replyToWindow(event, this.fChannelNames.update.response, item);
       } catch (error) {
-        event.reply(this.fChannelNames.update.error, error);
+        this.replyToWindow(event, this.fChannelNames.update.error, error);
       }
     });
+  }
+
+  protected replyToWindow(event: IpcMainEvent, channel: string, ...args: any[]) {
+    if (!event.sender || event.sender.isDestroyed()) return;
+    event.reply(channel, args);
   }
 
   getItemsJsonFilePath() {

@@ -6,8 +6,9 @@ import { AutoUpdater } from '../auto-update';
 import { saveComparison } from '../ipc';
 import { destroy as destroyNodeRed } from '../node-red';
 import { ExpressServer } from '../servers/express';
-import { isDev } from '../utils/is-dev-mode';
+import { isDev } from '../utils';
 import { setNoUpdateNotifier } from '../utils/npm-update-notifier';
+import { WindowManager } from './WindowManager';
 
 interface QuitEventOptions {
   cancel?: boolean;
@@ -45,7 +46,7 @@ export class ApplicationManager extends TypedEmitter<Events> {
   }
 
   private async onActivated() {
-    if (BrowserWindow.getAllWindows().length === 0) await global.visualCal.windowManager.ShowMain();
+    if (BrowserWindow.getAllWindows().length === 0) await WindowManager.instance.ShowMain();
   }
 
   private onAllWindowsClosed() {

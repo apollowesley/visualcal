@@ -1,7 +1,6 @@
 import * as RED from 'node-red';
-import { WindowManager } from './managers/WindowManager';
 import NodeRedSettings from './node-red-settings';
-import { isDev } from './utils/is-dev-mode';
+import { isDev, isMac } from './utils';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
@@ -24,7 +23,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
 
   global.visualCal = {
     logger: log,
-    isMac: process.platform === 'darwin',
+    isMac: isMac(),
     isDev: isDev(),
     nodeRed: {
       app: RED as NodeRed
@@ -42,7 +41,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
       warn: (msg: any) => log.warn(msg),
       error: (msg: any) => log.error(msg)
     },
-    windowManager: new WindowManager(),
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(userManager),
     resultManager: new ResultManager(),

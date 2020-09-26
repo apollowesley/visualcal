@@ -7,7 +7,7 @@ import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
 import visualCalNodeRed from '../../node-red';
 import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOptions, setWindowSize, getWindowTitle } from './vue-helper';
-import { isDev } from '../../utils/is-dev-mode';
+import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
 import VisualCalNodeRedSettings from '../../node-red-settings';
 import { init as initMainMenu } from '../../menu';
@@ -26,9 +26,12 @@ interface Events {
 
 export class WindowManager extends TypedEmitter<Events> {
 
+  private static fInstance = new WindowManager();
+  public static get instance() { return WindowManager.fInstance; }
+
   private fWindows: Set<BrowserWindow>;
 
-  constructor() {
+  private constructor() {
     super();
     this.fWindows = new Set<BrowserWindow>();
     ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
@@ -268,7 +271,7 @@ export class WindowManager extends TypedEmitter<Events> {
       onShow?: (bw: BrowserWindow) => void
     ) {
     return new Promise<BrowserWindow>(async (resolve, reject) => {
-      if (global.visualCal.windowManager.isWindowLoaded(id)) return reject('Already opened');
+      if (WindowManager.instance.isWindowLoaded(id)) return reject('Already opened');
       if (opts && !opts.windowOpts) {
         opts.windowOpts = defaultWindowConstructorOptions;
       } else if (opts && opts.windowOpts) {
@@ -280,7 +283,7 @@ export class WindowManager extends TypedEmitter<Events> {
         opts.windowOpts = setWindowSize(id, opts.windowOpts);
         const vueWindow = new BrowserWindow(opts.windowOpts);
         this.emit('windowCreated', id, vueWindow);
-        global.visualCal.windowManager.add(vueWindow, id);
+        WindowManager.instance.add(vueWindow, id);
         vueWindow.on('show', () => {
           this.emit('windowShown', id, vueWindow);
           if (onShow) onShow(vueWindow);
