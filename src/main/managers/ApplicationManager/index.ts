@@ -1,14 +1,14 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels } from '../../constants';
-import { AutoUpdater } from '../auto-update';
-import { saveComparison } from '../ipc';
-import { destroy as destroyNodeRed } from '../node-red';
-import { ExpressServer } from '../servers/express';
-import { isDev } from '../utils';
-import { setNoUpdateNotifier } from '../utils/npm-update-notifier';
-import { WindowManager } from './WindowManager';
+import { IpcChannels } from '../../../constants';
+import { AutoUpdater } from '../../auto-update';
+import { saveComparison } from '../../ipc';
+import { destroy as destroyNodeRed } from '../../node-red';
+import { ExpressServer } from '../../servers/express';
+import { isDev } from '../../utils';
+import { setNoUpdateNotifier } from '../../utils/npm-update-notifier';
+import { WindowManager } from '../WindowManager';
 
 interface QuitEventOptions {
   cancel?: boolean;

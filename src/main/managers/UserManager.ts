@@ -1,11 +1,10 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
-import { arg } from 'mathjs';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
-import { ApplicationManager } from '../managers/ApplicationManager';
+import { ApplicationManager } from './ApplicationManager';
 import { WindowManager } from './WindowManager';
 
 const log = electronLog.scope('UserManager');
@@ -328,7 +327,7 @@ export class UserManager extends TypedEmitter<Events> {
       event.reply(IpcChannels.session.getAllForActiveUser.response, activeUser.sessions || []);
     });
 
-    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string }) => {
+    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string; }) => {
       try {
         const exists = this.getSession(args.email, args.sessionName) !== undefined;
         event.reply(IpcChannels.session.getExists.response, exists);
@@ -352,12 +351,12 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   private initBenchConfigIpcHandlers() {
-    ipcMain.on(IpcChannels.user.benchConfig.removeCommInterface.request, (event, arg: { name: string, userEmail: string, benchConfigName: string }) => {
+    ipcMain.on(IpcChannels.user.benchConfig.removeCommInterface.request, (event, arg: { name: string, userEmail: string, benchConfigName: string; }) => {
       try {
         const config = this.getBenchConfig(arg.userEmail, arg.benchConfigName);
         if (!config) return event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, new Error(`Unable to remove communication interface, ${arg.name}, because bench configuration, ${arg.benchConfigName} does not exist`));
         const interfaceIndex = config.interfaces.findIndex(i => i.name.toLocaleUpperCase() === arg.name.toLocaleUpperCase());
-        if (interfaceIndex < 0) return event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, new Error(`Unable to remove communication interface, ${arg.name}, because it does not exist`)); 
+        if (interfaceIndex < 0) return event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, new Error(`Unable to remove communication interface, ${arg.name}, because it does not exist`));
         config.interfaces.splice(interfaceIndex, 1);
         this.updateBenchConfig(config);
       } catch (error) {
