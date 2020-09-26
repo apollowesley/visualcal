@@ -130,6 +130,7 @@
       "demo/**/*",
       "common/**/*",
       "ni-gpib/dotnet-driver/**/*",
+      "ni-gpib/node-addon-driver/**/*",
       "package.json"
     ],
     "win": {
