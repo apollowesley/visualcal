@@ -22,7 +22,7 @@ export const setWindowSize = (_: VisualCalWindow, opts?: BrowserWindowConstructo
   opts.maximizable = isDev();
   opts.height = 600;
   opts.width = 800;
-  opts.titleBarStyle = 'hidden';
+  opts.titleBarStyle = isDev() ? 'default' : 'hidden';
   return opts;
 }
 
@@ -60,6 +60,13 @@ export const coerceWindowConstructorOptions = (windowId: VisualCalWindow, opts: 
   if (opts.webPreferences) {
     opts.webPreferences.nodeIntegration = false;
     opts.webPreferences.preload = preloadFilePath;
+    opts.webPreferences.devTools = true;
+  } else {
+    opts.webPreferences = {
+      nodeIntegration: false,
+      preload: preloadFilePath,
+      devTools: true
+    }
   }
   return opts;
 }

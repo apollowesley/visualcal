@@ -2,7 +2,6 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../../constants';
-import { AutoUpdater } from '../../auto-update';
 import { saveComparison } from '../../ipc';
 import { destroy as destroyNodeRed } from '../../node-red';
 import { ExpressServer } from '../../servers/express';
@@ -31,7 +30,6 @@ export class ApplicationManager extends TypedEmitter<Events> {
   }
 
   private fInitialized = false;
-  private fAutoUpdater = new AutoUpdater();
 
   private constructor() {
     super();
@@ -57,7 +55,6 @@ export class ApplicationManager extends TypedEmitter<Events> {
 
   private async onBeforeQuit() {
     setNoUpdateNotifier(true);
-    this.fAutoUpdater.abort();
     log.info('Destroying logic server');
     await destroyNodeRed();
     log.info('Logic server destroyed');
@@ -89,10 +86,6 @@ export class ApplicationManager extends TypedEmitter<Events> {
   showErrorAndQuit(title: string, message: string) {
     dialog.showErrorBox(title, message);
     this.quit(message, false);
-  }
-
-  async checkForUpdates() {
-    await this.fAutoUpdater.checkForUpdates();
   }
 
   init() {

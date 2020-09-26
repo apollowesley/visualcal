@@ -123,7 +123,7 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
 
   protected replyToWindow(event: IpcMainEvent, channel: string, ...args: any[]) {
     if (!event.sender || event.sender.isDestroyed()) return;
-    event.reply(channel, args);
+    event.reply(channel, ...args);
   }
 
   getItemsJsonFilePath() {

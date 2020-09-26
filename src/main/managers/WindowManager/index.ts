@@ -10,7 +10,6 @@ import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOpt
 import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
 import VisualCalNodeRedSettings from '../../node-red-settings';
-import { init as initMainMenu } from '../../menu';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -34,6 +33,9 @@ export class WindowManager extends TypedEmitter<Events> {
   private constructor() {
     super();
     this.fWindows = new Set<BrowserWindow>();
+  }
+
+  init() {
     ipcMain.on(IpcChannels.windows.getMyId.request, (event) => {
       try {
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
@@ -417,7 +419,6 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!activeProcedureName) throw new Error('Active procedure is not set');
     // const w = await this.createWindow(VisualCalWindow.SelectSession, undefined, false);
     global.visualCal.userManager.once('activeSessionChanged', async () => {
-      initMainMenu();
       await this.ShowMain();
       this.closeAllBut(VisualCalWindow.Main);
     });

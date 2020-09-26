@@ -1,24 +1,26 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import electronIpcLog from 'electron-ipc-log';
 import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import RED from 'node-red';
 import path from 'path';
+import { init as initMainMenu } from './menu';
 import { NodeRed as RealNodeRed } from '../@types/logic-server';
 import { VisualCalWindow } from '../constants';
+import { installVueDevTools } from './dev';
 import { init as initGlobal } from './InitGlobal';
 import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';
+import { VueManager } from './managers/VueManager';
+import { WindowManager } from './managers/WindowManager';
 import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
-import { isDev } from './utils';
-import { setNoUpdateNotifier } from './utils/npm-update-notifier';
-import { VueManager } from './managers/VueManager';
 import { ExpressServer } from './servers/express';
-import { WindowManager } from './managers/WindowManager';
+import { getUserHomeDataPathDir, isDev } from './utils';
+import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 
 // *** TESTING NI-GPIB DRIVER ***
 // import IndySoftNIGPIB from 'indysoft-ni-gpib';
@@ -64,20 +66,21 @@ async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
 async function load() {
   setNoUpdateNotifier(false);
   ipcMain.sendToAll = (channelName, args) => BrowserWindow.getAllWindows().forEach(w => { if (!w.isDestroyed()) w.webContents.send(channelName, args); });
-  log.info('Initializing main menu ...');
+  log.info('Initializing main menu');
   const appBaseDirPath: string = path.resolve(__dirname, '..', '..');
   let userHomeDataDirPath: string = path.join(app.getPath('documents'), 'IndySoft', 'VisualCal');
   await ensureNodeRedNodeExamplesDirExists(appBaseDirPath);
-  if (isDev()) userHomeDataDirPath = path.join(__dirname, '..', '..', 'demo');
-  log.info('Initializing global ...');
+  userHomeDataDirPath = getUserHomeDataPathDir(userHomeDataDirPath);
+  log.info('Initializing global');
+  WindowManager.instance.init();
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   await WindowManager.instance.ShowLoading();
-  log.info('Ensuring demo exists in user folder ...');
+  log.info('Ensuring demo exists in user folder');
   copyDemo(userHomeDataDirPath);
   VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
-  log.info('Initializing Logic Server utils ...');
+  log.info('Initializing Logic Server utils');
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
@@ -85,38 +88,21 @@ async function load() {
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
 
+// TODO: TESTING ONLY!!!
 async function testingOnly() {
-  // TODO: TESTING ONLY!!!
-  await Promise.resolve();
+  if (!isDev()) return;
 }
 
 const run = async () => {
   await app.whenReady();
-  if (isDev()) {
-    try {
-      const VueDevTools = require('vue-devtools');
-      VueDevTools.install();
-    } catch (error) {
-      console.warn('The following error from vue-devtools can be ignored.  It is only loaded in development.');
-      console.error(error.message);
-    }
-  }
+  installVueDevTools();
   ApplicationManager.instance.on('readyToLoad', async () => {
     try {
-      Menu.setApplicationMenu(null);
+      initMainMenu();
       await load();
-      global.visualCal.userManager.once('loggedIn', async () => {
-        try {
-          await ApplicationManager.instance.checkForUpdates();
-        } catch (error) {
-          log.error('Error checking for updates', error);
-        }
-      });
       await WindowManager.instance.ShowLogin();
-      WindowManager.instance.close(VisualCalWindow.Loading);
-      if (isDev()) {
-        await testingOnly();
-      }
+      WindowManager.instance.closeAllBut(VisualCalWindow.Login);
+      await testingOnly();
     } catch (error) {
       log.error(error.message);
       log.error(error);
@@ -124,6 +110,6 @@ const run = async () => {
     }
   });
   ApplicationManager.instance.init();
-}
+};
 
 run();
