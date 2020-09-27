@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { ProcedureSection, ProcedureAction } from 'visualcal-common/types/session-view-info';
+import { ProcedureSection, ProcedureAction } from 'visualcal-common/dist/session-view-info';
 
 @Component
 export default class SessionProcedureComponent extends Vue {

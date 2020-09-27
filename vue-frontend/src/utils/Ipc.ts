@@ -1,11 +1,10 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { User, ViewInfo } from '../types/session';
-import { IpcChannels as SessionViewIpcChannels, SessionViewRequestResponseInfo, Procedure, Session } from 'visualcal-common/types/session-view-info';
-import { IpcChannels as LoginIpcChannels, LoginCredentials } from 'visualcal-common/types/user';
-// import { IpcChannels as ProcedureIpcChannels } from 'visualcal-common/types/procedure';
-import { ProcedureForCreate } from 'visualcal-common/types/procedure';
-import { SessionForCreate } from 'visualcal-common/types/session';
-import { IpcChannels as AutoUpdateIpcChannels, ProgressInfo, UpdateInfo } from 'visualcal-common/types/auto-update';
+import { IpcChannels as SessionViewIpcChannels, SessionViewRequestResponseInfo, Procedure, Session } from 'visualcal-common/src/session-view-info';
+import { IpcChannels as LoginIpcChannels, LoginCredentials } from 'visualcal-common/src/user';
+import { ProcedureForCreate } from 'visualcal-common/src/procedure';
+import { SessionForCreate } from 'visualcal-common/src/session';
+import { IpcChannels as AutoUpdateIpcChannels, ProgressInfo, UpdateInfo } from 'visualcal-common/src/auto-update';
 
 interface AutoUpdateEvents {
   updateError: (error: Error) => void;
@@ -51,6 +50,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async login(credentials: LoginCredentials) {
+    console.info(this);
     return await this.request<User, string>(LoginIpcChannels.Request, LoginIpcChannels.Response, LoginIpcChannels.Error, credentials);
   }
 

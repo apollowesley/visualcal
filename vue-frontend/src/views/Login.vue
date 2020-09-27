@@ -55,7 +55,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from "vue-property-decorator";
 import { passwordRules as vuetifyPasswordRules } from "@/utils/vuetify-input-rules";
-import { LoginCredentials } from "visualcal-common/types/user";
+import { LoginCredentials } from "visualcal-common/dist/user";
 import { isValidEmailAddress } from '../utils/validation';
 
 @Component
@@ -81,8 +81,7 @@ export default class LoginView extends Vue {
   }
 
   private updateIsLoginButtonDisabled() {
-    this.fIsLoginButtonDisabled =
-      this.fUsername.length <= 0 || !isValidEmailAddress(this.fUsername) || this.fPassword.length <= 0;
+    this.fIsLoginButtonDisabled = this.fUsername.length <= 0 || !isValidEmailAddress(this.fUsername) || this.fPassword.length <= 0;
   }
 
   async onLoginButtonClicked() {
@@ -94,6 +93,7 @@ export default class LoginView extends Vue {
     try {
       await this.$store.direct.dispatch.login(creds);
     } catch (error) {
+      console.error(error);
       this.fIsLoginButtonDisabled = false;
       console.info(this.fIsLoginButtonDisabled);
     }

@@ -61,6 +61,12 @@ export default class App extends Vue {
     return this.$store.direct.state.sessionViewInfo.procedure.name;
   }
 
+  mounted() {
+    if (this.isRunningInVisualCal) return;
+    console.error('Not running in VisualCal');
+    console.info(window.ipc);
+  }
+
 }
 </script>
 

@@ -30,16 +30,25 @@ const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
 };
 
 const getBenchConfigurationInterfaces = () => {
+  const loadData = window.visualCal.initialLoadData;
+  if (!loadData) return;
+  const user = loadData.user;
+  if (!user) return;
+  const session = loadData.session;
+  if (!session) return;
+  const sessionConfiguration = session.configuration;
+  if (!sessionConfiguration) return;
   if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user || !window.visualCal.initialLoadData.session || !window.visualCal.initialLoadData.session.configuration || !window.visualCal.initialLoadData.session.configuration.benchConfigName) return [];
-  const config = window.visualCal.initialLoadData.user?.benchConfigs.find(b => b.name === window.visualCal.initialLoadData?.session?.configuration?.benchConfigName);
+  const config = user.benchConfigs.find(b => b.name === sessionConfiguration.benchConfigName);
   if (!config) return [];
   return config.interfaces;
 }
 
 const devicesTableGetCommInterfaces = () => {
+  const benchConfigInterfaces = getBenchConfigurationInterfaces();
   if (!session.configuration || !session.configuration.benchConfigName) return [];
   const retVal: Tabulator.SelectParams = {
-    values: getBenchConfigurationInterfaces().map(d => d.name)
+    values: benchConfigInterfaces ? benchConfigInterfaces.map(d => d.name) : []
   };
   return retVal;
 };

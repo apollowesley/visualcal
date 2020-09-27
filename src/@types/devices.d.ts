@@ -72,37 +72,6 @@ interface DataEventHandler {
   (iface: ICommunicationInterface, data: ArrayBuffer): void;
 }
 
-interface TcpConfiguration {
-  host: string;
-  port: number;
-}
-
-interface GpibInterfaceConfiguration {
-  address: number;
-}
-
-interface GpibDeviceConfiguration {
-  address: number;
-}
-
-interface NationalInstrumentsGpibConfiguration {
-  unitId: string;
-}
-
-interface SerialPortConfiguration {
-  port: string;
-  baudRate: number;
-}
-
-interface CommunicationInterfaceConfigurationInfo {
-  name: string;
-  type: import('../constants').CommunicationInterfaceType;
-  nationalInstrumentsGpib?: NationalInstrumentsGpibConfiguration;
-  tcp?: TcpConfiguration;
-  serial?: SerialPortConfiguration;
-  gpib?: GpibInterfaceConfiguration;
-}
-
 interface DeviceNodeDriverRequirementsInfo {
   configNodeId: string;
   unitId: string;

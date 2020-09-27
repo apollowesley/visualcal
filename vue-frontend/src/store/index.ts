@@ -3,8 +3,8 @@ import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import Vuetify from '@/plugins/vuetify';
 import { User, ViewInfo } from '../types/session';
-import { SessionViewRequestResponseInfo, ProcedureSection, ProcedureAction } from 'visualcal-common/types/session-view-info';
-import { LoginCredentials } from 'visualcal-common/types/user';
+import { SessionViewRequestResponseInfo, ProcedureSection, ProcedureAction } from 'visualcal-common/dist/session-view-info';
+import { LoginCredentials } from 'visualcal-common/dist/user';
 
 interface State {
   darkMode: boolean;

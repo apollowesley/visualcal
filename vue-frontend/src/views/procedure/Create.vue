@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { ProcedureForCreate } from 'visualcal-common/types/procedure';
+import { ProcedureForCreate } from 'visualcal-common/dist/procedure';
 
 @Component
 export default class ProcedureCreateView extends Vue {

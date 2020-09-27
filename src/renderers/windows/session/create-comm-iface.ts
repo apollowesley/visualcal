@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
-import { IpcChannels, CommunicationInterfaceTypesEnum, CommunicationInterfaceType } from '../../../constants';
+import { IpcChannels, CommunicationInterfaceTypesEnum } from '../../../constants';
+import { CommunicationInterfaceType, CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
 
 let selectedSessionNameElement: HTMLHeadingElement;
 let interfaceNameElement: HTMLInputElement;
@@ -90,7 +91,7 @@ const init = () => {
       case CommunicationInterfaceTypesEnum.Emulated:
         break;
       case CommunicationInterfaceTypesEnum.NationalInstrumentsGPIB:
-          iface.gpib = {
+          iface.nationalInstrumentsGpib = {
             address: 0
           }
         break;

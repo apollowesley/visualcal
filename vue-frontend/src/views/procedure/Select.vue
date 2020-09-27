@@ -36,7 +36,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import TabulatorComponent from '@/components/Tabulator.vue';
 import Tabulator from 'tabulator-tables';
-import { Procedure } from 'visualcal-common/types/session-view-info';
+import { Procedure } from 'visualcal-common/dist/session-view-info';
 
 @Component({
   components: {

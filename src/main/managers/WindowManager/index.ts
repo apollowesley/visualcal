@@ -1,7 +1,7 @@
 import { app, BrowserWindow, BrowserWindowConstructorOptions, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import SerialPort from 'serialport';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { CommunicationInterfaceTypes, IpcChannels, VisualCalWindow } from '../../../constants';
+import { IpcChannels, VisualCalWindow } from '../../../constants';
 import * as WindowUtils from '../../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
@@ -10,6 +10,7 @@ import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOpt
 import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
 import VisualCalNodeRedSettings from '../../node-red-settings';
+import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');

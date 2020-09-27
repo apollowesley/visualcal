@@ -6,7 +6,7 @@ import { IpcChannels, VisualCalWindow } from '../../constants';
 import NodeRed from '../node-red';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
-import { SessionForCreate } from 'visualcal-common/types/session';
+import { SessionForCreate } from 'visualcal-common/dist/session';
 
 const log = electronLog.scope('SessionManager');
 const nodeRed = NodeRed();

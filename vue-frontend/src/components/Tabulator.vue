@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { Procedure } from 'visualcal-common/types/session-view-info';
+import { Procedure } from 'visualcal-common/dist/session-view-info';
 
 @Component
 export default class TabulatorComponent extends Vue {

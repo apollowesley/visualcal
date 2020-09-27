@@ -1,6 +1,7 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import Tabulator from 'tabulator-tables';
 import { SelectHandler } from '../../../components/SelectHandler';
+import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 
 interface ConstructorOptions {
   existingConfigsSelectId: string;

@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { UpdateInfo, ProgressInfo } from 'visualcal-common/types/auto-update';
+import { UpdateInfo, ProgressInfo } from 'visualcal-common/dist/auto-update';
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component

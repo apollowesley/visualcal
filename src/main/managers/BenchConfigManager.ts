@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
+import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 import { IpcChannels } from '../../constants';
 
 const log = electronLog.scope('BenchConfigManager');

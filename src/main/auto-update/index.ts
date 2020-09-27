@@ -4,7 +4,7 @@ import { isDev } from '../utils';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronLog from 'electron-log';
-import { AutoUpdateEvents, IpcChannels } from 'visualcal-common/types/auto-update';
+import { AutoUpdateEvents, IpcChannels } from 'visualcal-common/dist/auto-update';
 
 const log = electronLog.create('auto-update');
 log.transports.file.level = false;

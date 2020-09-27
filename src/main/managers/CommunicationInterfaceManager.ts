@@ -6,6 +6,7 @@ import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { ipcMain } from 'electron';
 import { NationalInstrumentsGpibInterface } from '../../drivers/communication-interfaces/national-instruments/NationalInstrumentsGpibInterface';
+import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
@@ -109,11 +110,11 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
       case 'National Instruments GPIB':
         iface = new NationalInstrumentsGpibInterface();
         const niGpib = iface as NationalInstrumentsGpibInterface;
-        if (!info.gpib) throw new Error('GPIB communication interface configuration is missing');
+        if (!info.nationalInstrumentsGpib) throw new Error('GPIB communication interface configuration is missing');
         niGpib.configure({
           id: info.name
         });
-        niGpib.address = info.gpib.address;
+        niGpib.address = info.nationalInstrumentsGpib.address;
         break;
     }
     if (!iface) throw new Error(`Unknown communication interface type, ${info.type}`);

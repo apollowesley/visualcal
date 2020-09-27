@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
 import Tabulator from 'tabulator-tables';
+import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
 import { IpcChannels } from '../../../../constants';
 
 const getActiveUser = () => {

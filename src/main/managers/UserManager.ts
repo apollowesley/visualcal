@@ -2,6 +2,7 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
+import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
 import { ApplicationManager } from './ApplicationManager';

@@ -7,7 +7,7 @@ interface Person {
 interface User extends Person {
   email: string;
   sessions: Session[];
-  benchConfigs: BenchConfig[];
+  benchConfigs: import('visualcal-common/dist/bench-configuration').BenchConfig[];
   token?: string;
   bio?: string;
   image?: string;

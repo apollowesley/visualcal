@@ -1,5 +1,6 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SelectHandler } from '../../../components/SelectHandler';
+import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 
 interface ConstructorOptions {
   configsSelectElementId: string;

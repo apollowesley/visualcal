@@ -16,3 +16,4 @@ html/main
 obj/
 package-lock.json
 !ni-gpib/node-addon-driver/dist
+!common/dist

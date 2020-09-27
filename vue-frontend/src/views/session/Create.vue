@@ -60,7 +60,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import { SessionForCreate } from 'visualcal-common/types/session';
+import { SessionForCreate } from 'visualcal-common/dist/session';
 import { User } from '@/types/session';
 
 @Component

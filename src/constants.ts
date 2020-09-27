@@ -1,4 +1,3 @@
-export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Serial Port' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Emulated';
 export type ActionState = 'started' | 'stopped' | 'completed';
 
 export const enum VisualCalWindow {
@@ -24,15 +23,6 @@ export const enum WindowPathType {
   File,
   Url
 }
-
-
-export const CommunicationInterfaceTypes = [
-  'National Instruments GPIB',
-  'Serial Port',
-  'Prologix GPIB TCP',
-  'Prologix GPIB USB',
-  'Emulated'
-];
 
 export const enum CommunicationInterfaceTypesEnum {
   NationalInstrumentsGPIB = 'National Instruments GPIB',

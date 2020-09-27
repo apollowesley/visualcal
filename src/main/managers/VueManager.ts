@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { IpcChannels, SessionViewRequestResponseInfo, Procedure } from 'visualcal-common/types/session-view-info';
+import { IpcChannels, SessionViewRequestResponseInfo, Procedure } from 'visualcal-common/dist/session-view-info';
 import nodeRed from '../node-red';
 
 const visualCalNodeRed = nodeRed();
