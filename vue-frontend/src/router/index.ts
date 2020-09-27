@@ -45,9 +45,9 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-auto-update" */ '@/views/AutoUpdate.vue')
   },
   {
-    path: '/auto-update',
-    name: 'AutoUpdate',
-    component: () => import(/* webpackChunkName: "view-bench-config" */ '@/views/BenchConfig.vue')
+    path: '/bench-config-editor',
+    name: 'BenchConfigEditor',
+    component: () => import(/* webpackChunkName: "view-bench-config" */ '@/views/BenchConfigEditor.vue')
   },
   {
     path: '*',
