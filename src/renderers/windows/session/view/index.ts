@@ -9,13 +9,15 @@ import { ProcedureHandler } from './ProcedureHandler';
 import { ResultHandler } from './ResultHandler';
 import { StatusHandler } from './StatusHandler';
 import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
+import { ipcRenderer } from 'electron';
+import { IpcChannels } from '../../../../constants';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
-const benchConfigsSelectElement = document.getElementById('vc-bench-config-select') as HTMLSelectElement;
 let devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
 const interceptDeviceWritesCheckbox = document.getElementById('vc-intercept-device-writes') as HTMLInputElement;
 
+let user: User | undefined = undefined;
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
@@ -30,23 +32,17 @@ const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
 };
 
 const getBenchConfigurationInterfaces = () => {
-  const loadData = window.visualCal.initialLoadData;
-  if (!loadData) return;
-  const user = loadData.user;
-  if (!user) return;
-  const session = loadData.session;
-  if (!session) return;
+  if (!user || !session) return [];
   const sessionConfiguration = session.configuration;
-  if (!sessionConfiguration) return;
-  if (!window.visualCal.initialLoadData || !window.visualCal.initialLoadData.user || !window.visualCal.initialLoadData.session || !window.visualCal.initialLoadData.session.configuration || !window.visualCal.initialLoadData.session.configuration.benchConfigName) return [];
+  if (!sessionConfiguration) return [];
   const config = user.benchConfigs.find(b => b.name === sessionConfiguration.benchConfigName);
   if (!config) return [];
   return config.interfaces;
 }
 
-const devicesTableGetCommInterfaces = () => {
+const getDevicesTableGetCommInterfaces = (): Tabulator.SelectParams => {
   const benchConfigInterfaces = getBenchConfigurationInterfaces();
-  if (!session.configuration || !session.configuration.benchConfigName) return [];
+  if (!session.configuration || !session.configuration.benchConfigName) return { values: [] };
   const retVal: Tabulator.SelectParams = {
     values: benchConfigInterfaces ? benchConfigInterfaces.map(d => d.name) : []
   };
@@ -59,7 +55,7 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   columns: [
     { title: 'Device Unit Id', field: 'unitId' },
     { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell: Tabulator.CellComponent) => devicesTableGetDrivers(cell) },
-    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => devicesTableGetCommInterfaces() },
+    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => getDevicesTableGetCommInterfaces() },
     { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]
 });
@@ -154,9 +150,26 @@ const deviceConfigHandler = new DeviceConfigHandler({
   configsSelectElementId: 'vc-bench-config-select'
 });
 
-deviceConfigHandler.on('selectedBenchConfigChanged', (config) => {
+deviceConfigHandler.on('selectedBenchConfigChanged', async (config) => {
   // TODO: Finish
   if (!config) return;
+  if (!session.configuration) {
+    session.configuration = { devices: devices, benchConfigName: config.name };
+  } else {
+    session.configuration.benchConfigName = config.name;
+  }
+  ipcRenderer.send(IpcChannels.session.update.request, session);
+  devices.forEach(d => d.interfaceName = '');
+  await devicesTable.setData(devices);
+});
+
+ipc.on('benchConfigsUpdated', async (configs) => {
+  const loadData = window.visualCal.initialLoadData;
+  if (!loadData) return;
+  const user = loadData.user;
+  if (!user) return;
+  user.benchConfigs = configs;
+  deviceConfigHandler.benchConfigHandler.items = configs;
 });
 
 // ************************************************************************************************
@@ -247,6 +260,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
 
 const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   try {
+    user = viewInfo.user;
     procedure.setTitle(viewInfo.procedure.name);
     session = viewInfo.session;
     deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceNodes;
@@ -264,6 +278,11 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
     results.loadResultsForSession(session.name);
     procedure.sectionHandler.items = viewInfo.sections;
     deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
+    if (session.configuration && session.configuration.benchConfigName) {
+      const selectedBenchConfigName = session.configuration.benchConfigName;
+      const selectedBenchConfig = deviceConfigHandler.benchConfigHandler.items.find(b => b.name === selectedBenchConfigName);
+      if (selectedBenchConfig) deviceConfigHandler.benchConfigHandler.selectedItem = selectedBenchConfig;
+    }
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
   }

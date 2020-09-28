@@ -356,6 +356,16 @@ export class UserManager extends TypedEmitter<Events> {
         return event.reply(IpcChannels.session.setActive.error, error);
       }
     });
+
+    ipcMain.on(IpcChannels.session.update.request, (event, session: Session) => {
+      if (event.sender.isDestroyed()) return;
+      try {
+        this.updateSession(session);
+        event.reply(IpcChannels.session.update.response, true);
+      } catch (error) {
+        return event.reply(IpcChannels.session.update.error, error);
+      }
+    });
   }
 
   private initBenchConfigIpcHandlers() {
@@ -376,6 +386,7 @@ export class UserManager extends TypedEmitter<Events> {
       try {
         this.setBenchConfigsForCurrentUser(configs);
         event.reply(BenchConfigIpcChannels.SaveConfigsForCurrentUserResponse, true);
+        ipcMain.sendToAll(BenchConfigIpcChannels.Updated, configs);
       } catch (error) {
         event.reply(BenchConfigIpcChannels.SaveConfigsForCurrentUserError, error);
       }
