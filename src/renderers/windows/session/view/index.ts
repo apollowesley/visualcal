@@ -164,9 +164,6 @@ deviceConfigHandler.on('selectedBenchConfigChanged', async (config) => {
 });
 
 ipc.on('benchConfigsUpdated', async (configs) => {
-  const loadData = window.visualCal.initialLoadData;
-  if (!loadData) return;
-  const user = loadData.user;
   if (!user) return;
   user.benchConfigs = configs;
   deviceConfigHandler.benchConfigHandler.items = configs;
