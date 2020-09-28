@@ -4,7 +4,8 @@ export const enum IpcChannels {
   GetSerialPortsError = 'get-serial-ports-error',
   SaveConfigsForCurrentUserRequest = 'save-bench-configs-for-current-user-request',
   SaveConfigsForCurrentUserResponse = 'save-bench-configs-for-current-user-response',
-  SaveConfigsForCurrentUserError = 'save-bench-configs-for-current-user-error'
+  SaveConfigsForCurrentUserError = 'save-bench-configs-for-current-user-error',
+  Updated = 'bench-configs-for-current-user-updated'
 }
 
 export type CommunicationInterfaceType = 'National Instruments GPIB' | 'Prologix GPIB TCP' | 'Prologix GPIB USB' | 'Serial Port' | 'Emulated';

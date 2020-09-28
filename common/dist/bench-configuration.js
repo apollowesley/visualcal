@@ -9,6 +9,7 @@ var IpcChannels;
     IpcChannels["SaveConfigsForCurrentUserRequest"] = "save-bench-configs-for-current-user-request";
     IpcChannels["SaveConfigsForCurrentUserResponse"] = "save-bench-configs-for-current-user-response";
     IpcChannels["SaveConfigsForCurrentUserError"] = "save-bench-configs-for-current-user-error";
+    IpcChannels["Updated"] = "bench-configs-for-current-user-updated";
 })(IpcChannels = exports.IpcChannels || (exports.IpcChannels = {}));
 exports.CommunicationInterfaceTypes = [
     'National Instruments GPIB',
