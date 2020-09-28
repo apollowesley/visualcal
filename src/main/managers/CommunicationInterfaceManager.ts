@@ -7,6 +7,8 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import { ipcMain } from 'electron';
 import { NationalInstrumentsGpibInterface } from '../../drivers/communication-interfaces/national-instruments/NationalInstrumentsGpibInterface';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
+import { IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/bench-configuration';
+import { getSerialPorts } from '../../drivers/utils';
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
@@ -29,6 +31,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
   constructor() {
     super();
     this.fInterfaces = [];
+    this.initIpcListeners();
   }
 
   add(communicationInterface: CommunicationInterface) {
@@ -217,6 +220,17 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     this.emit('interfaceDisconnected', communicationInterface, err);
     setImmediate(() => {
       ipcMain.sendToAll(IpcChannels.communicationInterface.error, { name: communicationInterface.name, err: err});
+    });
+  }
+
+  private initIpcListeners() {
+    ipcMain.on(BenchConfigIpcChannels.GetSerialPortsRequest, async (event) => {
+      if (event.sender.isDestroyed()) return;
+      try {
+        event.reply(BenchConfigIpcChannels.GetSerialPortsResponse, await getSerialPorts());
+      } catch (error) {
+        event.reply(BenchConfigIpcChannels.GetSerialPortsError, error);
+      }
     });
   }
 

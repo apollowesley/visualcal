@@ -1,4 +1,4 @@
-import { BenchConfig } from './bench-config';
+import { BenchConfig } from 'visualcal-common/src/bench-configuration';
 
 interface Person {
   nameFirst: string;

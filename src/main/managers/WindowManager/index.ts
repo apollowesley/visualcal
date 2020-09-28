@@ -446,7 +446,13 @@ export class WindowManager extends TypedEmitter<Events> {
 
   async showBenchConfigViewWindow() {
     if (!this.mainWindow) throw new Error('Main window must be defined');
-    const w = await this.createWindow(VisualCalWindow.BenchConfigView, this.mainWindow);
+    const w = await this.showVueWindow(VisualCalWindow.BenchConfigView, {
+      subPath: getSubPath(VisualCalWindow.BenchConfigView),
+      windowOpts: {
+        parent: this.mainWindow,
+        modal: true
+      }
+    });
     return w;
   }
 

@@ -70,7 +70,7 @@ export default class ProcedureSelectView extends Vue {
     button.style.width = '90%';
     button.style.boxShadow = '2px 2px #888888';
     button.id = (cell.getRow().getData() as Procedure).name;
-    button.onclick = async () => await this.onSelectProcedureButtonClicked((cell.getRow().getData() as Procedure).name);
+    button.onclick = async () => await this.onSelectProcedureButtonClicked(button.id);
     this.fSelectProcedureButtons.push(button);
     return button;
   }

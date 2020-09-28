@@ -2,7 +2,7 @@ import { BrowserWindow, dialog, ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
+import { BenchConfig, IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/bench-configuration';
 import { isValidEmailAddress } from '../../common/utils/validation';
 import { IpcChannels } from '../../constants';
 import { ApplicationManager } from './ApplicationManager';
@@ -161,6 +161,13 @@ export class UserManager extends TypedEmitter<Events> {
     if (existingBenchConfig) throw new Error(`A bench configuration named, ${config.name}, already exists for user, ${config.username}`);
     if (!user.benchConfigs) user.benchConfigs = [];
     user.benchConfigs.push({ ...config, username: config.username.toLocaleLowerCase() });
+    this.fStore.set('users', this.all);
+  }
+
+  setBenchConfigsForCurrentUser(configs: BenchConfig[]) {
+    const user = this.activeUser;
+    if (!user) throw new Error('No active user');
+    user.benchConfigs = configs;
     this.fStore.set('users', this.all);
   }
 
@@ -362,6 +369,15 @@ export class UserManager extends TypedEmitter<Events> {
         this.updateBenchConfig(config);
       } catch (error) {
         event.reply(IpcChannels.user.benchConfig.removeCommInterface.error, error);
+      }
+    });
+    ipcMain.on(BenchConfigIpcChannels.SaveConfigsForCurrentUserRequest, (event, configs: BenchConfig[]) => {
+      if (event.sender.isDestroyed()) return;
+      try {
+        this.setBenchConfigsForCurrentUser(configs);
+        event.reply(BenchConfigIpcChannels.SaveConfigsForCurrentUserResponse, true);
+      } catch (error) {
+        event.reply(BenchConfigIpcChannels.SaveConfigsForCurrentUserError, error);
       }
     });
   }

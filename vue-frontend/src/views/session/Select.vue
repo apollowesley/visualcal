@@ -75,7 +75,7 @@ export default class SessionSelectView extends Vue {
     button.style.width = '90%';
     button.style.boxShadow = '2px 2px #888888';
     button.id = (cell.getRow().getData() as Session).name;
-    button.onclick = async () => await this.onSelectSessionButtonClicked((cell.getRow().getData() as Session).name);
+    button.onclick = async () => await this.onSelectSessionButtonClicked(button.id);
     this.fSelectSessionButtons.push(button);
     return button;
   }

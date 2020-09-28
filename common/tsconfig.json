@@ -15,7 +15,9 @@
     "skipLibCheck": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "declaration": true
+    "declaration": true,
+    "preserveConstEnums": true,
+    "pretty": true
   },
   "include": [
     "src/**/*"

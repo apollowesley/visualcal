@@ -5,6 +5,8 @@ import { IpcChannels as LoginIpcChannels, LoginCredentials } from 'visualcal-com
 import { ProcedureForCreate } from 'visualcal-common/src/procedure';
 import { SessionForCreate } from 'visualcal-common/src/session';
 import { IpcChannels as AutoUpdateIpcChannels, ProgressInfo, UpdateInfo } from 'visualcal-common/src/auto-update';
+import { BenchConfig, IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/src/bench-configuration';
+import { PortInfo } from 'serialport';
 
 interface AutoUpdateEvents {
   updateError: (error: Error) => void;
@@ -96,6 +98,14 @@ export class Ipc extends TypedEmitter<Events> {
 
   async getSessionViewInfo() {
     return await this.request<SessionViewRequestResponseInfo | null, string>(SessionViewIpcChannels.Request, SessionViewIpcChannels.Response, SessionViewIpcChannels.Error);
+  }
+
+  async getSerialPorts() {
+    return await this.request<PortInfo[], Error>(BenchConfigIpcChannels.GetSerialPortsRequest, BenchConfigIpcChannels.GetSerialPortsResponse, BenchConfigIpcChannels.GetSerialPortsError);
+  }
+
+  async saveBenchConfigurationsForCurrentUser(configs: BenchConfig[]) {
+    return await this.request<boolean, Error>(BenchConfigIpcChannels.SaveConfigsForCurrentUserRequest, BenchConfigIpcChannels.SaveConfigsForCurrentUserResponse, BenchConfigIpcChannels.SaveConfigsForCurrentUserError, configs);
   }
 
   listenForAutoUpdateEvents() {
