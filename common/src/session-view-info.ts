@@ -1,4 +1,5 @@
-// eslint-disable-next-line
+/*eslint-env es6*/
+
 export const enum IpcChannels {
   Request = 'vue-session-view-info-request',
   Response = 'vue-session-view-info-response',

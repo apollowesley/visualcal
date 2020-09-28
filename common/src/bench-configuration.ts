@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export const enum IpcChannels {
   GetSerialPortsRequest = 'get-serial-ports-request',
   GetSerialPortsResponse = 'get-serial-ports-response',

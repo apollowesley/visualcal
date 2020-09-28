@@ -1,7 +1,7 @@
 "use strict";
+/*eslint-env es6*/
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IpcChannels = void 0;
-// eslint-disable-next-line
 var IpcChannels;
 (function (IpcChannels) {
     IpcChannels["Request"] = "vue-session-view-info-request";

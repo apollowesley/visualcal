@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export const enum IpcChannels {
   GetProceduresRequest = 'procedures-get-request',
   GetProceduresResponse = 'procedures-get-response',

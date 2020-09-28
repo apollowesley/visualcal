@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export const enum IpcChannels {
   GetSessionsRequest = 'sessions-get-request',
   GetSessionsResponse = 'sessions-get-response',

@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export const enum IpcChannels {
   Error = 'auto-update-error',
   StartedChecking = 'auto-update-started-checking',

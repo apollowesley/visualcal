@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommunicationInterfaceTypes = exports.IpcChannels = void 0;
+// eslint-disable-next-line
 var IpcChannels;
 (function (IpcChannels) {
     IpcChannels["GetSerialPortsRequest"] = "get-serial-ports-request";

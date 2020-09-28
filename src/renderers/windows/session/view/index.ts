@@ -11,6 +11,7 @@ import { StatusHandler } from './StatusHandler';
 import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
+import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
@@ -260,26 +261,34 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
     user = viewInfo.user;
     procedure.setTitle(viewInfo.procedure.name);
     session = viewInfo.session;
+    results.loadResultsForSession(session.name);
+    procedure.sectionHandler.items = viewInfo.sections;
+    deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
+    let selectedBenchConfig: BenchConfig | undefined = undefined;
+    if (session.configuration && session.configuration.benchConfigName) {
+      const selectedBenchConfigName = session.configuration.benchConfigName;
+      selectedBenchConfig = deviceConfigHandler.benchConfigHandler.items.find(b => b.name === selectedBenchConfigName);
+      if (selectedBenchConfig) deviceConfigHandler.benchConfigHandler.selectedItem = selectedBenchConfig;
+    }
     deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceNodes;
     deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {
-      devices.push({
+      const device = {
         configNodeId: deviceInfo.configNodeId,
         driverDisplayName: '',
         gpibAddress: 1,
         interfaceName: '',
         unitId: deviceInfo.unitId
-      });
+      };
+      if (session.configuration) {
+        const foundDevice = session.configuration.devices.find(d => d.configNodeId === deviceInfo.configNodeId);
+        if (foundDevice && selectedBenchConfig) {
+          device.interfaceName = foundDevice.interfaceName;
+        }
+      }
+      devices.push(device);
     });
     if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) devices = session.configuration.devices;
     await devicesTable.setData(devices);
-    results.loadResultsForSession(session.name);
-    procedure.sectionHandler.items = viewInfo.sections;
-    deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
-    if (session.configuration && session.configuration.benchConfigName) {
-      const selectedBenchConfigName = session.configuration.benchConfigName;
-      const selectedBenchConfig = deviceConfigHandler.benchConfigHandler.items.find(b => b.name === selectedBenchConfigName);
-      if (selectedBenchConfig) deviceConfigHandler.benchConfigHandler.selectedItem = selectedBenchConfig;
-    }
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
   }
