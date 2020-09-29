@@ -21,7 +21,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   async onConnected() {
     await super.onConnected();
     await this.reset();
-    const version = await this.getVersion();
+    // const version = await this.getVersion();
     await this.writeToController('++savecfg 0');
     await this.setMode(Mode.Controller);
     await this.setAutoReadAfterWrite(false);
@@ -29,7 +29,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.setEndOfInstruction(true);
     await this.writeToController('++read_tmo_ms 3000');
     await this.interfaceClear();
-    log.info(`Connected to Prologix controller, version ${version}`);
+    // log.info(`Connected to Prologix controller, version ${version}`);
   }
 
   protected get readLineParser() { return this.fReadlineParser; }
@@ -128,23 +128,23 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return await this.readFromController();
   }
 
-  private fPreviousWriteData?: ArrayBufferLike;
-  async writeData(data: ArrayBufferLike) {
-    const srq = await this.checkSRQ();
-    if (srq) {
-      let errMsg = 'GPIB SRQ detected after previous write';
-      if (this.fPreviousWriteData) {
-        const previousWriteDataString = this.fTextDecoder.decode(this.fPreviousWriteData);
-        errMsg = `GPIB SRQ detected after previous write of:  ${previousWriteDataString}`;
-      }
-      const serialPollStatus = await this.serialPoll();
-      log.info(serialPollStatus.value);
-      const err = new Error(errMsg);
-      this.onError(err);
-      throw new Error(err.message);
-    }
-    await super.writeData(data);
-  }
+  // private fPreviousWriteData?: ArrayBufferLike;
+  // async writeData(data: ArrayBufferLike) {
+  //   const srq = await this.checkSRQ();
+  //   if (srq) {
+  //     let errMsg = 'GPIB SRQ detected after previous write';
+  //     if (this.fPreviousWriteData) {
+  //       const previousWriteDataString = this.fTextDecoder.decode(this.fPreviousWriteData);
+  //       errMsg = `GPIB SRQ detected after previous write of:  ${previousWriteDataString}`;
+  //     }
+  //     const serialPollStatus = await this.serialPoll();
+  //     log.info(serialPollStatus.value);
+  //     const err = new Error(errMsg);
+  //     this.onError(err);
+  //     throw new Error(err.message);
+  //   }
+  //   await super.writeData(data);
+  // }
 
   async setDeviceAddress(address: number): Promise<void> {
     await this.writeToController(`++addr ${address}`);
