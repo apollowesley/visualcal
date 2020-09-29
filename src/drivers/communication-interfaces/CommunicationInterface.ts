@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { TextDecoder } from 'util';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import electronLog from 'electron-log';
+import { sleep } from '../utils';
 
 const log = electronLog.scope('CommunicationInterface');
 
@@ -172,7 +173,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await this.onBeforeWrite(data);
     await this.write(data);
     await this.onAfterWrite(data);
-    // await sleep(500);
+    await sleep(100);
   }
 
   async readString(): Promise<string> {
