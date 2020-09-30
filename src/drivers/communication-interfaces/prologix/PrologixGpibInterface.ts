@@ -20,7 +20,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   async onConnected() {
     await super.onConnected();
-    await this.reset();
+    if (this.resetOnConnect) await this.reset();
     // const version = await this.getVersion();
     await this.writeToController('++savecfg 0');
     await this.setMode(Mode.Controller);

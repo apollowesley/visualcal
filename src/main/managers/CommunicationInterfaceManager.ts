@@ -129,6 +129,7 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
       if (info.timing.delayBeforeRead) iface.delayBeforeRead = info.timing.delayBeforeRead;
       if (info.timing.delayAfterRead) iface.delayAfterRead = info.timing.delayAfterRead;
     }
+    if (info.resetOnConnect) iface.resetOnConnect = info.resetOnConnect;
     return iface;
   }
 

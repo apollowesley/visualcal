@@ -90,6 +90,7 @@ export default class BenchConfigComponent extends Vue {
   columns: Tabulator.ColumnDefinition[] = [
     { title: 'Name', field: 'name', editable: true, editor: 'input', frozen: true },
     { title: 'Type', field: 'type' },
+    { title: 'Reset on connect', field: 'resetOnConnect', editable: true, editor: 'tickCross' },
     { title: 'GPIB Address', field: 'nationalInstrumentsGpib.address', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell(), editable: (cell) => cell.getValue() !== undefined, editor: 'number' },
     { title: 'TCP', columns: [
       { title: 'Host', field: 'tcp.host', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell(), editable: (cell) => cell.getValue() !== undefined, editor: 'input' },

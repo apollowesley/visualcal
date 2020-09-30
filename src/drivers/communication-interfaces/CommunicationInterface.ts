@@ -25,6 +25,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   private fName: string = uuid();
   private fConnectTimeout = 3000;
   private fConnectTimeoutTimerId?: NodeJS.Timeout;
+  private fResetOnConnect = true;
   private fDelayBeforeWrite = 0;
   private fDelayAfterWrite = 0;
   private fDelayBeforeRead = 0;
@@ -70,6 +71,9 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     if (value === this.fConnectTimeout) return;
     this.fConnectTimeout = value;
   }
+
+  get resetOnConnect() { return this.fResetOnConnect; }
+  set resetOnConnect(value: boolean) { this.fResetOnConnect = value; }
 
   get delayBeforeWrite() { return this.fDelayBeforeWrite >= 0 ? this.fDelayBeforeWrite : 0; }
   set delayBeforeWrite(value: number) {

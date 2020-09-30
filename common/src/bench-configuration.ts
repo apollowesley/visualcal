@@ -52,6 +52,7 @@ export interface CommunicationInterfaceConfigurationInfo {
   tcp?: TcpConfiguration;
   serial?: SerialPortConfiguration;
   timing: Timing;
+  resetOnConnect?: boolean;
 }
 
 export interface BenchConfig {
