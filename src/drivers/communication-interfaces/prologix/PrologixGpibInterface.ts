@@ -45,6 +45,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   write(data: ArrayBufferLike) {
     return new Promise<void>((resolve, reject) => {
+      if (this.isDisconnecting) return;
       if (!this.duplexClient) {
         const err = new Error('Client is undefined');
         this.onError(err);
@@ -74,6 +75,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
+      if (this.isDisconnecting) return [];
       if (!this.duplexClient || !this.isConnected) {
         const error = new Error('Not connected or client is undefined');
         this.onError(error);
