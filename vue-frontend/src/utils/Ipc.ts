@@ -6,7 +6,7 @@ import { ProcedureForCreate } from 'visualcal-common/src/procedure';
 import { SessionForCreate } from 'visualcal-common/src/session';
 import { IpcChannels as AutoUpdateIpcChannels, ProgressInfo, UpdateInfo } from 'visualcal-common/src/auto-update';
 import { BenchConfig, IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/src/bench-configuration';
-import { IpcChannels as ResultIpcChannels } from 'visualcal-common/src/result';
+import { IpcChannels as ResultIpcChannels, LogicRun } from 'visualcal-common/src/result';
 import { PortInfo } from 'serialport';
 
 interface AutoUpdateEvents {
@@ -110,7 +110,7 @@ export class Ipc extends TypedEmitter<Events> {
   }
 
   async getRunsForCurrentSession() {
-    return await this.request<boolean, Error>(ResultIpcChannels.getAllBasicInfosForCurrentSession.request, ResultIpcChannels.getAllBasicInfosForCurrentSession.response, ResultIpcChannels.getAllBasicInfosForCurrentSession.error);
+    return await this.request<LogicRun<string, number>[], Error>(ResultIpcChannels.getAllBasicInfosForCurrentSession.request, ResultIpcChannels.getAllBasicInfosForCurrentSession.response, ResultIpcChannels.getAllBasicInfosForCurrentSession.error);
   }
 
   listenForAutoUpdateEvents() {

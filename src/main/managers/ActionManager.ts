@@ -57,7 +57,7 @@ export class ActionManager extends TypedEmitter<Events> {
   }
 
   async start(opts: StartOptions) {
-    const run = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId);
+    const run = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
     await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
     loadDevices(opts.session);
     if (opts.interceptDeviceWrites) {

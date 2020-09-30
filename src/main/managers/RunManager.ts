@@ -79,7 +79,7 @@ export class RunManager extends TypedEmitter<Events> {
       sectionId: sectionId,
       actionId: actionId,
       startTimestamp: new Date(),
-      description: description ? description : new Date().toDateString(),
+      description: description ? description : new Date().toString(),
       results: []
     }
     this.setOne(run);
@@ -110,7 +110,7 @@ export class RunManager extends TypedEmitter<Events> {
         if (event.sender.isDestroyed()) return;
         const currentSession = global.visualCal.userManager.activeSession;
         if (!currentSession) return event.reply(IpcChannels.getAllBasicInfosForCurrentSession.error, 'No active session');
-        const retVal = this.getAllRunInfos().map(r => r.sessionId === currentSession.name);
+        const retVal = this.runs.filter(r => r.sessionId === currentSession.name);
         event.reply(IpcChannels.getAllBasicInfosForCurrentSession.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.getAllBasicInfosForCurrentSession.error, error);

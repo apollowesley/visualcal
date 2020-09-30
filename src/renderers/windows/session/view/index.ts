@@ -12,7 +12,6 @@ import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
-import { v4 as uuid } from 'uuid';
 import { StartOptions, StopOptions } from '../../../../main/managers/ActionManager';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;

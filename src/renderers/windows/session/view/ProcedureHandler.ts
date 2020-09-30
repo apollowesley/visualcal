@@ -23,8 +23,6 @@ export class ProcedureHandler extends TypedEmitter<Events> {
 
   private fRunNameElement: HTMLInputElement;
 
-  private fRunName?: string;
-
   constructor(opts: ConstructorOptions) {
     super();
     this.fTitleElement = document.getElementById(opts.titleElementId) as HTMLHeadingElement;
@@ -42,12 +40,12 @@ export class ProcedureHandler extends TypedEmitter<Events> {
   get sectionHandler() { return this.fSectionHandler; }
   get actionHandler() { return this.fActionHandler; }
 
-  get runName() { return this.fRunName ? this.fRunName : null; }
+  get runName() { return this.fRunNameElement.value ? this.fRunNameElement.value : null; }
   set runName(value: string | null) {
-    if (!this.fRunName && !value) return;
-    if (this.fRunName === value) return;
-    value ? this.fRunName = value : this.fRunName = undefined;
-    this.onRunNameChanged(this.fRunName);
+    if (!this.fRunNameElement.value && !value) return;
+    if (this.fRunNameElement.value === value) return;
+    value ? this.fRunNameElement.value = value : this.fRunNameElement.value = '';
+    this.onRunNameChanged(this.fRunNameElement.value);
   }
 
   get isReady() { return this.sectionHandler.selectedItem && this.actionHandler.selectedItem; }

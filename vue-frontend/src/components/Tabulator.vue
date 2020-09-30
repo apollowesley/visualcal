@@ -41,9 +41,9 @@ export default class TabulatorComponent extends Vue {
   }
 
   @Watch('data')
-  onDataChanged(newData: unknown[]) {
+  async onDataChanged(newData: unknown[]) {
     const table = this.getTable();
-    table.setData(newData);
+    await table.setData(newData);
   }
 
   private onRowMouseEnter(_e: UIEvent, row: Tabulator.RowComponent) {
