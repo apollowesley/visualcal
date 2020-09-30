@@ -100,7 +100,7 @@ export class RunManager extends TypedEmitter<Events> {
     if (!run) throw new Error(`Run with Id, ${runId}, does not exist`);
     run.results.push(result);
     this.setOne(run);
-    ipcMain.sendToAll(IpcChannels.resultAdded, { result });
+    ipcMain.sendToAll(IpcChannels.resultAdded, result);
 
   }
 

@@ -122,6 +122,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     }
     if (!iface) throw new Error(`Unknown communication interface type, ${info.type}`);
     iface.name = info.name;
+    if (info.timing) {
+      if (info.timing.connectTimeout) iface.connectTimeout = info.timing.connectTimeout;
+      if (info.timing.delayBeforeWrite) iface.delayBeforeWrite = info.timing.delayBeforeWrite;
+      if (info.timing.delayAfterWrite) iface.delayAfterWrite = info.timing.delayAfterWrite;
+      if (info.timing.delayBeforeRead) iface.delayBeforeRead = info.timing.delayBeforeRead;
+      if (info.timing.delayAfterRead) iface.delayAfterRead = info.timing.delayAfterRead;
+    }
     return iface;
   }
 

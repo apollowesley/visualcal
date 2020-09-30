@@ -103,11 +103,11 @@ export default class BenchConfigComponent extends Vue {
       { title: 'Data Bits', field: 'serial.dataBits', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell() }
     ] },
     { title: 'Timing (all times are in milliseconds)', columns: [
-      { title: 'Connect Timeout', field: 'connectTimeout', editable: true, editor: 'number', validator: 'min: 0' },
-      { title: 'Delay before write', field: 'delayBeforeWrite', editable: true, editor: 'number', validator: 'min: 0' },
-      { title: 'Delay after write', field: 'delayAfterWrite', editable: true, editor: 'number', validator: 'min: 0' },
-      { title: 'Delay before read', field: 'delayBeforeRead', editable: true, editor: 'number', validator: 'min: 0' },
-      { title: 'Delay after read', field: 'delayAfterRead', editable: true, editor: 'number', validator: 'min: 0' }
+      { title: 'Connect Timeout', field: 'timing.connectTimeout', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay before write', field: 'timing.delayBeforeWrite', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay after write', field: 'timing.delayAfterWrite', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay before read', field: 'timing.delayBeforeRead', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay after read', field: 'timing.delayAfterRead', editable: true, editor: 'number', validator: 'min: 0' }
     ] },
     { title: '', formatter: this.createDeleteInterfaceColumnButton }
   ];

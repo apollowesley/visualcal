@@ -30,6 +30,8 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
 
 export interface RuntimeNodeInputEventMessagePayload {
   runId: string;
+  section: string;
+  action: string;
   unitId?: string;
   rate?: number;
   range?: number;
@@ -93,7 +95,7 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
-        this.device = await RED.settings.getDriverForDevice(this.deviceConfigNode.unitId) as DigitalMultimeterDevice;
+        this.device = RED.settings.getDriverForDevice(this.deviceConfigNode.unitId) as DigitalMultimeterDevice;
         if (!this.device) {
           const errMsg = `Could not find driver for device '${this.deviceConfigNode.unitId}'`;
           NodeLogManager.instance.error(this, new Error(errMsg));

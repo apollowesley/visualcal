@@ -37,6 +37,7 @@ export interface RuntimeNodeInputEventMessagePayload {
   unitId?: string;
   rate?: number;
   range?: number;
+  runId?: string;
   section?: string;
   action?: string;
   value: NumericMeasurement<string, number>;
@@ -122,7 +123,7 @@ module.exports = (RED: NodeRed) => {
               msg.payload.value = { 
                 raw: measurement.raw,
                 value: measurement.value
-              }
+              };
             } else {
               msg.payload = {
                 value: {

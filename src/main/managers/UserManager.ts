@@ -25,25 +25,19 @@ interface Store {
 export class UserManager extends TypedEmitter<Events> {
 
   private fStore: electronStore<Store> = electronStore.create<Store>('users.json', log);
-  private fUsers = new Map<string, User>();
   private fActiveUser: User | null = null;
   private fActiveSession: Session | null = null;
   private fActiveBenchConfig: BenchConfig | null = null;
 
   constructor() {
     super();
-    this.loadStore();
     this.initIpcUserHandlers();
     this.initSessionIpcHandlers();
     this.initBenchConfigIpcHandlers();
     log.info('Loaded');
   }
 
-  private loadStore() {
-    this.fStore.get('users', []).forEach(u => this.fUsers.set(u.email.toLocaleUpperCase(), u));
-  }
-
-  get all() { return Array.from(this.fUsers).map(u => u[1]); }
+  get all() { return this.fStore.get('users', []); }
 
   get activeUser() {
     return this.fActiveUser;
@@ -94,8 +88,14 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   private setOne(user: User) {
-    this.fUsers.set(user.email.toLocaleUpperCase(), { ...user, email: user.email.toLocaleLowerCase() });
-    this.fStore.set('users', this.all);
+    const users = this.all;
+    const existingIndex = users.findIndex(u => u.email.toLocaleUpperCase() === u.email.toLocaleUpperCase());
+    if (existingIndex < 0) {
+      users.push(user);
+    } else {
+      users.splice(existingIndex, 1, user);
+    }
+    this.fStore.set('users', users);
   }
 
   getIsActiveUser(email: string) {
@@ -104,7 +104,7 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   getOne(email: string) {
-    return this.fUsers.get(email.toLocaleUpperCase());
+    return this.all.find(u => u.email.toLocaleUpperCase() === email.toLocaleUpperCase());
   }
 
   getSession(email: string, sessionName: string) {
@@ -140,8 +140,7 @@ export class UserManager extends TypedEmitter<Events> {
   add(user: User) {
     const existing = this.getOne(user.email);
     if (existing) throw new Error(`User, ${user.email}, already exists`);
-    this.fUsers.set(user.email.toLocaleUpperCase(), { ...user, email: user.email.toLocaleLowerCase() });
-    this.fStore.set('users', this.all);
+    this.setOne(user);
   }
 
   addSession(session: Session) {
@@ -151,7 +150,7 @@ export class UserManager extends TypedEmitter<Events> {
     if (existingSession) throw new Error(`A session named, ${session.name}, already exists for user, ${session.username}`);
     if (!user.sessions) user.sessions = [];
     user.sessions.push({ ...session, username: session.username.toLocaleLowerCase() });
-    this.fStore.set('users', this.all);
+    this.setOne(user);
   }
 
   addBenchConfig(config: BenchConfig) {
@@ -161,14 +160,14 @@ export class UserManager extends TypedEmitter<Events> {
     if (existingBenchConfig) throw new Error(`A bench configuration named, ${config.name}, already exists for user, ${config.username}`);
     if (!user.benchConfigs) user.benchConfigs = [];
     user.benchConfigs.push({ ...config, username: config.username.toLocaleLowerCase() });
-    this.fStore.set('users', this.all);
+    this.setOne(user);
   }
 
   setBenchConfigsForCurrentUser(configs: BenchConfig[]) {
     const user = this.activeUser;
     if (!user) throw new Error('No active user');
     user.benchConfigs = configs;
-    this.fStore.set('users', this.all);
+    this.setOne(user);
   }
 
   setDeviceConfigs(email: string, sessionName: string, configs: CommunicationInterfaceDeviceNodeConfiguration[]) {
@@ -178,16 +177,17 @@ export class UserManager extends TypedEmitter<Events> {
     if (!existingSession) throw new Error(`Session, ${sessionName}, does not exist for user email, ${email}`);
     if (!existingSession.configuration) existingSession.configuration = { devices: [] };
     existingSession.configuration.devices = configs;
-    this.fStore.set('users', this.all);
+    this.setOne(user);
   }
 
   exists(email: string) { return this.getOne(email) !== undefined; }
 
   remove(email: string) {
-    const user = this.getOne(email);
-    if (user) return;
-    this.fUsers.delete(email.toLocaleUpperCase());
-    this.fStore.set('users', this.all);
+    const users = this.all;
+    const existingIndex = users.findIndex(u => u.email.toLocaleUpperCase() === email.toLocaleUpperCase());
+    if (existingIndex < 0) return;
+    users.splice(existingIndex, 1);
+    this.fStore.set('users', users);
     if (this.getIsActiveUser(email)) this.activeUser = null;
   }
 
@@ -230,7 +230,7 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   update(user: User) {
-    const exists = this.fUsers.has(user.email.toLocaleUpperCase());
+    const exists = this.getOne(user.email) !== undefined;
     if (!exists) throw new Error(`User, ${user.email}, does not exist`);
     this.setOne(user);
   }

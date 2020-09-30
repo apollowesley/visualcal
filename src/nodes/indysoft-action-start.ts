@@ -43,7 +43,7 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
     this.isRunning = false;
     this.status({});
   };
-  this.on('start', (runName?: string) => {
+  this.on('start', (runId?: string) => {
     if (!this.section) {
       this.error('Missing secton configuration');
       return;
@@ -63,7 +63,7 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
       payload: {
         section: this.section.shortName,
         action: this.name,
-        runId: runName
+        runId: runId
       }
     });
     global.visualCal.actionManager.stateChanged(this, 'started');

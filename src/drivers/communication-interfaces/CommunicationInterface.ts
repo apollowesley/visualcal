@@ -14,6 +14,8 @@ interface Events {
   dataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   beforeWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   afterWrite:  (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  beforeRead: (iface: ICommunicationInterface) => void;
+  afterRead:  (iface: ICommunicationInterface, data: ArrayBuffer) => void;
   stringReceived: (iface: ICommunicationInterface, data: string) => void;
   error: (iface: ICommunicationInterface, err: Error) => void;
 }
@@ -23,6 +25,10 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   private fName: string = uuid();
   private fConnectTimeout = 3000;
   private fConnectTimeoutTimerId?: NodeJS.Timeout;
+  private fDelayBeforeWrite = 0;
+  private fDelayAfterWrite = 0;
+  private fDelayBeforeRead = 0;
+  private fDelayAfterRead = 0;
   private fIsConnecting = false;
   private fIsDisconnecting = false;
   private fEndOfStringTerminator: EndOfStringTerminator = 'CrLf';
@@ -63,6 +69,30 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     if (value < 0) throw new Error('connectTimout cannot be less than zero');
     if (value === this.fConnectTimeout) return;
     this.fConnectTimeout = value;
+  }
+
+  get delayBeforeWrite() { return this.fDelayBeforeWrite >= 0 ? this.fDelayBeforeWrite : 0; }
+  set delayBeforeWrite(value: number) {
+    if (value < 0) value = 0;
+    this.fDelayBeforeWrite = value;
+  }
+
+  get delayAfterWrite() { return this.fDelayAfterWrite >= 0 ? this.fDelayAfterWrite : 0; }
+  set delayAfterWrite(value: number) {
+    if (value < 0) value = 0;
+    this.fDelayAfterWrite = value;
+  }
+
+  get delayBeforeRead() { return this.fDelayBeforeRead >= 0 ? this.fDelayBeforeRead : 0; }
+  set delayBeforeRead(value: number) {
+    if (value < 0) value = 0;
+    this.fDelayBeforeRead = value;
+  }
+
+  get delayAfterRead() { return this.fDelayAfterRead >= 0 ? this.fDelayAfterRead : 0; }
+  set delayAfterRead(value: number) {
+    if (value < 0) value = 0;
+    this.fDelayAfterRead = value;
   }
 
   get isConnecting() { return this.fIsConnecting; }
@@ -160,11 +190,13 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   abstract read(): Promise<ArrayBufferLike>;
 
   protected async onBeforeWrite(data: ArrayBufferLike) {
+    if (this.delayBeforeWrite) await sleep(this.delayBeforeWrite);
     this.emit('beforeWrite', this, data);
     await Promise.resolve();
   }
 
   protected async onAfterWrite(data: ArrayBufferLike) {
+    if (this.delayAfterWrite) await sleep(this.delayAfterWrite);
     this.emit('afterWrite', this, data);
     await Promise.resolve();
   }
@@ -176,8 +208,27 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await sleep(100);
   }
 
-  async readString(): Promise<string> {
+  protected async onBeforeRead() {
+    if (this.delayBeforeRead) await sleep(this.delayBeforeRead);
+    this.emit('beforeRead', this);
+    await Promise.resolve();
+  }
+
+  protected async onAfterRead(data: ArrayBufferLike) {
+    if (this.delayAfterRead) await sleep(this.delayAfterRead);
+    this.emit('afterRead', this, data);
+    await Promise.resolve();
+  }
+
+  async readData(): Promise<ArrayBufferLike> {
+    await this.onBeforeRead();
     const data = await this.read();
+    await this.onAfterRead(data);
+    return data;
+  }
+
+  async readString(): Promise<string> {
+    const data = await this.readData();
     return new TextDecoder().decode(data);
   }
 

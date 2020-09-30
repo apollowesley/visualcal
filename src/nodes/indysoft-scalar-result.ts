@@ -36,6 +36,7 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
 export interface InputMessagePayload {
   runId: string;
   value: string | number | NumericMeasurement<string, number>;
+  result?: LogicResult<string, number>; // Used for output message
 }
 
 export interface InputMessage extends NodeRedNodeMessage {
@@ -101,7 +102,8 @@ module.exports = (RED: NodeRed) => {
       // Delay sending to the next node, in case it's a completed node, so that our result gets to the frontend first.
       // 100ms for now, but we don't know how long it should be delayed, yet.
       setTimeout(() => {
-        send({ payload: { runId: msg.payload.runId, result: result } });
+        msg.payload.result = result;
+        send(msg);
         if (done) done();
       }, 100);
     });
