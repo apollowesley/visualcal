@@ -38,11 +38,14 @@ export class RunHandler extends TypedEmitter<Events> {
     });
 
     this.fRunManager = opts.runManager;
-    this.fRunManager.on('runStarted', (run) => this.fCurrentRun = run);
+    this.fRunManager.on('runStarted', async (run) => {
+      this.fCurrentRun = run;
+      await this.fTable.setData(this.fCurrentRun.results);
+    });
     this.fRunManager.on('resultAdded', async (result) => {
       if (!this.fCurrentRun) return;
       this.fCurrentRun.results.push(result);
-      this.fTable.setData(this.fCurrentRun.results);
+      await this.fTable.setData(this.fCurrentRun.results);
     });
   }
 
