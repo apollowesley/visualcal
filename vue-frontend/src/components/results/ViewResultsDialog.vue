@@ -19,7 +19,7 @@
           <v-col>
           <TabulatorComponent
             :columns="columns"
-            layout="fitData"
+            layout="fitColumns"
             :show-row-hover="false"
             :data="results"
           />

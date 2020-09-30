@@ -18,6 +18,18 @@
             cols="6"
           >
             Runs to keep
+            <v-btn
+              style="margin: 10px"
+              @click="saveAsJson"
+            >
+              Save as JSON
+            </v-btn>
+            <v-btn
+              style="margin: 10px"
+              @click="saveAsCsv"
+            >
+              Save as CSV
+            </v-btn>
             <div ref="outputRunsTabulatorElement" />
           </v-col>
         </v-row>
@@ -45,9 +57,9 @@ interface LogicResult {
 export default class ResultsView extends Vue {
 
   columns: Tabulator.ColumnDefinition[] = [
-    { title: 'Description', field: 'description', editable: true, editor: 'input' },
-    { title: 'Section', field: 'sectionId' },
-    { title: 'Action', field: 'actionId' },
+    { title: 'Description', field: 'description', frozen: true },
+    { title: 'Section', field: 'sectionId', frozen: true },
+    { title: 'Action', field: 'actionId', frozen: true },
     { title: 'Started', field: 'startTimestamp' },
     { title: 'Completed?', formatter: (cell) => {
         if ((cell.getRow().getData() as LogicRun<string, number>).stopTimestamp !== undefined) {
@@ -74,6 +86,11 @@ export default class ResultsView extends Vue {
   get inputRunsTabulatorElement() { return this.$refs.inputRunsTabulatorElement as HTMLDivElement; }
   get outputRunsTabulatorElement() { return this.$refs.outputRunsTabulatorElement as HTMLDivElement; }
 
+  get inputRuns() { return this.fInputRunsTable ? this.fInputRunsTable.getData() as LogicRun<string, number>[] : []; }
+  get outputRuns() { return this.fOutputRunsTable ? this.fOutputRunsTable.getData() as LogicRun<string, number>[] : []; }
+
+  get canSave() { return this.fOutputRunsTable !== undefined && this.outputRuns !== undefined && this.outputRuns.length > 0; }
+
   private createViewResultsColumnButton(cell: Tabulator.CellComponent) {
     const button = document.createElement('button') as HTMLButtonElement;
     button.textContent = 'View Results';
@@ -94,7 +111,7 @@ export default class ResultsView extends Vue {
     return run.results.every(r => r.passed);
   }
 
-  private createInputRunsTable(runs: LogicRun<string, number>[] = []) {
+  private async createInputRunsTable(runs: LogicRun<string, number>[] = []) {
     const table = new Tabulator(this.inputRunsTabulatorElement, {
       layout: 'fitColumns',
       columns: this.columns,
@@ -103,11 +120,11 @@ export default class ResultsView extends Vue {
       movableRowsSender: 'delete',
       movableRowsReceiver: 'add'
     });
-    table.setData(runs);
+    await table.setData(runs);
     return table;
   }
 
-  private createOutputRunsTable(runs: LogicRun<string, number>[] = []) {
+  private async createOutputRunsTable(runs: LogicRun<string, number>[] = []) {
     const table = new Tabulator(this.outputRunsTabulatorElement, {
       layout: 'fitColumns',
       columns: this.columns,
@@ -116,25 +133,34 @@ export default class ResultsView extends Vue {
       movableRowsSender: 'delete',
       movableRowsReceiver: 'add'
     });
-    table.setData(runs);
+    await table.setData(runs);
     return table;
   }
 
-  private getInputRunsTable() {
-    if (!this.fInputRunsTable) this.fInputRunsTable = this.createInputRunsTable();
+  private async getInputRunsTable() {
+    if (!this.fInputRunsTable) this.fInputRunsTable = await this.createInputRunsTable();
     return this.fInputRunsTable;
   }
 
-  private getOutputRunsTable() {
-    if (!this.fInputRunsTable) this.fInputRunsTable = this.createInputRunsTable();
+  private async getOutputRunsTable() {
+    if (!this.fInputRunsTable) this.fInputRunsTable = await this.createInputRunsTable();
     return this.fInputRunsTable;
   }
 
   async mounted() {
     const runs = await window.ipc.getRunsForCurrentSession();
-    console.info(runs);
-    this.fInputRunsTable = this.createInputRunsTable(runs);
-    this.fOutputRunsTable = this.createOutputRunsTable();
+    this.fInputRunsTable = await this.createInputRunsTable(runs);
+    this.fOutputRunsTable = await this.createOutputRunsTable();
+  }
+
+  async saveAsJson() {
+    if (!this.fOutputRunsTable) return;
+    this.fOutputRunsTable.download('json', 'results.json');
+  }
+
+  async saveAsCsv() {
+    if (!this.fOutputRunsTable) return;
+    this.fOutputRunsTable.download('csv', 'results.csv');
   }
 
 }

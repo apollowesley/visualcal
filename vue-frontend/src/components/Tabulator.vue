@@ -21,18 +21,19 @@ export default class TabulatorComponent extends Vue {
 
   get tabulatorElement() { return this.$refs.tabulatorElement as HTMLDivElement; }
 
-  private createTable() {
+  private async createTable() {
     const table = new Tabulator(this.tabulatorElement, {
       layout: this.layout,
-      columns: this.columns,
-      rowMouseEnter: this.onRowMouseEnter
+      columns: this.columns
+      // rowMouseEnter: this.onRowMouseEnter
     });
-    table.setData(this.data);
+    await table.setData(this.data);
+    table.redraw();
     return table;
   }
 
-  private getTable() {
-    if (!this.fTable) this.fTable = this.createTable();
+  private async getTable() {
+    if (!this.fTable) this.fTable = await this.createTable();
     return this.fTable;
   }
 
@@ -42,18 +43,19 @@ export default class TabulatorComponent extends Vue {
 
   @Watch('data')
   async onDataChanged(newData: unknown[]) {
-    const table = this.getTable();
+    const table = await this.getTable();
     await table.setData(newData);
+    table.redraw();
   }
 
-  private onRowMouseEnter(_e: UIEvent, row: Tabulator.RowComponent) {
-    const rowElement = row.getElement();
-    if (this.showRowHover) {
-      rowElement.style.background = '#bbb';
-    } else {
-      rowElement.style.background = 'white';
-    }
-  }
+  // private onRowMouseEnter(_e: UIEvent, row: Tabulator.RowComponent) {
+  //   const rowElement = row.getElement();
+  //   if (this.showRowHover) {
+  //     rowElement.style.background = '#bbb';
+  //   } else {
+  //     rowElement.style.background = 'white';
+  //   }
+  // }
 
 }
 </script>
