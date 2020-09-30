@@ -98,7 +98,6 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   logger: import('electron-log').LogFunctions;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
   sessionManager: import('../main/managers/SessionManager').SessionManager;
-  resultManager: import('../main/managers/ResultManager').ResultManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
   assetManager: import('../main/managers/AssetManager').AssetManager;
@@ -128,7 +127,7 @@ interface VisualCalWindowAugment extends VisualCalAugment {
     quit: () => void;
   };
   sessionManager: import('../renderers/managers/RendererSessionManager').RendererSessionManager;
-  resultsManager: import('../renderers/managers/RendererResultManager').RendererResultManager;
+  runsManager: import('../renderers/managers/RendererRunManager').RendererRunManager;
   actionManager: import('../renderers/managers/RendererActionManager').RendererActionManager;
   procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;
   assetManager: import('../renderers/managers/RendererAssetManager').RendererAssetManager;

@@ -16,7 +16,8 @@ export const enum VisualCalWindow {
   UpdateApp = 'update-app',
   BenchConfigView = 'bench-configurations-view',
   DeviceBeforeWrite = 'device-before-write',
-  VueTestWindow = 'vue-test-window'
+  VueTestWindow = 'vue-test-window',
+  Results = 'results'
 }
 
 export const enum WindowPathType {
@@ -284,23 +285,6 @@ export const IpcChannels = {
       error: 'get-device-config-node-infos-for-current-flow-error'
     }
   },
-  results: {
-    load: {
-      request: 'load-results-request',
-      response: 'load-results-response',
-      error: 'load-results-error'
-    },
-    save: {
-      request: 'save-results-request',
-      response: 'save-results-response',
-      error: 'save-results-error'
-    },
-    saveOne: {
-      request: 'saveOne-result-request',
-      response: 'saveOne-result-response',
-      error: 'saveOne-result-error'
-    }
-  },
   actions: {
     start: {
       request: 'start-action-request',
@@ -317,8 +301,7 @@ export const IpcChannels = {
       response: 'reset-action-response',
       error: 'reset-action-error'
     },
-    stateChanged: 'start-action-state-changed',
-    resultAcquired: 'action-result-acquired'
+    stateChanged: 'start-action-state-changed'
   },
   user: {
     active: {

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommunicationInterfaceTypes = exports.IpcChannels = void 0;
+exports.DefaultTiming = exports.CommunicationInterfaceTypes = exports.IpcChannels = void 0;
 // eslint-disable-next-line
 var IpcChannels;
 (function (IpcChannels) {
@@ -19,4 +19,7 @@ exports.CommunicationInterfaceTypes = [
     'Serial Port',
     'Emulated'
 ];
+exports.DefaultTiming = {
+    connectTimeout: 3000
+};
 //# sourceMappingURL=bench-configuration.js.map

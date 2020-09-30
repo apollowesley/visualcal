@@ -30,6 +30,12 @@ export const setWindowSize = (id: VisualCalWindow, opts?: BrowserWindowConstruct
       opts.height = undefined;
       opts.width = undefined;
       opts.titleBarStyle = undefined;
+    case VisualCalWindow.Results:
+      opts.resizable = undefined;
+      opts.maximizable = undefined;
+      opts.height = undefined;
+      opts.width = undefined;
+      opts.titleBarStyle = undefined;
   }
   return opts;
 }
@@ -46,6 +52,8 @@ export const getWindowTitle = (windowId: VisualCalWindow) => {
       return 'VisualCal Update';
     case VisualCalWindow.BenchConfigView:
       return 'VisualCal Bench Configuration';
+    case VisualCalWindow.Results:
+      return 'VisualCal Results';
   }
   return 'VisualCal';
 }
@@ -62,6 +70,8 @@ export const getSubPath = (windowId: VisualCalWindow) => {
       return '/auto-update';
     case VisualCalWindow.BenchConfigView:
       return '/bench-config-editor';
+    case VisualCalWindow.Results:
+      return '/results';
   }
   return '/';
 }

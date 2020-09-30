@@ -1,7 +1,7 @@
 import { NodeProperties } from 'node-red';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
+import { StopOptions } from '../main/managers/ActionManager';
 import VisualCalNodeRed from '../main/node-red';
-import { TriggerOptions } from './indysoft-action-start-types';
 
 const nodeRed = VisualCalNodeRed();
 
@@ -14,7 +14,7 @@ module.exports = (RED: NodeRed) => {
       this.status({});
     };
     this.on('input', (msg: VisualCalNodeRedNodeInputMessage, _send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
-      if (!msg.payload || !msg.payload.section || !msg.payload.action) {
+      if (!msg.payload || !msg.payload.runId) {
         this.error('Message missing payload', msg);
         if (done) done();
         return;
@@ -27,9 +27,7 @@ module.exports = (RED: NodeRed) => {
         if (done) done();
         return;
       }
-      const opts: TriggerOptions = {
-        action: msg.payload.action,
-        section: msg.payload.section,
+      const opts: StopOptions = {
         runId: msg.payload.runId ? msg.payload.runId : 'unknown'
       }
       startNode.runtime.emit('stop', opts);

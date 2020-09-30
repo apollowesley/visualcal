@@ -69,17 +69,17 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       },
       { type: 'separator' },
       {
-        label: 'Console',
-        accelerator: "CmdOrCtrl+Shift+C",
-        click: async () => {
-          await WindowManager.instance.ShowConsole();
-        }
-      },
-      {
         label: 'Editor',
         accelerator: "CmdOrCtrl+Shift+E",
         click: async () => {
           await WindowManager.instance.ShowNodeRedEditor();
+        }
+      },
+      {
+        label: 'Results',
+        accelerator: "CmdOrCtrl+Shift+R",
+        click: async () => {
+          await WindowManager.instance.showResultsWindow();
         }
       },
       {

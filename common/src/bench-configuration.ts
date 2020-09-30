@@ -33,12 +33,25 @@ interface SerialPortConfiguration {
   baudRate: number;
 }
 
+interface Timing {
+  connectTimeout: number;
+  delayBeforeWrite?: number;
+  delayAfterWrite?: number;
+  delayBeforeRead?: number;
+  delayAfterRead?: number;
+}
+
+export const DefaultTiming: Timing = {
+  connectTimeout: 3000
+}
+
 export interface CommunicationInterfaceConfigurationInfo {
   name: string;
   type: CommunicationInterfaceType;
   nationalInstrumentsGpib?: NationalInstrumentsGpibConfiguration;
   tcp?: TcpConfiguration;
   serial?: SerialPortConfiguration;
+  timing: Timing;
 }
 
 export interface BenchConfig {

@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 import { IpcChannels, CommunicationInterfaceTypesEnum } from '../../../constants';
-import { CommunicationInterfaceType, CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
+import { CommunicationInterfaceType, CommunicationInterfaceConfigurationInfo, DefaultTiming } from 'visualcal-common/dist/bench-configuration';
 
 let selectedSessionNameElement: HTMLHeadingElement;
 let interfaceNameElement: HTMLInputElement;
@@ -85,7 +85,8 @@ const init = () => {
   createButton.addEventListener('click', () => {
     const iface: CommunicationInterfaceConfigurationInfo = {
       name: interfaceNameElement.value,
-      type: interfaceTypeElement.selectedOptions[0].value as CommunicationInterfaceType
+      type: interfaceTypeElement.selectedOptions[0].value as CommunicationInterfaceType,
+      timing: DefaultTiming
     };
     switch (iface.type) {
       case CommunicationInterfaceTypesEnum.Emulated:

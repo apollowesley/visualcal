@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height class="grey">
+  <v-container fluid class="grey" style="height: 100vh">
     <v-row>
       <v-col>
         <v-row>
@@ -45,5 +45,7 @@ export default class ResultsView extends Vue {
 </script>
 
 <style>
-
+::-webkit-scrollbar {
+  display: none;
+}
 </style>

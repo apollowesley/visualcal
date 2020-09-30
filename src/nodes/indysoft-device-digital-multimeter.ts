@@ -29,12 +29,11 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
 }
 
 export interface RuntimeNodeInputEventMessagePayload {
+  runId: string;
   unitId?: string;
   rate?: number;
   range?: number;
   address?: number;
-  section?: string;
-  action?: string;
 }
 
 export interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {

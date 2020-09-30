@@ -8,10 +8,10 @@
     />
     <v-row>
       <v-col>
-        <v-container>
+        <v-container fluid>
           <v-row>
             <v-col>
-              <h1 class="text-center">Select a bench configuration to edit</h1>
+              <h1 class="text-center">Bench Configuration Editor</h1>
             </v-col>
           </v-row>
           <v-row
@@ -113,7 +113,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { User } from '@/types/session';
 import { BenchConfig } from 'visualcal-common/src/bench-configuration';
-import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
+import { CommunicationInterfaceTypes, DefaultTiming } from 'visualcal-common/dist/bench-configuration';
 import BenchConfigComponent from '@/components/bench-config/Index.vue';
 import ConfirmDeleteDialogComponent from '@/components/bench-config/ConfirmDeleteDialog.vue';
 
@@ -201,19 +201,19 @@ export default class BenchConfigView extends Vue {
     if (!this.selectedBenchConfig) return;
     switch (this.selectedInterfaceTypeToAdd) {
       case 'Emulated':
-        this.selectedBenchConfig.interfaces.push({ type: 'Emulated', name: 'Emulated' });
+        this.selectedBenchConfig.interfaces.push({ type: 'Emulated', name: 'Emulated', timing: DefaultTiming });
         break;
       case 'National Instruments GPIB':
-        this.selectedBenchConfig.interfaces.push({ type: 'National Instruments GPIB', name: 'National Instruments GPIB', nationalInstrumentsGpib: { address: 0 } });
+        this.selectedBenchConfig.interfaces.push({ type: 'National Instruments GPIB', name: 'National Instruments GPIB', nationalInstrumentsGpib: { address: 0 }, timing: DefaultTiming });
         break;
       case 'Prologix GPIB TCP':
-        this.selectedBenchConfig.interfaces.push({ type: 'Prologix GPIB TCP', name: 'Prologix GPIB TCP', tcp: { host: 'hostname', port: 1234 } });
+        this.selectedBenchConfig.interfaces.push({ type: 'Prologix GPIB TCP', name: 'Prologix GPIB TCP', tcp: { host: 'hostname', port: 1234 }, timing: DefaultTiming });
         break;
       case 'Prologix GPIB USB':
-        this.selectedBenchConfig.interfaces.push({ type: 'Prologix GPIB USB', name: 'Prologix GPIB USB', serial: { port: '', baudRate: 9600 } });
+        this.selectedBenchConfig.interfaces.push({ type: 'Prologix GPIB USB', name: 'Prologix GPIB USB', serial: { port: '', baudRate: 9600 }, timing: DefaultTiming });
         break;
       case 'Serial Port':
-        this.selectedBenchConfig.interfaces.push({ type: 'Serial Port', name: 'Serial Port', serial: { port: '', baudRate: 9600 } });
+        this.selectedBenchConfig.interfaces.push({ type: 'Serial Port', name: 'Serial Port', serial: { port: '', baudRate: 9600 }, timing: DefaultTiming });
         break;
     }
   }

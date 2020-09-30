@@ -15,7 +15,7 @@ body {
 .row-results {
   position: relative;
   top: 10px;
-  min-height: 250px;
+  min-height: 200px;
 }
 
 .row-logs {
@@ -46,5 +46,15 @@ select {
 
 #vc-comm-interface-log {
   max-height: 250px;
+}
+
+.tabulator-table {
+  min-height: 75px;
+}
+
+.design-visible {
+  border-width: 1px;
+  border: dashed;
+  border-color: grey;
 }
 

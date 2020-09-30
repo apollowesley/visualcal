@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron';
 import { ActionState, IpcChannels } from '../../constants';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
+import { StartOptions, StopOptions } from '../../main/managers/ActionManager';
 
 export interface StateChangeInfo {
   state: ActionState;
@@ -12,13 +13,12 @@ export interface StateChangeInfo {
 
 interface Events {
   started: () => void;
-  startError: (args: { opts: TriggerOptions, err: Error | string }) => void;
+  startError: (args: { opts: StartOptions, err: Error | string }) => void;
   stopped: () => void;
   stopError: (err: Error) => void;
   reset: () => void;
   resetError: (err: Error) => void;
   stateChanged: (info: StateChangeInfo) => void;
-  resultAcquired: (info: { result: LogicResult }) => void;
 }
 
 export class RendererActionManager extends TypedEmitter<Events> {
@@ -26,7 +26,7 @@ export class RendererActionManager extends TypedEmitter<Events> {
   constructor() {
     super();
     ipcRenderer.on(IpcChannels.actions.start.response, () => this.emit('started'));
-    ipcRenderer.on(IpcChannels.actions.start.error, (_, args: { opts: TriggerOptions, err: Error | string }) => this.emit('startError', args));
+    ipcRenderer.on(IpcChannels.actions.start.error, (_, args: { opts: StartOptions, err: Error | string }) => this.emit('startError', args));
 
     ipcRenderer.on(IpcChannels.actions.stop.response, () => this.emit('stopped'));
     ipcRenderer.on(IpcChannels.actions.stop.error, (_, err: Error) => this.emit('stopError', err));
@@ -35,14 +35,13 @@ export class RendererActionManager extends TypedEmitter<Events> {
     ipcRenderer.on(IpcChannels.actions.reset.error, (_, err: Error) => this.emit('resetError', err));
 
     ipcRenderer.on(IpcChannels.actions.stateChanged, (_, info: StateChangeInfo) => this.emit('stateChanged', info));
-    ipcRenderer.on(IpcChannels.actions.resultAcquired, (_, info: { result: LogicResult }) => this.emit('resultAcquired', info));
   }
 
-  start(opts: TriggerOptions) {
+  start(opts: StartOptions) {
     ipcRenderer.send(IpcChannels.actions.start.request, opts);
   }
 
-  stop(opts: TriggerOptions) {
+  stop(opts: StopOptions) {
     ipcRenderer.send(IpcChannels.actions.stop.request, opts);
   }
 

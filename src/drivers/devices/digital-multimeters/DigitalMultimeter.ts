@@ -1,3 +1,4 @@
+import { NumericMeasurement } from 'visualcal-common/dist/result';
 import { Device } from '../Device';
 import { DeviceDefinition } from '../device-interfaces';
 
@@ -41,6 +42,6 @@ export abstract class DigitalMultimeterDevice extends Device {
 
   abstract setByExpectedInput(expectedInput: number | bigint, mode: DigitalMultimeterMode, samplesPerSecond: number): Promise<void>;
 
-  abstract getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement>;
+  abstract getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement<string, number>>;
 
 }

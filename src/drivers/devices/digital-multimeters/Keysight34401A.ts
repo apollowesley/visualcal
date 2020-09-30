@@ -1,6 +1,7 @@
 import { DigitalMultimeterDevice, DigitalMultimeterMode, SetModeOptions, MeasurementConfiguration, Configuration } from './DigitalMultimeter';
 import { Identifiable, DeviceIdentity } from '../../IIdentifiable';
 import { sleep } from '../../utils';
+import { NumericMeasurement } from 'visualcal-common/dist/result';
 
 // Volt ranges (volts)
 const VoltsACRangeCommands: string[] = ['AUTO ON', '0.1', '1', '10', '100', '750' ];
@@ -91,7 +92,7 @@ export class Keysight34401A extends DigitalMultimeterDevice implements Identifia
     return config;
   }
 
-  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement> {
+  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement<string, number>> {
     if (!this.communicationInterface) throw new Error('Communication interface is undefined');
     await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';

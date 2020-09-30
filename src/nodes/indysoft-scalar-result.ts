@@ -1,6 +1,9 @@
 import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, NodeRedNodeMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import electronLog from 'electron-log';
+import { v4 as uuid } from 'uuid';
+import { RunManager } from '../main/managers/RunManager';
+import { NumericMeasurement, LogicResult } from 'visualcal-common/dist/result';
 
 export const NODE_TYPE = 'indysoft-scalar-result';
 
@@ -31,11 +34,8 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
 }
 
 export interface InputMessagePayload {
-  sessionId: string;
   runId: string;
-  section: string;
-  action: string;
-  value: string | number | NumericMeasurement;
+  value: string | number | NumericMeasurement<string, number>;
 }
 
 export interface InputMessage extends NodeRedNodeMessage {
@@ -62,7 +62,7 @@ module.exports = (RED: NodeRed) => {
         return;
       }
       // Make sure we have section and action in the msg.payload
-      if (!msg.payload.section && !msg.payload.action) {
+      if (!msg.payload.runId) {
         this.error('Missing Action Name or Read Tag');
         if (done) done();
         return;
@@ -75,20 +75,18 @@ module.exports = (RED: NodeRed) => {
         measuredValue = msg.payload.value.value;
         rawValue = msg.payload.value.raw;
       };
-      const result: LogicResult = {
-        sessionId: msg.payload.sessionId,
+      const result: LogicResult<string, number> = {
+        id: uuid(),
         runId: msg.payload.runId,
-        section: msg.payload.section,
-        action: msg.payload.action,
         type: 'scalar',
         description: this.description,
         timestamp: new Date(Date.now()),
         baseQuantity: this.baseQuantity,
         derivedQuantity: this.derivedQuantity,
         derivedQuantityPrefix: this.derivedQuantityPrefix === 'none' ? '' : this.derivedQuantityPrefix,
-        inputLevel: this.inputValue,
         minimum: this.min,
         maximum: this.max,
+        inputLevel: this.inputValue,
         rawValue: rawValue,
         measuredValue: measuredValue,
         passed: false
@@ -99,11 +97,11 @@ module.exports = (RED: NodeRed) => {
         shape: 'dot',
         text: `Last: ${result.passed ? 'Passed' : 'Failed'} | ${result.measuredValue}`
       });
-      global.visualCal.actionManager.handleResult(result);
+      RunManager.instance.addResult(msg.payload.runId ,result);
       // Delay sending to the next node, in case it's a completed node, so that our result gets to the frontend first.
       // 100ms for now, but we don't know how long it should be delayed, yet.
       setTimeout(() => {
-        send({ payload: result });
+        send({ payload: { runId: msg.payload.runId, result: result } });
         if (done) done();
       }, 100);
     });

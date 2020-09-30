@@ -4,6 +4,7 @@ import { Fluke45 } from '../drivers/devices/digital-multimeters/Fluke45';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
 import { getDeviceConfig } from '../main/node-red/utils';
 import { DeviceManager } from '../main/managers/DeviceManager';
+import { NumericMeasurement } from 'visualcal-common/dist/result';
 
 export const NODE_TYPE = 'indysoft-device-fluke45';
 
@@ -38,7 +39,7 @@ export interface RuntimeNodeInputEventMessagePayload {
   range?: number;
   section?: string;
   action?: string;
-  value: NumericMeasurement;
+  value: NumericMeasurement<string, number>;
 }
 
 export interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {

@@ -51,9 +51,6 @@ export class WindowManager extends TypedEmitter<Events> {
     });
     ipcMain.on(IpcChannels.windows.show, async (_, id: VisualCalWindow) => {
       switch (id) {
-        case VisualCalWindow.Console:
-          await this.ShowConsole();
-          break;
         case VisualCalWindow.CreateProcedure:
           await this.ShowCreateProcedureWindow();
           break;
@@ -342,22 +339,6 @@ export class WindowManager extends TypedEmitter<Events> {
     return w;
   }
 
-  // Console log window
-  async ShowConsole() {
-    // const onShow = () => {
-    //   try {
-    //     log.query({ fields: ['message'] }, (err, results) => {
-    //       if (this.consoleWindow && !err && results && Array.isArray(results)) this.consoleWindow.webContents.send('results', [results]);
-    //       else if (err) throw err;
-    //     });
-    //   } catch (error) {
-    //     dialog.showErrorBox('Error querying log', error.message);
-    //   }
-    // };
-    const w = await this.createWindow(VisualCalWindow.Console, undefined, false);
-    return w;
-  }
-
   // Node-red editor window
   async ShowNodeRedEditor() {
     const w = await this.createWindow(VisualCalWindow.NodeRedEditor, undefined, true);
@@ -459,6 +440,17 @@ export class WindowManager extends TypedEmitter<Events> {
   async showDeviceBeforeWriteWindow() {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     const w = await this.createWindow(VisualCalWindow.DeviceBeforeWrite, this.mainWindow);
+    return w;
+  }
+
+  async showResultsWindow() {
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    const w = await this.showVueWindow(VisualCalWindow.Results, {
+      subPath: getSubPath(VisualCalWindow.Results),
+      windowOpts: {
+        parent: this.mainWindow
+      }
+    });
     return w;
   }
 

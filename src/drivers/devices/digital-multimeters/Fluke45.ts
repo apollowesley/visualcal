@@ -1,6 +1,7 @@
 import { DigitalMultimeterDevice, DigitalMultimeterMode, MeasurementConfiguration, Configuration } from './DigitalMultimeter';
 import { Identifiable, DeviceIdentity } from '../../IIdentifiable';
 import { sleep } from '../../utils';
+import { NumericMeasurement } from 'visualcal-common/dist/result';
 
 export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
 
@@ -52,7 +53,7 @@ export class Fluke45 extends DigitalMultimeterDevice implements Identifiable {
     return config;
   }
 
-  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement> {
+  async getMeasurement(config: MeasurementConfiguration): Promise<NumericMeasurement<string, number>> {
     if (!this.communicationInterface) throw new Error('Communication interface is undefined');
     await this.communicationInterface.setEndOfStringTerminator('Lf');
     let command = '';

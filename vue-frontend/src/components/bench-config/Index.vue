@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-container>
+    <v-container fluid>
       <v-row no-gutters>
         <v-col>
           <h2>Interfaces</h2>
@@ -88,7 +88,7 @@ export default class BenchConfigComponent extends Vue {
   }
 
   columns: Tabulator.ColumnDefinition[] = [
-    { title: 'Name', field: 'name', editable: true, editor: 'input' },
+    { title: 'Name', field: 'name', editable: true, editor: 'input', frozen: true },
     { title: 'Type', field: 'type' },
     { title: 'GPIB Address', field: 'nationalInstrumentsGpib.address', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell(), editable: (cell) => cell.getValue() !== undefined, editor: 'number' },
     { title: 'TCP', columns: [
@@ -101,6 +101,13 @@ export default class BenchConfigComponent extends Vue {
       { title: 'Parity', field: 'serial.parity', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell() },
       { title: 'Stop Bits', field: 'serial.stopBits', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell() },
       { title: 'Data Bits', field: 'serial.dataBits', formatter: (cell) => cell.getValue() !== undefined ? cell.getValue() : this.createUnusedCell() }
+    ] },
+    { title: 'Timing (all times are in milliseconds)', columns: [
+      { title: 'Connect Timeout', field: 'connectTimeout', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay before write', field: 'delayBeforeWrite', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay after write', field: 'delayAfterWrite', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay before read', field: 'delayBeforeRead', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay after read', field: 'delayAfterRead', editable: true, editor: 'number', validator: 'min: 0' }
     ] },
     { title: '', formatter: this.createDeleteInterfaceColumnButton }
   ];

@@ -5,7 +5,7 @@ import { RendererProcedureManager } from './managers/RendererProcedureManager';
 import { IpcChannels, VisualCalWindow } from '../constants';
 import { RendererSessionManager } from './managers/RendererSessionManager';
 import { browserUtils } from './utils/browser-utils';
-import { RendererResultManager } from './managers/RendererResultManager';
+import { RendererRunManager } from './managers/RendererRunManager';
 import { RendererActionManager } from './managers/RendererActionManager';
 import { RendererAssetManager } from './managers/RendererAssetManager';
 import { RendererUserManager } from './managers/RendererUserManager';
@@ -13,6 +13,7 @@ import { CommunicationInterfaceManager } from './managers/CommunicationInterface
 import electronIpcLog from 'electron-ipc-log';
 import { removeDesignTimeFromAllElements } from './utils/runtime';
 import electronLog from 'electron-log';
+import { LogicResult } from 'visualcal-common/dist/result';
 
 electronLog.transports.file.level = 'debug';
 electronLog.transports.console.level = 'debug';
@@ -51,14 +52,14 @@ window.visualCal = {
     }
   },
   log: {
-    result: (result: LogicResult) => ipcRenderer.send(IpcChannels.log.result, result),
+    result: (result: LogicResult<string, number>) => ipcRenderer.send(IpcChannels.log.result, result),
     info: (msg: any) => ipcRenderer.send(IpcChannels.log.info, msg),
     warn: (msg: any) => ipcRenderer.send(IpcChannels.log.warn, msg),
     error: (msg: any) => ipcRenderer.send(IpcChannels.log.error, msg)
   },
   procedureManager: new RendererProcedureManager(),
   sessionManager: new RendererSessionManager(),
-  resultsManager: new RendererResultManager(),
+  runsManager: new RendererRunManager(),
   actionManager: new RendererActionManager(),
   assetManager: new RendererAssetManager(),
   userManager: new RendererUserManager(),

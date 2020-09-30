@@ -5,13 +5,13 @@ import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
 import { NodeRed } from '../@types/logic-server';
-import { ResultManager } from './managers/ResultManager';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
 import { UserManager } from './managers/UserManager';
 import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronLog from 'electron-log';
+import { LogicResult } from 'visualcal-common/dist/result';
 
 const log = electronLog.scope('VisualCal');
 
@@ -36,14 +36,13 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     dirs: localDirs,
     files: localFiles,
     log: {
-      result: (result: LogicResult) => log.info('result', result),
+      result: (result: LogicResult<string, number>) => log.info('result', result),
       info: (msg: any) => log.info(msg),
       warn: (msg: any) => log.warn(msg),
       error: (msg: any) => log.error(msg)
     },
     procedureManager: new ProcedureManager(localDirs.userHomeData.procedures),
     sessionManager: new SessionManager(userManager),
-    resultManager: new ResultManager(),
     actionManager: new ActionManager(userManager),
     userInteractionManager: new UserInteractionManager(),
     assetManager: new AssetManager(),

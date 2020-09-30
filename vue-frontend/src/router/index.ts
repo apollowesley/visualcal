@@ -50,6 +50,11 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-bench-config" */ '@/views/BenchConfigEditor.vue')
   },
   {
+    path: '/results',
+    name: 'Results',
+    component: () => import(/* webpackChunkName: "view-results" */ '@/views/Results.vue')
+  },
+  {
     path: '*',
     component: () => import(/* webpackChunkName: "view-no-route" */ '@/views/NoRoute.vue')
   }

@@ -6,12 +6,14 @@ import { DeviceLogHandler } from './DeviceLogHandler';
 import { IpcHandler } from './IpcHandler';
 import { MainLogHandler } from './MainLogHandler';
 import { ProcedureHandler } from './ProcedureHandler';
-import { ResultHandler } from './ResultHandler';
+import { RunHandler } from './RunHandler';
 import { StatusHandler } from './StatusHandler';
 import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
+import { v4 as uuid } from 'uuid';
+import { StartOptions, StopOptions } from '../../../../main/managers/ActionManager';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
@@ -122,10 +124,9 @@ const deviceLog = new DeviceLogHandler({
 // ================================================================================================
 //  Results handler
 // ================================================================================================
-const results = new ResultHandler({
+const runHandler = new RunHandler({
   tableId: 'vc-results-tabulator',
-  clearResultsElementId: 'vc-clear-results-button',
-  runsSelectElementId: 'vc-runs-select'
+  runManager: window.visualCal.runsManager
 });
 // ************************************************************************************************
 
@@ -179,7 +180,7 @@ resetButton.addEventListener('click', () => {
   const triggerOpts: TriggerOptions = {
     action: '',
     section: '',
-    runId: Date.now().toString(),
+    runId: runHandler.currentRunId || ''
   };
   session.lastSectionName = undefined;
   session.lastActionName = undefined;
@@ -235,22 +236,24 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     return;
   }
   session.configuration.devices = devices;
-  const opts: TriggerOptions = {
-    action: action.name,
-    section: section.shortName,
-    runId: runName,
-    session: session
-  };
   if (session.lastSectionName && session.lastActionName) {
-    window.visualCal.actionManager.stop(opts);
+    const stopOpts: StopOptions = {
+      runId: runHandler.currentRunId || ''
+    }
+    window.visualCal.actionManager.stop(stopOpts);
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
-    opts.interceptDeviceWrites = interceptDeviceWritesCheckbox.checked;
+    const startOpts: StartOptions = {
+      actionId: action.name,
+      sectionId: section.shortName,
+      runDescription: runName,
+      session: session
+    };
+    startOpts.interceptDeviceWrites = interceptDeviceWritesCheckbox.checked;
     const deviceConfigs = devicesTable.getData() as CommunicationInterfaceDeviceNodeConfiguration[];
-    opts.deviceConfig = deviceConfigs;
-    results.addRun(runName);
-    window.visualCal.actionManager.start(opts);
+    startOpts.deviceConfig = deviceConfigs;
+    window.visualCal.actionManager.start(startOpts);
     session.lastSectionName = section.name;
     session.lastActionName = action.name;
   }
@@ -261,7 +264,6 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
     user = viewInfo.user;
     procedure.setTitle(viewInfo.procedure.name);
     session = viewInfo.session;
-    results.loadResultsForSession(session.name);
     procedure.sectionHandler.items = viewInfo.sections;
     deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
     let selectedBenchConfig: BenchConfig | undefined = undefined;

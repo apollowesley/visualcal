@@ -237,7 +237,7 @@ export class UserManager extends TypedEmitter<Events> {
 
   updateSession(session: Session) {
     const existingSession = this.getSession(session.username, session.name);
-    if (existingSession) throw new Error(`A session named, ${session.name}, already exists for user, ${session.username}`);
+    if (!existingSession) throw new Error(`A session named, ${session.name}, does not exist for user, ${session.username}`);
     const user = this.getOne(session.username);
     if (!user) throw new Error(`User, ${session.username}, does not exist`);
     if (!user.sessions) throw new Error(`User, ${session.username}, does not have any sessions to update`);
