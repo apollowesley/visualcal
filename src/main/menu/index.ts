@@ -1,6 +1,7 @@
 import { BrowserWindow, shell, MenuItemConstructorOptions, Menu, dialog } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import { WindowManager } from '../managers/WindowManager';
+import { checkForUpdates } from '../auto-update';
 
 interface Options {
   start?: any;
@@ -108,6 +109,16 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       }
     ]
   });
+
+  template.push({
+    label: 'Options',
+    submenu: [
+      {
+        label: 'Check for updates',
+        click: async (menuItem) => await checkForUpdates(menuItem)
+      }
+    ]
+  })
 
   // Add Dev menu if in dev mode
   template.push({

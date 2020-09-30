@@ -32,7 +32,6 @@
     "url": "https://github.com/scottpageindysoft/visualcal"
   },
   "dependencies": {
-    "@imjs/electron-differential-updater": "^5.0.1",
     "@node-red-contrib-themes/midnight-red": "^1.4.4",
     "@schemastore/package": "0.0.6",
     "aedes": "^0.42.6",
@@ -46,6 +45,7 @@
     "electron-is-dev": "^1.2.0",
     "electron-log": "^4.2.4",
     "electron-store": "^6.0.0",
+    "electron-updater": "^4.3.5",
     "express": "^4.17.1",
     "grapesjs": "^0.16.22",
     "grapesjs-custom-code": "^0.1.3",

@@ -1,156 +1,60 @@
-import { autoUpdater, CancellationToken, UpdateInfo } from '@imjs/electron-differential-updater';
-import { ProgressInfo } from 'electron-builder';
-import { isDev } from '../utils';
-import { TypedEmitter } from 'tiny-typed-emitter';
-import { BrowserWindow, dialog, ipcMain } from 'electron';
-import electronLog from 'electron-log';
-import { AutoUpdateEvents, IpcChannels } from 'visualcal-common/dist/auto-update';
+import { BrowserWindow, dialog, MenuItem } from 'electron';
+import { autoUpdater } from 'electron-updater';
 
-const log = electronLog.create('auto-update');
-log.transports.file.level = false;
-log.transports.console.level = 'warn';
+/**
+ * updater.js
+ *
+ * Please use manual update only when it is really required, otherwise please use recommended non-intrusive auto update.
+ *
+ * Import steps:
+ * 1. create `updater.js` for the code snippet
+ * 2. require `updater.js` for menu implementation, and set `checkForUpdates` callback from `updater` for the click property of `Check Updates...` MenuItem.
+ */
 
-interface Events extends AutoUpdateEvents {
-  aborted: () => void;
-  cancelled: () => void;
-}
 
-export class AutoUpdater extends TypedEmitter<Events> {
+let updater: MenuItem | null;
+autoUpdater.autoDownload = false;
 
-  fUpdateWindow: BrowserWindow;
-  fAborted = false;
-  fCancellationToken?: CancellationToken;
+autoUpdater.on('error', (error) => {
+  dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString());
+});
 
-  constructor(updateWindow: BrowserWindow) {
-    super();
-    this.fUpdateWindow = updateWindow;
+autoUpdater.on('update-available', async () => {
+  const result = await dialog.showMessageBox({
+    type: 'info',
+    title: 'Found Updates',
+    message: 'Found updates, do you want update now?',
+    buttons: ['Yes', 'No']
+  });
+  if (result.response === 0) {
+    autoUpdater.downloadUpdate();
   }
-
-  private get updateWindow() { return this.fUpdateWindow; }
-
-  private onAborted() {
-    this.emit('aborted');
+  else {
+    if (updater) updater.enabled = true;
+    updater = null;
   }
+});
 
-  private onError(error: Error) {
-    log.error(error);
-    this.emit('error', error);
-  }
+autoUpdater.on('update-not-available', () => {
+  dialog.showMessageBox({
+    title: 'No Updates',
+    message: 'Current version is up-to-date.'
+  });
+  if (updater) updater.enabled = true;
+  updater = null;
+});
 
-  private sendToUpdateWindow(channel: string, arg?: Error | UpdateInfo | ProgressInfo) {
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    setImmediate( () => this.updateWindow.webContents.send(channel, arg));
-  }
+autoUpdater.on('update-downloaded', async () => {
+  await dialog.showMessageBox({
+    title: 'Install Updates',
+    message: 'Updates downloaded, application will now quit for update...'
+  });
+  setImmediate(() => autoUpdater.quitAndInstall());
+});
 
-  private onUpdateError(error: Error) {
-    log.info('onUpdateError');
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    this.emit('updateError', error);
-    this.sendToUpdateWindow(IpcChannels.Error, error);
-    this.onError(error); // Send last so other notifications have a chance to get sent before main process reacts
-  }
-
-  private onCheckingForUpdateStarted() {
-    log.info('onCheckingForUpdateStarted');
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    this.emit('checkingForUpdatesStarted');
-    this.sendToUpdateWindow(IpcChannels.StartedChecking);
-  }
-
-  private async onUpdateAvailable(info: UpdateInfo) {
-    log.info('onUpdateAvailable');
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    ipcMain.once(IpcChannels.DownloadAndInstallRequest, async () => {
-      this.fCancellationToken = new CancellationToken();
-      try {
-        await autoUpdater.downloadUpdate(this.fCancellationToken);
-      } catch (error) {
-        const err = error as Error;
-        dialog.showErrorBox('An error occured attempting to download the update', err.message);
-        this.emit('error', err);
-      }
-    });
-    ipcMain.once(IpcChannels.CancelRequest, () => {
-      this.emit('cancelled');
-    });
-    this.emit('updateAvailable', info);
-    this.sendToUpdateWindow(IpcChannels.UpdateAvailable, info);
-  }
-
-  private onUpdateNotAvailable(info: UpdateInfo) {
-    log.info('onUpdateNotAvailable');
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    this.emit('updateNotAvailable', info);
-    this.sendToUpdateWindow(IpcChannels.UpdateNotAvailable, info);
-  }
-
-  private onDownloadProgressChanged(progress: ProgressInfo) {
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    // this.emit('downloadProgressChanged', progress);
-    this.sendToUpdateWindow(IpcChannels.DownloadProgressChanged, progress);
-  }
-
-  private onUpdateDownloaded(info: UpdateInfo) {
-    log.info('onUpdateDownloaded');
-    if (this.fAborted) {
-      this.onAborted();
-      return;
-    }
-    this.emit('updateDownloaded', info);
-    this.sendToUpdateWindow(IpcChannels.UpdateDownloaded, info);
-    autoUpdater.quitAndInstall();
-  }
-
-  public async checkForUpdates() {
-    this.fAborted = false;
-    // autoUpdater.logger = log;
-    autoUpdater.autoDownload = false;
-    autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.allowDowngrade = false;
-    autoUpdater.allowPrerelease = true;
-    autoUpdater.logger = log;
-    autoUpdater.on('error', (error: Error) => this.onUpdateError(error));
-    autoUpdater.on('checking-for-update', () => this.onCheckingForUpdateStarted());
-    autoUpdater.on('update-available', async (info: UpdateInfo) => {
-      try {
-        await this.onUpdateAvailable(info);
-      } catch (error) {
-        if (error.message && error.message === 'Cancelled') return;
-      }
-    });
-    autoUpdater.on('update-not-available', (info: UpdateInfo) => this.onUpdateNotAvailable(info));
-    autoUpdater.on('download-progress', (progress: ProgressInfo) => this.onDownloadProgressChanged(progress));
-    autoUpdater.on('update-downloaded', (info: UpdateInfo) => this.onUpdateDownloaded(info));
-    if (isDev()) {
-      await Promise.resolve();
-    } else {
-      log.info('Checking for updates');
-      await autoUpdater.checkForUpdatesAndNotify();
-    }
-  }
-
-  public abort() {
-    this.fAborted = true;
-    if (this.fCancellationToken && !this.fCancellationToken.cancelled) this.fCancellationToken.cancel();
-    autoUpdater.removeAllListeners();
-  }
-
+// export this to MenuItem click callback
+export async function checkForUpdates(menuItem: MenuItem) {
+  updater = menuItem;
+  updater.enabled = false;
+  await autoUpdater.checkForUpdates();
 }
