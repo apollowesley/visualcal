@@ -454,4 +454,15 @@ export class WindowManager extends TypedEmitter<Events> {
     return w;
   }
 
+  async showDriverBuilderWindow() {
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    const w = await this.showVueWindow(VisualCalWindow.DriverBuilder, {
+      subPath: getSubPath(VisualCalWindow.DriverBuilder),
+      windowOpts: {
+        parent: this.mainWindow
+      }
+    });
+    return w;
+  }
+
 }

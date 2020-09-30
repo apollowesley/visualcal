@@ -55,6 +55,11 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-results" */ '@/views/Results.vue')
   },
   {
+    path: '/driver-builder',
+    name: 'DriverBuilder',
+    component: () => import(/* webpackChunkName: "view-results" */ '@/views/DriverBuilder.vue')
+  },
+  {
     path: '*',
     component: () => import(/* webpackChunkName: "view-no-route" */ '@/views/NoRoute.vue')
   }

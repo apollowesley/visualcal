@@ -111,6 +111,16 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
   });
 
   template.push({
+    label: 'Tools',
+    submenu: [
+      {
+        label: 'Driver builder',
+        click: async () => await WindowManager.instance.showDriverBuilderWindow()
+      }
+    ]
+  });
+
+  template.push({
     label: 'Options',
     submenu: [
       {
@@ -118,7 +128,7 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
         click: async (menuItem) => await checkForUpdates(menuItem)
       }
     ]
-  })
+  });
 
   // Add Dev menu if in dev mode
   template.push({

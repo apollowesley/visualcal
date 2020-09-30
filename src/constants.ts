@@ -17,7 +17,8 @@ export const enum VisualCalWindow {
   BenchConfigView = 'bench-configurations-view',
   DeviceBeforeWrite = 'device-before-write',
   VueTestWindow = 'vue-test-window',
-  Results = 'results'
+  Results = 'results',
+  DriverBuilder = 'driver-builder'
 }
 
 export const enum WindowPathType {
