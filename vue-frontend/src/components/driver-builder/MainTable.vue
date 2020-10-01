@@ -1,5 +1,75 @@
 <template>
   <v-container fluid class="grey">
+    <v-form
+      v-model="canSaveForm"
+    >
+      <v-row dense>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+          <v-text-field
+            v-model="driver.manufacturer"
+            :rules="rules"
+            label="Manufacturer"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+          <v-text-field
+            v-model="driver.model"
+            :rules="rules"
+            label="Model"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="4"
+        >
+          <v-text-field
+            v-model="driver.nomenclature"
+            :rules="rules"
+            label="Nomenclature"
+            hint="Instrument class or description"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-checkbox
+            v-model="driver.identifiable"
+            label="Identifiable?"
+          />
+        </v-col>
+        <v-col
+          v-if="driver.identifiable"
+        >
+          <v-text-field
+            v-model="driver.identityQueryCommand"
+            :rules="driver.identifiable ? rules : []"
+            label="Identity Query Command"
+            hint="Command sent to instrument to ask it for it's identity"
+          />
+        </v-col>
+        <v-col>
+          <v-checkbox
+            v-model="driver.isGpib"
+            label="Has a GPIB interface?"
+          />
+        </v-col>
+        <v-col>
+          <v-select
+            v-model="driver.terminator"
+            :rules="rules"
+            :items="['None', 'Carriage return', 'Line feed', 'Carriage return / Line feed']"
+            label="Terminator"
+            hint="Character(s) used to signal the end of a read/write"
+          />
+        </v-col>
+      </v-row>
+    </v-form>
     <v-row no-gutters>
       <v-col
         class="text-center"
@@ -14,29 +84,67 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Tablulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
+import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 
-type CommandType = 'Read' | 'Write' | 'Query';
-type DataType = 'Boolean' | 'Number' | 'String' | 'Binary' | 'IEEE-488.2 Identity';
+type InstructionType = 'Read' | 'Write' | 'Query';
+type DataType = 'Boolean' | 'Number' | 'String' | 'Binary' | 'Array';
 
 interface Instruction {
   id: string;
+  order: number;
   name: string;
   description?: string;
-  commandType: CommandType;
+  type: InstructionType;
   responseDataType?: DataType;
   delayBefore?: number;
   delayAfter?: number;
+  readAttempts?: number;
   command: string;
 }
 
+interface Driver {
+  manufacturer: string;
+  model: string;
+  nomenclature: string;
+  identifiable: boolean;
+  identityQueryCommand: string;
+  isGpib: boolean;
+  terminator: string;
+}
+
 const MockInstructions: Instruction[] = [
-  { id: uuid(), name: 'Get identity', commandType: 'Query', responseDataType: 'String', delayAfter: 500, command: '*IDN?' }
+  { id: uuid(), order: 0, name: 'Get identity', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
+  { id: uuid(), order: 0, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC?' },
+  { id: uuid(), order: 0, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC?' }
 ];
+
+const MockDriver: Driver = {
+  manufacturer: 'Keysight',
+  model: '34401A',
+  nomenclature: 'Digital Multimeter',
+  identifiable: true,
+  identityQueryCommand: '*IDN?',
+  isGpib: true,
+  terminator: 'Line feed'
+};
 
 @Component
 export default class MainTableComponent extends Vue {
 
   private fTable?: Tablulator;
+  rules: VuetifyRule[] = [
+    requiredRule
+  ];
+  canSaveForm = false;
+  driver: Driver = process.env.NODE_ENV === 'production' ? {
+    manufacturer: '',
+    model: '',
+    nomenclature: '',
+    identifiable: false,
+    identityQueryCommand: '*IDN?',
+    isGpib: false,
+    terminator: 'None'
+  } : MockDriver;
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
   get table() {
@@ -48,13 +156,18 @@ export default class MainTableComponent extends Vue {
 
   private getIsResponseDataTypeEditable(cell: Tablulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
-    return instruction.commandType === 'Read' || instruction.commandType === 'Query';
+    return instruction.type === 'Read' || instruction.type === 'Query';
   }
 
   private getIsCommandEditable(cell: Tablulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
-    if (instruction.commandType === 'Read') return false;
+    if (instruction.type === 'Read') return false;
     return true;
+  }
+
+  private getIsReadAttemptsEditable(cell: Tablulator.CellComponent) {
+    const instruction = this.getInstructionFromCell(cell);
+    return instruction.type === 'Read' || instruction.type === 'Query';
   }
 
   private getCommandTypeEditorParams(): Tablulator.SelectParams {
@@ -74,13 +187,14 @@ export default class MainTableComponent extends Vue {
         Number: 'Number',
         String: 'String',
         Binary: 'Binary',
-        Ieee4882Identity: 'IEEE-488.2 Identity'
+        Array: 'Array'
       }
     };
   }
 
   private async updateInstruction(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
+    if (!instruction.readAttempts) instruction.readAttempts = 1;
     if (this.getIsResponseDataTypeEditable(cell)) {
       if (!instruction.responseDataType) instruction.responseDataType = 'String';
     } else {
@@ -110,14 +224,29 @@ export default class MainTableComponent extends Vue {
     return div;
   }
 
+  private formatReadAttemptsCell(cell: Tablulator.CellComponent) {
+    const isEditable = this.getIsReadAttemptsEditable(cell);
+    const div = document.createElement('div') as HTMLDivElement;
+    div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
+    div.style.height = '100%';
+    div.style.width = '100%';
+    if (isEditable) div.innerText = cell.getValue();
+    return div;
+  }
+
   private columns: Tablulator.ColumnDefinition[] = [
     { title: 'Name', field: 'name', editable: true, editor: 'input', validator: 'required' },
-    { title: 'Command type', field: 'commandType', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
+    { title: 'Type', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
-    { title: 'Response data type (Read/Query only)', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
-    { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
-    { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' },
-    { title: 'Command', field: 'command', editable: this.getIsCommandEditable, editor: 'input', validator: 'required', formatter: this.formatCommandCell }
+    { title: 'Read/Query', columns: [
+      { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
+      { title: 'Read attempts', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min 1', formatter: this.formatReadAttemptsCell }
+    ]},
+    { title: 'Timing', columns: [
+      { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
+      { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
+    ]},
+    { title: 'Command', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' }
   ]
 
   private createTable() {
