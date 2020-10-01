@@ -209,7 +209,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await this.onBeforeWrite(data);
     await this.write(data);
     await this.onAfterWrite(data);
-    await sleep(100);
   }
 
   protected async onBeforeRead() {

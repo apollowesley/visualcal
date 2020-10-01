@@ -22,12 +22,12 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await super.onConnected();
     if (this.resetOnConnect) await this.reset();
     // const version = await this.getVersion();
-    await this.writeToController('++savecfg 0');
-    await this.setMode(Mode.Controller);
     await this.setAutoReadAfterWrite(false);
+    await this.writeString('++savecfg 0');
+    await this.setMode(Mode.Controller);
     await this.setEndOfStringTerminator('Lf');
     await this.setEndOfInstruction(true);
-    await this.writeToController('++read_tmo_ms 3000');
+    await this.writeString('++read_tmo_ms 3000');
     await this.interfaceClear();
     // log.info(`Connected to Prologix controller, version ${version}`);
   }
@@ -66,13 +66,6 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     });
   }
 
-  protected async writeToController(command: string) {
-    const data = this.fTextEncoder.encode(command);
-    await this.onBeforeWrite(data);
-    await this.write(data);
-    await this.onAfterWrite(data);
-  }
-
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
       if (this.isDisconnecting) return resolve();
@@ -96,7 +89,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
       }
       this.duplexClient.once('error', handleError);
       this.fReadlineParser.on('data', handleData);
-      await this.writeToController('++read eoi');
+      await this.writeString('++read eoi');
     });
   }
 
@@ -121,12 +114,12 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
       }
       this.duplexClient.once('error', handleError);
       this.fReadlineParser.on('data', handleData);
-      await this.writeToController('++read');
+      await this.writeString('++read');
     });
   }
 
   protected async queryController(query: string) {
-    await this.writeToController(query);
+    await this.writeString(query);
     return await this.readFromController();
   }
 
@@ -149,7 +142,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   // }
 
   async setDeviceAddress(address: number): Promise<void> {
-    await this.writeToController(`++addr ${address}`);
+    await this.writeString(`++addr ${address}`);
   }
 
   async getVersion() {
@@ -175,16 +168,16 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
     switch (eos) {
       case 'CrLf':
-        await this.writeToController('++eos 0');
+        await this.writeString('++eos 0');
         break;
       case 'Cr':
-        await this.writeToController('++eos 1');
+        await this.writeString('++eos 1');
         break;
       case 'Lf':
-        await this.writeToController('++eos 2');
+        await this.writeString('++eos 2');
         break;
       case 'none':
-        await this.writeToController('++eos 3');
+        await this.writeString('++eos 3');
         break;
     }
   }
@@ -192,21 +185,21 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   address = 0;
 
   async setMode(mode: Mode) {
-    await this.writeToController(`++mode ${ mode === Mode.Device ? '0' : '1' }`);
+    await this.writeString(`++mode ${ mode === Mode.Device ? '0' : '1' }`);
   }
 
   async setAutoReadAfterWrite(enable: boolean) {
-    await this.writeToController(`++auto ${enable ? '1' : '0'}`);
+    await this.writeString(`++auto ${enable ? '1' : '0'}`);
   }
 
   async interfaceClear() {
-    await this.writeToController('++ifc');
+    await this.writeString('++ifc');
     await sleep(150); // Manual says 150 microseconds, but we can't sleep that short of time
   }
 
   async selectedDeviceClear(address?: number): Promise<void> {
     if (address) await this.setDeviceAddress(address);
-    await this.writeToController('++clr');
+    await this.writeString('++clr');
   }
 
   async getEndOfInstruction(): Promise<boolean> {
@@ -214,7 +207,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEndOfInstruction(enable: boolean): Promise<void> {
-    await this.writeToController(`++eoi ${enable ? '1' : '0'}`);
+    await this.writeString(`++eoi ${enable ? '1' : '0'}`);
   }
 
   async getEndOfTransmission(): Promise<EndOfTransmissionOptions> {
@@ -227,8 +220,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEndOfTransmission(options: EndOfTransmissionOptions): Promise<void> {
-    await this.writeToController(`++eot_char ${options.character}`);
-    await this.writeToController(`++eot_enable ${options.enabled ? '1' : '0'}`);
+    await this.writeString(`++eot_char ${options.character}`);
+    await this.writeString(`++eot_enable ${options.enabled ? '1' : '0'}`);
   }
 
   async becomeControllerInCharge(): Promise<void> {
@@ -253,7 +246,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
 
   async reset(): Promise<void> {
     log.info('Reseting');
-    await this.writeToController('++rst');
+    await this.writeString('++rst');
     await sleep(6000);
   }
 

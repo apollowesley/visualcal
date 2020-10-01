@@ -123,13 +123,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     if (!iface) throw new Error(`Unknown communication interface type, ${info.type}`);
     iface.name = info.name;
     if (info.timing) {
-      if (info.timing.connectTimeout) iface.connectTimeout = info.timing.connectTimeout;
-      if (info.timing.delayBeforeWrite) iface.delayBeforeWrite = info.timing.delayBeforeWrite;
-      if (info.timing.delayAfterWrite) iface.delayAfterWrite = info.timing.delayAfterWrite;
-      if (info.timing.delayBeforeRead) iface.delayBeforeRead = info.timing.delayBeforeRead;
-      if (info.timing.delayAfterRead) iface.delayAfterRead = info.timing.delayAfterRead;
+      if (info.timing.connectTimeout >= 0) iface.connectTimeout = info.timing.connectTimeout;
+      iface.delayBeforeWrite = info.timing.delayBeforeWrite !== undefined ? info.timing.delayBeforeWrite : 0;
+      iface.delayAfterWrite = info.timing.delayAfterWrite !== undefined ? info.timing.delayAfterWrite : 0;
+      iface.delayBeforeRead = info.timing.delayBeforeRead !== undefined ? info.timing.delayBeforeRead : 0;
+      iface.delayAfterRead = info.timing.delayAfterRead !== undefined ? info.timing.delayAfterRead : 0;
     }
-    if (info.resetOnConnect) iface.resetOnConnect = info.resetOnConnect;
+    iface.resetOnConnect = info.resetOnConnect !== undefined ? info.resetOnConnect : true;
     return iface;
   }
 
