@@ -89,8 +89,8 @@ import { CustomInstruction, Driver } from '@/driver-builder';
 
 const MockInstructions: CustomInstruction[] = [
   { id: uuid(), order: 0, name: 'Identification Query', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
-  { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC?' },
-  { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC?' }
+  { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC? $optArg1,$optArg2' },
+  { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC? $optArg1,$optArg2' }
 ];
 
 const MockDriver: Driver = {

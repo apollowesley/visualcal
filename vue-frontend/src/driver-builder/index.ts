@@ -12,6 +12,7 @@ export interface Instruction {
   delayAfter?: number;
   helpLink?: string;
   command: string;
+  commandArgs?: string[];
 }
 
 export interface CustomInstruction extends Instruction {
@@ -34,6 +35,28 @@ export const IEEE4882MandatedCommands: Instruction[] = [
   { name: 'Self-Test Query', type: 'Query', command: '*TST?', responseDataType: 'Number' },
   { name: 'Wait-to-Continue Command', type: 'Write', command: '*WAI' }
 ];
+
+export const SCPIRequiredCommands: Instruction[] = [
+  { name: 'System Error Query', type: 'Query', command: 'SYSTem:ERRor?' },
+  { name: 'System Version Query', type: 'Query', command: 'SYSTem:VERSion?' },
+  { name: 'Status Operation Event Query', type: 'Query', command: 'STATus:OPERation:EVENt?' },
+  { name: 'Status Operation Condition Query', type: 'Query', command: 'STATus:OPERation:CONDition?' },
+  { name: 'Status Operation Enable Command', type: 'Write', command: 'STATus:OPERation:ENABle $reqArg1' },
+  { name: 'Status Operation Enable Query', type: 'Query', command: 'STATus:OPERation:ENABle?' },
+  { name: 'Status Questionable Event Query', type: 'Query', command: 'STATus:QUEStionable:EVENt?' },
+  { name: 'Status Questionable Condition Query', type: 'Query', command: 'STATus:QUEStionable:CONDition?' },
+  { name: 'Status Questionable Enable Command', type: 'Write', command: 'STATus:QUEStionable:ENABle $reqArg1' },
+  { name: 'Status Questionable Enable Query', type: 'Query', command: 'STATus:QUEStionable:ENABle?' },
+  { name: 'Status Preset Command', type: 'Write', command: 'STATus:PRESet' }
+];
+
+export const getRequiredCommandArgsCount = (instruction: Instruction) => {
+  return (instruction.command.match(/\$reqArg*/g) || []).length;
+}
+
+export const getOptionalCommandArgsCount = (instruction: Instruction) => {
+  return (instruction.command.match(/\$optArg*/g) || []).length;
+}
 
 export interface Driver {
   manufacturer: string;

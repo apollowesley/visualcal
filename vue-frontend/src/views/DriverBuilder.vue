@@ -57,7 +57,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import MainTableComponent from '@/components/driver-builder/MainTable.vue';
-import { Instruction, IEEE4882MandatedCommands } from '@/driver-builder';
+import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands } from '@/driver-builder';
 
 interface ItemInstruction extends Instruction {
   name: string;
@@ -97,15 +97,24 @@ export default class DriverBuilderView extends Vue {
   ]
  
   mounted() {
-    const SCPICategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', file: 'fold', children: [] };
+    const SCPIMandatedCategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', children: [] };
     IEEE4882MandatedCommands.forEach(c => {
       const instruction: ItemInstruction = {
         ...c,
         file: 'json'
       }
-      if (SCPICategory && SCPICategory.children) SCPICategory.children.push(instruction);
+      if (SCPIMandatedCategory.children) SCPIMandatedCategory.children.push(instruction);
     });
-    this.items.unshift(SCPICategory);
+    this.items.unshift(SCPIMandatedCategory);
+    const SCPIRequiredCategory: Item = { name: 'SCPI Required', children: [] };
+    SCPIRequiredCommands.forEach(c => {
+      const instruction: ItemInstruction = {
+        ...c,
+        file: 'json'
+      }
+      if (SCPIRequiredCategory.children) SCPIRequiredCategory.children.push(instruction);
+    });
+    this.items.unshift(SCPIRequiredCategory);
   }
 
 }
