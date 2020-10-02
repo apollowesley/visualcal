@@ -13,29 +13,39 @@
     </v-row>
     <v-row
       style="height: 96vh"
+      no-gutters
     >
       <v-col
         cols="2"
       >
-        <v-treeview
-          v-model="tree"
-          :open="open"
-          :items="items"
-          style="height: 100%; width: 100%; background: white; font-size: 14px"
-          activatable
-          item-key="name"
-          open-on-click
-          dense
-        >
-          <template v-slot:prepend="{ item, open }">
-            <v-icon v-if="!item.file">
-              {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-            </v-icon>
-            <v-icon v-else>
-              {{ files[item.file] }}
-            </v-icon>
-          </template>
-        </v-treeview>
+        <v-row no-gutters style="height: 2%">
+          <v-col>
+            <h4>Templates</h4>
+          </v-col>
+        </v-row>
+        <v-row no-gutters style="height: 98%">
+          <v-col>
+            <v-treeview
+              v-model="tree"
+              :open="open"
+              :items="items"
+              style="height: 100%; width: 100%; background: white; font-size: 14px"
+              activatable
+              item-key="name"
+              open-on-click
+              dense
+            >
+              <template v-slot:prepend="{ item, open }">
+                <v-icon v-if="!item.file">
+                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+                </v-icon>
+                <v-icon v-else>
+                  {{ files[item.file] }}
+                </v-icon>
+              </template>
+            </v-treeview>
+          </v-col>
+        </v-row>
       </v-col>
       <v-col>
         <MainTableComponent style="height: 100%; width: 100%" />
@@ -49,9 +59,14 @@ import { Vue, Component } from 'vue-property-decorator';
 import MainTableComponent from '@/components/driver-builder/MainTable.vue';
 import { Instruction, IEEE4882MandatedCommands } from '@/driver-builder';
 
+interface ItemInstruction extends Instruction {
+  name: string;
+  file?: string;
+}
+
 interface Item {
   name: string;
-  children?: Item[] | Instruction[];
+  children?: Item[] | ItemInstruction[];
   file?: string;
 }
 
@@ -84,7 +99,11 @@ export default class DriverBuilderView extends Vue {
   mounted() {
     const SCPICategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', file: 'fold', children: [] };
     IEEE4882MandatedCommands.forEach(c => {
-      if (SCPICategory && SCPICategory.children) SCPICategory.children.push(c);
+      const instruction: ItemInstruction = {
+        ...c,
+        file: 'json'
+      }
+      if (SCPICategory && SCPICategory.children) SCPICategory.children.push(instruction);
     });
     this.items.unshift(SCPICategory);
   }

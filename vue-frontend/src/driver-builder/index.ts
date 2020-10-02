@@ -1,6 +1,5 @@
 type InstructionType = 'Read' | 'Write' | 'Query';
-type DataType = 'Boolean' | 'Number' | 'String' | 'Binary' | 'Array';
-type ArrayItemDataType = 'Boolean' | 'Number' | 'String';
+type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
 
 // eslint-disable-next-line
 export interface Instruction {
@@ -8,8 +7,6 @@ export interface Instruction {
   description?: string;
   type: InstructionType;
   responseDataType?: DataType;
-  arraySeparator?: string;
-  arrayItemDataType?: ArrayItemDataType;
   readAttempts?: number;
   delayBefore?: number;
   delayAfter?: number;

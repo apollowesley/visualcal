@@ -3,7 +3,7 @@
     <v-form
       v-model="canSaveForm"
     >
-      <v-row dense>
+      <v-row no-gutters dense>
         <v-col
           cols="12"
           sm="4"
@@ -88,7 +88,7 @@ import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 import { CustomInstruction, Driver } from '@/driver-builder';
 
 const MockInstructions: CustomInstruction[] = [
-  { id: uuid(), order: 0, name: 'Get identity', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
+  { id: uuid(), order: 0, name: 'Identification Query', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
   { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC?' },
   { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC?' }
 ];
@@ -161,8 +161,7 @@ export default class MainTableComponent extends Vue {
         Boolean: 'Boolean',
         Number: 'Number',
         String: 'String',
-        Binary: 'Binary',
-        Array: 'Array'
+        Binary: 'Binary'
       }
     };
   }
@@ -211,8 +210,8 @@ export default class MainTableComponent extends Vue {
 
   private columns: Tablulator.ColumnDefinition[] = [
     { title: 'Order', field: 'order' },
-    { title: 'Name', field: 'name', editable: true, editor: 'input', validator: 'required' },
-    { title: 'Type', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
+    { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
+    { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
@@ -222,7 +221,7 @@ export default class MainTableComponent extends Vue {
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Command', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' },
+    { title: 'Command*', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' },
     { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpLink', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
   ]
 
