@@ -15,13 +15,13 @@
       style="height: 96vh"
     >
       <v-col
-        cols="auto"
+        cols="2"
       >
         <v-treeview
           v-model="tree"
           :open="open"
           :items="items"
-          style="height: 100%; width: 100%; background: white"
+          style="height: 100%; width: 100%; background: white; font-size: 14px"
           activatable
           item-key="name"
           open-on-click
@@ -47,10 +47,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import MainTableComponent from '@/components/driver-builder/MainTable.vue';
+import { Instruction, IEEE4882MandatedCommands } from '@/driver-builder';
 
 interface Item {
   name: string;
-  children?: Item[];
+  children?: Item[] | Instruction[];
   file?: string;
 }
 
@@ -79,6 +80,14 @@ export default class DriverBuilderView extends Vue {
     { name: 'Signal Generator' },
     { name: 'Waveform Generator' }
   ]
+ 
+  mounted() {
+    const SCPICategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', file: 'fold', children: [] };
+    IEEE4882MandatedCommands.forEach(c => {
+      if (SCPICategory && SCPICategory.children) SCPICategory.children.push(c);
+    });
+    this.items.unshift(SCPICategory);
+  }
 
 }
 </script>

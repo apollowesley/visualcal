@@ -85,37 +85,12 @@ import { Vue, Component } from 'vue-property-decorator';
 import Tablulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
+import { CustomInstruction, Driver } from '@/driver-builder';
 
-type InstructionType = 'Read' | 'Write' | 'Query';
-type DataType = 'Boolean' | 'Number' | 'String' | 'Binary' | 'Array';
-
-interface Instruction {
-  id: string;
-  order: number;
-  name: string;
-  description?: string;
-  type: InstructionType;
-  responseDataType?: DataType;
-  delayBefore?: number;
-  delayAfter?: number;
-  readAttempts?: number;
-  command: string;
-}
-
-interface Driver {
-  manufacturer: string;
-  model: string;
-  nomenclature: string;
-  identifiable: boolean;
-  identityQueryCommand: string;
-  isGpib: boolean;
-  terminator: string;
-}
-
-const MockInstructions: Instruction[] = [
+const MockInstructions: CustomInstruction[] = [
   { id: uuid(), order: 0, name: 'Get identity', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
-  { id: uuid(), order: 0, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC?' },
-  { id: uuid(), order: 0, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC?' }
+  { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC?' },
+  { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC?' }
 ];
 
 const MockDriver: Driver = {
@@ -152,7 +127,7 @@ export default class MainTableComponent extends Vue {
     return this.fTable;
   }
 
-  private getInstructionFromCell(cell: Tablulator.CellComponent) { return cell.getRow().getData() as Instruction; }
+  private getInstructionFromCell(cell: Tablulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
 
   private getIsResponseDataTypeEditable(cell: Tablulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
@@ -235,23 +210,25 @@ export default class MainTableComponent extends Vue {
   }
 
   private columns: Tablulator.ColumnDefinition[] = [
+    { title: 'Order', field: 'order' },
     { title: 'Name', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
-      { title: 'Read attempts', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min 1', formatter: this.formatReadAttemptsCell }
+      { title: 'Read attempts', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell }
     ]},
-    { title: 'Timing', columns: [
+    { title: 'Timing (can also be set on interface)', columns: [
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Command', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' }
+    { title: 'Command', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' },
+    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpLink', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
   ]
 
   private createTable() {
     const table = new Tablulator(this.tableElement, {
-      layout: 'fitData',
+      layout: 'fitDataStretch',
       columns: this.columns,
       cellEdited: () => { table.redraw(true) }
     });
