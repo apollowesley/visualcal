@@ -208,9 +208,18 @@ export default class MainTableComponent extends Vue {
     return div;
   }
 
+  private reorderInstructions(table: Tablulator) {
+    const rows = table.getRows();
+    for (let index = 0; index < rows.length; index++) {
+      const row = rows[index];
+      const instruction = row.getData() as CustomInstruction;
+      instruction.order = index;
+    }
+    table.redraw(true);
+  }
+
   private columns: Tablulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30 },
-    { title: 'Order', field: 'order' },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
@@ -231,16 +240,8 @@ export default class MainTableComponent extends Vue {
       layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
-      cellEdited: () => { table.redraw(true) },
-      rowMoved: () => {
-        const rows = table.getRows();
-        for (let index = 0; index < rows.length; index++) {
-          const row = rows[index];
-          const instruction = row.getData() as CustomInstruction;
-          instruction.order = index;
-        }
-        table.redraw(true);
-      }
+      cellEdited: () => { table.redraw(true); },
+      rowMoved: () => { this.reorderInstructions(table); }
     });
     this.fTable = table;
     return table;
