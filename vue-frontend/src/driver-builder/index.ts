@@ -29,7 +29,7 @@ export interface Instruction {
   delayAfter?: number;
   /** A URI/URL of a help document or webpage that contains information about this instruction. */
   helpUri?: string;
-  /** The command that is sent to the device.  Can be a string or an array of InstructionCommandPart that make up the complete command. */
+  /** The command that is sent to the device.  Can be a string or an array of InstructionCommandPart that make up the complete command.  At a minimum one, and only one, part with type "main" can and must exist if using an array of InstructionCommandPart. */
   command: string | InstructionCommandPart[];
 }
 
