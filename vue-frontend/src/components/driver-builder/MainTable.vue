@@ -215,14 +215,14 @@ export default class MainTableComponent extends Vue {
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
-      { title: 'Read attempts', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell }
+      { title: 'Read attempts before failure', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell }
     ]},
-    { title: 'Timing (can also be set on interface)', columns: [
+    { title: 'Timing (in addition to interface timing)', columns: [
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
     { title: 'Command*', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' },
-    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpLink', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
+    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
   ]
 
   private createTable() {

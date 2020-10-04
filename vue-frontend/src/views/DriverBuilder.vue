@@ -12,6 +12,7 @@
       </v-col>
     </v-row>
     <v-row
+      class="flex-nowrap"
       style="height: 96vh"
       no-gutters
     >

@@ -1,25 +1,45 @@
 type InstructionType = 'Read' | 'Write' | 'Query';
 type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
+type InstructionCommandPartType = 'main' | 'parameter';
 
+/** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
+interface InstructionCommandPart {
+  type: InstructionCommandPartType;
+  /** The text of the this part. */
+  text: string;
+  /** Characters to be appended to the text property.  This is intented to be used for separating parameters from the main part and from other parameters. */
+  afterText?: string;
+  /** Whether or not this part is required.  Only used if type is parameter. */
+  required?: boolean;
+}
+
+/** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
 // eslint-disable-next-line
 export interface Instruction {
   name: string;
   description?: string;
   type: InstructionType;
+  /** Expected data type returned from a read or query. */
   responseDataType?: DataType;
+  /** Number of failed reads before throwing an error. */
   readAttempts?: number;
+  /** Length of time, in milliseconds, to delay before invoking this instruction. */
   delayBefore?: number;
+  /** Length of time, in milliseconds, to delay after invoking this instruction. */
   delayAfter?: number;
-  helpLink?: string;
-  command: string;
-  commandArgs?: string[];
+  /** A URI/URL of a help document or webpage that contains information about this instruction. */
+  helpUri?: string;
+  /** The command that is sent to the device.  Can be a string or an array of InstructionCommandPart that make up the complete command. */
+  command: string | InstructionCommandPart[];
 }
 
+/** Extended instruction with tracking information for use with custom commands. */
 export interface CustomInstruction extends Instruction {
   id: string;
   order: number;
 }
 
+/** Instructions mandated by IEEE 488.2 and SCPI */
 export const IEEE4882MandatedCommands: Instruction[] = [
   { name: 'Clear Status Command', type: 'Write', command: '*CLS' },
   { name: 'Standard Event Status Enable Command', type: 'Write', command: '*ESE' },
@@ -36,6 +56,7 @@ export const IEEE4882MandatedCommands: Instruction[] = [
   { name: 'Wait-to-Continue Command', type: 'Write', command: '*WAI' }
 ];
 
+/** Instructions required by SCPI */
 export const SCPIRequiredCommands: Instruction[] = [
   { name: 'System Error Query', type: 'Query', command: 'SYSTem:ERRor?' },
   { name: 'System Version Query', type: 'Query', command: 'SYSTem:VERSion?' },
@@ -50,12 +71,18 @@ export const SCPIRequiredCommands: Instruction[] = [
   { name: 'Status Preset Command', type: 'Write', command: 'STATus:PRESet' }
 ];
 
+const getInstructionCommandPartArgsCount = (commands: InstructionCommandPart[]) => {
+  return commands.filter(c => c.type !== 'main').length;
+}
+
 export const getRequiredCommandArgsCount = (instruction: Instruction) => {
-  return (instruction.command.match(/\$reqArg*/g) || []).length;
+  if (typeof instruction.command === 'string') return (instruction.command.match(/\$reqArg*/g) || []).length;
+  return getInstructionCommandPartArgsCount(instruction.command);
 }
 
 export const getOptionalCommandArgsCount = (instruction: Instruction) => {
-  return (instruction.command.match(/\$optArg*/g) || []).length;
+  if (typeof instruction.command === 'string') return (instruction.command.match(/\$optArg*/g) || []).length;
+  return getInstructionCommandPartArgsCount(instruction.command);
 }
 
 export interface Driver {
