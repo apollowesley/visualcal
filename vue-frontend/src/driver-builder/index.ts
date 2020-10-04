@@ -14,7 +14,6 @@ interface InstructionCommandPart {
 }
 
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
-// eslint-disable-next-line
 export interface Instruction {
   name: string;
   description?: string;

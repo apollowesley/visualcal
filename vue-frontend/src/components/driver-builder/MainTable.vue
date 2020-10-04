@@ -209,6 +209,7 @@ export default class MainTableComponent extends Vue {
   }
 
   private columns: Tablulator.ColumnDefinition[] = [
+    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30 },
     { title: 'Order', field: 'order' },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
@@ -229,7 +230,17 @@ export default class MainTableComponent extends Vue {
     const table = new Tablulator(this.tableElement, {
       layout: 'fitDataStretch',
       columns: this.columns,
-      cellEdited: () => { table.redraw(true) }
+      movableRows: true,
+      cellEdited: () => { table.redraw(true) },
+      rowMoved: () => {
+        const rows = table.getRows();
+        for (let index = 0; index < rows.length; index++) {
+          const row = rows[index];
+          const instruction = row.getData() as CustomInstruction;
+          instruction.order = index;
+        }
+        table.redraw(true);
+      }
     });
     this.fTable = table;
     return table;
