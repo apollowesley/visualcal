@@ -3,7 +3,7 @@
     <v-form
       v-model="canSaveForm"
     >
-      <v-row no-gutters dense>
+      <v-row dense>
         <v-col
           cols="12"
           sm="4"
@@ -219,7 +219,7 @@ export default class MainTableComponent extends Vue {
   }
 
   private columns: Tablulator.ColumnDefinition[] = [
-    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30 },
+    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
