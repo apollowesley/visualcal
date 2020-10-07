@@ -66,7 +66,30 @@
         </v-row>
       </v-col>
       <v-col>
-        <InstructionTableComponent style="height: 100%; width: 100%" />
+        <v-row
+          style="height: 96vh"
+          no-gutters
+        >
+          <v-col>
+            <v-expansion-panels
+              style="width: 98%"
+              class="ml-5 mt-7 mb-n10"
+              dense
+            >
+              <v-expansion-panel
+                v-for="(item) in 5"
+                :key="item"
+                class="grey"
+                dense
+              >
+                <v-expansion-panel-header class="white">Function {{ item }}</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <InstructionTableComponent />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
