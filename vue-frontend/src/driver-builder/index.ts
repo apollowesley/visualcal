@@ -57,16 +57,16 @@ export const IEEE4882MandatedCommands: Instruction[] = [
 
 /** Instructions required by SCPI */
 export const SCPIRequiredCommands: Instruction[] = [
-  { name: 'System Error Query', type: 'Query', command: 'SYSTem:ERRor?' },
-  { name: 'System Version Query', type: 'Query', command: 'SYSTem:VERSion?' },
-  { name: 'Status Operation Event Query', type: 'Query', command: 'STATus:OPERation:EVENt?' },
-  { name: 'Status Operation Condition Query', type: 'Query', command: 'STATus:OPERation:CONDition?' },
+  { name: 'System Error Query', type: 'Query', command: 'SYSTem:ERRor?', responseDataType: 'String' },
+  { name: 'System Version Query', type: 'Query', command: 'SYSTem:VERSion?', responseDataType: 'String' },
+  { name: 'Status Operation Event Query', type: 'Query', command: 'STATus:OPERation:EVENt?', responseDataType: 'Number' },
+  { name: 'Status Operation Condition Query', type: 'Query', command: 'STATus:OPERation:CONDition?', responseDataType: 'Number' },
   { name: 'Status Operation Enable Command', type: 'Write', command: 'STATus:OPERation:ENABle $reqArg1' },
-  { name: 'Status Operation Enable Query', type: 'Query', command: 'STATus:OPERation:ENABle?' },
-  { name: 'Status Questionable Event Query', type: 'Query', command: 'STATus:QUEStionable:EVENt?' },
-  { name: 'Status Questionable Condition Query', type: 'Query', command: 'STATus:QUEStionable:CONDition?' },
+  { name: 'Status Operation Enable Query', type: 'Query', command: 'STATus:OPERation:ENABle?', responseDataType: 'Number' },
+  { name: 'Status Questionable Event Query', type: 'Query', command: 'STATus:QUEStionable:EVENt?', responseDataType: 'Number' },
+  { name: 'Status Questionable Condition Query', type: 'Query', command: 'STATus:QUEStionable:CONDition?', responseDataType: 'Number' },
   { name: 'Status Questionable Enable Command', type: 'Write', command: 'STATus:QUEStionable:ENABle $reqArg1' },
-  { name: 'Status Questionable Enable Query', type: 'Query', command: 'STATus:QUEStionable:ENABle?' },
+  { name: 'Status Questionable Enable Query', type: 'Query', command: 'STATus:QUEStionable:ENABle?', responseDataType: 'Number' },
   { name: 'Status Preset Command', type: 'Write', command: 'STATus:PRESet' }
 ];
 

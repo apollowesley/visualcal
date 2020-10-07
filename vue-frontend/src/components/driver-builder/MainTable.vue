@@ -74,7 +74,7 @@
       <v-col
         class="text-center"
       >
-        <div ref="tableElement" />
+        <div ref="tableElement" class="instruction-drag-target" dropzone @dragover="onDragOver" @drop="onDrop" />
       </v-col>
     </v-row>
   </v-container>
@@ -87,11 +87,11 @@ import { v4 as uuid } from 'uuid';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 import { CustomInstruction, Driver } from '@/driver-builder';
 
-const MockInstructions: CustomInstruction[] = [
-  { id: uuid(), order: 0, name: 'Identification Query', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
-  { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC? $optArg1,$optArg2' },
-  { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC? $optArg1,$optArg2' }
-];
+// const MockInstructions: CustomInstruction[] = [
+//   { id: uuid(), order: 0, name: 'Identification Query', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
+//   { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC? $optArg1,$optArg2' },
+//   { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC? $optArg1,$optArg2' }
+// ];
 
 const MockDriver: Driver = {
   manufacturer: 'Keysight',
@@ -231,7 +231,7 @@ export default class MainTableComponent extends Vue {
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Command*', field: 'command', editable: this.getIsResponseDataTypeEditable, editor: 'input', validator: 'required' },
+    { title: 'Command*', field: 'command', editable: true, editor: 'input', validator: 'required' },
     { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
   ]
 
@@ -241,15 +241,35 @@ export default class MainTableComponent extends Vue {
       columns: this.columns,
       movableRows: true,
       cellEdited: () => { table.redraw(true); },
-      rowMoved: () => { this.reorderInstructions(table); }
+      rowMoved: () => { this.reorderInstructions(table); },
     });
     this.fTable = table;
     return table;
   }
 
-  async mounted() {
-    const table = this.table;
-    await table.setData(MockInstructions);
+  mounted() {
+    // const table = this.table;
+    // await table.setData(MockInstructions);
+    this.createTable();
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (!event.dataTransfer) return;
+    event.dataTransfer.dropEffect = 'copy';
+  }
+
+  async onDrop(event: DragEvent) {
+    event.preventDefault();
+    if (!event.dataTransfer) return;
+    const instructionString = event.dataTransfer.getData('application/json');
+    const instruction = JSON.parse(instructionString);
+    const customInstruction: CustomInstruction = {
+      ...instruction,
+      id: uuid(),
+      readAttempts: 1
+    }
+    await this.table.addData([customInstruction]);
   }
 
 }

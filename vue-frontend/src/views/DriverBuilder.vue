@@ -44,6 +44,23 @@
                   {{ files[item.file] }}
                 </v-icon>
               </template>
+              <template
+                v-slot:label="{ item }"
+              >
+                <label
+                  v-if="item.command"
+                  draggable
+                  @dragstart="onDragStart($event, item)"
+                  class="drag-item"
+                >
+                  {{ item.name }}
+                </label>
+                <label
+                  v-else
+                >
+                  {{ item.name }}
+                </label>
+              </template>
             </v-treeview>
           </v-col>
         </v-row>
@@ -61,7 +78,6 @@ import MainTableComponent from '@/components/driver-builder/MainTable.vue';
 import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands } from '@/driver-builder';
 
 interface ItemInstruction extends Instruction {
-  name: string;
   file?: string;
 }
 
@@ -116,6 +132,13 @@ export default class DriverBuilderView extends Vue {
       if (SCPIRequiredCategory.children) SCPIRequiredCategory.children.push(instruction);
     });
     this.items.unshift(SCPIRequiredCategory);
+  }
+
+  onDragStart(event: DragEvent, instruction: Instruction) {
+    if (!event || !event.dataTransfer) return;
+    const instructionString = JSON.stringify(instruction);
+    event.dataTransfer.dropEffect = 'copy';
+    event.dataTransfer.setData('application/json', instructionString);
   }
 
 }
