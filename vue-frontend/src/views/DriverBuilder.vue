@@ -2,7 +2,7 @@
   <v-container fluid class="grey" style="height: 100vh">
     <CommandBuilderDialogComponent
       :should-show="shouldCommandBuilderDialogShow"
-      :instruction="{}"
+      :instruction="commandBuilderDialogInstruction"
       @save="onCommandBuilderSave"
       @cancel="shouldCommandBuilderDialogShow = false"
     />
@@ -167,7 +167,9 @@
               >
                 <v-expansion-panel-header class="white">{{ section.name }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <InstructionTableComponent />
+                  <InstructionTableComponent
+                    @edit-instruction-command="onInstructionTableComponentEditInstructionCommand"
+                  />
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -214,7 +216,8 @@ const MockDriver: Driver = {
 })
 export default class DriverBuilderView extends Vue {
 
-  shouldCommandBuilderDialogShow = true;
+  shouldCommandBuilderDialogShow = false;
+  commandBuilderDialogInstruction: CustomInstruction = { id: 'new', order: 0, name: '', type: 'Write', command: [] };
   rules: VuetifyRule[] = [
     requiredRule
   ];
@@ -280,6 +283,11 @@ export default class DriverBuilderView extends Vue {
   onCommandBuilderSave(instruction: CustomInstruction, parts: InstructionCommandPart[]) {
     console.info(instruction);
     console.info(parts);
+  }
+
+  onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {
+    this.commandBuilderDialogInstruction = instruction;
+    this.shouldCommandBuilderDialogShow = true;
   }
 
 }

@@ -2,8 +2,14 @@
   <v-dialog
     :value="shouldShow"
     persistent
+    max-width="75%"
   >
     <v-container fluid class="grey">
+      <v-row>
+        <v-col class="text-center">
+          <h4>Command builder</h4>
+        </v-col>
+      </v-row>
       <v-row no-gutters>
         <v-col
           class="text-center"
@@ -42,10 +48,12 @@ export default class CommandBuilderComponent extends Vue {
   private fTable?: Tabulator;
   commandParts: InstructionCommandPart[] = [];
 
-  @Watch('instruction')
+  @Watch('shouldShow', { immediate: true })
   async onInstructionChanged() {
+    if (!this.shouldShow) return;
     // If we have an array of InstructionCommandPart, the we use the instruction.command.  Otherwise we create a new array with a main using the existing command text
     this.commandParts = Array.isArray(this.instruction.command) ? this.instruction.command : [{ type: 'main', text: this.instruction.command }];
+    while (!this.$refs.commandBuilderTableElement) await this.$nextTick();
     await this.table.setData(this.commandParts);
   }
 
@@ -74,6 +82,7 @@ export default class CommandBuilderComponent extends Vue {
   }
 
   private async updateInstruction(cell: Tabulator.CellComponent) {
+    if (!this.table) return;
     const instruction = this.getInstructionFromCell(cell);
     await this.table.updateData([instruction]);
     this.table.redraw(true);
@@ -102,7 +111,7 @@ export default class CommandBuilderComponent extends Vue {
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
-    { title: 'Text*', field: 'text', editable: true, editor: 'input', validator: 'required' },
+    { title: 'Text*', field: 'text', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
 
