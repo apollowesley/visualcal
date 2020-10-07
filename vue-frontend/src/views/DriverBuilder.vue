@@ -21,7 +21,7 @@
       >
         <v-row no-gutters style="height: 2%">
           <v-col>
-            <h4>Templates</h4>
+            <h4>Instructions and Templates</h4>
           </v-col>
         </v-row>
         <v-row no-gutters style="height: 98%">
@@ -143,9 +143,11 @@
           </v-col>
         </v-row>
         <v-row
+          class="ml-2"
           no-gutters
         >
           <v-col>
+            Instruction Sets
             <v-expansion-panels
               style="width: 98%"
               class="ml-5 mt-7 mb-n10"
@@ -157,7 +159,7 @@
                 class="grey"
                 dense
               >
-                <v-expansion-panel-header class="white">Section: {{ section.name }}</v-expansion-panel-header>
+                <v-expansion-panel-header class="white">{{ section.name }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <InstructionTableComponent />
                 </v-expansion-panel-content>
