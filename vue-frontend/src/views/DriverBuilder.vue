@@ -66,7 +66,7 @@
         </v-row>
       </v-col>
       <v-col>
-        <MainTableComponent style="height: 100%; width: 100%" />
+        <InstructionTableComponent style="height: 100%; width: 100%" />
       </v-col>
     </v-row>
   </v-container>
@@ -74,7 +74,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import MainTableComponent from '@/components/driver-builder/MainTable.vue';
+import InstructionTableComponent from '@/components/driver-builder/InstructionTable.vue';
 import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands } from '@/driver-builder';
 
 interface ItemInstruction extends Instruction {
@@ -89,7 +89,7 @@ interface Item {
 
 @Component({
   components: {
-    MainTableComponent
+    InstructionTableComponent
   }
 })
 export default class DriverBuilderView extends Vue {

@@ -104,7 +104,7 @@ const MockDriver: Driver = {
 };
 
 @Component
-export default class MainTableComponent extends Vue {
+export default class InstructionTableComponent extends Vue {
 
   private fTable?: Tabulator;
   rules: VuetifyRule[] = [
