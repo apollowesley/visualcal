@@ -41,9 +41,10 @@
 </template>
 
 <script lang="ts">
-import { LogicRun } from 'visualcal-common/src/result';
+import { LogicResult, LogicRun } from 'visualcal-common/src/result';
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import TabulatorComponent from '@/components/Tabulator.vue';
+import Tabulator from 'tabulator-tables';
 
 @Component({
   components: {
@@ -68,9 +69,9 @@ export default class ViewResultsDialogComponent extends Vue {
     { title: 'Passed', field: 'passed' }
   ];
 
-  get results() { return this.run ? this.run.results : []; }
+  get results(): LogicResult<string, number>[] { return this.run ? this.run.results : []; }
 
-  cancel() {
+  cancel(): void {
     this.$emit('cancel');
   }
 

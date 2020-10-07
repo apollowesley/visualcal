@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import Tablulator from 'tabulator-tables';
+import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 import { CustomInstruction, Driver } from '@/driver-builder';
@@ -106,7 +106,7 @@ const MockDriver: Driver = {
 @Component
 export default class MainTableComponent extends Vue {
 
-  private fTable?: Tablulator;
+  private fTable?: Tabulator;
   rules: VuetifyRule[] = [
     requiredRule
   ];
@@ -127,25 +127,25 @@ export default class MainTableComponent extends Vue {
     return this.fTable;
   }
 
-  private getInstructionFromCell(cell: Tablulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
+  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
 
-  private getIsResponseDataTypeEditable(cell: Tablulator.CellComponent) {
+  private getIsResponseDataTypeEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
     return instruction.type === 'Read' || instruction.type === 'Query';
   }
 
-  private getIsCommandEditable(cell: Tablulator.CellComponent) {
+  private getIsCommandEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
     if (instruction.type === 'Read') return false;
     return true;
   }
 
-  private getIsReadAttemptsEditable(cell: Tablulator.CellComponent) {
+  private getIsReadAttemptsEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
     return instruction.type === 'Read' || instruction.type === 'Query';
   }
 
-  private getCommandTypeEditorParams(): Tablulator.SelectParams {
+  private getCommandTypeEditorParams(): Tabulator.SelectParams {
     return {
       values: {
         Write: 'Write',
@@ -155,7 +155,7 @@ export default class MainTableComponent extends Vue {
     };
   }
 
-  private getResponseDataTypeEditorParams(): Tablulator.SelectParams {
+  private getResponseDataTypeEditorParams(): Tabulator.SelectParams {
     return {
       values: {
         Boolean: 'Boolean',
@@ -178,7 +178,7 @@ export default class MainTableComponent extends Vue {
     this.table.redraw(true);
   }
 
-  private formatResponseDataTypeCell(cell: Tablulator.CellComponent) {
+  private formatResponseDataTypeCell(cell: Tabulator.CellComponent) {
     const isEditable = this.getIsResponseDataTypeEditable(cell);
     const div = document.createElement('div') as HTMLDivElement;
     div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
@@ -188,7 +188,7 @@ export default class MainTableComponent extends Vue {
     return div;
   }
 
-  private formatCommandCell(cell: Tablulator.CellComponent) {
+  private formatCommandCell(cell: Tabulator.CellComponent) {
     const isEditable = this.getIsCommandEditable(cell);
     const div = document.createElement('div') as HTMLDivElement;
     div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
@@ -198,7 +198,7 @@ export default class MainTableComponent extends Vue {
     return div;
   }
 
-  private formatReadAttemptsCell(cell: Tablulator.CellComponent) {
+  private formatReadAttemptsCell(cell: Tabulator.CellComponent) {
     const isEditable = this.getIsReadAttemptsEditable(cell);
     const div = document.createElement('div') as HTMLDivElement;
     div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
@@ -208,7 +208,7 @@ export default class MainTableComponent extends Vue {
     return div;
   }
 
-  private reorderInstructions(table: Tablulator) {
+  private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
@@ -218,7 +218,7 @@ export default class MainTableComponent extends Vue {
     table.redraw(true);
   }
 
-  private columns: Tablulator.ColumnDefinition[] = [
+  private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
@@ -236,7 +236,7 @@ export default class MainTableComponent extends Vue {
   ]
 
   private createTable() {
-    const table = new Tablulator(this.tableElement, {
+    const table = new Tabulator(this.tableElement, {
       layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
