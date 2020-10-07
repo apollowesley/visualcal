@@ -150,12 +150,12 @@
               dense
             >
               <v-expansion-panel
-                v-for="(item) in 5"
-                :key="item"
+                v-for="(section) in driver.sections"
+                :key="section.name"
                 class="grey"
                 dense
               >
-                <v-expansion-panel-header class="white">Function {{ item }}</v-expansion-panel-header>
+                <v-expansion-panel-header class="white">Section: {{ section.name }}</v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <InstructionTableComponent />
                 </v-expansion-panel-content>
@@ -185,13 +185,14 @@ interface Item {
 }
 
 const MockDriver: Driver = {
-  manufacturer: 'Keysight',
-  model: '34401A',
+  manufacturer: 'Fluke',
+  model: '45',
   nomenclature: 'Digital Multimeter',
   identifiable: true,
   identityQueryCommand: '*IDN?',
   isGpib: true,
-  terminator: 'Line feed'
+  terminator: 'Line feed',
+  sections: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
 };
 
 @Component({
@@ -212,7 +213,8 @@ export default class DriverBuilderView extends Vue {
     identifiable: false,
     identityQueryCommand: '*IDN?',
     isGpib: false,
-    terminator: 'None'
+    terminator: 'None',
+    sections: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
   } : MockDriver;
 
   tree = [{ name: 'test' }];
@@ -230,8 +232,8 @@ export default class DriverBuilderView extends Vue {
   }
   items: Item[] = [
     { name: 'Digital Multimeter', file: 'fold' },
-    { name: 'Signal Generator' },
-    { name: 'Waveform Generator' }
+    { name: 'Signal Generator', file: 'fold' },
+    { name: 'Waveform Generator', file: 'fold' }
   ]
  
   mounted() {
