@@ -84,7 +84,7 @@ export const getOptionalCommandArgsCount = (instruction: Instruction) => {
   return getInstructionCommandPartArgsCount(instruction.command);
 }
 
-export interface DriverSection {
+export interface InstructionSet {
   name: string;
 }
 
@@ -96,5 +96,5 @@ export interface Driver {
   identityQueryCommand: string;
   isGpib: boolean;
   terminator: string;
-  sections: DriverSection[]
+  instructionSets: InstructionSet[]
 }

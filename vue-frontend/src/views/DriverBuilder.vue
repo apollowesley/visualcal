@@ -66,7 +66,9 @@
         </v-row>
       </v-col>
       <v-col>
-        <v-row>
+        <v-row
+          class="ma-5"
+        >
           <v-col>
             <v-form
               v-model="canSaveForm"
@@ -150,7 +152,7 @@
               dense
             >
               <v-expansion-panel
-                v-for="(section) in driver.sections"
+                v-for="(section) in driver.instructionSets"
                 :key="section.name"
                 class="grey"
                 dense
@@ -192,7 +194,7 @@ const MockDriver: Driver = {
   identityQueryCommand: '*IDN?',
   isGpib: true,
   terminator: 'Line feed',
-  sections: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
+  instructionSets: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
 };
 
 @Component({
@@ -214,7 +216,7 @@ export default class DriverBuilderView extends Vue {
     identityQueryCommand: '*IDN?',
     isGpib: false,
     terminator: 'None',
-    sections: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
+    instructionSets: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
   } : MockDriver;
 
   tree = [{ name: 'test' }];
