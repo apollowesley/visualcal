@@ -3,7 +3,7 @@ type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
 type InstructionCommandPartType = 'main' | 'parameter';
 
 /** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
-interface InstructionCommandPart {
+export interface InstructionCommandPart {
   type: InstructionCommandPartType;
   /** The text of the this part. */
   text: string;
