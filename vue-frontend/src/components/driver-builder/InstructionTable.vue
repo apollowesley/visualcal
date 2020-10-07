@@ -1,75 +1,5 @@
 <template>
   <v-container fluid class="grey">
-    <v-form
-      v-model="canSaveForm"
-    >
-      <v-row dense>
-        <v-col
-          cols="12"
-          sm="4"
-        >
-          <v-text-field
-            v-model="driver.manufacturer"
-            :rules="rules"
-            label="Manufacturer"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="4"
-        >
-          <v-text-field
-            v-model="driver.model"
-            :rules="rules"
-            label="Model"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="4"
-        >
-          <v-text-field
-            v-model="driver.nomenclature"
-            :rules="rules"
-            label="Nomenclature"
-            hint="Instrument class or description"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-checkbox
-            v-model="driver.identifiable"
-            label="Identifiable?"
-          />
-        </v-col>
-        <v-col
-          v-if="driver.identifiable"
-        >
-          <v-text-field
-            v-model="driver.identityQueryCommand"
-            :rules="driver.identifiable ? rules : []"
-            label="Identity Query Command"
-            hint="Command sent to instrument to ask it for it's identity"
-          />
-        </v-col>
-        <v-col>
-          <v-checkbox
-            v-model="driver.isGpib"
-            label="Has a GPIB interface?"
-          />
-        </v-col>
-        <v-col>
-          <v-select
-            v-model="driver.terminator"
-            :rules="rules"
-            :items="['None', 'Carriage return', 'Line feed', 'Carriage return / Line feed']"
-            label="Terminator"
-            hint="Character(s) used to signal the end of a read/write"
-          />
-        </v-col>
-      </v-row>
-    </v-form>
     <v-row no-gutters>
       <v-col
         class="text-center"
@@ -84,42 +14,12 @@
 import { Vue, Component } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
-import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
-import { CustomInstruction, Driver } from '@/driver-builder';
-
-// const MockInstructions: CustomInstruction[] = [
-//   { id: uuid(), order: 0, name: 'Identification Query', type: 'Query', responseDataType: 'String', delayAfter: 500, readAttempts: 2, command: '*IDN?' },
-//   { id: uuid(), order: 1, name: 'Measure volts AC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:AC? $optArg1,$optArg2' },
-//   { id: uuid(), order: 2, name: 'Measure volts DC', type: 'Query', responseDataType: 'Number', delayAfter: 500, readAttempts: 2, command: 'MEAS:VOLT:DC? $optArg1,$optArg2' }
-// ];
-
-const MockDriver: Driver = {
-  manufacturer: 'Keysight',
-  model: '34401A',
-  nomenclature: 'Digital Multimeter',
-  identifiable: true,
-  identityQueryCommand: '*IDN?',
-  isGpib: true,
-  terminator: 'Line feed'
-};
+import { CustomInstruction } from '@/driver-builder';
 
 @Component
 export default class InstructionTableComponent extends Vue {
 
   private fTable?: Tabulator;
-  rules: VuetifyRule[] = [
-    requiredRule
-  ];
-  canSaveForm = false;
-  driver: Driver = process.env.NODE_ENV === 'production' ? {
-    manufacturer: '',
-    model: '',
-    nomenclature: '',
-    identifiable: false,
-    identityQueryCommand: '*IDN?',
-    isGpib: false,
-    terminator: 'None'
-  } : MockDriver;
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
   get table() {

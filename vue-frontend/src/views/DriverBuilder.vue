@@ -66,8 +66,81 @@
         </v-row>
       </v-col>
       <v-col>
+        <v-row>
+          <v-col>
+            <v-form
+              v-model="canSaveForm"
+            >
+              <v-row dense>
+                <v-col
+                  cols="12"
+                  sm="4"
+                >
+                  <v-text-field
+                    v-model="driver.manufacturer"
+                    :rules="rules"
+                    label="Manufacturer"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="4"
+                >
+                  <v-text-field
+                    v-model="driver.model"
+                    :rules="rules"
+                    label="Model"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="4"
+                >
+                  <v-text-field
+                    v-model="driver.nomenclature"
+                    :rules="rules"
+                    label="Nomenclature"
+                    hint="Instrument class or description"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-checkbox
+                    v-model="driver.identifiable"
+                    label="Identifiable?"
+                  />
+                </v-col>
+                <v-col
+                  v-if="driver.identifiable"
+                >
+                  <v-text-field
+                    v-model="driver.identityQueryCommand"
+                    :rules="driver.identifiable ? rules : []"
+                    label="Identity Query Command"
+                    hint="Command sent to instrument to ask it for it's identity"
+                  />
+                </v-col>
+                <v-col>
+                  <v-checkbox
+                    v-model="driver.isGpib"
+                    label="Has a GPIB interface?"
+                  />
+                </v-col>
+                <v-col>
+                  <v-select
+                    v-model="driver.terminator"
+                    :rules="rules"
+                    :items="['None', 'Carriage return', 'Line feed', 'Carriage return / Line feed']"
+                    label="Terminator"
+                    hint="Character(s) used to signal the end of a read/write"
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-col>
+        </v-row>
         <v-row
-          style="height: 96vh"
           no-gutters
         >
           <v-col>
@@ -98,7 +171,8 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import InstructionTableComponent from '@/components/driver-builder/InstructionTable.vue';
-import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands } from '@/driver-builder';
+import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver } from '@/driver-builder';
+import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 
 interface ItemInstruction extends Instruction {
   file?: string;
@@ -110,12 +184,36 @@ interface Item {
   file?: string;
 }
 
+const MockDriver: Driver = {
+  manufacturer: 'Keysight',
+  model: '34401A',
+  nomenclature: 'Digital Multimeter',
+  identifiable: true,
+  identityQueryCommand: '*IDN?',
+  isGpib: true,
+  terminator: 'Line feed'
+};
+
 @Component({
   components: {
     InstructionTableComponent
   }
 })
 export default class DriverBuilderView extends Vue {
+
+  rules: VuetifyRule[] = [
+    requiredRule
+  ];
+  canSaveForm = false;
+  driver: Driver = process.env.NODE_ENV === 'production' ? {
+    manufacturer: '',
+    model: '',
+    nomenclature: '',
+    identifiable: false,
+    identityQueryCommand: '*IDN?',
+    isGpib: false,
+    terminator: 'None'
+  } : MockDriver;
 
   tree = [{ name: 'test' }];
   open = [];
