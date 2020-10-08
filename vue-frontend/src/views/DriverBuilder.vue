@@ -247,12 +247,25 @@ export default class DriverBuilderView extends Vue {
     fold: 'mdi-folder'
   }
   items: Item[] = [
-    { name: 'Digital Multimeter', file: 'fold' },
-    { name: 'Signal Generator', file: 'fold' },
-    { name: 'Waveform Generator', file: 'fold' }
+    { name: 'Instructions',
+      file: 'fold',
+      children: [
+        { name: 'Digital Multimeter', file: 'fold' },
+        { name: 'Signal Generator', file: 'fold' },
+        { name: 'Waveform Generator', file: 'fold' }
+      ]
+    },
+    {
+      name: 'Templates',
+      file: 'fold',
+      children: []
+    }
   ]
  
   mounted() {
+    const instructionsCategory = this.items.find(i => i.name === 'Instructions');
+    if (!instructionsCategory) return;
+    if (!instructionsCategory.children) instructionsCategory.children = [];
     const SCPIMandatedCategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', children: [] };
     IEEE4882MandatedCommands.forEach(c => {
       const instruction: ItemInstruction = {
@@ -261,7 +274,7 @@ export default class DriverBuilderView extends Vue {
       }
       if (SCPIMandatedCategory.children) SCPIMandatedCategory.children.push(instruction);
     });
-    this.items.unshift(SCPIMandatedCategory);
+    (instructionsCategory.children as Item[]).unshift(SCPIMandatedCategory);
     const SCPIRequiredCategory: Item = { name: 'SCPI Required', children: [] };
     SCPIRequiredCommands.forEach(c => {
       const instruction: ItemInstruction = {
@@ -270,7 +283,7 @@ export default class DriverBuilderView extends Vue {
       }
       if (SCPIRequiredCategory.children) SCPIRequiredCategory.children.push(instruction);
     });
-    this.items.unshift(SCPIRequiredCategory);
+    (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {
