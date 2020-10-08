@@ -7,7 +7,7 @@
     <v-container fluid class="grey">
       <v-row>
         <v-col class="text-center">
-          <h4>Command builder</h4>
+          <h4>Instruction Command Parameter Builder</h4>
         </v-col>
       </v-row>
       <v-row>
