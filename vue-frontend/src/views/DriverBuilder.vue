@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="grey" style="height: 100vh">
-    <CommandBuilderDialogComponent
+    <CommandParametersBuilderDialogComponent
       :should-show="shouldCommandBuilderDialogShow"
       :instruction="commandBuilderDialogInstruction"
       @save="onCommandBuilderSave"
@@ -183,9 +183,9 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import InstructionTableComponent from '@/components/driver-builder/InstructionTable.vue';
-import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, InstructionCommandPart, CustomInstruction } from '@/driver-builder';
+import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, CustomInstruction } from '@/driver-builder';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
-import CommandBuilderDialogComponent from '@/components/driver-builder/CommandBuilderDialog.vue';
+import CommandParametersBuilderDialogComponent from '@/components/driver-builder/CommandParametersBuilderDialog.vue';
 
 interface ItemInstruction extends Instruction {
   file?: string;
@@ -211,13 +211,13 @@ const MockDriver: Driver = {
 @Component({
   components: {
     InstructionTableComponent,
-    CommandBuilderDialogComponent
+    CommandParametersBuilderDialogComponent
   }
 })
 export default class DriverBuilderView extends Vue {
 
   shouldCommandBuilderDialogShow = false;
-  commandBuilderDialogInstruction: CustomInstruction = { id: 'new', order: 0, name: '', type: 'Write', command: [] };
+  commandBuilderDialogInstruction: CustomInstruction = { id: 'new', order: 0, name: '', type: 'Write', command: 'Command?' };
   rules: VuetifyRule[] = [
     requiredRule
   ];
@@ -280,9 +280,9 @@ export default class DriverBuilderView extends Vue {
     event.dataTransfer.setData('application/json', instructionString);
   }
 
-  onCommandBuilderSave(instruction: CustomInstruction, parts: InstructionCommandPart[]) {
+  onCommandBuilderSave(instruction: CustomInstruction, parameters: CommandParameter[]) {
     console.info(instruction);
-    console.info(parts);
+    console.info(parameters);
   }
 
   onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {

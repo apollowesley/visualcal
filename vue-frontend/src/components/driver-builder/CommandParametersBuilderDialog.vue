@@ -44,10 +44,10 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
-import { CustomInstruction, InstructionCommandPart } from '@/driver-builder';
+import { CustomInstruction, CommandParameter } from '@/driver-builder';
 
 @Component
-export default class CommandBuilderComponent extends Vue {
+export default class CommandParametersBuilderDialogComponent extends Vue {
 
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
   @Prop({ type: Object, required: true }) instruction!: CustomInstruction;
@@ -58,9 +58,9 @@ export default class CommandBuilderComponent extends Vue {
   async onInstructionChanged() {
     if (!this.shouldShow) return;
     // If we have an array of InstructionCommandPart, the we use the instruction.command.  Otherwise we create a new array with a main using the existing command text
-    const commandParts = Array.isArray(this.instruction.command) ? this.instruction.command : [{ type: 'main', text: this.instruction.command }];
-    while (!this.$refs.commandBuilderTableElement) await this.$nextTick();
-    await this.table.setData(commandParts);
+    const parameters: CommandParameter[] = (this.instruction.parameters) ? this.instruction.parameters : [];
+    while (!this.$refs.commandBuilderTableElement) await this.$nextTick(); // TODO: Find a better way to wait for table $ref to exist
+    await this.table.setData(parameters);
   }
 
   get tableElement() { return this.$refs.commandBuilderTableElement as HTMLDivElement; }
@@ -69,7 +69,24 @@ export default class CommandBuilderComponent extends Vue {
     return this.fTable;
   }
 
-  private getCommandPartFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as InstructionCommandPart; }
+  private getParameterTypeEditorParams(): Tabulator.SelectParams {
+    return {
+      values: {
+        boolean: 'Boolean',
+        number: 'Number',
+        string: 'String',
+        list: 'List'
+      }
+    };
+  }
+
+  private getParameterFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CommandParameter; }
+
+  private async updateParameter(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    await this.table.updateData([parameter]);
+    this.table.redraw(true);
+  }
 
   private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
@@ -83,8 +100,8 @@ export default class CommandBuilderComponent extends Vue {
 
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
-    { title: 'Type*', field: 'type' },
-    { title: 'Text*', field: 'text', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
+    { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
+    { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
 
@@ -102,15 +119,15 @@ export default class CommandBuilderComponent extends Vue {
   }
 
   async addNewCommandPart() {
-    const newPart: InstructionCommandPart = {
-      type: 'parameter',
-      text: ''
+    const newParameter: CommandParameter = {
+      type: 'boolean',
+      prompt: ''
     };
-    await this.table.addData([newPart]);
+    await this.table.addData([newParameter]);
   }
 
   onSaveClicked() {
-    this.$emit('save', this.instruction, this.table.getData() as InstructionCommandPart[]);
+    this.$emit('save', this.instruction, this.table.getData() as CommandParameter[]);
   }
 
 }

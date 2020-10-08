@@ -1,12 +1,13 @@
 type InstructionType = 'Read' | 'Write' | 'Query';
 type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
-type InstructionCommandPartType = 'main' | 'parameter';
+type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
 
 /** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
-export interface InstructionCommandPart {
-  type: InstructionCommandPartType;
-  /** The text of the this part. */
-  text: string;
+export interface CommandParameter {
+  /** The parameter type.  This determines what is shown to the procedure developer when editing the node that represents it. */
+  type: InstructionParameterType;
+  /** The prompt to show the procedure developer for this parameter when editing the node that represents it. */
+  prompt: string;
   /** Characters to be appended to the text property.  This is intented to be used for separating parameters from the main part and from other parameters. */
   afterText?: string;
   /** Whether or not this part is required.  Only used if type is parameter. */
@@ -15,8 +16,10 @@ export interface InstructionCommandPart {
 
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
 export interface Instruction {
+  /** The name for this instruction.  This helps differentiate one instruction from another when used in the same instruction set. */
   name: string;
   description?: string;
+  /** The instruction type.  This determines if we are only writing data to the device, reading from the device, or both. */
   type: InstructionType;
   /** Expected data type returned from a read or query. */
   responseDataType?: DataType;
@@ -28,8 +31,10 @@ export interface Instruction {
   delayAfter?: number;
   /** A URI/URL of a help document or webpage that contains information about this instruction. */
   helpUri?: string;
-  /** The command that is sent to the device.  Can be a string or an array of InstructionCommandPart that make up the complete command.  At a minimum one, and only one, part with type "main" can and must exist if using an array of InstructionCommandPart. */
-  command: string | InstructionCommandPart[];
+  /** The command that is sent to the device, without parameters. */
+  command: string;
+  /** The optional command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
+  parameters?: CommandParameter[];
 }
 
 /** Extended instruction with tracking information for use with custom commands. */
@@ -69,20 +74,6 @@ export const SCPIRequiredCommands: Instruction[] = [
   { name: 'Status Questionable Enable Query', type: 'Query', command: 'STATus:QUEStionable:ENABle?', responseDataType: 'Number' },
   { name: 'Status Preset Command', type: 'Write', command: 'STATus:PRESet' }
 ];
-
-const getInstructionCommandPartArgsCount = (commands: InstructionCommandPart[]) => {
-  return commands.filter(c => c.type !== 'main').length;
-}
-
-export const getRequiredCommandArgsCount = (instruction: Instruction) => {
-  if (typeof instruction.command === 'string') return (instruction.command.match(/\$reqArg*/g) || []).length;
-  return getInstructionCommandPartArgsCount(instruction.command);
-}
-
-export const getOptionalCommandArgsCount = (instruction: Instruction) => {
-  if (typeof instruction.command === 'string') return (instruction.command.match(/\$optArg*/g) || []).length;
-  return getInstructionCommandPartArgsCount(instruction.command);
-}
 
 export interface InstructionSet {
   name: string;
