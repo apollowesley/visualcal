@@ -43,7 +43,6 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { v4 as uuid } from 'uuid';
 import { CustomInstruction, CommandParameter } from '@/driver-builder';
 
 @Component

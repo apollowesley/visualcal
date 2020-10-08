@@ -6,6 +6,12 @@
       @save="onCommandBuilderSave"
       @cancel="shouldCommandBuilderDialogShow = false"
     />
+    <RenameInstructionSetDialogComponent
+      :should-show="shouldRenameInstructionSetDialogShow"
+      :instruction-set="selectedRenameInstructionSet"
+      @renamed="onInstructionSetRenamed"
+      @cancel="shouldRenameInstructionSetDialogShow = false"
+    />
     <v-row no-gutters>
       <v-col
         class="text-center"
@@ -150,7 +156,18 @@
         </v-row>
         <v-row
           class="ml-2"
-          no-gutters
+        >
+          <v-col>
+            <v-btn
+              color="primary"
+              @click="addNewInstructionSet"
+            >
+              Add Instruction Set
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row
+          class="ml-2"
         >
           <v-col>
             Instruction Sets
@@ -160,15 +177,22 @@
               dense
             >
               <v-expansion-panel
-                v-for="(section) in driver.instructionSets"
-                :key="section.name"
+                v-for="(instructionSet) in driver.instructionSets"
+                :key="instructionSet.name"
                 class="grey"
                 dense
               >
-                <v-expansion-panel-header class="white">{{ section.name }}</v-expansion-panel-header>
+                <v-expansion-panel-header class="white">
+                  {{ instructionSet.name }}
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" class="mr-3" max-width="100" @click.native.stop="renameInstructionSet(instructionSet)">Rename</v-btn>
+                  <v-btn color="primary" max-width="100" @click.native.stop="removeInstructionSet(instructionSet)">Remove</v-btn>
+                </v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <InstructionTableComponent
+                    :instructions="instructionSet.instructions"
                     @edit-instruction-command="onInstructionTableComponentEditInstructionCommand"
+                    @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
                   />
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -183,9 +207,10 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import InstructionTableComponent from '@/components/driver-builder/InstructionTable.vue';
-import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, CustomInstruction } from '@/driver-builder';
+import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, CustomInstruction, InstructionSet } from '@/driver-builder';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 import CommandParametersBuilderDialogComponent from '@/components/driver-builder/CommandParametersBuilderDialog.vue';
+import RenameInstructionSetDialogComponent from '@/components/driver-builder/RenameInstructionSetDialog.vue';
 
 interface ItemInstruction extends Instruction {
   file?: string;
@@ -205,19 +230,24 @@ const MockDriver: Driver = {
   identityQueryCommand: '*IDN?',
   isGpib: true,
   terminator: 'Line feed',
-  instructionSets: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
+  instructionSets: []
 };
 
 @Component({
   components: {
     InstructionTableComponent,
-    CommandParametersBuilderDialogComponent
+    CommandParametersBuilderDialogComponent,
+    RenameInstructionSetDialogComponent
   }
 })
 export default class DriverBuilderView extends Vue {
 
   shouldCommandBuilderDialogShow = false;
   commandBuilderDialogInstruction: CustomInstruction = { id: 'new', order: 0, name: '', type: 'Write', command: 'Command?' };
+
+  shouldRenameInstructionSetDialogShow = false;
+  selectedRenameInstructionSet: InstructionSet = { name: '', instructions: [] };
+
   rules: VuetifyRule[] = [
     requiredRule
   ];
@@ -230,7 +260,7 @@ export default class DriverBuilderView extends Vue {
     identityQueryCommand: '*IDN?',
     isGpib: false,
     terminator: 'None',
-    instructionSets: [{ name: 'Measure Volts AC' }, { name: 'Measure Volts DC' }]
+    instructionSets: []
   } : MockDriver;
 
   tree = [{ name: 'test' }];
@@ -256,7 +286,17 @@ export default class DriverBuilderView extends Vue {
       ]
     },
     {
+      name: 'Instruction Sets',
+      file: 'fold',
+      children: []
+    },
+    {
       name: 'Templates',
+      file: 'fold',
+      children: []
+    },
+    {
+      name: 'Drivers',
       file: 'fold',
       children: []
     }
@@ -294,13 +334,42 @@ export default class DriverBuilderView extends Vue {
   }
 
   onCommandBuilderSave(instruction: CustomInstruction, parameters: CommandParameter[]) {
-    console.info(instruction);
-    console.info(parameters);
+    instruction.parameters = parameters;
   }
 
   onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {
     this.commandBuilderDialogInstruction = instruction;
     this.shouldCommandBuilderDialogShow = true;
+  }
+
+  addNewInstructionSet() {
+    this.driver.instructionSets.push({
+      name: 'New Instruction Set',
+      instructions: []
+    });
+  }
+
+  renameInstructionSet(instructionSet: InstructionSet) {
+    this.selectedRenameInstructionSet = instructionSet;
+    this.shouldRenameInstructionSetDialogShow = true;
+  }
+
+  onInstructionSetRenamed(opts: { originalInstructionSet: InstructionSet, newName: string }) {
+    this.shouldRenameInstructionSetDialogShow = false;
+    const foundSet = this.driver.instructionSets.find(i => i.name === opts.originalInstructionSet.name);
+    if (!foundSet) return;
+    foundSet.name = opts.newName;
+  }
+
+  removeInstructionSet(instructionSet: InstructionSet) {
+    const setIndex = this.driver.instructionSets.findIndex(i => i.name === instructionSet.name);
+    if (setIndex < 0) return;
+    this.driver.instructionSets.splice(setIndex, 1);
+  }
+
+  // eslint-disable-next-line
+  async onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
+    //
   }
 
 }

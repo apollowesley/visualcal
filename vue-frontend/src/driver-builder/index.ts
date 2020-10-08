@@ -77,6 +77,7 @@ export const SCPIRequiredCommands: Instruction[] = [
 
 export interface InstructionSet {
   name: string;
+  instructions: CustomInstruction[];
 }
 
 export interface Driver {

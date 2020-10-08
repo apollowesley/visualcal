@@ -1,6 +1,9 @@
 <template>
   <v-container fluid class="grey">
     <v-row no-gutters>
+      <v-btn class="ma-2" color="primary" @click="addNewInstruction">Add Instruction</v-btn>
+    </v-row>
+    <v-row no-gutters>
       <v-col
         class="text-center"
       >
@@ -11,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
 import { CustomInstruction } from '@/driver-builder';
@@ -19,7 +22,14 @@ import { CustomInstruction } from '@/driver-builder';
 @Component
 export default class InstructionTableComponent extends Vue {
 
+  @Prop({ type: Array, required: true }) instructions!: CustomInstruction[];
+
   private fTable?: Tabulator;
+
+  @Watch('instructions')
+  async onInstructionsChanged() {
+    await this.table.setData(this.instructions);
+  }
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
   get table() {
@@ -131,9 +141,29 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Command*', field: 'command', editable: false, validator: 'required', cellClick: (_, cell) => this.$emit('edit-instruction-command', cell.getRow().getData()) },
-    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' },
+    { title: 'Command*', field: 'command', editable: true, validator: 'required', editor: 'input' },
+    { title: 'Parameters', editable: false, formatter: (cell) => cell.getValue() ? cell.getValue().length.toString() : '0', cellClick: (_, cell) => this.$emit('edit-instruction-command', cell.getRow().getData()) },
+    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' }
   ]
+
+  private createRowContextMenu(): (Tabulator.MenuObject<Tabulator.RowComponent> | Tabulator.MenuSeparator)[] {
+    const menu: Tabulator.RowContextMenuSignature = [
+      {
+        label: 'Save to library',
+        action: (_, row) => {
+          this.$emit('save-instruction-to-library', row.getData());
+        }
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Delete',
+        action: (_, row) => this.table.deleteRow(row)
+      }
+    ];
+    return menu;
+  }
 
   private createTable() {
     if (this.fTable) return this.fTable;
@@ -141,8 +171,9 @@ export default class InstructionTableComponent extends Vue {
       layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
+      rowContextMenu: this.createRowContextMenu(),
       cellEdited: () => { table.redraw(true); },
-      rowMoved: () => { this.reorderInstructions(table); },
+      rowMoved: () => { this.reorderInstructions(table); }
     });
     this.fTable = table;
     return table;
@@ -171,6 +202,19 @@ export default class InstructionTableComponent extends Vue {
       readAttempts: 1
     }
     await this.table.addData([customInstruction]);
+  }
+
+  async addNewInstruction() {
+    const newInstruction: CustomInstruction = {
+      id: uuid(),
+      order: this.table.getRows().length,
+      name: 'New instruction',
+      type: 'Write',
+      command: 'DATA',
+      readAttempts: 1
+    }
+    await this.table.addRow(newInstruction);
+    this.$emit('instruction-added', newInstruction);
   }
 
 }
