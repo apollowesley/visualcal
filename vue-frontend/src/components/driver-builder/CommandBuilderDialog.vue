@@ -10,6 +10,13 @@
           <h4>Command builder</h4>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col>
+          <v-btn color="primary" class="ma-2" @click="addNewCommandPart">
+            Add
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-row no-gutters>
         <v-col
           class="text-center"
@@ -46,15 +53,14 @@ export default class CommandBuilderComponent extends Vue {
   @Prop({ type: Object, required: true }) instruction!: CustomInstruction;
 
   private fTable?: Tabulator;
-  commandParts: InstructionCommandPart[] = [];
 
   @Watch('shouldShow', { immediate: true })
   async onInstructionChanged() {
     if (!this.shouldShow) return;
     // If we have an array of InstructionCommandPart, the we use the instruction.command.  Otherwise we create a new array with a main using the existing command text
-    this.commandParts = Array.isArray(this.instruction.command) ? this.instruction.command : [{ type: 'main', text: this.instruction.command }];
+    const commandParts = Array.isArray(this.instruction.command) ? this.instruction.command : [{ type: 'main', text: this.instruction.command }];
     while (!this.$refs.commandBuilderTableElement) await this.$nextTick();
-    await this.table.setData(this.commandParts);
+    await this.table.setData(commandParts);
   }
 
   get tableElement() { return this.$refs.commandBuilderTableElement as HTMLDivElement; }
@@ -63,40 +69,7 @@ export default class CommandBuilderComponent extends Vue {
     return this.fTable;
   }
 
-  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
-
-  private getIsCommandEditable(cell: Tabulator.CellComponent) {
-    const instruction = this.getInstructionFromCell(cell);
-    if (instruction.type === 'Read') return false;
-    return true;
-  }
-
-  private getCommandTypeEditorParams(): Tabulator.SelectParams {
-    return {
-      values: {
-        Write: 'Write',
-        Read: 'Read',
-        Query: 'Query',
-      }
-    };
-  }
-
-  private async updateInstruction(cell: Tabulator.CellComponent) {
-    if (!this.table) return;
-    const instruction = this.getInstructionFromCell(cell);
-    await this.table.updateData([instruction]);
-    this.table.redraw(true);
-  }
-
-  private formatCommandCell(cell: Tabulator.CellComponent) {
-    const isEditable = this.getIsCommandEditable(cell);
-    const div = document.createElement('div') as HTMLDivElement;
-    div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
-    div.style.height = '100%';
-    div.style.width = '100%';
-    if (isEditable) div.innerText = cell.getValue();
-    return div;
-  }
+  private getCommandPartFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as InstructionCommandPart; }
 
   private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
@@ -110,7 +83,7 @@ export default class CommandBuilderComponent extends Vue {
 
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
-    { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
+    { title: 'Type*', field: 'type' },
     { title: 'Text*', field: 'text', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
@@ -128,8 +101,16 @@ export default class CommandBuilderComponent extends Vue {
     return table;
   }
 
+  async addNewCommandPart() {
+    const newPart: InstructionCommandPart = {
+      type: 'parameter',
+      text: ''
+    };
+    await this.table.addData([newPart]);
+  }
+
   onSaveClicked() {
-    this.$emit('save', this.instruction, this.commandParts);
+    this.$emit('save', this.instruction, this.table.getData() as InstructionCommandPart[]);
   }
 
 }
