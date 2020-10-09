@@ -5,6 +5,8 @@ import Vuetify from '@/plugins/vuetify';
 import { User, ViewInfo } from '../types/session';
 import { SessionViewRequestResponseInfo, ProcedureSection, ProcedureAction } from 'visualcal-common/dist/session-view-info';
 import { LoginCredentials } from 'visualcal-common/dist/user';
+import DriverBuilderModule from './driver-builder';
+import { isDev } from '@/utils';
 
 interface State {
   darkMode: boolean;
@@ -25,6 +27,10 @@ const {
   rootGetterContext,
   moduleGetterContext
 } = createDirectStore({
+  strict: isDev(),
+  modules: {
+    driverBuilder: DriverBuilderModule
+  },
   state: (): State => {
     return {
       darkMode: false,
@@ -98,11 +104,12 @@ export {
   moduleActionContext,
   rootGetterContext,
   moduleGetterContext
-}
+};
  
 // The following lines enable types in the injected store '$store'.
-export type AppStore = typeof store
+export type AppStore = typeof store;
 declare module 'vuex' {
+  // eslint-disable-next-line
   interface Store<S> {
     direct: AppStore;
   }

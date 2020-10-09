@@ -37,8 +37,8 @@ export const setWindowSize = (id: VisualCalWindow, opts?: BrowserWindowConstruct
       opts.width = undefined;
       opts.titleBarStyle = undefined;
     case VisualCalWindow.DriverBuilder:
-      opts.resizable = undefined;
-      opts.maximizable = undefined;
+      opts.resizable = true;
+      opts.maximizable = true;
       opts.height = undefined;
       opts.width = undefined;
       opts.titleBarStyle = undefined;

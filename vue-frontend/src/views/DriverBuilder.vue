@@ -91,7 +91,7 @@
                   sm="4"
                 >
                   <v-text-field
-                    v-model="driver.manufacturer"
+                    v-model="manufacturer"
                     :rules="rules"
                     label="Manufacturer"
                   />
@@ -101,7 +101,7 @@
                   sm="4"
                 >
                   <v-text-field
-                    v-model="driver.model"
+                    v-model="model"
                     :rules="rules"
                     label="Model"
                   />
@@ -111,7 +111,7 @@
                   sm="4"
                 >
                   <v-text-field
-                    v-model="driver.nomenclature"
+                    v-model="nomenclature"
                     :rules="rules"
                     label="Nomenclature"
                     hint="Instrument class or description"
@@ -121,29 +121,29 @@
               <v-row>
                 <v-col>
                   <v-checkbox
-                    v-model="driver.identifiable"
+                    v-model="identifiable"
                     label="Identifiable?"
                   />
                 </v-col>
                 <v-col
-                  v-if="driver.identifiable"
+                  v-if="identifiable"
                 >
                   <v-text-field
-                    v-model="driver.identityQueryCommand"
-                    :rules="driver.identifiable ? rules : []"
+                    v-model="identityQueryCommand"
+                    :rules="identifiable ? rules : []"
                     label="Identity Query Command"
                     hint="Command sent to instrument to ask it for it's identity"
                   />
                 </v-col>
                 <v-col>
                   <v-checkbox
-                    v-model="driver.isGpib"
+                    v-model="isGpib"
                     label="Has a GPIB interface?"
                   />
                 </v-col>
                 <v-col>
                   <v-select
-                    v-model="driver.terminator"
+                    v-model="terminator"
                     :rules="rules"
                     :items="['None', 'Carriage return', 'Line feed', 'Carriage return / Line feed']"
                     label="Terminator"
@@ -252,17 +252,7 @@ export default class DriverBuilderView extends Vue {
     requiredRule
   ];
   canSaveForm = false;
-  driver: Driver = process.env.NODE_ENV === 'production' ? {
-    manufacturer: '',
-    model: '',
-    nomenclature: '',
-    identifiable: false,
-    identityQueryCommand: '*IDN?',
-    isGpib: false,
-    terminator: 'None',
-    instructionSets: []
-  } : MockDriver;
-
+  localDriver: Driver = this.driver;
   tree = [{ name: 'test' }];
   open = [];
   files: Record<string, string> = {
@@ -302,7 +292,49 @@ export default class DriverBuilderView extends Vue {
     }
   ]
  
+  get driver() { return this.$store.direct.state.driverBuilder.currentDriver; }
+  set driver(value: Driver) {
+    this.$store.direct.commit.driverBuilder.setCurrentDriver(value);
+  }
+
+  get manufacturer() { return this.driver.manufacturer; }
+  set manufacturer(value: string) {
+    this.$store.direct.commit.driverBuilder.setManufacturer(value);
+  }
+
+  get model() { return this.driver.model; }
+  set model(value: string) {
+    this.$store.direct.commit.driverBuilder.setModel(value);
+  }
+
+  get nomenclature() { return this.driver.nomenclature; }
+  set nomenclature(value: string) {
+    this.$store.direct.commit.driverBuilder.setNomenclature(value);
+  }
+
+  get identifiable() { return this.driver.identifiable; }
+  set identifiable(value: boolean) {
+    this.$store.direct.commit.driverBuilder.setIdentifiable(value);
+  }
+
+  get identityQueryCommand() { return this.driver.identityQueryCommand; }
+  set identityQueryCommand(value: string) {
+    this.$store.direct.commit.driverBuilder.setIdentityQueryCommand(value);
+  }
+
+  get isGpib() { return this.driver.isGpib; }
+  set isGpib(value: boolean) {
+    this.$store.direct.commit.driverBuilder.setIsGpib(value);
+  }
+
+  get terminator() { return this.driver.terminator; }
+  set terminator(value: string) {
+    this.$store.direct.commit.driverBuilder.setTerminator(value);
+  }
+
   mounted() {
+    this.localDriver = MockDriver;
+    this.driver = this.localDriver;
     const instructionsCategory = this.items.find(i => i.name === 'Instructions');
     if (!instructionsCategory) return;
     if (!instructionsCategory.children) instructionsCategory.children = [];
@@ -343,10 +375,7 @@ export default class DriverBuilderView extends Vue {
   }
 
   addNewInstructionSet() {
-    this.driver.instructionSets.push({
-      name: 'New Instruction Set',
-      instructions: []
-    });
+    this.$store.direct.commit.driverBuilder.addNewDriverInstructionSet();
   }
 
   renameInstructionSet(instructionSet: InstructionSet) {
@@ -356,20 +385,15 @@ export default class DriverBuilderView extends Vue {
 
   onInstructionSetRenamed(opts: { originalInstructionSet: InstructionSet, newName: string }) {
     this.shouldRenameInstructionSetDialogShow = false;
-    const foundSet = this.driver.instructionSets.find(i => i.name === opts.originalInstructionSet.name);
-    if (!foundSet) return;
-    foundSet.name = opts.newName;
+    this.$store.direct.commit.driverBuilder.renameInstructionSet({ oldName: opts.originalInstructionSet.name, newName: opts.newName });
   }
 
   removeInstructionSet(instructionSet: InstructionSet) {
-    const setIndex = this.driver.instructionSets.findIndex(i => i.name === instructionSet.name);
-    if (setIndex < 0) return;
-    this.driver.instructionSets.splice(setIndex, 1);
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet.name);
   }
 
-  // eslint-disable-next-line
   async onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
-    //
+    this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({ instructionSetName: instructionSet.name, newInstruction: newInstruction })
   }
 
 }
