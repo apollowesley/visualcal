@@ -1,4 +1,5 @@
 import { defineModule } from 'direct-vuex';
+import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
 import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 
@@ -7,6 +8,8 @@ export interface DriverBuilderState {
   instructionSets: InstructionSet[];
   drivers: Driver[];
   currentDriver: Driver;
+  communicationInterfaceInfos: CommunicationInterfaceConfigurationInfo[];
+  selectedCommunicationInterfaceInfo?: CommunicationInterfaceConfigurationInfo;
 }
 
 const employeesModule = defineModule({
@@ -26,7 +29,9 @@ const employeesModule = defineModule({
         isGpib: false,
         terminator: 'None',
         instructionSets: []
-      }
+      },
+      communicationInterfaceInfos: [],
+      selectedCommunicationInterfaceInfo: undefined
     }
   },
   // getters: {
@@ -87,20 +92,35 @@ const employeesModule = defineModule({
       const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.oldName);
       if (!instructionSet) return;
       instructionSet.name = opts.newName;
+    },
+    setCommunicationInterfaceInfos(state, value: CommunicationInterfaceConfigurationInfo[]) {
+      state.communicationInterfaceInfos = value;
+    },
+    setSelectedCommunicationInterfaceInfo(state, value?: CommunicationInterfaceConfigurationInfo) {
+      state.selectedCommunicationInterfaceInfo = value;
     }
   },
-  // actions: {
-  //   async refreshInstructions(context) {
-  //     const { commit } = actionContext(context);
-  //     // const instructions = await getInstructions();
-  //     // commit.setInstructions(instructions);
-  //   }
-  // },
+  actions: {
+    async refreshCommunicationInterfaceInfos(context) {
+      const { commit } = actionContext(context);
+      const currentUser = await window.ipc.getCurrentUser();
+      if (!currentUser) return;
+      const viewInfo = await window.ipc.getViewInfo();
+      if (!viewInfo || !viewInfo.session.configuration || !viewInfo.session.configuration.benchConfigName) return;
+      const benchConfig = currentUser.benchConfigs.find(b => {
+        if (!viewInfo || !viewInfo.session.configuration || !viewInfo.session.configuration.benchConfigName) return;
+        return b.name === viewInfo.session.configuration.benchConfigName;
+      });
+      if (!benchConfig) return;
+      commit.setCommunicationInterfaceInfos(benchConfig.interfaces);
+      if (benchConfig.interfaces.length <= 0) return;
+      commit.setSelectedCommunicationInterfaceInfo(benchConfig.interfaces[0]);
+    }
+  }
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line
 const getterContext = (args: [any, any, any, any]) => moduleGetterContext(args, employeesModule);
-// eslint-disable-next-line
 const actionContext = (context: any) => moduleActionContext(context, employeesModule);
 export default employeesModule;

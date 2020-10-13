@@ -127,6 +127,7 @@
             </v-form>
           </v-col>
         </v-row>
+        <DirectControlComponent />
         <v-row class="ml-2">
           <v-col>
             <v-btn color="primary" @click="addNewInstructionSet">
@@ -203,6 +204,7 @@ import {
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
+import DirectControlComponent from "@/components/driver-builder/DirectControlComponent.vue";
 import { v4 as uuid } from 'uuid';
 
 interface ItemInstruction extends Instruction {
@@ -233,7 +235,8 @@ const MockDriver: Driver = {
     InstructionTableComponent,
     CommandParametersBuilderDialogComponent,
     RenameInstructionSetDialogComponent,
-  },
+    DirectControlComponent
+  }
 })
 export default class DriverBuilderView extends Vue {
   shouldCommandBuilderDialogShow = false;
