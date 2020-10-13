@@ -13,9 +13,7 @@
       @cancel="shouldRenameInstructionSetDialogShow = false"
     />
     <v-row no-gutters>
-      <v-col
-        class="text-center"
-      >
+      <v-col class="text-center">
         <v-row no-gutters>
           <v-col>
             <h2>Driver Builder</h2>
@@ -23,14 +21,8 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row
-      class="flex-nowrap"
-      style="height: 96vh"
-      no-gutters
-    >
-      <v-col
-        cols="2"
-      >
+    <v-row class="flex-nowrap" style="height: 96vh" no-gutters>
+      <v-col cols="2">
         <v-row no-gutters style="height: 2%">
           <v-col>
             <h4>Instructions and Templates</h4>
@@ -42,23 +34,26 @@
               v-model="tree"
               :open="open"
               :items="items"
-              style="height: 100%; width: 100%; background: white; font-size: 14px"
+              style="
+                height: 100%;
+                width: 100%;
+                background: white;
+                font-size: 14px;
+              "
               activatable
-              item-key="name"
+              item-key="id"
               open-on-click
               dense
             >
               <template v-slot:prepend="{ item, open }">
                 <v-icon v-if="!item.file">
-                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+                  {{ open ? "mdi-folder-open" : "mdi-folder" }}
                 </v-icon>
                 <v-icon v-else>
                   {{ files[item.file] }}
                 </v-icon>
               </template>
-              <template
-                v-slot:label="{ item }"
-              >
+              <template v-slot:label="{ item }">
                 <label
                   v-if="item.command"
                   draggable
@@ -67,9 +62,7 @@
                 >
                   {{ item.name }}
                 </label>
-                <label
-                  v-else
-                >
+                <label v-else>
                   {{ item.name }}
                 </label>
               </template>
@@ -78,38 +71,21 @@
         </v-row>
       </v-col>
       <v-col>
-        <v-row
-          class="ma-5"
-        >
+        <v-row class="ma-5">
           <v-col>
-            <v-form
-              v-model="canSaveForm"
-            >
+            <v-form v-model="canSaveForm">
               <v-row dense>
-                <v-col
-                  cols="12"
-                  sm="4"
-                >
+                <v-col cols="12" sm="4">
                   <v-text-field
                     v-model="manufacturer"
                     :rules="rules"
                     label="Manufacturer"
                   />
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="4"
-                >
-                  <v-text-field
-                    v-model="model"
-                    :rules="rules"
-                    label="Model"
-                  />
+                <v-col cols="12" sm="4">
+                  <v-text-field v-model="model" :rules="rules" label="Model" />
                 </v-col>
-                <v-col
-                  cols="12"
-                  sm="4"
-                >
+                <v-col cols="12" sm="4">
                   <v-text-field
                     v-model="nomenclature"
                     :rules="rules"
@@ -120,14 +96,9 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-checkbox
-                    v-model="identifiable"
-                    label="Identifiable?"
-                  />
+                  <v-checkbox v-model="identifiable" label="Identifiable?" />
                 </v-col>
-                <v-col
-                  v-if="identifiable"
-                >
+                <v-col v-if="identifiable">
                   <v-text-field
                     v-model="identityQueryCommand"
                     :rules="identifiable ? rules : []"
@@ -136,16 +107,18 @@
                   />
                 </v-col>
                 <v-col>
-                  <v-checkbox
-                    v-model="isGpib"
-                    label="Has a GPIB interface?"
-                  />
+                  <v-checkbox v-model="isGpib" label="Has a GPIB interface?" />
                 </v-col>
                 <v-col>
                   <v-select
                     v-model="terminator"
                     :rules="rules"
-                    :items="['None', 'Carriage return', 'Line feed', 'Carriage return / Line feed']"
+                    :items="[
+                      'None',
+                      'Carriage return',
+                      'Line feed',
+                      'Carriage return / Line feed',
+                    ]"
                     label="Terminator"
                     hint="Character(s) used to signal the end of a read/write"
                   />
@@ -154,21 +127,14 @@
             </v-form>
           </v-col>
         </v-row>
-        <v-row
-          class="ml-2"
-        >
+        <v-row class="ml-2">
           <v-col>
-            <v-btn
-              color="primary"
-              @click="addNewInstructionSet"
-            >
+            <v-btn color="primary" @click="addNewInstructionSet">
               Add Instruction Set
             </v-btn>
           </v-col>
         </v-row>
-        <v-row
-          class="ml-2"
-        >
+        <v-row class="ml-2">
           <v-col>
             Instruction Sets
             <v-expansion-panels
@@ -177,7 +143,7 @@
               dense
             >
               <v-expansion-panel
-                v-for="(instructionSet) in driver.instructionSets"
+                v-for="instructionSet in driver.instructionSets"
                 :key="instructionSet.name"
                 class="grey"
                 dense
@@ -185,14 +151,32 @@
                 <v-expansion-panel-header class="white">
                   {{ instructionSet.name }}
                   <v-spacer></v-spacer>
-                  <v-btn color="primary" class="mr-3" max-width="100" @click.native.stop="renameInstructionSet(instructionSet)">Rename</v-btn>
-                  <v-btn color="primary" max-width="100" @click.native.stop="removeInstructionSet(instructionSet)">Remove</v-btn>
+                  <v-btn
+                    color="primary"
+                    class="mr-3"
+                    max-width="100"
+                    @click.native.stop="renameInstructionSet(instructionSet)"
+                    >Rename</v-btn
+                  >
+                  <v-btn
+                    color="primary"
+                    max-width="100"
+                    @click.native.stop="removeInstructionSet(instructionSet)"
+                    >Remove</v-btn
+                  >
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
                   <InstructionTableComponent
                     :instructions="instructionSet.instructions"
-                    @edit-instruction-command="onInstructionTableComponentEditInstructionCommand"
-                    @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
+                    @edit-instruction-command="
+                      onInstructionTableComponentEditInstructionCommand
+                    "
+                    @instruction-added="
+                      onInstructionTableComponentInstructionAdded(
+                        instructionSet,
+                        $event
+                      )
+                    "
                   />
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -205,129 +189,242 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
-import InstructionTableComponent from '@/components/driver-builder/InstructionTable.vue';
-import { Instruction, IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, CustomInstruction, InstructionSet } from '@/driver-builder';
-import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
-import CommandParametersBuilderDialogComponent from '@/components/driver-builder/CommandParametersBuilderDialog.vue';
-import RenameInstructionSetDialogComponent from '@/components/driver-builder/RenameInstructionSetDialog.vue';
+import { Vue, Component } from "vue-property-decorator";
+import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
+import {
+  Instruction,
+  IEEE4882MandatedCommands,
+  SCPIRequiredCommands,
+  Driver,
+  CommandParameter,
+  CustomInstruction,
+  InstructionSet,
+} from "@/driver-builder";
+import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
+import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
+import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
+import { v4 as uuid } from 'uuid';
 
 interface ItemInstruction extends Instruction {
+  id: string;
   file?: string;
 }
 
 interface Item {
+  id: string;
   name: string;
   children?: Item[] | ItemInstruction[];
   file?: string;
 }
 
 const MockDriver: Driver = {
-  manufacturer: 'Fluke',
-  model: '45',
-  nomenclature: 'Digital Multimeter',
+  manufacturer: "Fluke",
+  model: "45",
+  nomenclature: "Digital Multimeter",
   identifiable: true,
-  identityQueryCommand: '*IDN?',
+  identityQueryCommand: "*IDN?",
   isGpib: true,
-  terminator: 'Line feed',
-  instructionSets: []
+  terminator: "Line feed",
+  instructionSets: [],
 };
 
 @Component({
   components: {
     InstructionTableComponent,
     CommandParametersBuilderDialogComponent,
-    RenameInstructionSetDialogComponent
-  }
+    RenameInstructionSetDialogComponent,
+  },
 })
 export default class DriverBuilderView extends Vue {
-
   shouldCommandBuilderDialogShow = false;
-  commandBuilderDialogInstruction: CustomInstruction = { id: 'new', order: 0, name: '', type: 'Write', command: 'Command?' };
+  commandBuilderDialogInstruction: CustomInstruction = {
+    id: "new",
+    order: 0,
+    name: "",
+    type: "Write",
+    command: "Command?",
+  };
 
   shouldRenameInstructionSetDialogShow = false;
-  selectedRenameInstructionSet: InstructionSet = { name: '', instructions: [] };
+  selectedRenameInstructionSet: InstructionSet = { name: "", instructions: [] };
 
-  rules: VuetifyRule[] = [
-    requiredRule
-  ];
+  rules: VuetifyRule[] = [requiredRule];
   canSaveForm = false;
   localDriver: Driver = this.driver;
-  tree = [{ name: 'test' }];
+  tree = [{ name: "test" }];
   open = [];
   files: Record<string, string> = {
-    html: 'mdi-language-html5',
-    js: 'mdi-nodejs',
-    json: 'mdi-code-json',
-    md: 'mdi-language-markdown',
-    pdf: 'mdi-file-pdf',
-    png: 'mdi-file-image',
-    txt: 'mdi-file-document-outline',
-    xls: 'mdi-file-excel',
-    fold: 'mdi-folder'
-  }
+    html: "mdi-language-html5",
+    js: "mdi-nodejs",
+    json: "mdi-code-json",
+    md: "mdi-language-markdown",
+    pdf: "mdi-file-pdf",
+    png: "mdi-file-image",
+    txt: "mdi-file-document-outline",
+    xls: "mdi-file-excel",
+    fold: "mdi-folder",
+  };
   items: Item[] = [
-    { name: 'Instructions',
-      file: 'fold',
+    {
+      id: uuid(),
+      name: 'Built-in',
       children: [
-        { name: 'Digital Multimeter', file: 'fold' },
-        { name: 'Signal Generator', file: 'fold' },
-        { name: 'Waveform Generator', file: 'fold' }
+        {
+          id: uuid(),
+          name: "Instructions",
+          children: [
+            { id: uuid(), name: "Digital Multimeter" },
+            { id: uuid(), name: "Signal Generator" },
+            { id: uuid(), name: "Waveform Generator" }
+          ]
+        },
+        {
+          id: uuid(),
+          name: "Instruction Sets",
+          children: []
+        }
       ]
     },
     {
-      name: 'Instruction Sets',
-      file: 'fold',
-      children: []
+      id: uuid(),
+      name: "Categories",
+      children: [
+        {
+          id: uuid(),
+          name: "Digital Multimeter",
+          children: [
+            {
+              id: uuid(),
+              name: 'Measure AC Volts',
+              file: 'json'
+            },
+            {
+              id: uuid(),
+              name: 'Measure DC Volts',
+              file: 'json'
+            }
+          ]
+        }
+      ]
     },
     {
-      name: 'Templates',
-      file: 'fold',
-      children: []
-    },
-    {
-      name: 'Drivers',
-      file: 'fold',
-      children: []
+      id: uuid(),
+      name: "Devices",
+      children: [
+        {
+          id: uuid(),
+          name: "Fluke",
+          children: [
+            {
+              id: uuid(),
+              name: "45",
+              children: [
+                {
+                  id: uuid(),
+                  name: "Instructions",
+                  children: [
+                    {
+                      id: uuid(),
+                      name: "Set mode AC volts",
+                      file: "json",
+                      command: "CONF:VOLTS:AC",
+                      type: "Write",
+                    }
+                  ]
+                },
+                {
+                  id: uuid(),
+                  name: "Instruction Sets",
+                  children: [
+                    {
+                      id: uuid(),
+                      name: "Measure AC Volts",
+                      file: "json",
+                    }
+                  ]
+                },
+                {
+                  id: uuid(),
+                  name: 'Categories',
+                  children: [
+                    {
+                      id: uuid(),
+                      name: 'Digital Multimeter',
+                      children: [
+                        {
+                          id: uuid(),
+                          name: 'Measure AC Volts',
+                          file: 'json'
+                        },
+                        {
+                          id: uuid(),
+                          name: 'Measure DC Volts',
+                          file: 'json'
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
-  ]
- 
-  get driver() { return this.$store.direct.state.driverBuilder.currentDriver; }
+  ];
+
+  get driver() {
+    return this.$store.direct.state.driverBuilder.currentDriver;
+  }
   set driver(value: Driver) {
     this.$store.direct.commit.driverBuilder.setCurrentDriver(value);
   }
 
-  get manufacturer() { return this.driver.manufacturer; }
+  get manufacturer() {
+    return this.driver.manufacturer;
+  }
   set manufacturer(value: string) {
     this.$store.direct.commit.driverBuilder.setManufacturer(value);
   }
 
-  get model() { return this.driver.model; }
+  get model() {
+    return this.driver.model;
+  }
   set model(value: string) {
     this.$store.direct.commit.driverBuilder.setModel(value);
   }
 
-  get nomenclature() { return this.driver.nomenclature; }
+  get nomenclature() {
+    return this.driver.nomenclature;
+  }
   set nomenclature(value: string) {
     this.$store.direct.commit.driverBuilder.setNomenclature(value);
   }
 
-  get identifiable() { return this.driver.identifiable; }
+  get identifiable() {
+    return this.driver.identifiable;
+  }
   set identifiable(value: boolean) {
     this.$store.direct.commit.driverBuilder.setIdentifiable(value);
   }
 
-  get identityQueryCommand() { return this.driver.identityQueryCommand; }
+  get identityQueryCommand() {
+    return this.driver.identityQueryCommand;
+  }
   set identityQueryCommand(value: string) {
     this.$store.direct.commit.driverBuilder.setIdentityQueryCommand(value);
   }
 
-  get isGpib() { return this.driver.isGpib; }
+  get isGpib() {
+    return this.driver.isGpib;
+  }
   set isGpib(value: boolean) {
     this.$store.direct.commit.driverBuilder.setIsGpib(value);
   }
 
-  get terminator() { return this.driver.terminator; }
+  get terminator() {
+    return this.driver.terminator;
+  }
   set terminator(value: string) {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
   }
@@ -335,25 +432,35 @@ export default class DriverBuilderView extends Vue {
   mounted() {
     this.localDriver = MockDriver;
     this.driver = this.localDriver;
-    const instructionsCategory = this.items.find(i => i.name === 'Instructions');
+    const builtInCategory = this.items.find((i) => i.name === 'Built-in');
+    if (!builtInCategory || !builtInCategory.children) return;
+    const instructionsCategory = (builtInCategory.children as Item[]).find((i) => i.name === 'Instructions');
     if (!instructionsCategory) return;
     if (!instructionsCategory.children) instructionsCategory.children = [];
-    const SCPIMandatedCategory: Item = { name: 'IEEE 488.2 / SCPI Mandated', children: [] };
-    IEEE4882MandatedCommands.forEach(c => {
+    const SCPIMandatedCategory: Item = {
+      id: uuid(),
+      name: 'IEEE 488.2 / SCPI Mandated',
+      children: [],
+    };
+    IEEE4882MandatedCommands.forEach((c) => {
       const instruction: ItemInstruction = {
+        id: uuid(),
         ...c,
-        file: 'json'
-      }
-      if (SCPIMandatedCategory.children) SCPIMandatedCategory.children.push(instruction);
+        file: 'json',
+      };
+      if (SCPIMandatedCategory.children)
+        SCPIMandatedCategory.children.push(instruction);
     });
     (instructionsCategory.children as Item[]).unshift(SCPIMandatedCategory);
-    const SCPIRequiredCategory: Item = { name: 'SCPI Required', children: [] };
-    SCPIRequiredCommands.forEach(c => {
+    const SCPIRequiredCategory: Item = { id: uuid(), name: 'SCPI Required', children: [] };
+    SCPIRequiredCommands.forEach((c) => {
       const instruction: ItemInstruction = {
+        id: uuid(),
         ...c,
-        file: 'json'
-      }
-      if (SCPIRequiredCategory.children) SCPIRequiredCategory.children.push(instruction);
+        file: 'json',
+      };
+      if (SCPIRequiredCategory.children)
+        SCPIRequiredCategory.children.push(instruction);
     });
     (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
   }
@@ -365,11 +472,16 @@ export default class DriverBuilderView extends Vue {
     event.dataTransfer.setData('application/json', instructionString);
   }
 
-  onCommandBuilderSave(instruction: CustomInstruction, parameters: CommandParameter[]) {
+  onCommandBuilderSave(
+    instruction: CustomInstruction,
+    parameters: CommandParameter[]
+  ) {
     instruction.parameters = parameters;
   }
 
-  onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {
+  onInstructionTableComponentEditInstructionCommand(
+    instruction: CustomInstruction
+  ) {
     this.commandBuilderDialogInstruction = instruction;
     this.shouldCommandBuilderDialogShow = true;
   }
@@ -383,19 +495,32 @@ export default class DriverBuilderView extends Vue {
     this.shouldRenameInstructionSetDialogShow = true;
   }
 
-  onInstructionSetRenamed(opts: { originalInstructionSet: InstructionSet, newName: string }) {
+  onInstructionSetRenamed(opts: {
+    originalInstructionSet: InstructionSet;
+    newName: string;
+  }) {
     this.shouldRenameInstructionSetDialogShow = false;
-    this.$store.direct.commit.driverBuilder.renameInstructionSet({ oldName: opts.originalInstructionSet.name, newName: opts.newName });
+    this.$store.direct.commit.driverBuilder.renameInstructionSet({
+      oldName: opts.originalInstructionSet.name,
+      newName: opts.newName,
+    });
   }
 
   removeInstructionSet(instructionSet: InstructionSet) {
-    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet.name);
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(
+      instructionSet.name
+    );
   }
 
-  async onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
-    this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({ instructionSetName: instructionSet.name, newInstruction: newInstruction })
+  async onInstructionTableComponentInstructionAdded(
+    instructionSet: InstructionSet,
+    newInstruction: CustomInstruction
+  ) {
+    this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({
+      instructionSetName: instructionSet.name,
+      newInstruction: newInstruction,
+    });
   }
-
 }
 </script>
 
