@@ -12,7 +12,7 @@
         />
       </v-col>
       <v-col
-        v-if="selectedInterfaceInfo && selectedInterfaceInfo.type.toLocaleUpperCase().includes('GPIB')"
+        v-if="isSelectedInterfaceGpib"
         cols="2"
       >
         <v-text-field
@@ -65,6 +65,8 @@ export default class DirectControlComponent extends Vue {
   set deviceGpibAddress(value: number) { this.$store.direct.commit.driverBuilder.setDeviceGpibAddress(parseInt(value.toString())); }
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
+
+  get isSelectedInterfaceGpib() { return this.$store.direct.getters.driverBuilder.isSelectedInterfaceGpib; }
 
   onDeviceGpibAddressMouseWheel(event: MouseWheelInputEvent) {
     if (!event.wheelTicksY) return;

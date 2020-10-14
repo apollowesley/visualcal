@@ -2,7 +2,7 @@ import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
 import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
-import { IpcChannels, Status } from 'visualcal-common/src/driver-builder';
+import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 
 export interface DriverBuilderState {
   instructions: Instruction[];
@@ -39,13 +39,14 @@ const employeesModule = defineModule({
       isSelectedCommunicationInterfaceConnected: false
     }
   },
-  // getters: {
-  //   examiners(...args): Examiner[] {
-  //     /* eslint-disable @typescript-eslint/no-use-before-define */
-  //     const { state } = getterContext(args);
-  //     return state.employees.filter(e => e.type === EmployeeTypes.Examiner && !e.deleted) as Examiner[];
-  //   },
-  // },
+  getters: {
+    isSelectedInterfaceGpib(...args): boolean {
+      /* eslint-disable @typescript-eslint/no-use-before-define */
+      const { state } = getterContext(args);
+      if (!state.selectedCommunicationInterfaceInfo) return false;
+      return state.selectedCommunicationInterfaceInfo && state.selectedCommunicationInterfaceInfo.type.toLocaleUpperCase().includes('GPIB')
+    }
+  },
   mutations: {
     setInstructions(state, value: Instruction[]) {
       state.instructions = value;
@@ -157,10 +158,19 @@ const employeesModule = defineModule({
     async disconnect() {
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
     },
-    async write(_, data: ArrayBufferLike) {
-      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, data);
+    async write(context, data: ArrayBufferLike) {
+      const { getters, state } = actionContext(context);
+      const info: WriteInfo = {
+        data: data,
+        deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
+      };
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
     },
-    async read() {
+    async read(context) {
+      const { getters, state } = actionContext(context);
+      const info: CommunicationInterfaceActionInfo = {
+        deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
+      };
       return new Promise<ArrayBufferLike>((resolve, reject) => {
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => {
           return resolve((data));
@@ -168,18 +178,23 @@ const employeesModule = defineModule({
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.error, (_, error: Error) => {
           return reject(error);
         });
-        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request);
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request, info);
       });
     },
-    async queryString(_, data: string) {
+    async queryString(context, data: string) {
+      const { getters, state } = actionContext(context);
       return new Promise<string>((resolve, reject) => {
+        const info: QueryStringInfo = {
+          data: data,
+          deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
+        };
         window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.response, (_, data: string) => {
           return resolve(data);
         });
         window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => {
           return reject(error);
         });
-        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, data);
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, info);
       });
     }
   }

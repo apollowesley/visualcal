@@ -36,3 +36,12 @@ export interface Status {
     communicationInterfaceName?: string;
     isConnected: boolean;
 }
+export interface CommunicationInterfaceActionInfo {
+    deviceGpibAddress?: number;
+}
+export interface WriteInfo extends CommunicationInterfaceActionInfo {
+    data: ArrayBufferLike;
+}
+export interface QueryStringInfo extends CommunicationInterfaceActionInfo {
+    data: string;
+}

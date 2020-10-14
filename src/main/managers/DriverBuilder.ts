@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { IpcChannels, Status } from 'visualcal-common/dist/driver-builder';
+import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
 
@@ -101,28 +101,31 @@ export class DriverBuilder extends TypedEmitter<Events> {
         return event.reply(IpcChannels.communicationInterface.disconnect.error, error);
       }
     });
-    ipcMain.on(IpcChannels.communicationInterface.write.request, async (event, data: ArrayBufferLike) => {
+    ipcMain.on(IpcChannels.communicationInterface.write.request, async (event, info: WriteInfo) => {
       try {
         if (event.sender.isDestroyed()) return;
-        await this.write(data);
+        if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
+        await this.write(info.data);
         return event.reply(IpcChannels.communicationInterface.write.response, true);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.write.error, error);
       }
     });
-    ipcMain.on(IpcChannels.communicationInterface.read.request, async (event) => {
+    ipcMain.on(IpcChannels.communicationInterface.read.request, async (event, info: CommunicationInterfaceActionInfo) => {
       try {
         if (event.sender.isDestroyed()) return;
+        if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
         const data = await this.read();
         return event.reply(IpcChannels.communicationInterface.read.response, data);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.read.error, error);
       }
     });
-    ipcMain.on(IpcChannels.communicationInterface.queryString.request, async (event, data: string) => {
+    ipcMain.on(IpcChannels.communicationInterface.queryString.request, async (event, info: QueryStringInfo) => {
       try {
         if (event.sender.isDestroyed()) return;
-        const responseData = await this.queryString(data);
+        if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
+        const responseData = await this.queryString(info.data);
         return event.reply(IpcChannels.communicationInterface.queryString.response, responseData);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.queryString.error, error);
