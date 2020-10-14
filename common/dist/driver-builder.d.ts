@@ -38,6 +38,9 @@ export interface Status {
 }
 export interface CommunicationInterfaceActionInfo {
     deviceGpibAddress?: number;
+    delayBefore?: number;
+    delayAfter?: number;
+    terminator?: string;
 }
 export interface WriteInfo extends CommunicationInterfaceActionInfo {
     data: ArrayBufferLike;

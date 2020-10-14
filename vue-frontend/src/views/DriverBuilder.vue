@@ -114,10 +114,10 @@
                     v-model="terminator"
                     :rules="rules"
                     :items="[
-                      'None',
-                      'Carriage return',
-                      'Line feed',
-                      'Carriage return / Line feed',
+                      { text: 'None', value: 'none' },
+                      { text: 'Carriage return', value: 'Cr' },
+                      { text: 'Line feed', value: 'Lf' },
+                      { text: 'Carriage return / Line feed', value: 'CrLf' },
                     ]"
                     label="Terminator"
                     hint="Character(s) used to signal the end of a read/write"
@@ -145,7 +145,7 @@
             >
               <v-expansion-panel
                 v-for="instructionSet in driver.instructionSets"
-                :key="instructionSet.name"
+                :key="instructionSet.id"
                 class="grey"
                 dense
               >
@@ -153,13 +153,13 @@
                   {{ instructionSet.name }}
                   <v-spacer></v-spacer>
                   <v-btn
-                    :disabled="!isCommunicationInterfaceConnected || instructionSet.instructions.length <= 0 || isTesting"
+                    :disabled="!isCommunicationInterfaceConnected || instructionSet.instructions.length <= 0"
                     color="primary"
                     class="mr-3"
                     max-width="100"
-                    @click.native.stop="onTestInstructionSet(instructionSet)"
+                    @click.native.stop="onTestInstructionSetButtonClicked(instructionSet)"
                   >
-                    Test
+                    {{ isTesting ? 'Stop' : 'Test' }}
                   </v-btn>
                   <v-btn
                     color="primary"
@@ -231,7 +231,7 @@ const MockDriver: Driver = {
   identifiable: true,
   identityQueryCommand: "*IDN?",
   isGpib: true,
-  terminator: "Line feed",
+  terminator: "Lf",
   instructionSets: [],
 };
 
@@ -254,7 +254,7 @@ export default class DriverBuilderView extends Vue {
   };
 
   shouldRenameInstructionSetDialogShow = false;
-  selectedRenameInstructionSet: InstructionSet = { name: "", instructions: [] };
+  selectedRenameInstructionSet: InstructionSet = { id: uuid(), name: "", instructions: [] };
   isTesting = false;
 
   rules: VuetifyRule[] = [requiredRule];
@@ -513,49 +513,52 @@ export default class DriverBuilderView extends Vue {
   }) {
     this.shouldRenameInstructionSetDialogShow = false;
     this.$store.direct.commit.driverBuilder.renameInstructionSet({
+      id: opts.originalInstructionSet.id,
       oldName: opts.originalInstructionSet.name,
       newName: opts.newName,
     });
   }
 
   removeInstructionSet(instructionSet: InstructionSet) {
-    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(
-      instructionSet.name
-    );
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet.id);
   }
 
   onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
     this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({
-      instructionSetName: instructionSet.name,
+      instructionSetId: instructionSet.id,
       newInstruction: newInstruction,
     });
   }
 
   onInstructionTableComponentInstructionUpdated(instructionSet: InstructionSet, instruction: CustomInstruction) {
-    this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetName: instructionSet.name, instruction: instruction });
+    this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instruction: instruction });
   }
 
   onInstructionTableComponentInstructionRemoved(instructionSet: InstructionSet, instruction: CustomInstruction) {
-    this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetName: instructionSet.name, instructionId: instruction.id });
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instructionId: instruction.id });
   }
 
   async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: CustomInstruction[]) {
-    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetName: instructionSet.name, instructions: instructions });
+    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet.id, instructions: instructions });
   }
 
-  async onTestInstructionSet(instructionSet: InstructionSet) {
-    this.isTesting = true;
-    try {
-      const responses: string[] = [];
-      for (const instruction of instructionSet.instructions) {
-        const response = await this.onTestInstruction(instruction, false);
-        if (response) responses.push(response);
+  async onTestInstructionSetButtonClicked(instructionSet: InstructionSet) {
+    if (this.isTesting) {
+      this.isTesting = false;
+    } else {
+      this.isTesting = true;
+      try {
+        const responses: string[] = [];
+        for (const instruction of instructionSet.instructions) {
+          const response = await this.onTestInstruction(instruction, false);
+          if (response) responses.push(response);
+        }
+        console.info(responses);
+      } catch (error) {
+        alert(error.message);
       }
-      console.info(responses);
-    } catch (error) {
-      alert(error.message);
+      this.isTesting = false;
     }
-    this.isTesting = false;
   }
 
   async onTestInstruction(instruction: CustomInstruction, toggleIsTesting = true) {

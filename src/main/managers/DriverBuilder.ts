@@ -4,6 +4,7 @@ import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/b
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
+import { sleep } from '../../drivers/utils';
 
 interface Events {
   connected: () => void;
@@ -55,19 +56,30 @@ export class DriverBuilder extends TypedEmitter<Events> {
     await this.fCommunicationInterface.setDeviceAddress(address);
   }
 
-  async write(data: ArrayBufferLike) {
+  async write(info: WriteInfo) {
     if (!this.fCommunicationInterface) throw new Error('Not connected');
-    await this.fCommunicationInterface.write(data);
+    if (info.terminator) await this.fCommunicationInterface.setEndOfStringTerminator(info.terminator as EndOfStringTerminator);
+    if (info.delayBefore && info.delayBefore > 0) await sleep(info.delayBefore);
+    await this.fCommunicationInterface.write(info.data);
+    if (info.delayAfter && info.delayAfter > 0) await sleep(info.delayAfter);
   }
 
-  async read() {
+  async read(info: CommunicationInterfaceActionInfo) {
     if (!this.fCommunicationInterface) throw new Error('Not connected');
-    return await this.fCommunicationInterface.read();
+    if (info.terminator) await this.fCommunicationInterface.setEndOfStringTerminator(info.terminator as EndOfStringTerminator);
+    if (info.delayBefore && info.delayBefore > 0) await sleep(info.delayBefore);
+    const response = await this.fCommunicationInterface.read();
+    if (info.delayAfter && info.delayAfter > 0) await sleep(info.delayAfter);
+    return response;
   }
 
-  async queryString(data: string) {
+  async queryString(info: QueryStringInfo) {
     if (!this.fCommunicationInterface) throw new Error('Not connected');
-    return await this.fCommunicationInterface.queryString(data);
+    if (info.terminator) await this.fCommunicationInterface.setEndOfStringTerminator(info.terminator as EndOfStringTerminator);
+    if (info.delayBefore && info.delayBefore > 0) await sleep(info.delayBefore);
+    const response = await this.fCommunicationInterface.queryString(info.data);
+    if (info.delayAfter && info.delayAfter > 0) await sleep(info.delayAfter);
+    return response;
   }
 
   public init() {
@@ -105,7 +117,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
       try {
         if (event.sender.isDestroyed()) return;
         if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
-        await this.write(info.data);
+        await this.write(info);
         return event.reply(IpcChannels.communicationInterface.write.response, true);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.write.error, error);
@@ -115,7 +127,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
       try {
         if (event.sender.isDestroyed()) return;
         if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
-        const data = await this.read();
+        const data = await this.read(info);
         return event.reply(IpcChannels.communicationInterface.read.response, data);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.read.error, error);
@@ -125,7 +137,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
       try {
         if (event.sender.isDestroyed()) return;
         if (info.deviceGpibAddress) await this.setDeviceGpibAddress(info.deviceGpibAddress);
-        const responseData = await this.queryString(info.data);
+        const responseData = await this.queryString(info);
         return event.reply(IpcChannels.communicationInterface.queryString.response, responseData);
       } catch (error) {
         return event.reply(IpcChannels.communicationInterface.queryString.error, error);

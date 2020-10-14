@@ -3,6 +3,7 @@ import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/be
 import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
+import { v4 as uuid } from 'uuid';
 
 export interface DriverBuilderState {
   instructions: Instruction[];
@@ -80,41 +81,42 @@ const employeesModule = defineModule({
     },
     addNewDriverInstructionSet(state) {
       state.currentDriver.instructionSets.push({
+        id: uuid(),
         name: 'New Instruction Set',
         instructions: []
       });
     },
-    removeDriverInstructionSet(state, name: string) {
-      const setIndex = state.currentDriver.instructionSets.findIndex(i => i.name === name);
+    removeDriverInstructionSet(state, id: string) {
+      const setIndex = state.currentDriver.instructionSets.findIndex(i => i.id === id);
       if (setIndex < 0) return;
       state.currentDriver.instructionSets.splice(setIndex, 1);
     },
-    addNewDriverInstructionToSet(state, opts: { instructionSetName: string, newInstruction: CustomInstruction }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+    addNewDriverInstructionToSet(state, opts: { instructionSetId: string, newInstruction: CustomInstruction }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions.push({ ...opts.newInstruction });
     },
-    updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetName: string, instruction: CustomInstruction }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+    updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetId: string, instruction: CustomInstruction }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1, { ...opts.instruction });
     },
-    removeDriverInstructionFromInstructionSet(state, opts: { instructionSetName: string, instructionId: string }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+    removeDriverInstructionFromInstructionSet(state, opts: { instructionSetId: string, instructionId: string }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instructionId);
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
     },
-    setInstructionSetInstructionsOrder(state, opts: { instructionSetName: string, instructions: CustomInstruction[] }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+    setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: CustomInstruction[] }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions = opts.instructions;
     },
-    renameInstructionSet(state, opts: { oldName: string, newName: string }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.oldName);
+    renameInstructionSet(state, opts: { id: string, oldName: string, newName: string }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.id);
       if (!instructionSet) return;
       instructionSet.name = opts.newName;
     },
@@ -141,8 +143,6 @@ const employeesModule = defineModule({
 
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(false));
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.error, (_, error: Error) => alert(error.message));
-
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.write.error, (_, error: Error) => alert(error.message));
 
       await dispatch.refreshCommunicationInterfaceInfos(); 
       window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getStatus.response, (_, status: Status) => {
@@ -179,16 +179,26 @@ const employeesModule = defineModule({
     },
     async write(context, data: ArrayBufferLike) {
       const { getters, state } = actionContext(context);
-      const info: WriteInfo = {
-        data: data,
-        deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
-      };
-      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
+      return new Promise<void>((resolve, reject) => {
+        const info: WriteInfo = {
+          data: data,
+          deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
+          terminator: state.currentDriver.terminator
+        };
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.write.error, (_, error: Error) => {
+          return reject(error);
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.write.response, () => {
+          return resolve();
+        });
+      });
     },
     async read(context) {
       const { getters, state } = actionContext(context);
       const info: CommunicationInterfaceActionInfo = {
-        deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
+        deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
+        terminator: state.currentDriver.terminator
       };
       return new Promise<ArrayBufferLike>((resolve, reject) => {
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => {
@@ -205,12 +215,13 @@ const employeesModule = defineModule({
       return new Promise<string>((resolve, reject) => {
         const info: QueryStringInfo = {
           data: data,
-          deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined
+          deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
+          terminator: state.currentDriver.terminator
         };
-        window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.response, (_, data: string) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.queryString.response, (_, data: string) => {
           return resolve(data);
         });
-        window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => {
           return reject(error);
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, info);

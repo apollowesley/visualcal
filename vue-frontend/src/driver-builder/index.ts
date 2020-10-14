@@ -76,6 +76,7 @@ export const SCPIRequiredCommands: Instruction[] = [
 ];
 
 export interface InstructionSet {
+  id: string;
   name: string;
   instructions: CustomInstruction[];
 }
