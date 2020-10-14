@@ -13,13 +13,14 @@
       </v-col>
       <v-col
         v-if="selectedInterfaceInfo && selectedInterfaceInfo.type.toLocaleUpperCase().includes('GPIB')"
-        cols="1"
+        cols="2"
       >
         <v-text-field
           v-model="deviceGpibAddress"
           :rules="[deviceGpibAddressRangeRule]"
           label="Device GPIB Address"
           type="number"
+          @mousewheel="onDeviceGpibAddressMouseWheel"
         />
       </v-col>
       <v-col>
@@ -32,13 +33,13 @@
 
 <script lang="ts">
 import { VuetifyRule } from '@/utils/vuetify-input-rules';
+import { MouseWheelInputEvent } from 'electron';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class DirectControlComponent extends Vue {
 
-  deviceGpibAddress = 1;
   deviceGpibAddressRangeRule: VuetifyRule = (v) => {
     if (!v) return 'Required';
     const address = parseInt(v);
@@ -51,8 +52,17 @@ export default class DirectControlComponent extends Vue {
   get selectedInterfaceInfo() { return this.$store.direct.state.driverBuilder.selectedCommunicationInterfaceInfo; }
   set selectedInterfaceInfo(value: CommunicationInterfaceConfigurationInfo | undefined) { this.$store.direct.commit.driverBuilder.setSelectedCommunicationInterfaceInfo(value); }
 
+  get deviceGpibAddress() { return this.$store.direct.state.driverBuilder.deviceGpibAddress; }
+  set deviceGpibAddress(value: number) { this.$store.direct.commit.driverBuilder.setDeviceGpibAddress(parseInt(value.toString())); }
+
   async mounted() {
     await this.$store.direct.dispatch.driverBuilder.refreshCommunicationInterfaceInfos();
+  }
+
+  onDeviceGpibAddressMouseWheel(event: MouseWheelInputEvent) {
+    if (!event.wheelTicksY) return;
+    const deltaY = event.wheelTicksY / 12;
+    this.deviceGpibAddress -= deltaY;
   }
 
 }

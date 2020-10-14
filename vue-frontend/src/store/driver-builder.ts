@@ -10,6 +10,7 @@ export interface DriverBuilderState {
   currentDriver: Driver;
   communicationInterfaceInfos: CommunicationInterfaceConfigurationInfo[];
   selectedCommunicationInterfaceInfo?: CommunicationInterfaceConfigurationInfo;
+  deviceGpibAddress: number;
 }
 
 const employeesModule = defineModule({
@@ -31,7 +32,8 @@ const employeesModule = defineModule({
         instructionSets: []
       },
       communicationInterfaceInfos: [],
-      selectedCommunicationInterfaceInfo: undefined
+      selectedCommunicationInterfaceInfo: undefined,
+      deviceGpibAddress: 1
     }
   },
   // getters: {
@@ -98,6 +100,9 @@ const employeesModule = defineModule({
     },
     setSelectedCommunicationInterfaceInfo(state, value?: CommunicationInterfaceConfigurationInfo) {
       state.selectedCommunicationInterfaceInfo = value;
+    },
+    setDeviceGpibAddress(state, value: number) {
+      state.deviceGpibAddress = value;
     }
   },
   actions: {
