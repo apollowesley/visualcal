@@ -20,6 +20,8 @@
           :rules="[deviceGpibAddressRangeRule]"
           label="Device GPIB Address"
           type="number"
+          min="1"
+          max="31"
           @mousewheel="onDeviceGpibAddressMouseWheel"
         />
       </v-col>

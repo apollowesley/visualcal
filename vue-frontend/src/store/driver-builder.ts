@@ -102,6 +102,8 @@ const employeesModule = defineModule({
       state.selectedCommunicationInterfaceInfo = value;
     },
     setDeviceGpibAddress(state, value: number) {
+      if (value < 1) value = 1;
+      if (value > 31) value = 31;
       state.deviceGpibAddress = value;
     }
   },
