@@ -18,6 +18,7 @@
         <v-text-field
           v-model="deviceGpibAddress"
           :rules="[deviceGpibAddressRangeRule]"
+          :disabled="connecting"
           label="Device GPIB Address"
           type="number"
           min="1"
@@ -45,6 +46,8 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component
 export default class DirectControlComponent extends Vue {
+
+  connecting = false;
 
   deviceGpibAddressRangeRule: VuetifyRule = (v) => {
     if (!v) return 'Required';
@@ -74,6 +77,7 @@ export default class DirectControlComponent extends Vue {
   }
 
   async onConnectDisconnectButtonClicked() {
+    this.connecting = true;
     try {
       if (this.isCommunicationInterfaceConnected) {
         await this.$store.direct.dispatch.driverBuilder.disconnect();
@@ -82,6 +86,8 @@ export default class DirectControlComponent extends Vue {
       }
     } catch (error) {
       alert(error.message);
+    } finally {
+      this.connecting = false;
     }
   }
 
