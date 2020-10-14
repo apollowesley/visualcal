@@ -3,6 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IpcChannels = void 0;
 exports.IpcChannels = {
     communicationInterface: {
+        getStatus: {
+            request: 'driver-builder-get-status-request',
+            response: 'driver-builder-get-status-response',
+            error: 'driver-builder-get-status-error'
+        },
         connect: {
             request: 'driver-builder-iface-connect-request',
             response: 'driver-builder-iface-connect-response',

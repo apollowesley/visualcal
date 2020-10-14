@@ -1,5 +1,10 @@
 export declare const IpcChannels: {
     communicationInterface: {
+        getStatus: {
+            request: string;
+            response: string;
+            error: string;
+        };
         connect: {
             request: string;
             response: string;
@@ -27,3 +32,7 @@ export declare const IpcChannels: {
         };
     };
 };
+export interface Status {
+    communicationInterfaceName?: string;
+    isConnected: boolean;
+}

@@ -66,10 +66,6 @@ export default class DirectControlComponent extends Vue {
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
-  async mounted() {
-    await this.$store.direct.dispatch.driverBuilder.refreshCommunicationInterfaceInfos();
-  }
-
   onDeviceGpibAddressMouseWheel(event: MouseWheelInputEvent) {
     if (!event.wheelTicksY) return;
     const deltaY = event.wheelTicksY / 12;

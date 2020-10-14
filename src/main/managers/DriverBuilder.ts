@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { IpcChannels } from 'visualcal-common/dist/driver-builder';
+import { IpcChannels, Status } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
 
@@ -29,11 +29,12 @@ export class DriverBuilder extends TypedEmitter<Events> {
   }
 
   async connect(info: CommunicationInterfaceConfigurationInfo) {
+    if (this.fCommunicationInterface) throw new Error('Already connected');
     try {
       this.fCommunicationInterface = global.visualCal.communicationInterfaceManager.createFromInfo(info);
       await this.fCommunicationInterface.connect();
     } catch (error) {
-      this.disconnect();
+      await this.disconnect();
       throw error;
     }
   }
@@ -74,6 +75,14 @@ export class DriverBuilder extends TypedEmitter<Events> {
   }
 
   private initIpcListeners() {
+    ipcMain.on(IpcChannels.communicationInterface.getStatus.request, (event) => {
+      if (event.sender.isDestroyed()) return;
+      const status: Status = {
+        isConnected: this.fCommunicationInterface !== undefined && this.fCommunicationInterface.isConnected,
+        communicationInterfaceName: this.fCommunicationInterface ? this.fCommunicationInterface.name : undefined
+      };
+      return event.reply(IpcChannels.communicationInterface.getStatus.response, status);
+    });
     ipcMain.on(IpcChannels.communicationInterface.connect.request, async (event, info: CommunicationInterfaceConfigurationInfo) => {
       try {
         if (event.sender.isDestroyed()) return;

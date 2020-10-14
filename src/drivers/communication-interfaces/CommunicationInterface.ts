@@ -136,7 +136,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
       this.fConnectTimeoutTimerId = setTimeout(async () => {
         await this.disconnect();
         const err = new Error(`${this.name} failed to connect within ${this.connectTimeout} ms`);
-        this.onError(err);
         return reject(err);
       }, this.connectTimeout);
       return resolve();
@@ -163,7 +162,6 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
       await this.onConnected();
     } catch (error) {
       await this.disconnect();
-      this.onError(error);
       throw error;
     }
   }

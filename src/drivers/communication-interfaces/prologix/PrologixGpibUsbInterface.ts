@@ -23,31 +23,21 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
 
   protected onConnect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      try {
-        if (!this.fClientOptions) throw 'Not configured';
-        log.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
-        this.fClient = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
-        this.fClient.pipe(this.readLineParser);
-        this.fClient.open(async (err) => {
-          if (err) {
-            await this.disconnect();
-            this.onError(err);
-            return reject(err);
-          }
-          if (this.fClient) {
-            this.fClient.flush(async () => {
-              return resolve();
-            });
-          } else {
-            const clientUndefinedError = new Error('Client is undefined');
-            this.onError(clientUndefinedError);
-            return reject(clientUndefinedError);
-          }
-        });
-      } catch (error) {
-        this.onError(error);
-        return reject(error);
-      }
+      if (!this.fClientOptions) throw 'Not configured';
+      this.fClient = new SerialPort(this.fClientOptions.portName, { autoOpen: false });
+      this.fClient.pipe(this.readLineParser);
+      log.info(`Connecting to port "${this.fClientOptions.portName}" ...`);
+      this.fClient.open((err) => {
+        if (err) return reject(err);
+        if (this.fClient) {
+          this.fClient.flush(() => {
+            return resolve();
+          });
+        } else {
+          const clientUndefinedError = new Error('Client is undefined');
+          return reject(clientUndefinedError);
+        }
+      });
     });
   }
   

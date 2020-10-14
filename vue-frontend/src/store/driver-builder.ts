@@ -2,7 +2,7 @@ import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
 import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
-import { IpcChannels } from 'visualcal-common/src/driver-builder';
+import { IpcChannels, Status } from 'visualcal-common/src/driver-builder';
 
 export interface DriverBuilderState {
   instructions: Instruction[];
@@ -115,7 +115,7 @@ const employeesModule = defineModule({
   },
   actions: {
     async init(context) {
-      const { commit } = actionContext(context);
+      const { state, commit, dispatch } = actionContext(context);
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(true));
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.error, (_, error: Error) => alert(error.message));
 
@@ -123,12 +123,16 @@ const employeesModule = defineModule({
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.error, (_, error: Error) => alert(error.message));
 
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.write.error, (_, error: Error) => alert(error.message));
-      
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => alert(new TextDecoder().decode(data)));
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.read.error, (_, error: Error) => alert(error.message));
 
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.response, (_, data: string) => alert(data));
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => alert(error.message));
+      await dispatch.refreshCommunicationInterfaceInfos(); 
+      window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getStatus.response, (_, status: Status) => {
+        commit.setIsSelectedCommunicationInterfaceConnected(status.isConnected);
+        if (status.communicationInterfaceName) {
+          const selectedCommunicationInterfaceInfo = state.communicationInterfaceInfos.find(c => c.name === status.communicationInterfaceName);
+          if (selectedCommunicationInterfaceInfo) commit.setSelectedCommunicationInterfaceInfo(selectedCommunicationInterfaceInfo);
+        }
+      });
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.getStatus.request);
     },
     async refreshCommunicationInterfaceInfos(context) {
       const { commit } = actionContext(context);
@@ -157,10 +161,26 @@ const employeesModule = defineModule({
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, data);
     },
     async read() {
-      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request);
+      return new Promise<ArrayBufferLike>((resolve, reject) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => {
+          return resolve((data));
+        });
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.error, (_, error: Error) => {
+          return reject(error);
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request);
+      });
     },
     async queryString(_, data: string) {
-      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, data);
+      return new Promise<string>((resolve, reject) => {
+        window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.response, (_, data: string) => {
+          return resolve(data);
+        });
+        window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => {
+          return reject(error);
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, data);
+      });
     }
   }
 });

@@ -1,5 +1,10 @@
 export const IpcChannels = {
   communicationInterface: {
+    getStatus: {
+      request: 'driver-builder-get-status-request',
+      response: 'driver-builder-get-status-response',
+      error: 'driver-builder-get-status-error'
+    },
     connect: {
       request: 'driver-builder-iface-connect-request',
       response: 'driver-builder-iface-connect-response',
@@ -26,4 +31,9 @@ export const IpcChannels = {
       error: 'driver-builder-iface-query-string-error'
     }
   }
+}
+
+export interface Status {
+  communicationInterfaceName?: string;
+  isConnected: boolean;
 }

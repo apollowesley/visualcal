@@ -153,6 +153,15 @@
                   {{ instructionSet.name }}
                   <v-spacer></v-spacer>
                   <v-btn
+                    :disabled="!isCommunicationInterfaceConnected || instructionSet.instructions.length <= 0 || isTesting"
+                    color="primary"
+                    class="mr-3"
+                    max-width="100"
+                    @click.native.stop="onTestInstructionSet(instructionSet)"
+                  >
+                    Test
+                  </v-btn>
+                  <v-btn
                     color="primary"
                     class="mr-3"
                     max-width="100"
@@ -250,6 +259,7 @@ export default class DriverBuilderView extends Vue {
 
   shouldRenameInstructionSetDialogShow = false;
   selectedRenameInstructionSet: InstructionSet = { name: "", instructions: [] };
+  isTesting = false;
 
   rules: VuetifyRule[] = [requiredRule];
   canSaveForm = false;
@@ -432,6 +442,8 @@ export default class DriverBuilderView extends Vue {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
   }
 
+  get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
+
   async mounted() {
     this.localDriver = MockDriver;
     this.driver = this.localDriver;
@@ -525,6 +537,44 @@ export default class DriverBuilderView extends Vue {
       newInstruction: newInstruction,
     });
   }
+
+  async onTestInstructionSet(instructionSet: InstructionSet) {
+    this.isTesting = true;
+    try {
+      const responses: string[] = [];
+      for (const instruction of instructionSet.instructions) {
+        const response = await this.onTestInstruction(instruction, false);
+        if (response) responses.push(response);
+      }
+      console.info(responses);
+    } catch (error) {
+      alert(error.message);
+    }
+    this.isTesting = false;
+  }
+
+  async onTestInstruction(instruction: CustomInstruction, toggleIsTesting = true) {
+    if (toggleIsTesting) this.isTesting = true;
+    const command = new TextEncoder().encode(instruction.command);
+    let response: ArrayBufferLike | undefined = undefined;
+    let responseString = '';
+    switch (instruction.type) {
+      case 'Write':
+        await this.$store.direct.dispatch.driverBuilder.write(command);
+        break;
+      case 'Read':
+        response = await this.$store.direct.dispatch.driverBuilder.read();
+        responseString = new TextDecoder().decode(response);
+        if (toggleIsTesting) this.isTesting = false;
+        return responseString;
+      case 'Query':
+        responseString = await this.$store.direct.dispatch.driverBuilder.queryString(instruction.command);
+        if (toggleIsTesting) this.isTesting = false;
+        return responseString;
+    }
+    if (toggleIsTesting) this.isTesting = false;
+  }
+
 }
 </script>
 
