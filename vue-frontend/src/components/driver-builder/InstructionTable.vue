@@ -28,13 +28,19 @@ export default class InstructionTableComponent extends Vue {
 
   @Watch('instructions')
   async onInstructionsChanged() {
-    await this.table.setData(this.instructions);
+    await this.setData(this.instructions);
   }
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
   get table() {
     if (!this.fTable) this.fTable = this.createTable();
     return this.fTable;
+  }
+
+  private async setData(instructions: CustomInstruction[]) {
+    const stringCopy = JSON.stringify(instructions);
+    const copy = JSON.parse(stringCopy);
+    await this.table.setData(copy);
   }
 
   private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
@@ -120,16 +126,18 @@ export default class InstructionTableComponent extends Vue {
 
   private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
+    const instructions: CustomInstruction[] = [];
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
       const instruction = row.getData() as CustomInstruction;
       instruction.order = index;
+      instructions.push(instruction);
     }
-    table.redraw(true);
+    this.$emit('reordered', instructions);
   }
 
   private columns: Tabulator.ColumnDefinition[] = [
-    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
+    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false, field: 'order' },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
@@ -159,7 +167,10 @@ export default class InstructionTableComponent extends Vue {
       },
       {
         label: 'Delete',
-        action: (_, row) => this.table.deleteRow(row)
+        action: (_, row) => {
+          this.table.deleteRow(row);
+          this.$emit('instruction-removed', row.getData() as CustomInstruction);
+        }
       }
     ];
     return menu;
@@ -172,7 +183,11 @@ export default class InstructionTableComponent extends Vue {
       columns: this.columns,
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),
-      cellEdited: () => { table.redraw(true); },
+      cellEdited: (cell) => {
+        const instruction = cell.getRow().getData() as CustomInstruction;
+        this.$emit('instruction-updated', instruction);
+        this.table.redraw();
+      },
       rowMoved: () => { this.reorderInstructions(table); }
     });
     this.fTable = table;
@@ -180,8 +195,6 @@ export default class InstructionTableComponent extends Vue {
   }
 
   mounted() {
-    // const table = this.table;
-    // await table.setData(MockInstructions);
     this.createTable();
   }
 
@@ -202,6 +215,7 @@ export default class InstructionTableComponent extends Vue {
       readAttempts: 1
     }
     await this.table.addData([customInstruction]);
+    this.$emit('instruction-added', customInstruction);
   }
 
   async addNewInstruction() {

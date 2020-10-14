@@ -40,7 +40,7 @@ import { InstructionSet } from '@/driver-builder';
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 
 @Component
-export default class RenameInstructionSetDialogComponent extends Vue {
+export default class RenameInstructionSetDialog extends Vue {
 
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
   @Prop({ type: Object, required: true }) instructionSet!: InstructionSet;

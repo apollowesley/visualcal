@@ -178,15 +178,11 @@
                 <v-expansion-panel-content>
                   <InstructionTableComponent
                     :instructions="instructionSet.instructions"
-                    @edit-instruction-command="
-                      onInstructionTableComponentEditInstructionCommand
-                    "
-                    @instruction-added="
-                      onInstructionTableComponentInstructionAdded(
-                        instructionSet,
-                        $event
-                      )
-                    "
+                    @edit-instruction-command="onInstructionTableComponentEditInstructionCommand"
+                    @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
+                    @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
+                    @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
+                    @reordered="onInstructionTableComponentReordered(instructionSet, $event)"
                   />
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -528,14 +524,23 @@ export default class DriverBuilderView extends Vue {
     );
   }
 
-  async onInstructionTableComponentInstructionAdded(
-    instructionSet: InstructionSet,
-    newInstruction: CustomInstruction
-  ) {
+  onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
     this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({
       instructionSetName: instructionSet.name,
       newInstruction: newInstruction,
     });
+  }
+
+  onInstructionTableComponentInstructionUpdated(instructionSet: InstructionSet, instruction: CustomInstruction) {
+    this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetName: instructionSet.name, instruction: instruction });
+  }
+
+  onInstructionTableComponentInstructionRemoved(instructionSet: InstructionSet, instruction: CustomInstruction) {
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetName: instructionSet.name, instructionId: instruction.id });
+  }
+
+  async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: CustomInstruction[]) {
+    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetName: instructionSet.name, instructions: instructions });
   }
 
   async onTestInstructionSet(instructionSet: InstructionSet) {

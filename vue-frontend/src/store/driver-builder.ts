@@ -92,7 +92,26 @@ const employeesModule = defineModule({
     addNewDriverInstructionToSet(state, opts: { instructionSetName: string, newInstruction: CustomInstruction }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
       if (!instructionSet) return;
-      instructionSet.instructions.push(opts.newInstruction);
+      instructionSet.instructions.push({ ...opts.newInstruction });
+    },
+    updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetName: string, instruction: CustomInstruction }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+      if (!instructionSet) return;
+      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
+      if (instructionIndex <= -1) return;
+      instructionSet.instructions.splice(instructionIndex, 1, { ...opts.instruction });
+    },
+    removeDriverInstructionFromInstructionSet(state, opts: { instructionSetName: string, instructionId: string }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+      if (!instructionSet) return;
+      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instructionId);
+      if (instructionIndex <= -1) return;
+      instructionSet.instructions.splice(instructionIndex, 1);
+    },
+    setInstructionSetInstructionsOrder(state, opts: { instructionSetName: string, instructions: CustomInstruction[] }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.instructionSetName);
+      if (!instructionSet) return;
+      instructionSet.instructions = opts.instructions;
     },
     renameInstructionSet(state, opts: { oldName: string, newName: string }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.name === opts.oldName);
