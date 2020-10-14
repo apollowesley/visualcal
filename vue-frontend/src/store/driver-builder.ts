@@ -2,6 +2,7 @@ import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
 import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
+import { IpcChannels } from 'visualcal-common/src/driver-builder';
 
 export interface DriverBuilderState {
   instructions: Instruction[];
@@ -11,6 +12,7 @@ export interface DriverBuilderState {
   communicationInterfaceInfos: CommunicationInterfaceConfigurationInfo[];
   selectedCommunicationInterfaceInfo?: CommunicationInterfaceConfigurationInfo;
   deviceGpibAddress: number;
+  isSelectedCommunicationInterfaceConnected: boolean
 }
 
 const employeesModule = defineModule({
@@ -33,7 +35,8 @@ const employeesModule = defineModule({
       },
       communicationInterfaceInfos: [],
       selectedCommunicationInterfaceInfo: undefined,
-      deviceGpibAddress: 1
+      deviceGpibAddress: 1,
+      isSelectedCommunicationInterfaceConnected: false
     }
   },
   // getters: {
@@ -105,9 +108,28 @@ const employeesModule = defineModule({
       if (value < 1) value = 1;
       if (value > 31) value = 31;
       state.deviceGpibAddress = value;
+    },
+    setIsSelectedCommunicationInterfaceConnected(state, value: boolean) {
+      state.isSelectedCommunicationInterfaceConnected = value;
     }
   },
   actions: {
+    async init(context) {
+      const { commit } = actionContext(context);
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(true));
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.error, (_, error: Error) => alert(error.message));
+
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(false));
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.error, (_, error: Error) => alert(error.message));
+
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.write.error, (_, error: Error) => alert(error.message));
+      
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => alert(new TextDecoder().decode(data)));
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.read.error, (_, error: Error) => alert(error.message));
+
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.response, (_, data: string) => alert(data));
+      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => alert(error.message));
+    },
     async refreshCommunicationInterfaceInfos(context) {
       const { commit } = actionContext(context);
       const currentUser = await window.ipc.getCurrentUser();
@@ -122,6 +144,23 @@ const employeesModule = defineModule({
       commit.setCommunicationInterfaceInfos(benchConfig.interfaces);
       if (benchConfig.interfaces.length <= 0) return;
       commit.setSelectedCommunicationInterfaceInfo(benchConfig.interfaces[0]);
+    },
+    async connect(context) {
+      const { state } = actionContext(context);
+      if (!state.selectedCommunicationInterfaceInfo) throw new Error('Selected communication interface info cannot be undefined');
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.connect.request, state.selectedCommunicationInterfaceInfo);
+    },
+    async disconnect() {
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
+    },
+    async write(_, data: ArrayBufferLike) {
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, data);
+    },
+    async read() {
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request);
+    },
+    async queryString(_, data: string) {
+      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, data);
     }
   }
 });

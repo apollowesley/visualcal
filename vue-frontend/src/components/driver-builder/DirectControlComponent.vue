@@ -26,8 +26,12 @@
         />
       </v-col>
       <v-col>
-        <v-btn :disabled="!selectedInterfaceInfo" color="primary">
-          Connect
+        <v-btn
+          :disabled="!selectedInterfaceInfo"
+          color="primary"
+          @click="onConnectDisconnectButtonClicked"
+        >
+          {{ isCommunicationInterfaceConnected ? 'Disconnect' : 'Connect' }}
         </v-btn>
       </v-col>
   </v-row>
@@ -57,6 +61,8 @@ export default class DirectControlComponent extends Vue {
   get deviceGpibAddress() { return this.$store.direct.state.driverBuilder.deviceGpibAddress; }
   set deviceGpibAddress(value: number) { this.$store.direct.commit.driverBuilder.setDeviceGpibAddress(parseInt(value.toString())); }
 
+  get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
+
   async mounted() {
     await this.$store.direct.dispatch.driverBuilder.refreshCommunicationInterfaceInfos();
   }
@@ -65,6 +71,18 @@ export default class DirectControlComponent extends Vue {
     if (!event.wheelTicksY) return;
     const deltaY = event.wheelTicksY / 12;
     this.deviceGpibAddress -= deltaY;
+  }
+
+  async onConnectDisconnectButtonClicked() {
+    try {
+      if (this.isCommunicationInterfaceConnected) {
+        await this.$store.direct.dispatch.driverBuilder.disconnect();
+      } else {
+        await this.$store.direct.dispatch.driverBuilder.connect();
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   }
 
 }

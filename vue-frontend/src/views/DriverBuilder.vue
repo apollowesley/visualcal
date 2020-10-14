@@ -432,7 +432,7 @@ export default class DriverBuilderView extends Vue {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
   }
 
-  mounted() {
+  async mounted() {
     this.localDriver = MockDriver;
     this.driver = this.localDriver;
     const builtInCategory = this.items.find((i) => i.name === 'Built-in');
@@ -466,6 +466,7 @@ export default class DriverBuilderView extends Vue {
         SCPIRequiredCategory.children.push(instruction);
     });
     (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
+    await this.$store.direct.dispatch.driverBuilder.init();
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {

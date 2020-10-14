@@ -21,6 +21,7 @@ import { init as nodeRedUtilsInit } from './node-red/utils';
 import { ExpressServer } from './servers/express';
 import { getUserHomeDataPathDir, isDev } from './utils';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
+import { DriverBuilder } from './managers/DriverBuilder';
 
 // *** TESTING NI-GPIB DRIVER ***
 // import IndySoftNIGPIB from 'indysoft-ni-gpib';
@@ -110,6 +111,7 @@ const run = async () => {
     }
   });
   ApplicationManager.instance.init();
+  DriverBuilder.instance.init();
 };
 
 run();
