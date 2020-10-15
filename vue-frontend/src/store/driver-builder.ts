@@ -178,11 +178,11 @@ const employeesModule = defineModule({
     async disconnect() {
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
     },
-    async write(context, data: ArrayBufferLike) {
+    async write(context, instruction: CustomInstruction) {
       const { getters, state } = actionContext(context);
       return new Promise<void>((resolve, reject) => {
         const info: WriteInfo = {
-          data: data,
+          data: new TextEncoder().encode(instruction.command),
           deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
           terminator: state.currentDriver.terminator
         };

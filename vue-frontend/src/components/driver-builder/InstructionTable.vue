@@ -17,7 +17,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
-import { CustomInstruction } from '@/driver-builder';
+import { CustomInstruction, Instruction } from '@/driver-builder';
 
 @Component
 export default class InstructionTableComponent extends Vue {
@@ -209,11 +209,12 @@ export default class InstructionTableComponent extends Vue {
     event.preventDefault();
     if (!event.dataTransfer) return;
     const instructionString = event.dataTransfer.getData('application/json');
-    const instruction = JSON.parse(instructionString);
+    const instruction = JSON.parse(instructionString) as Instruction;
     const customInstruction: CustomInstruction = {
       ...instruction,
       id: uuid(),
-      readAttempts: 1
+      readAttempts: 1,
+      order: -1
     }
     await this.table.addData([customInstruction]);
     this.$emit('instruction-added', customInstruction);
@@ -223,9 +224,9 @@ export default class InstructionTableComponent extends Vue {
     const newInstruction: CustomInstruction = {
       id: uuid(),
       order: this.table.getRows().length,
-      name: 'New instruction',
+      name: 'Instruction',
       type: 'Write',
-      command: 'DATA',
+      command: '',
       readAttempts: 1
     }
     await this.table.addRow(newInstruction);

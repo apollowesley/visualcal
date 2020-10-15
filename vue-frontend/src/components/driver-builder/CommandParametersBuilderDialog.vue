@@ -101,6 +101,8 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
     { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
+    { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input' },
+    { title: 'Text After', field: 'afterText', editable: true, editor: 'input' },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
 

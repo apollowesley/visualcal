@@ -113,12 +113,11 @@ export default class DirectControlTesterDialog extends Vue {
 
   async onTestInstruction(instruction: CustomInstruction, toggleIsTesting = true) {
     if (toggleIsTesting) this.isTesting = true;
-    const command = new TextEncoder().encode(instruction.command);
     let response: ArrayBufferLike | undefined = undefined;
     let responseString = '';
     switch (instruction.type) {
       case 'Write':
-        await this.$store.direct.dispatch.driverBuilder.write(command);
+        await this.$store.direct.dispatch.driverBuilder.write(instruction);
         if (toggleIsTesting) this.isTesting = false;
         return undefined;
       case 'Read':
