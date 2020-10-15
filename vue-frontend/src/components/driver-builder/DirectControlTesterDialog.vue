@@ -10,6 +10,12 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col>
+          Command parameter arguments
+          <div ref="commandArgumentsTable" />
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col
           offset="5"
         >
@@ -32,7 +38,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <div ref="tableElement" />
+          <div ref="responsesTable" />
         </v-col>
       </v-row>
     </v-container>
@@ -55,7 +61,7 @@ export default class DirectControlTesterDialog extends Vue {
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
   @Prop({ type: Object, required: true }) instructionSet!: InstructionSet;
 
-  private fTable?: Tabulator;
+  private fResponsesTable?: Tabulator;
   isTesting = false;
   responses: InstructionResponse[] = [];
 
@@ -65,24 +71,24 @@ export default class DirectControlTesterDialog extends Vue {
     { title: 'Response', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : cell.getValue() }
   ]
 
-  get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
-  get table() {
-    if (!this.fTable) this.fTable = this.createTable();
-    return this.fTable;
+  get responsesTableElement() { return this.$refs.responsesTable as HTMLDivElement; }
+  get responsesTable() {
+    if (!this.fResponsesTable) this.fResponsesTable = this.createResponsesTable();
+    return this.fResponsesTable;
   }
 
   get instructionSetName() { return this.instructionSet ? this.instructionSet.name : ''; }
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
-  private createTable() {
-    if (this.fTable) return this.fTable;
-    const table = new Tabulator(this.tableElement, {
+  private createResponsesTable() {
+    if (this.fResponsesTable) return this.fResponsesTable;
+    const table = new Tabulator(this.responsesTableElement, {
       layout: 'fitDataStretch',
       columns: this.columns,
       maxHeight: '500px'
     });
-    this.fTable = table;
+    this.fResponsesTable = table;
     return table;
   }
 
@@ -104,7 +110,7 @@ export default class DirectControlTesterDialog extends Vue {
       }
       this.isTesting = false;
       try {
-        await this.table.setData(this.responses);
+        await this.responsesTable.setData(this.responses);
       } catch (error) {
         alert(error.message);
       }
@@ -117,7 +123,7 @@ export default class DirectControlTesterDialog extends Vue {
     let responseString = '';
     switch (instruction.type) {
       case 'Write':
-        await this.$store.direct.dispatch.driverBuilder.write(instruction);
+        await this.$store.direct.dispatch.driverBuilder.write({ instruction: instruction });
         if (toggleIsTesting) this.isTesting = false;
         return undefined;
       case 'Read':
@@ -136,7 +142,7 @@ export default class DirectControlTesterDialog extends Vue {
 
   onClearResponses() {
     this.responses = [];
-    this.table.clearData();
+    this.responsesTable.clearData();
   }
 
 }

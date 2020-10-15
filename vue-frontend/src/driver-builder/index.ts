@@ -2,6 +2,12 @@ type InstructionType = 'Read' | 'Write' | 'Query';
 type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
 type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
 
+/** An item for a command parameter when its type is set to "list" */
+export interface CommandParameterListItem {
+  text: string;
+  value: string;
+}
+
 /** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
 export interface CommandParameter {
   /** The parameter type.  This determines what is shown to the procedure developer when editing the node that represents it. */
@@ -14,6 +20,14 @@ export interface CommandParameter {
   afterText?: string;
   /** Whether or not this part is required.  Only used if type is parameter. */
   required?: boolean;
+  /** When this parameters type is set to list, these are the items that will be used for the options available to the user. */
+  listItems?: CommandParameterListItem[];
+}
+
+/** A CommandParameter argument that will be sent along with the command to the device. */
+export interface CommandParameterArgument {
+  parameter: CommandParameter;
+  value: string | boolean | number;
 }
 
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */

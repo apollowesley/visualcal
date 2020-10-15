@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
+import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
@@ -178,11 +178,17 @@ const employeesModule = defineModule({
     async disconnect() {
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
     },
-    async write(context, instruction: CustomInstruction) {
+    async write(context, opts: { instruction: CustomInstruction, arguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
       return new Promise<void>((resolve, reject) => {
+        let command = opts.instruction.command;
+        if (opts.arguments) {
+          for (const argument of opts.arguments) {
+            command = `${command}${argument.parameter.beforeText}${argument.value}${argument.parameter.afterText}`;
+          }
+        }
         const info: WriteInfo = {
-          data: new TextEncoder().encode(instruction.command),
+          data: new TextEncoder().encode(command),
           deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
           terminator: state.currentDriver.terminator
         };
