@@ -85,9 +85,7 @@ export interface Driver {
   manufacturer: string;
   model: string;
   nomenclature: string;
-  identifiable: boolean;
-  identityQueryCommand: string;
-  isGpib: boolean;
+  identityQueryCommand?: string;
   terminator: string;
   instructionSets: InstructionSet[]
 }

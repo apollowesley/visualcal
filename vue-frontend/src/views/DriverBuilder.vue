@@ -101,18 +101,11 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-checkbox v-model="identifiable" label="Identifiable?" />
-                </v-col>
-                <v-col v-if="identifiable">
                   <v-text-field
                     v-model="identityQueryCommand"
-                    :rules="identifiable ? rules : []"
                     label="Identity Query Command"
                     hint="Command sent to instrument to ask it for it's identity"
                   />
-                </v-col>
-                <v-col>
-                  <v-checkbox v-model="isGpib" label="Has a GPIB interface?" />
                 </v-col>
                 <v-col>
                   <v-select
@@ -235,9 +228,7 @@ const MockDriver: Driver = {
   manufacturer: "Fluke",
   model: "45",
   nomenclature: "Digital Multimeter",
-  identifiable: true,
   identityQueryCommand: "*IDN?",
-  isGpib: true,
   terminator: "Lf",
   instructionSets: [],
 };
@@ -422,25 +413,11 @@ export default class DriverBuilderView extends Vue {
     this.$store.direct.commit.driverBuilder.setNomenclature(value);
   }
 
-  get identifiable() {
-    return this.driver.identifiable;
-  }
-  set identifiable(value: boolean) {
-    this.$store.direct.commit.driverBuilder.setIdentifiable(value);
-  }
-
   get identityQueryCommand() {
     return this.driver.identityQueryCommand;
   }
-  set identityQueryCommand(value: string) {
+  set identityQueryCommand(value: string | undefined) {
     this.$store.direct.commit.driverBuilder.setIdentityQueryCommand(value);
-  }
-
-  get isGpib() {
-    return this.driver.isGpib;
-  }
-  set isGpib(value: boolean) {
-    this.$store.direct.commit.driverBuilder.setIsGpib(value);
   }
 
   get terminator() {

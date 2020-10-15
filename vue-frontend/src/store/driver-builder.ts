@@ -28,9 +28,7 @@ const employeesModule = defineModule({
         manufacturer: '',
         model: '',
         nomenclature: '',
-        identifiable: false,
         identityQueryCommand: '*IDN?',
-        isGpib: false,
         terminator: 'None',
         instructionSets: []
       },
@@ -64,14 +62,8 @@ const employeesModule = defineModule({
     setNomenclature(state, value: string) {
       state.currentDriver.nomenclature = value;
     },
-    setIdentifiable(state, value: boolean) {
-      state.currentDriver.identifiable = value;
-    },
-    setIdentityQueryCommand(state, value: string) {
+    setIdentityQueryCommand(state, value?: string) {
       state.currentDriver.identityQueryCommand = value;
-    },
-    setIsGpib(state, value: boolean) {
-      state.currentDriver.isGpib = value;
     },
     setTerminator(state, value: string) {
       state.currentDriver.terminator = value;
