@@ -106,6 +106,18 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
 
+  private createRowContextMenu(): (Tabulator.MenuObject<Tabulator.RowComponent> | Tabulator.MenuSeparator)[] {
+    const menu: Tabulator.RowContextMenuSignature = [
+      {
+        label: 'Delete',
+        action: (_, row) => {
+          this.table.deleteRow(row);
+        }
+      }
+    ];
+    return menu;
+  }
+
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
@@ -114,6 +126,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       movableRows: true,
       cellEdited: () => { table.redraw(true); },
       rowMoved: () => { this.reorderInstructions(table); },
+      rowContextMenu: this.createRowContextMenu()
     });
     this.fTable = table;
     return table;

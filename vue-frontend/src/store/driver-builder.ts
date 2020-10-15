@@ -102,13 +102,13 @@ const employeesModule = defineModule({
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
     },
-    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: CustomInstruction, parameters: CommandParameter[] }) {
+    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: CustomInstruction, parameters?: CommandParameter[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
       if (instructionIndex <= -1) return;
       const instruction = instructionSet.instructions[instructionIndex];
-      instruction.parameters = opts.parameters;
+      opts.parameters && opts.parameters.length > 0 ? instruction.parameters = opts.parameters : instruction.parameters = undefined;
       instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
     },
     setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: CustomInstruction[] }) {
