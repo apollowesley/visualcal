@@ -1,14 +1,22 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
+import { CommunicationInterfaceActionInfo, Driver, Instruction, InstructionSet, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import electronLog from 'electron-log';
 import { sleep } from '../../drivers/utils';
+import electronStore from 'electron-cfg';
 
 interface Events {
   connected: () => void;
   disconnected: () => void;
+}
+
+interface Store {
+  drivers: Driver[];
+  instructionSets: InstructionSet[];
+  instructions: Instruction[];
+  
 }
 
 const log = electronLog.scope('DriverBuilder');
@@ -21,6 +29,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
     return DriverBuilder.fInstance;
   }
 
+  private fStore: electronStore<Store> = electronStore.create<Store>('driver-builder-library.json', log);
   private fCommunicationInterface?: CommunicationInterface;
 
   private constructor() {

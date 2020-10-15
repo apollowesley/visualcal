@@ -17,7 +17,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
-import { CustomInstruction, Instruction } from '@/driver-builder';
+import { CustomInstruction, Instruction } from 'visualcal-common/src/driver-builder';
 
 @Component
 export default class InstructionTableComponent extends Vue {

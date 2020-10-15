@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
+import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';

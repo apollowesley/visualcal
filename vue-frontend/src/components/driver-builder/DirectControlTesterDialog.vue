@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { CommandParameter, CommandParameterArgument, CustomInstruction, InstructionSet } from '@/driver-builder';
+import { CommandParameter, CommandParameterArgument, CustomInstruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 

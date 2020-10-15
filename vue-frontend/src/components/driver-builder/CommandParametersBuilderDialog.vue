@@ -43,7 +43,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { CustomInstruction, CommandParameter } from '@/driver-builder';
+import { CustomInstruction, CommandParameter } from 'visualcal-common/src/driver-builder';
 
 @Component
 export default class CommandParametersBuilderDialogComponent extends Vue {

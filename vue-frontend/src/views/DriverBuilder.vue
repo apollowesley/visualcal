@@ -204,8 +204,8 @@ import {
   Driver,
   CommandParameter,
   CustomInstruction,
-  InstructionSet,
-} from "@/driver-builder";
+  InstructionSet
+} from 'visualcal-common/src/driver-builder';
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
