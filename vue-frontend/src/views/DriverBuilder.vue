@@ -148,7 +148,7 @@
                 class="grey"
                 dense
               >
-                <v-expansion-panel-header class="white">
+                <v-expansion-panel-header class="white" style="height: 25px">
                   {{ instructionSet.name }}
                   <v-spacer></v-spacer>
                   <v-btn

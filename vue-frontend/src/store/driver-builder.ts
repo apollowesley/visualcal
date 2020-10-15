@@ -110,7 +110,6 @@ const employeesModule = defineModule({
       const instruction = instructionSet.instructions[instructionIndex];
       instruction.parameters = opts.parameters;
       instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
-      console.info(instruction);
     },
     setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: CustomInstruction[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
