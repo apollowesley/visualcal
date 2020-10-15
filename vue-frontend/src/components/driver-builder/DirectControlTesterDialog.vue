@@ -202,14 +202,6 @@ export default class DirectControlTesterDialog extends Vue {
     await this.commandArgumentsTable.setData(parameters);
   }
 
-  @Watch('instructionSet')
-  async onInstructionSetChanged() {
-    if (!this.shouldShow || !this.$refs.commandArgumentsTableElement) return;
-    await this.commandArgumentsTable.setData(this.instructionSet.instructions.filter(i => i.parameters !== undefined).map(i => {
-      return { instruction: i };
-    }));
-  }
-
 }
 </script>
 
