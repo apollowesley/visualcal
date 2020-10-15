@@ -13,7 +13,7 @@
       </v-row>
       <v-row>
         <v-col>
-          Command parameter arguments
+          <h4>Command parameter arguments</h4>
           <div ref="commandArgumentsTable" />
         </v-col>
       </v-row>
@@ -40,6 +40,7 @@
       </v-row>
       <v-row>
         <v-col>
+          <h4>Responses</h4>
           <div ref="responsesTable" />
         </v-col>
       </v-row>
@@ -59,6 +60,7 @@ interface InstructionParameterArgument {
 }
 
 interface InstructionResponse {
+  timestamp: string;
   instruction: CustomInstruction;
   response?: string | ArrayBufferLike;
 }
@@ -81,9 +83,14 @@ export default class DirectControlTesterDialog extends Vue {
   ]
 
   private responsesTableColumns: Tabulator.ColumnDefinition[] = [
+    { title: 'Timestamp', field: 'timestamp' },
     { title: 'Command', field: 'instruction.command' },
     { title: 'Type', field: 'instruction.type' },
-    { title: 'Response', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : cell.getValue() }
+    { title: 'Response (string)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : cell.getValue() },
+    { title: 'Response (integer from string)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : parseInt(cell.getValue()) },
+    { title: 'Response (integer from float)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : parseInt(parseFloat(cell.getValue()).toString()) },
+    { title: 'Response (float)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : parseFloat(cell.getValue()) },
+    { title: 'Response (boolean)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : !!cell.getValue() }
   ]
 
   get commandArgumentsTableElement() { return this.$refs.commandArgumentsTable as HTMLDivElement; }
@@ -133,6 +140,7 @@ export default class DirectControlTesterDialog extends Vue {
         for (const instruction of instructionSet.instructions) {
           const response = await this.onTestInstruction(instruction, false);
           this.responses.push({
+            timestamp: new Date().toString(),
             instruction: instruction,
             response: response
           });
