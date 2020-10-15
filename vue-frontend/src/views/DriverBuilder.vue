@@ -15,6 +15,7 @@
     <DirectControlTesterDialog
       :should-show="shouldDirectControlTesterDialogShow"
       :instruction-set="selectedInstructionSetUnderTest"
+      eager
       @cancel="shouldDirectControlTesterDialogShow = false"
     />
     <v-row no-gutters>

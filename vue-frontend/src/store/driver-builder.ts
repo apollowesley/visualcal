@@ -184,7 +184,7 @@ const employeesModule = defineModule({
         let command = opts.instruction.command;
         if (opts.arguments) {
           for (const argument of opts.arguments) {
-            command = `${command}${argument.parameter.beforeText}${argument.value}${argument.parameter.afterText}`;
+            command = `${command}${argument.parameter.beforeText ? argument.parameter.beforeText : ''}${argument.value}${argument.parameter.afterText ? argument.parameter.afterText : ''}`;
           }
         }
         const info: WriteInfo = {
