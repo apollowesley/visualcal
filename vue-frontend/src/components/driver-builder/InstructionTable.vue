@@ -29,6 +29,7 @@ export default class InstructionTableComponent extends Vue {
   @Watch('instructions')
   async onInstructionsChanged() {
     await this.setData(this.instructions);
+    this.table.redraw();
   }
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
@@ -150,7 +151,7 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
     { title: 'Command*', field: 'command', editable: true, validator: 'required', editor: 'input' },
-    { title: 'Parameters', editable: false, formatter: (cell) => cell.getValue() ? cell.getValue().length.toString() : '0', cellClick: (_, cell) => this.$emit('edit-instruction-command', cell.getRow().getData()) },
+    { title: 'Parameters (Click to edit)', editable: false, formatter: (cell) => cell.getRow().getData().parameters ? cell.getRow().getData().parameters.length.toString() : '0', cellClick: (_, cell) => this.$emit('edit-instruction-command', cell.getRow().getData()) },
     { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' }
   ]
 

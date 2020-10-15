@@ -3,7 +3,7 @@
     <CommandParametersBuilderDialogComponent
       :should-show="shouldCommandBuilderDialogShow"
       :instruction="commandBuilderDialogInstruction"
-      @save="onCommandBuilderSave"
+      @save="onCommandParametersBuilderDialogSave"
       @cancel="shouldCommandBuilderDialogShow = false"
     />
     <RenameInstructionSetDialogComponent
@@ -144,6 +144,7 @@
           <v-col>
             Instruction Sets
             <v-expansion-panels
+              v-model="expandedInstructionSet"
               style="width: 98%"
               class="ml-5 mt-7 mb-n10"
               dense
@@ -262,6 +263,8 @@ export default class DriverBuilderView extends Vue {
 
   shouldRenameInstructionSetDialogShow = false;
   selectedRenameInstructionSet: InstructionSet = { id: uuid(), name: "", instructions: [] };
+
+  expandedInstructionSet = 0;
 
   shouldDirectControlTesterDialogShow = false;
   selectedInstructionSetUnderTest: InstructionSet = { id: uuid(), name: "", instructions: [] };
@@ -493,16 +496,18 @@ export default class DriverBuilderView extends Vue {
     event.dataTransfer.setData('application/json', instructionString);
   }
 
-  onCommandBuilderSave(
-    instruction: CustomInstruction,
-    parameters: CommandParameter[]
-  ) {
-    instruction.parameters = parameters;
+  onCommandParametersBuilderDialogSave(instruction: CustomInstruction, parameters: CommandParameter[]) {
+    this.shouldCommandBuilderDialogShow = false;
+    const instructionSet = this.$store.direct.state.driverBuilder.currentDriver.instructionSets[this.expandedInstructionSet];
+    if (!instructionSet) return;
+    this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandParameters({
+      instructionSetId: instructionSet.id,
+      instruction: instruction,
+      parameters: parameters
+    });
   }
 
-  onInstructionTableComponentEditInstructionCommand(
-    instruction: CustomInstruction
-  ) {
+  onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {
     this.commandBuilderDialogInstruction = instruction;
     this.shouldCommandBuilderDialogShow = true;
   }

@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
+import { CommandParameter, CustomInstruction, Driver, Instruction, InstructionSet } from '../driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
@@ -109,6 +109,16 @@ const employeesModule = defineModule({
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instructionId);
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
+    },
+    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: CustomInstruction, parameters: CommandParameter[] }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      if (!instructionSet) return;
+      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
+      if (instructionIndex <= -1) return;
+      const instruction = instructionSet.instructions[instructionIndex];
+      instruction.parameters = opts.parameters;
+      instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
+      console.info(instruction);
     },
     setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: CustomInstruction[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
