@@ -26,10 +26,9 @@ export default class InstructionTableComponent extends Vue {
 
   private fTable?: Tabulator;
 
-  @Watch('instructions')
+  @Watch('instructions', { deep: true })
   async onInstructionsChanged() {
     await this.setData(this.instructions);
-    this.table.redraw();
   }
 
   get tableElement() { return this.$refs.tableElement as HTMLDivElement; }
@@ -42,6 +41,7 @@ export default class InstructionTableComponent extends Vue {
     const stringCopy = JSON.stringify(instructions);
     const copy = JSON.parse(stringCopy);
     await this.table.setData(copy);
+    this.table.redraw();
   }
 
   private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
@@ -195,8 +195,9 @@ export default class InstructionTableComponent extends Vue {
     return table;
   }
 
-  mounted() {
+  async mounted() {
     this.createTable();
+    if (this.instructions) await this.setData(this.instructions);
   }
 
   onDragOver(event: DragEvent) {

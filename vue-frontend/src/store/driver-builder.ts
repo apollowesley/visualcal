@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet, Library } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
@@ -44,9 +44,23 @@ const employeesModule = defineModule({
       const { state } = getterContext(args);
       if (!state.selectedCommunicationInterfaceInfo) return false;
       return state.selectedCommunicationInterfaceInfo && state.selectedCommunicationInterfaceInfo.type.toLocaleUpperCase().includes('GPIB')
+    },
+    library(...args): Library {
+      /* eslint-disable @typescript-eslint/no-use-before-define */
+      const { state } = getterContext(args);
+      return {
+        drivers: state.drivers,
+        instructionSets: state.instructionSets,
+        instructions: state.instructions
+      }
     }
   },
   mutations: {
+    setLibrary(state, value: Library) {
+      state.drivers = value.drivers;
+      state.instructionSets = value.instructionSets;
+      state.instructions = value.instructions;
+    },
     setInstructions(state, value: Instruction[]) {
       state.instructions = value;
     },
@@ -71,12 +85,17 @@ const employeesModule = defineModule({
     setInstructionSets(state, value: InstructionSet[]) {
       state.currentDriver.instructionSets = value;
     },
-    addNewDriverInstructionSet(state) {
-      state.currentDriver.instructionSets.push({
-        id: uuid(),
-        name: 'New Instruction Set',
-        instructions: []
-      });
+    addDriverInstructionSet(state, instructionSet?: InstructionSet) {
+      if (instructionSet) {
+        const newInstructionSet = { ...instructionSet };
+        state.currentDriver.instructionSets.push(newInstructionSet);
+      } else {
+        state.currentDriver.instructionSets.push({
+          id: uuid(),
+          name: 'New Instruction Set',
+          instructions: []
+        });
+      }
     },
     removeDriverInstructionSet(state, id: string) {
       const setIndex = state.currentDriver.instructionSets.findIndex(i => i.id === id);
@@ -134,26 +153,54 @@ const employeesModule = defineModule({
     },
     setIsSelectedCommunicationInterfaceConnected(state, value: boolean) {
       state.isSelectedCommunicationInterfaceConnected = value;
+    },
+    saveInstructionSetToLibrary(state, value: InstructionSet) {
+      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i.id === value.id);
+      if (existingInstructionSetIndex > -1) {
+        state.instructionSets[existingInstructionSetIndex] = value;
+      } else {
+        state.instructionSets.push(value);
+      }
+    },
+    removeInstructionSetFromLibrary(state, value: InstructionSet) {
+      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i.id === value.id);
+      if (existingInstructionSetIndex <= -1) return;
+      state.instructionSets.splice(existingInstructionSetIndex, 1);
     }
   },
   actions: {
     async init(context) {
-      const { state, commit, dispatch } = actionContext(context);
+      const { commit, dispatch } = actionContext(context);
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(true));
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.error, (_, error: Error) => alert(error.message));
 
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(false));
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.error, (_, error: Error) => alert(error.message));
 
-      await dispatch.refreshCommunicationInterfaceInfos(); 
-      window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getStatus.response, (_, status: Status) => {
-        commit.setIsSelectedCommunicationInterfaceConnected(status.isConnected);
-        if (status.communicationInterfaceName) {
-          const selectedCommunicationInterfaceInfo = state.communicationInterfaceInfos.find(c => c.name === status.communicationInterfaceName);
-          if (selectedCommunicationInterfaceInfo) commit.setSelectedCommunicationInterfaceInfo(selectedCommunicationInterfaceInfo);
-        }
+      await dispatch.refreshCommunicationInterfaceInfos();
+      await dispatch.initCommunicationInterfaces();
+
+      return new Promise<void>((resolve) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getLibrary.response, (_, library: Library) => {
+          commit.setLibrary(library);
+          return resolve();
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.getLibrary.request);
       });
-      window.electron.ipcRenderer.send(IpcChannels.communicationInterface.getStatus.request);
+    },
+    async initCommunicationInterfaces(context) {
+      const { state, commit } = actionContext(context);
+      return new Promise<void>((resolve) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getStatus.response, (_, status: Status) => {
+          commit.setIsSelectedCommunicationInterfaceConnected(status.isConnected);
+          if (status.communicationInterfaceName) {
+            const selectedCommunicationInterfaceInfo = state.communicationInterfaceInfos.find(c => c.name === status.communicationInterfaceName);
+            if (selectedCommunicationInterfaceInfo) commit.setSelectedCommunicationInterfaceInfo(selectedCommunicationInterfaceInfo);
+          }
+          return resolve();
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.getStatus.request);
+      });
     },
     async refreshCommunicationInterfaceInfos(context) {
       const { commit } = actionContext(context);
@@ -169,6 +216,20 @@ const employeesModule = defineModule({
       commit.setCommunicationInterfaceInfos(benchConfig.interfaces);
       if (benchConfig.interfaces.length <= 0) return;
       commit.setSelectedCommunicationInterfaceInfo(benchConfig.interfaces[0]);
+    },
+    async saveLibrary(context) {
+      const { getters } = actionContext(context);
+      return new Promise<void>((resolve, reject) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.setLibrary.response, () => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.setLibrary.error);
+          return resolve();
+        });
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.setLibrary.error, (error) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.setLibrary.response);
+          return reject(error);
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.setLibrary.request, getters.library);
+      });
     },
     async connect(context) {
       const { state } = actionContext(context);
@@ -193,12 +254,14 @@ const employeesModule = defineModule({
           terminator: state.currentDriver.terminator
         };
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.write.error, (_, error: Error) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.write.response);
           return reject(error);
         });
-        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.write.response, () => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.write.error);
           return resolve();
         });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
       });
     },
     async read(context) {
@@ -209,9 +272,11 @@ const employeesModule = defineModule({
       };
       return new Promise<ArrayBufferLike>((resolve, reject) => {
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.response, (_, data: ArrayBufferLike) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.read.error);
           return resolve((data));
         });
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.read.error, (_, error: Error) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.read.response);
           return reject(error);
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request, info);
@@ -226,9 +291,11 @@ const employeesModule = defineModule({
           terminator: state.currentDriver.terminator
         };
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.queryString.response, (_, data: string) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.queryString.error);
           return resolve(data);
         });
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.queryString.error, (_, error: Error) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.queryString.response);
           return reject(error);
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, info);

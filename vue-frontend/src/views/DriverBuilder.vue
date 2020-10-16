@@ -64,6 +64,7 @@
                   v-if="item.command"
                   draggable
                   @dragstart="onDragStart($event, item)"
+                  @contextmenu="itemRightClicked($event, item.instructionSet)"
                   class="drag-item"
                 >
                   {{ item.name }}
@@ -73,6 +74,26 @@
                 </label>
               </template>
             </v-treeview>
+            <v-menu
+              v-model="shouldItemContextMenuShow"
+              :position-x="itemMouseX"
+              :position-y="itemMouseY"
+              absolute
+              offset-y
+            >
+              <v-list>
+                <v-list-item
+                  @click="addItemInstructionSet"
+                >
+                  <v-list-item-title>Add to driver</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  @click="removeInstructionSetFromLibrary"
+                >
+                  <v-list-item-title>Remove</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
       </v-col>
@@ -170,6 +191,13 @@
                   >
                   <v-btn
                     color="primary"
+                    class="mr-3"
+                    max-width="100"
+                    @click.native.stop="saveInstructionSetToLibrary(instructionSet)"
+                    >Save</v-btn
+                  >
+                  <v-btn
+                    color="primary"
                     max-width="100"
                     @click.native.stop="removeInstructionSet(instructionSet)"
                     >Remove</v-btn
@@ -195,7 +223,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
 import {
   Instruction,
@@ -216,6 +244,7 @@ import { v4 as uuid } from 'uuid';
 interface ItemInstruction extends Instruction {
   id: string;
   file?: string;
+  instructionSet?: InstructionSet;
 }
 
 interface Item {
@@ -225,14 +254,14 @@ interface Item {
   file?: string;
 }
 
-const MockDriver: Driver = {
-  manufacturer: "Fluke",
-  model: "45",
-  nomenclature: "Digital Multimeter",
-  identityQueryCommand: "*IDN?",
-  terminator: "Lf",
-  instructionSets: [],
-};
+// const MockDriver: Driver = {
+//   manufacturer: "Fluke",
+//   model: "45",
+//   nomenclature: "Digital Multimeter",
+//   identityQueryCommand: "*IDN?",
+//   terminator: "Lf",
+//   instructionSets: [],
+// };
 
 @Component({
   components: {
@@ -244,6 +273,11 @@ const MockDriver: Driver = {
   }
 })
 export default class DriverBuilderView extends Vue {
+
+  shouldItemContextMenuShow = false;
+  itemMouseX = 0;
+  itemMouseY = 0;
+
   shouldCommandBuilderDialogShow = false;
   commandBuilderDialogInstruction: CustomInstruction = {
     id: "new",
@@ -263,7 +297,6 @@ export default class DriverBuilderView extends Vue {
 
   rules: VuetifyRule[] = [requiredRule];
   canSaveForm = false;
-  localDriver: Driver = this.driver;
   tree = [{ name: "test" }];
   open = [];
   files: Record<string, string> = {
@@ -430,9 +463,32 @@ export default class DriverBuilderView extends Vue {
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
+  get instructionSets() { return this.$store.direct.state.driverBuilder.instructionSets; }
+
+  @Watch('instructionSets', { deep: true })
+  onInstructionSetsChanged() {
+    this.refreshInstructionSetsCategory();
+  }
+
+  refreshInstructionSetsCategory() {
+    let instructionSetsCategory = (this.items as Item[]).find(i => i.name === 'Your Instruction Sets');
+    let addCategory = instructionSetsCategory === undefined;
+    if (!instructionSetsCategory) instructionSetsCategory = { id: uuid(), name: 'Your Instruction Sets', children: [] };
+    instructionSetsCategory.children = [];
+    for (const instructionSet of this.instructionSets) {
+      instructionSetsCategory.children.push({
+        id: instructionSet.id,
+        name: instructionSet.name,
+        file: 'json',
+        instructionSet: { ...instructionSet },
+        type: 'Write',
+        command: 'DUMMY'
+      });
+    }
+    if (addCategory) this.items.push(instructionSetsCategory);
+  }
+
   async mounted() {
-    this.localDriver = MockDriver;
-    this.driver = this.localDriver;
     const builtInCategory = this.items.find((i) => i.name === 'Built-in');
     if (!builtInCategory || !builtInCategory.children) return;
     const instructionsCategory = (builtInCategory.children as Item[]).find((i) => i.name === 'Instructions');
@@ -465,6 +521,7 @@ export default class DriverBuilderView extends Vue {
     });
     (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
     await this.$store.direct.dispatch.driverBuilder.init();
+    this.refreshInstructionSetsCategory();
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {
@@ -491,7 +548,7 @@ export default class DriverBuilderView extends Vue {
   }
 
   addNewInstructionSet() {
-    this.$store.direct.commit.driverBuilder.addNewDriverInstructionSet();
+    this.$store.direct.commit.driverBuilder.addDriverInstructionSet();
   }
 
   renameInstructionSet(instructionSet: InstructionSet) {
@@ -537,6 +594,33 @@ export default class DriverBuilderView extends Vue {
   onTestInstructionSetButtonClicked(instructionSet: InstructionSet) {
     this.selectedInstructionSetUnderTest = instructionSet;
     this.shouldDirectControlTesterDialogShow = true;
+  }
+
+  async saveInstructionSetToLibrary(instructionSet: InstructionSet) {
+    this.$store.direct.commit.driverBuilder.saveInstructionSetToLibrary(instructionSet);
+    await this.$store.direct.dispatch.driverBuilder.saveLibrary();
+  }
+
+  private itemInstructionSet?: InstructionSet;
+  async itemRightClicked(event: MouseEvent, instructionSet: InstructionSet) {
+    event.preventDefault();
+    this.shouldItemContextMenuShow = false;
+    this.itemMouseX = event.clientX;
+    this.itemMouseY = event.clientY;
+    await this.$nextTick();
+    this.shouldItemContextMenuShow = true;
+    this.itemInstructionSet = instructionSet;
+  }
+
+  addItemInstructionSet() {
+    if (!this.itemInstructionSet) return;
+    this.$store.direct.commit.driverBuilder.addDriverInstructionSet(this.itemInstructionSet);
+  }
+
+  async removeInstructionSetFromLibrary() {
+    if (!this.itemInstructionSet) return;
+    this.$store.direct.commit.driverBuilder.removeInstructionSetFromLibrary(this.itemInstructionSet);
+    await this.$store.direct.dispatch.driverBuilder.saveLibrary();
   }
 
 }

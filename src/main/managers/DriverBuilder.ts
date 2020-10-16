@@ -1,22 +1,15 @@
 import { ipcMain } from 'electron';
+import electronStore from 'electron-cfg';
+import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { CommunicationInterfaceActionInfo, Driver, Instruction, InstructionSet, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
+import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
-import electronLog from 'electron-log';
 import { sleep } from '../../drivers/utils';
-import electronStore from 'electron-cfg';
 
 interface Events {
   connected: () => void;
   disconnected: () => void;
-}
-
-interface Store {
-  drivers: Driver[];
-  instructionSets: InstructionSet[];
-  instructions: Instruction[];
-  
 }
 
 const log = electronLog.scope('DriverBuilder');
@@ -29,7 +22,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
     return DriverBuilder.fInstance;
   }
 
-  private fStore: electronStore<Store> = electronStore.create<Store>('driver-builder-library.json', log);
+  private fStore: electronStore<Library> = electronStore.create<Library>('driver-builder-library.json', log);
   private fCommunicationInterface?: CommunicationInterface;
 
   private constructor() {
@@ -91,11 +84,32 @@ export class DriverBuilder extends TypedEmitter<Events> {
     return response;
   }
 
+  getLibrary() {
+    const library = this.fStore.getAll();
+    if (!library.drivers) library.drivers = [];
+    if (!library.instructionSets) library.instructionSets = [];
+    if (!library.instructions) library.instructions = [];
+    return library;
+  }
+
+  setLibrary(library: Library) {
+    this.fStore.setAll(library);
+  }
+
   public init() {
     this.initIpcListeners();
   }
 
   private initIpcListeners() {
+    ipcMain.on(IpcChannels.communicationInterface.getLibrary.request, (event) => {
+      if (event.sender.isDestroyed()) return;
+      return event.reply(IpcChannels.communicationInterface.getLibrary.response, this.getLibrary());
+    });
+    ipcMain.on(IpcChannels.communicationInterface.setLibrary.request, (event, library: Library) => {
+      if (event.sender.isDestroyed()) return;
+      this.setLibrary(library);
+      return event.reply(IpcChannels.communicationInterface.setLibrary.response, true);
+    });
     ipcMain.on(IpcChannels.communicationInterface.getStatus.request, (event) => {
       if (event.sender.isDestroyed()) return;
       const status: Status = {

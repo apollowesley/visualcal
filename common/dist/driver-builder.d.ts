@@ -1,5 +1,15 @@
 export declare const IpcChannels: {
     communicationInterface: {
+        getLibrary: {
+            request: string;
+            response: string;
+            error: string;
+        };
+        setLibrary: {
+            request: string;
+            response: string;
+            error: string;
+        };
         getStatus: {
             request: string;
             response: string;
@@ -32,6 +42,11 @@ export declare const IpcChannels: {
         };
     };
 };
+export interface Library {
+    drivers: Driver[];
+    instructionSets: InstructionSet[];
+    instructions: Instruction[];
+}
 export interface Status {
     communicationInterfaceName?: string;
     isConnected: boolean;

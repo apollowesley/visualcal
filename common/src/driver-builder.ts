@@ -1,5 +1,15 @@
 export const IpcChannels = {
   communicationInterface: {
+    getLibrary: {
+      request: 'driver-builder-get-library-request',
+      response: 'driver-builder-get-library-response',
+      error: 'driver-builder-get-library-error'
+    },
+    setLibrary: {
+      request: 'driver-builder-set-library-request',
+      response: 'driver-builder-set-library-response',
+      error: 'driver-builder-set-library-error'
+    },
     getStatus: {
       request: 'driver-builder-get-status-request',
       response: 'driver-builder-get-status-response',
@@ -31,6 +41,12 @@ export const IpcChannels = {
       error: 'driver-builder-iface-query-string-error'
     }
   }
+}
+
+export interface Library {
+  drivers: Driver[];
+  instructionSets: InstructionSet[];
+  instructions: Instruction[];
 }
 
 export interface Status {

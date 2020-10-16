@@ -3,6 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SCPIRequiredCommands = exports.IEEE4882MandatedCommands = exports.IpcChannels = void 0;
 exports.IpcChannels = {
     communicationInterface: {
+        getLibrary: {
+            request: 'driver-builder-get-library-request',
+            response: 'driver-builder-get-library-response',
+            error: 'driver-builder-get-library-error'
+        },
+        setLibrary: {
+            request: 'driver-builder-set-library-request',
+            response: 'driver-builder-set-library-response',
+            error: 'driver-builder-set-library-error'
+        },
         getStatus: {
             request: 'driver-builder-get-status-request',
             response: 'driver-builder-get-status-response',
