@@ -90,9 +90,8 @@ module.exports = (RED: NodeRed) => {
         inputLevel: this.inputValue,
         rawValue: rawValue,
         measuredValue: measuredValue,
-        passed: false
+        passed: (measuredValue >= this.min) && (this.max >= measuredValue)
       };
-      result.passed = (measuredValue >= this.min) && (this.max >= measuredValue);
       this.status({
         fill: result.passed ? 'green' : 'red',
         shape: 'dot',

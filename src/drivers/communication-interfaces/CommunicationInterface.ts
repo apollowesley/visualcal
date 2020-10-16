@@ -109,13 +109,13 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   protected async onDisconnecting(): Promise<void> {
     this.fIsConnecting = false;
     this.fIsDisconnecting = true;
-    this.emit('disconnecting', this);
+    setImmediate(() => this.emit('disconnecting', this));
     await Promise.resolve();
   }
 
   protected async onDisconnected(): Promise<void> {
     this.fIsDisconnecting = false;
-    this.emit('disconnected', this);
+    setImmediate(() => this.emit('disconnected', this));
     await Promise.resolve();
   };
 
@@ -132,7 +132,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     return new Promise((resolve, reject) => {
       this.fIsConnecting = true;
       this.fIsDisconnecting = false;
-      this.emit('connecting', this);
+      setImmediate(() => this.emit('connecting', this));
       this.fConnectTimeoutTimerId = setTimeout(async () => {
         await this.disconnect();
         const err = new Error(`${this.name} failed to connect within ${this.connectTimeout} ms`);
@@ -146,7 +146,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     if (this.fConnectTimeoutTimerId) clearTimeout(this.fConnectTimeoutTimerId);
     this.fConnectTimeoutTimerId = undefined;
     this.fIsConnecting = false;
-    this.emit('connected', this);
+    setImmediate(() => this.emit('connected', this));
     return await Promise.resolve();
   }
 
@@ -175,7 +175,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   protected onError(error: Error) {
-    this.emit('error', this, error);
+    setImmediate(() => this.emit('error', this, error));
   }
 
   configure(options: CommunicationInterfaceConfigurationOptions) {

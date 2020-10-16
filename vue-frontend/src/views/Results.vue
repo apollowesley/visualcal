@@ -118,7 +118,8 @@ export default class ResultsView extends Vue {
       movableRows: true,
       movableRowsConnectedTables: this.outputRunsTabulatorElement,
       movableRowsSender: 'delete',
-      movableRowsReceiver: 'add'
+      movableRowsReceiver: 'add',
+      maxHeight: '90vh'
     });
     await table.setData(runs);
     return table;

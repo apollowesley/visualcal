@@ -18,13 +18,15 @@ export default class TabulatorComponent extends Vue {
   @Prop({ type: String, required: false, default: 'fitColumns' }) layout!: 'fitData' | 'fitColumns' | 'fitDataFill' | 'fitDataStretch' | 'fitDataTable' | undefined;
   @Prop({ type: Array, required: false, default: function() { return {}; } }) data!: Procedure[];
   @Prop({ type: Boolean, required: false, default: false }) showRowHover!: boolean;
+  @Prop({ type: String, required: false, default: undefined }) maxHeight?: string;
 
   get tabulatorElement() { return this.$refs.tabulatorElement as HTMLDivElement; }
 
   private async createTable() {
     const table = new Tabulator(this.tabulatorElement, {
       layout: this.layout,
-      columns: this.columns
+      columns: this.columns,
+      maxHeight: this.maxHeight
       // rowMouseEnter: this.onRowMouseEnter
     });
     await table.setData(this.data);
