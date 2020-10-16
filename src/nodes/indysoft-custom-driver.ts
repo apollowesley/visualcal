@@ -41,9 +41,9 @@ function indySoftCustomDriver(this: NodeRedRuntimeNode, config: NodeRedNodeUIPro
   nodeRed.nodes.createNode(this, config as any);
   if (config.name) this.name = config.name;
   this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
-    
+
     if (done) done();
-});
+  });
 }
 
 module.exports = (RED: NodeRed) => {
