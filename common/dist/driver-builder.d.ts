@@ -10,6 +10,11 @@ export declare const IpcChannels: {
             response: string;
             error: string;
         };
+        saveDriver: {
+            request: string;
+            response: string;
+            error: string;
+        };
         getStatus: {
             request: string;
             response: string;

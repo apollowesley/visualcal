@@ -29,7 +29,7 @@ const employeesModule = defineModule({
         model: '',
         nomenclature: '',
         identityQueryCommand: '*IDN?',
-        terminator: 'None',
+        terminator: 'Lf',
         instructionSets: []
       },
       communicationInterfaceInfos: [],
@@ -65,7 +65,9 @@ const employeesModule = defineModule({
       state.instructions = value;
     },
     setCurrentDriver(state, value: Driver) {
-      state.currentDriver = value;
+      const driverString = JSON.stringify(value);
+      const driver = JSON.parse(driverString) as Driver;
+      state.currentDriver = driver;
     },
     setManufacturer(state, value: string) {
       state.currentDriver.manufacturer = value;
@@ -166,6 +168,19 @@ const employeesModule = defineModule({
       const existingInstructionSetIndex = state.instructionSets.findIndex(i => i.id === value.id);
       if (existingInstructionSetIndex <= -1) return;
       state.instructionSets.splice(existingInstructionSetIndex, 1);
+    },
+    removeDriverFromLibrary(state, value: Driver) {
+      const existingDriverIndex = state.drivers.findIndex(i => i.manufacturer === value.manufacturer && i.model === value.model && i.nomenclature === value.nomenclature);
+      if (existingDriverIndex <= -1) return;
+      state.drivers.splice(existingDriverIndex, 1);
+    },
+    addOrReplaceDriverInLibrary(state, value: Driver) {
+      const existingDriverIndex = state.drivers.findIndex(i => i.manufacturer === value.manufacturer && i.model === value.model && i.nomenclature === value.nomenclature);
+      if (existingDriverIndex > -1) {
+        state.drivers[existingDriverIndex] = { ...value };
+      } else {
+        state.drivers.push({ ...value });
+      }
     }
   },
   actions: {
@@ -299,6 +314,21 @@ const employeesModule = defineModule({
           return reject(error);
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.queryString.request, info);
+      });
+    },
+    async saveCurrentDriver(context) {
+      const { state, commit } = actionContext(context);
+      return new Promise<void>((resolve, reject) => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.saveDriver.response, () => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.saveDriver.error);
+          commit.addOrReplaceDriverInLibrary(state.currentDriver);
+          return resolve();
+        });
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.saveDriver.error, (_, error: Error) => {
+          window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.saveDriver.response);
+          return reject(error);
+        });
+        window.electron.ipcRenderer.send(IpcChannels.communicationInterface.saveDriver.request, state.currentDriver);
       });
     }
   }

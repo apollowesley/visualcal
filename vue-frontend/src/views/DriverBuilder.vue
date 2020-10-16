@@ -64,18 +64,29 @@
                   v-if="item.command"
                   draggable
                   @dragstart="onDragStart($event, item)"
-                  @contextmenu="itemRightClicked($event, item.instructionSet)"
                   class="drag-item"
                 >
                   {{ item.name }}
                 </label>
+                <v-label
+                  v-else-if="item.instructionSet"
+                  @contextmenu="instructionSetRightClicked($event, item.instructionSet)"
+                >
+                  {{ item.name }}
+                </v-label>
+                <v-label
+                  v-else-if="item.driver"
+                  @contextmenu="driverRightClicked($event, item.driver)"
+                >
+                  {{ item.name }}
+                </v-label>
                 <label v-else>
                   {{ item.name }}
                 </label>
               </template>
             </v-treeview>
             <v-menu
-              v-model="shouldItemContextMenuShow"
+              v-model="shouldInstructionSetContextMenuShow"
               :position-x="itemMouseX"
               :position-y="itemMouseY"
               absolute
@@ -94,13 +105,43 @@
                 </v-list-item>
               </v-list>
             </v-menu>
+            <v-menu
+              v-model="shouldDriverContextMenuShow"
+              :position-x="itemMouseX"
+              :position-y="itemMouseY"
+              absolute
+              offset-y
+            >
+              <v-list>
+                <v-list-item
+                  @click="setDriverAsCurrent"
+                >
+                  <v-list-item-title>Edit</v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  @click="removeDriverFromLibrary"
+                >
+                  <v-list-item-title>Remove</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
       </v-col>
       <v-col>
         <v-row class="ma-5">
           <v-col>
-            <v-form v-model="canSaveForm">
+            <v-btn
+              :disabled="!canSaveDriver"
+              @click.prevent="saveDriver"
+            >
+              Save Driver
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row class="ma-5">
+          <v-col>
+            <v-form :value="canSaveDriver">
               <v-row dense>
                 <v-col cols="12" sm="4">
                   <v-text-field
@@ -274,7 +315,8 @@ interface Item {
 })
 export default class DriverBuilderView extends Vue {
 
-  shouldItemContextMenuShow = false;
+  shouldInstructionSetContextMenuShow = false;
+  shouldDriverContextMenuShow = false;
   itemMouseX = 0;
   itemMouseY = 0;
 
@@ -296,7 +338,6 @@ export default class DriverBuilderView extends Vue {
   selectedInstructionSetUnderTest: InstructionSet = { id: uuid(), name: "", instructions: [] };
 
   rules: VuetifyRule[] = [requiredRule];
-  canSaveForm = false;
   tree = [{ name: "test" }];
   open = [];
   files: Record<string, string> = {
@@ -355,69 +396,14 @@ export default class DriverBuilderView extends Vue {
     },
     {
       id: uuid(),
-      name: "Devices",
-      children: [
-        {
-          id: uuid(),
-          name: "Fluke",
-          children: [
-            {
-              id: uuid(),
-              name: "45",
-              children: [
-                {
-                  id: uuid(),
-                  name: "Instructions",
-                  children: [
-                    {
-                      id: uuid(),
-                      name: "Set mode AC volts",
-                      file: "json",
-                      command: "CONF:VOLTS:AC",
-                      type: "Write",
-                    }
-                  ]
-                },
-                {
-                  id: uuid(),
-                  name: "Instruction Sets",
-                  children: [
-                    {
-                      id: uuid(),
-                      name: "Measure AC Volts",
-                      file: "json",
-                    }
-                  ]
-                },
-                {
-                  id: uuid(),
-                  name: 'Categories',
-                  children: [
-                    {
-                      id: uuid(),
-                      name: 'Digital Multimeter',
-                      children: [
-                        {
-                          id: uuid(),
-                          name: 'Measure AC Volts',
-                          file: 'json'
-                        },
-                        {
-                          id: uuid(),
-                          name: 'Measure DC Volts',
-                          file: 'json'
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      name: "Drivers",
+      children: []
     }
   ];
+
+  get canSaveDriver() {
+    return this.manufacturer !== '' && this.model !== '' && this.nomenclature !== '' && this.terminator !== '';
+  }
 
   get driver() {
     return this.$store.direct.state.driverBuilder.currentDriver;
@@ -463,7 +449,13 @@ export default class DriverBuilderView extends Vue {
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
+  get drivers() { return this.$store.direct.state.driverBuilder.drivers; }
   get instructionSets() { return this.$store.direct.state.driverBuilder.instructionSets; }
+
+  @Watch('drivers', { deep: true })
+  onDriversChanged() {
+    this.refreshDriversCategory();
+  }
 
   @Watch('instructionSets', { deep: true })
   onInstructionSetsChanged() {
@@ -476,16 +468,47 @@ export default class DriverBuilderView extends Vue {
     if (!instructionSetsCategory) instructionSetsCategory = { id: uuid(), name: 'Your Instruction Sets', children: [] };
     instructionSetsCategory.children = [];
     for (const instructionSet of this.instructionSets) {
-      instructionSetsCategory.children.push({
+      (instructionSetsCategory.children as unknown[]).push({
         id: instructionSet.id,
         name: instructionSet.name,
         file: 'json',
-        instructionSet: { ...instructionSet },
-        type: 'Write',
-        command: 'DUMMY'
+        instructionSet: { ...instructionSet }
       });
     }
     if (addCategory) this.items.push(instructionSetsCategory);
+  }
+
+  refreshDriversCategory() {
+    const driversCategory = (this.items as Item[]).find(i => i.name === 'Drivers');
+    if (!driversCategory) return;
+    driversCategory.children = [];
+    for (const driver of this.drivers) {
+      let manufacturerItem = (driversCategory.children as Item[]).find(c => c.name === driver.manufacturer);
+      if (!manufacturerItem) {
+        manufacturerItem = {
+          id: uuid(),
+          name: driver.manufacturer,
+          children: []
+        };
+        (driversCategory.children as Item[]).push(manufacturerItem);
+      }
+      let modelItem = (manufacturerItem.children as Item[]).find(c => c.name === driver.model);
+      if (!modelItem) {
+        modelItem = {
+          id: uuid(),
+          name: driver.model,
+          children: []
+        };
+        (manufacturerItem.children as Item[]).push(modelItem);
+      }
+      const driverItem = {
+        id: uuid(),
+        name: 'Driver',
+        file: 'json',
+        driver: { ...driver }
+      };
+      (modelItem.children as Item[]).push(driverItem);
+    }
   }
 
   async mounted() {
@@ -521,7 +544,6 @@ export default class DriverBuilderView extends Vue {
     });
     (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
     await this.$store.direct.dispatch.driverBuilder.init();
-    this.refreshInstructionSetsCategory();
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {
@@ -602,13 +624,13 @@ export default class DriverBuilderView extends Vue {
   }
 
   private itemInstructionSet?: InstructionSet;
-  async itemRightClicked(event: MouseEvent, instructionSet: InstructionSet) {
+  async instructionSetRightClicked(event: MouseEvent, instructionSet: InstructionSet) {
     event.preventDefault();
-    this.shouldItemContextMenuShow = false;
+    this.shouldInstructionSetContextMenuShow = false;
     this.itemMouseX = event.clientX;
     this.itemMouseY = event.clientY;
     await this.$nextTick();
-    this.shouldItemContextMenuShow = true;
+    this.shouldInstructionSetContextMenuShow = true;
     this.itemInstructionSet = instructionSet;
   }
 
@@ -621,6 +643,34 @@ export default class DriverBuilderView extends Vue {
     if (!this.itemInstructionSet) return;
     this.$store.direct.commit.driverBuilder.removeInstructionSetFromLibrary(this.itemInstructionSet);
     await this.$store.direct.dispatch.driverBuilder.saveLibrary();
+  }
+
+  private itemDriver?: Driver;
+  async driverRightClicked(event: MouseEvent, driver: Driver) {
+    event.preventDefault();
+    this.shouldDriverContextMenuShow = false;
+    this.itemMouseX = event.clientX;
+    this.itemMouseY = event.clientY;
+    await this.$nextTick();
+    this.shouldDriverContextMenuShow = true;
+    this.itemDriver = driver;
+  }
+
+  setDriverAsCurrent() {
+    if (!this.itemDriver) return;
+    this.$store.direct.commit.driverBuilder.setCurrentDriver(this.itemDriver);
+    this.itemDriver = undefined;
+  }
+
+  async removeDriverFromLibrary() {
+    if (!this.itemDriver) return;
+    this.$store.direct.commit.driverBuilder.removeDriverFromLibrary(this.itemDriver);
+    await this.$store.direct.dispatch.driverBuilder.saveLibrary();
+    this.itemDriver = undefined;
+  }
+
+  async saveDriver() {
+    await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
   }
 
 }

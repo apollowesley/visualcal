@@ -3,7 +3,7 @@ import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/dist/driver-builder';
+import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo, Driver } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
 
@@ -96,6 +96,17 @@ export class DriverBuilder extends TypedEmitter<Events> {
     this.fStore.setAll(library);
   }
 
+  saveDriver(driver: Driver) {
+    const drivers = this.fStore.get('drivers');
+    const existingDriverIndex = drivers.findIndex(d => d.manufacturer === driver.manufacturer && d.model === driver.model && d.nomenclature === driver.nomenclature);
+    if (existingDriverIndex > -1) {
+      drivers[existingDriverIndex] = driver;
+    } else {
+      drivers.push(driver);
+    }
+    this.fStore.set('drivers', drivers);
+  }
+
   public init() {
     this.initIpcListeners();
   }
@@ -109,6 +120,11 @@ export class DriverBuilder extends TypedEmitter<Events> {
       if (event.sender.isDestroyed()) return;
       this.setLibrary(library);
       return event.reply(IpcChannels.communicationInterface.setLibrary.response, true);
+    });
+    ipcMain.on(IpcChannels.communicationInterface.saveDriver.request, (event, driver: Driver) => {
+      if (event.sender.isDestroyed()) return;
+      this.saveDriver(driver);
+      return event.reply(IpcChannels.communicationInterface.saveDriver.response, true);
     });
     ipcMain.on(IpcChannels.communicationInterface.getStatus.request, (event) => {
       if (event.sender.isDestroyed()) return;

@@ -13,6 +13,11 @@ exports.IpcChannels = {
             response: 'driver-builder-set-library-response',
             error: 'driver-builder-set-library-error'
         },
+        saveDriver: {
+            request: 'driver-builder-save-driver-request',
+            response: 'driver-builder-save-driver-response',
+            error: 'driver-builder-save-driver-error'
+        },
         getStatus: {
             request: 'driver-builder-get-status-request',
             response: 'driver-builder-get-status-response',
