@@ -44,11 +44,6 @@ import ViewResultsDialogComponent from '@/components/results/ViewResultsDialog.v
 import Tabulator from 'tabulator-tables';
 import { LogicRun } from 'visualcal-common/src/result';
 
-interface LogicResult {
-  rawValue: string;
-  value: number;
-}
-
 @Component({
   components: {
     ViewResultsDialogComponent
