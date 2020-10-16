@@ -18,6 +18,16 @@ exports.IpcChannels = {
             response: 'driver-builder-save-driver-response',
             error: 'driver-builder-save-driver-error'
         },
+        getDriver: {
+            request: 'driver-builder-get-driver-request',
+            response: 'driver-builder-get-driver-response',
+            error: 'driver-builder-get-driver-error'
+        },
+        getDriverIdentityInfos: {
+            request: 'driver-builder-get-driver-identity-infos-request',
+            response: 'driver-builder-get-driver-identity-infos-response',
+            error: 'driver-builder-get-driver-identity-infos-error'
+        },
         getStatus: {
             request: 'driver-builder-get-status-request',
             response: 'driver-builder-get-status-response',

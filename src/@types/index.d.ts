@@ -115,6 +115,8 @@ interface VisualCalWindowAugment extends VisualCalAugment {
   initialLoadData?: VisualCalWindowInitialLoadData,
   onInitialLoadData?: (data: VisualCalWindowInitialLoadData) => void;
   browserUtils: VisualCalBrowserUtils;
+  getCustomDriver: (manufacturer: string, model: string) => Promise<import('visualcal-common/dist/driver-builder').Driver | undefined>;
+  getCustomDriverIdentityInfos: () => Promise<{ manufactuer: string, model: string, nomenclature: string }>;
   electron: {
     ipc: import('electron').IpcRenderer;
     getVisualCalWindowId: () => void;

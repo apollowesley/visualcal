@@ -15,6 +15,16 @@ export declare const IpcChannels: {
             response: string;
             error: string;
         };
+        getDriver: {
+            request: string;
+            response: string;
+            error: string;
+        };
+        getDriverIdentityInfos: {
+            request: string;
+            response: string;
+            error: string;
+        };
         getStatus: {
             request: string;
             response: string;

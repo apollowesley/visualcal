@@ -14,6 +14,7 @@ import electronIpcLog from 'electron-ipc-log';
 import { removeDesignTimeFromAllElements } from './utils/runtime';
 import electronLog from 'electron-log';
 import { LogicResult } from 'visualcal-common/dist/result';
+import { Driver, IpcChannels as DriverBuilderIpcChannels } from 'visualcal-common/dist/driver-builder';
 
 electronLog.transports.file.level = 'debug';
 electronLog.transports.console.level = 'debug';
@@ -63,7 +64,33 @@ window.visualCal = {
   actionManager: new RendererActionManager(),
   assetManager: new RendererAssetManager(),
   userManager: new RendererUserManager(),
-  communicationInterfaceManager: new CommunicationInterfaceManager()
+  communicationInterfaceManager: new CommunicationInterfaceManager(),
+  getCustomDriver(manufacturer, model) {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriver.response, (_, driver?: Driver) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriver.error);
+        return resolve(driver);
+      });
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriver.error, (_, error: Error) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriver.response);
+        return reject(error);
+      });
+      ipcRenderer.send(DriverBuilderIpcChannels.communicationInterface.getDriver.request, { manufacturer: manufacturer, model: model });
+    });
+  },
+  getCustomDriverIdentityInfos() {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.response, (_, infos: { manufactuer: string, model: string, nomenclature: string }) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.error);
+        return resolve(infos);
+      });
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.error, (_, error: Error) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.response);
+        return reject(error);
+      });
+      ipcRenderer.send(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.request);
+    });
+  }
 };
 
 const sendEventNames = () => {

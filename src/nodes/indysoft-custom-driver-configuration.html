@@ -1,0 +1,76 @@
+<script type="text/x-red" data-template-name="indysoft-custom-driver-configuration">
+  <div class="form-row">
+    <label for="node-config-input-unitId"><i class="fa fa-tag"></i> Unit Id</label>
+    <input type="text" id="node-config-input-unitId">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-manufacturer"><i class="fa fa-tag"></i> Manufacturer</label>
+    <select id="node-config-input-manufacturer">
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-model"><i class="fa fa-tag"></i> Model</label>
+    <select id="node-config-input-model">
+    </select>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="indysoft-custom-driver-configuration">
+  <p>Provides a UI for defining a custom driver.</p>
+</script>
+
+<script type="text/javascript">
+  
+  RED.nodes.registerType('indysoft-custom-driver-configuration', {
+    color: '#67F36E',
+    category: 'config',
+    defaults: {
+      unitId: { value: '', required: true },
+      manufacturer: { value: '', required: true },
+      model: { value: '', required: true }
+    },
+    inputs: 0,
+    outputs: 0,
+    icon: 'template.svg',
+    label: function () {
+      return this.unitId || 'Custom Driver Configuration';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    oneditprepare: async function() {
+      const manufacturerSelectElement = $('#node-config-input-manufacturer');
+      const modelSelectElement = $('#node-config-input-model');
+      const driverIdentityInfos = await visualCal.getCustomDriverIdentityInfos();
+      const manufacturers = driverIdentityInfos.map(d => d.manufacturer);
+
+      manufacturerSelectElement.change((eventObject) => {
+        console.info(eventObject);
+        let manufacturer = '';
+        for (const option of eventObject.target.options) {
+          if (!option.selected) continue;
+          manufacturer = option.value;
+          break;
+        }
+        console.info(manufacturer);
+        const models = driverIdentityInfos.filter(d => d.manufacturer === manufacturer).map(d => d.model);
+        console.info(models);
+        for (let index = 0; index < models.length; index++) {
+          const model = models[index];
+          modelSelectElement.append(`<option value="${models}" ${index === 0 ? 'selected' : ''}>${model}</option>`);
+        };
+      });
+
+      for (let index = 0; index < manufacturers.length; index++) {
+        const manufacturer = manufacturers[index];
+        manufacturerSelectElement.append(`<option value="${manufacturer}" ${index === 0 ? 'selected' : ''}>${manufacturer}</option>`);
+      };
+
+      manufacturerSelectElement.change();
+    },
+    oneditsave: function() {
+
+    }
+  });
+
+</script>
