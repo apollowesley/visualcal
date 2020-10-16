@@ -16,7 +16,8 @@
       "indysoft-scalar-result": "indysoft-scalar-result.js",
       "indysoft-mqtt-dynamic-topic-in": "indysoft-mqtt-dynamic-topic-in.js",
       "indysoft-user-input": "indysoft-user-input.js",
-      "indysoft-testpoint": "indysoft-testpoint.js"
+      "indysoft-testpoint": "indysoft-testpoint.js",
+      "indysoft-custom-driver": "indysoft-custom-driver.js"
     }
   }
 }
