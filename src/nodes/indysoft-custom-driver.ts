@@ -113,7 +113,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
                   break;
               }
             }
-            send([null, { ...msg, payload: { instruction: instruction, value: { raw: rawResponse, value: response } } }]);
+            send([null, { ...msg, payload: { ...msg.payload, instruction: instruction, value: { raw: rawResponse, value: response } } }]);
           }
           if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
         };

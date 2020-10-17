@@ -848,7 +848,7 @@
 		"wires": [
 			[],
 			[
-				"7c6d0d33.dad3c4"
+				"69314aa6.d4a894"
 			]
 		]
 	},
@@ -1830,13 +1830,11 @@
 		"preDelay": 1000,
 		"measure": true,
 		"outputs": 2,
-		"x": 1320,
-		"y": 720,
+		"x": 1330,
+		"y": 880,
 		"wires": [
 			[],
-			[
-				"99c8cbf2.1cdaf8"
-			]
+			[]
 		]
 	},
 	{
@@ -3086,61 +3084,21 @@
 		]
 	},
 	{
-		"id": "2bbe00f9.2c1ac",
+		"id": "69314aa6.d4a894",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Custom driver test",
 		"driverConfigId": "346a7891.e29d38",
 		"instructionSetIds": [
-			"85c5fb83-c653-4d14-87b2-9ffb9dd32bac",
 			"8eaa1f45-3d1b-4500-a3f0-961e836bbcbb"
 		],
-		"x": 470,
-		"y": 820,
+		"x": 1330,
+		"y": 720,
 		"wires": [
+			[],
 			[
-				"662cd9cb.4bdc68"
-			],
-			[
-				"662cd9cb.4bdc68"
+				"99c8cbf2.1cdaf8"
 			]
 		]
-	},
-	{
-		"id": "5a5b8d41.d43c34",
-		"type": "inject",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"repeat": "",
-		"crontab": "",
-		"once": false,
-		"onceDelay": 0.1,
-		"topic": "",
-		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
-		"payloadType": "json",
-		"x": 290,
-		"y": 820,
-		"wires": [
-			[
-				"2bbe00f9.2c1ac"
-			]
-		]
-	},
-	{
-		"id": "662cd9cb.4bdc68",
-		"type": "debug",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"active": true,
-		"tosidebar": true,
-		"console": false,
-		"tostatus": false,
-		"complete": "true",
-		"targetType": "full",
-		"statusVal": "",
-		"statusType": "auto",
-		"x": 680,
-		"y": 820,
-		"wires": []
 	}
 ]
