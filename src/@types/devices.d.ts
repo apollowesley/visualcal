@@ -78,6 +78,7 @@ interface DeviceNodeDriverRequirementsInfo {
   driverCategories?: string[]; // Only found on generic device nodes
   availableDrivers: import('./drivers-package-json').DriversPackageJsonDriver[];
   isGeneric?: boolean;
+  isCustom?: boolean;
 }
 
 interface DeviceDriverInfo {
@@ -94,6 +95,7 @@ interface CommunicationInterfaceDeviceNodeConfiguration {
   gpibAddress: number;
   driverDisplayName: string;
   isGeneric?: boolean;
+  isCustom?: boolean;
   driver?: DeviceDriverInfo;
 }
 

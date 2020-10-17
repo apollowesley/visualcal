@@ -34,7 +34,7 @@
     defaults: {
       name: { value: '' },
       driverConfigId: { type: 'indysoft-custom-driver-configuration', required: true },
-      instructionSets: { value: [] }
+      instructionSetIds: { value: [] }
     },
     inputs: 1,
     outputs: 2,
@@ -127,15 +127,15 @@
     oneditsave: function() {
       /** @type {JQuery} */
       const instructionSetItemElements = $('#node-input-instruction-sets-container').editableList('items');
-      const instructionSets = [];
+      const instructionSetIds = [];
       instructionSetItemElements.each(function() {
         const instructionSetListItemElement = $(this);
         const instructionSetListItemDivElement = instructionSetListItemElement.children('div');
         const selectElement = instructionSetListItemDivElement.children('select');
         const selectedOptionElements = selectElement.children('option:selected');
-        if (selectedOptionElements && selectedOptionElements.length > 0) instructionSets.push(selectedOptionElements[0].value);
+        if (selectedOptionElements && selectedOptionElements.length > 0) instructionSetIds.push(selectedOptionElements[0].value);
       });
-      this.instructionSets = instructionSets;
+      this.instructionSetIds = instructionSetIds;
     },
     oneditresize: function(size) {
       let rows = $('#dialog-form>div:not(.node-input-instruction-sets-container-row)');

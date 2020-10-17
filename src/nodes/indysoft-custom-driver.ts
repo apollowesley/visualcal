@@ -55,7 +55,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
   if (config.name) this.name = config.name;
   this.driverConfigId = config.driverConfigId;
   this.instructionSetIds = config.instructionSetIds;
-  this.on('input', (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+  this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
     const driverConfig = visualCalNodeRed.nodes.find(n => n.id === this.driverConfigId);
     if (!driverConfig) {
       this.error(`Missing configuration node, ${this.driverConfigId}`);
@@ -75,26 +75,46 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
       this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
       return;
     }
-    this.instructionSetIds.forEach(id => {
+    if (!commInterface.isConnected) await commInterface.connect();
+    for (const id of this.instructionSetIds) {
       const instructionSet = driver.instructionSets.find(i => i.id === id);
       if (instructionSet) {
         instructionSet.instructions.forEach(async (instruction) => {
+          let response: string | number | ArrayBufferLike | boolean | undefined = undefined;
           switch (instruction.type) {
             case 'Query':
-              const queryResponse = await commInterface.queryString(instruction.command);
-              this.send([null, { ...msg, payload: queryResponse }]);
+              response = await commInterface.queryString(instruction.command);
               break;
             case 'Read':
-              const readData = await commInterface.read();
-              this.send([null, { ...msg, payload: readData }]);
+              response = await commInterface.read();
               break;
             case 'Write':
               await commInterface.write(new TextEncoder().encode(instruction.command));
               break;
           }
+          if (response) {
+            if (instruction.responseDataType) {
+              switch (instruction.responseDataType) {
+                case 'Binary':
+                  if (typeof response === 'string') response = new TextEncoder().encode(response);
+                  break;
+                case 'Boolean':
+                  response = !!response;
+                  break;
+                case 'Number':
+                  if (typeof response === 'string') response = parseFloat(response);
+                  if (typeof response === 'object') response = parseFloat(new TextDecoder().decode(response));
+                  break;
+                case 'String':
+                  if (typeof response === 'object') response = new TextDecoder().decode(response);
+                  break;
+              }
+            }
+            send([null, { ...msg, payload: { instruction: instruction, response: response } }]);
+          }
         });
       }
-    });
+    };
     if (done) done();
   });
 }

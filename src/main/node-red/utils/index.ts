@@ -4,6 +4,7 @@ import path from 'path';
 import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
 import { DeviceManager, DriverName } from '../../managers/DeviceManager';
+import { config } from 'mathjs';
 
 interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -66,7 +67,8 @@ export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
           unitId: configNode.unitId,
           driverCategories: isGeneric ? firstDeviceNode.deviceDriverRequiredCategories : undefined,
           availableDrivers: availableDrivers,
-          isGeneric: isGeneric
+          isGeneric: isGeneric,
+          isCustom: false
         });
       }
     }
@@ -147,20 +149,30 @@ export const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
   session.configuration.devices.forEach(deviceConfig => {
-    const drivers = getDriverInfosForDevice(deviceConfig.unitId);
-    const driver = drivers.find(d => d.displayName = deviceConfig.driverDisplayName);
-    if (!driver) throw new Error(`Could not find driver for ${deviceConfig.unitId}, ${deviceConfig.driverDisplayName}`);
-    deviceCommunicationInterfaces.push({
-      communicationInterfaceName: deviceConfig.interfaceName,
-      deviceName: deviceConfig.unitId,
-      isGpib: deviceConfig.gpib !== undefined,
-      gpibAddress: deviceConfig.gpibAddress,
-      deviceDriver: {
-        categories: driver.categories,
-        deviceModel: driver.model,
-        manufacturer: driver.manufacturer
-      }
-    });
+    if (deviceConfig.isCustom) {
+      deviceCommunicationInterfaces.push({
+        communicationInterfaceName: deviceConfig.interfaceName,
+        deviceName: deviceConfig.unitId,
+        isGpib: deviceConfig.gpib !== undefined,
+        gpibAddress: deviceConfig.gpibAddress,
+        deviceDriver: undefined
+      })
+    } else {
+      const drivers = getDriverInfosForDevice(deviceConfig.unitId);
+      const driver = drivers.find(d => d.displayName = deviceConfig.driverDisplayName);
+      if (!driver) throw new Error(`Could not find driver for ${deviceConfig.unitId}, ${deviceConfig.driverDisplayName}`);
+      deviceCommunicationInterfaces.push({
+        communicationInterfaceName: deviceConfig.interfaceName,
+        deviceName: deviceConfig.unitId,
+        isGpib: deviceConfig.gpib !== undefined,
+        gpibAddress: deviceConfig.gpibAddress,
+        deviceDriver: {
+          categories: driver.categories,
+          deviceModel: driver.model,
+          manufacturer: driver.manufacturer
+        }
+      });
+    }
     // const driverDisplayName = deviceConfig.driver ? `${deviceConfig.driver.manufacturer} ${deviceConfig.driver.deviceModel}` : '';
     // assignDriverToDevice(deviceConfig.unitId, driverDisplayName);
   });

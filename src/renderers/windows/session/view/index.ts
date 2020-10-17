@@ -278,7 +278,8 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
         driverDisplayName: '',
         gpibAddress: 1,
         interfaceName: '',
-        unitId: deviceInfo.unitId
+        unitId: deviceInfo.unitId,
+        isCustom: deviceInfo.isCustom
       };
       if (session.configuration) {
         const foundDevice = session.configuration.devices.find(d => d.configNodeId === deviceInfo.configNodeId);
