@@ -94,6 +94,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
               await commInterface.write(new TextEncoder().encode(instruction.command));
               break;
           }
+          const rawResponse = response;
           if (response) {
             if (instruction.responseDataType) {
               switch (instruction.responseDataType) {
@@ -112,7 +113,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
                   break;
               }
             }
-            send([null, { ...msg, payload: { instruction: instruction, response: response } }]);
+            send([null, { ...msg, payload: { instruction: instruction, value: { raw: rawResponse, value: response } } }]);
           }
           if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
         };
