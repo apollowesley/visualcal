@@ -2,8 +2,8 @@ import { ipcMain } from 'electron';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
-import { IpcChannels, VisualCalWindow } from '../../constants';
-import NodeRed from '../node-red';
+import { IpcChannels } from '../../constants';
+import NodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../node-red';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
@@ -134,6 +134,19 @@ export class SessionManager extends TypedEmitter<Events> {
       benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
       deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
     };
+
+    // *** CUSTOM NODES ***
+    const customDriverConfigNodes = nodeRed.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
+    customDriverConfigNodes.forEach((n) => {
+      const editorDef = n.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
+      viewInfo.deviceNodes.push({
+        configNodeId: editorDef.id,
+        unitId: editorDef.unitId,
+        availableDrivers: viewInfo.deviceNodes[0].availableDrivers
+      });
+    });
+    // ********************
+
     return viewInfo;
   }
 

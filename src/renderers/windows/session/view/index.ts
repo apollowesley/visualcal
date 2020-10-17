@@ -288,7 +288,7 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
       }
       devices.push(device);
     });
-    if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) devices = session.configuration.devices;
+    // if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) devices = session.configuration.devices;
     await devicesTable.setData(devices);
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);

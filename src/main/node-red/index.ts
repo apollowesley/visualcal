@@ -11,6 +11,12 @@ import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../servers/express';
 
+export interface CustomDriverConfigurationNodeEditorDefinition extends NodeRedFlowNode {
+  unitId: string;
+  manufacturer: string;
+  model: string;
+}
+
 interface Events {
   starting: () => void;
   started: () => void;

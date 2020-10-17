@@ -45,16 +45,13 @@
       const manufacturers = driverIdentityInfos.map(d => d.manufacturer);
 
       manufacturerSelectElement.change((eventObject) => {
-        console.info(eventObject);
         let manufacturer = '';
         for (const option of eventObject.target.options) {
           if (!option.selected) continue;
           manufacturer = option.value;
           break;
         }
-        console.info(manufacturer);
         const models = driverIdentityInfos.filter(d => d.manufacturer === manufacturer).map(d => d.model);
-        console.info(models);
         for (let index = 0; index < models.length; index++) {
           const model = models[index];
           modelSelectElement.append(`<option value="${models}" ${index === 0 ? 'selected' : ''}>${model}</option>`);

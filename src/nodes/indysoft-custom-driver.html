@@ -10,20 +10,35 @@
     <input type="text" id="node-input-driverConfigId" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
 
-  <div class="form-tips"><b>Tip:</b> This is here to help.</div>
+  <div class="form-row node-input-instruction-sets-container-row">
+    <ol id="node-input-instruction-sets-container"></ol>
+  </div>
+
+  <div class="form-tips"><b>Tip:</b> Example tip.</div>
 </script>
 
 <script type="text/javascript">
+  /**
+   * @typedef InstructionSetItemParameterArgument
+   * @type {object}
+   * @property {string} parameterId
+   * 
+   * @typedef InstructionSetItem
+   * @type {object}
+   * @property {string} instructionSetId - The ID of the instruction set being referenced by this item
+   * @property {InstructionSetItemParameterArgument[]} parameterArguments - The arguments to the parameters of the instruction set referenced by this item
+  */
   RED.nodes.registerType('indysoft-custom-driver', {
     category: 'common',
     color: '#a6bbcf',
     defaults: {
       name: { value: '' },
-      driverConfigId: { type: 'indysoft-custom-driver-configuration', required: true }
+      driverConfigId: { type: 'indysoft-custom-driver-configuration', required: true },
+      instructionSets: { value: [] }
     },
     inputs: 1,
     outputs: 2,
-    icon: "file.png",
+    icon: "circuit.png",
     label: function () {
       return this.name || 'Custom Driver';
     },
@@ -31,12 +46,61 @@
       return this.name ? 'node_label_italic' : '';
     },
     paletteLabel: 'Custom Driver',
-    outputLabels: function(index) {
+    outputLabels: function (index) {
       if (index === 0) return 'Error';
       return 'Data';
     },
-    oneditprepare: function() {
+    oneditprepare: function () {
       const driverConfigIdElement = $('#node-input-driverConfigId');
+      const instructionSetsContainerElement = $('#node-input-instruction-sets-container');
+
+      const resizeInstructionSetItem = (instructionSetElement) => {
+
+      }
+
+      let driver;
+
+      // Build the Instruction Sets list
+      const instructionSetsEditableList = instructionSetsContainerElement.css('min-height', '150px').css('min-width', '450px').editableList({
+        header: $("<div>").append($.parseHTML('<div display: inline-grid">Instruction Sets</div>')),
+        /**
+         * @param {JQuery} container - The container
+         * @param {number} index - The index of the item
+         * @param {Object} newItem - The new item being added
+        */
+        addItem: function(container, index, newItem) {
+          // container.css({
+          //   overflow: 'hidden',
+          //   whiteSpace: 'nowrap'
+          // });
+          const row1 = $('<div/>').appendTo(container);
+          const row2 = $('<div/>', { style: "padding-top: 5px;" }).appendTo(container);
+          // const row3 = $('<div/>',{style:"padding-top: 5px; padding-left: 102px;"}).appendTo(container);
+          const instructionSetSelectLabelElement = $('<label>Instruction Set</label>', { style: "margin-left: 8px; text-align: center;" }).appendTo(row1);
+          const instructionSetSelectElement = $('<select/>', { style: "margin-left: 5px; text-align: center;" }).appendTo(row2);
+          if (driver) {
+            for (let index = 0; index < driver.instructionSets.length; index++) {
+              const instructionSet = driver.instructionSets[index];
+              instructionSetSelectElement.append(`<option value="${instructionSet.id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`);
+            };
+          }
+        },
+        removable: true,
+        /**
+         * @param {InstructionSetItem} instructionSet - The instruction set item being removed
+        */
+        removeItem: function (instructionSet) {
+
+        },
+        resizeItem: resizeInstructionSetItem,
+        sortable: true,
+        /**
+         * @param {InstructionSetItem[]} instructionSetElements - The instruction set items
+        */
+        sortItems: function(instructionSetElements) {
+
+        }
+      });
 
       const refreshUI = (driver) => {
 
@@ -55,12 +119,34 @@
           if (node.id === driverConfigIdNodeId) configNode = node;
         });
         if (configNode) {
-          const driver = await visualCal.getCustomDriver(configNode.manufacturer, configNode.model);
+          driver = await visualCal.getCustomDriver(configNode.manufacturer, configNode.model);
           if (driver) refreshUI(driver);
         }
       });
     },
     oneditsave: function() {
+      /** @type {JQuery} */
+      const instructionSetItemElements = $('#node-input-instruction-sets-container').editableList('items');
+      const instructionSets = [];
+      instructionSetItemElements.each(function() {
+        const instructionSetListItemElement = $(this);
+        const instructionSetListItemDivElement = instructionSetListItemElement.children('div');
+        const selectElement = instructionSetListItemDivElement.children('select');
+        const selectedOptionElements = selectElement.children('option:selected');
+        if (selectedOptionElements && selectedOptionElements.length > 0) instructionSets.push(selectedOptionElements[0].value);
+      });
+      this.instructionSets = instructionSets;
+    },
+    oneditresize: function(size) {
+      let rows = $('#dialog-form>div:not(.node-input-instruction-sets-container-row)');
+      let height = size.height;
+      for (let i = 0; i < rows.length; i++) {
+        height -= $(rows[i]).outerHeight(true);
+      }
+      let editorRow = $('#dialog-form>div.node-input-instruction-sets-container-row');
+      height -= (parseInt(editorRow.css('marginTop')) + parseInt(editorRow.css('marginBottom')));
+      height += 16;
+      $('#node-input-instruction-sets-container').editableList('height', height);
     }
   });
 </script>
