@@ -117,6 +117,14 @@
 		"unitId": "calibrator"
 	},
 	{
+		"id": "346a7891.e29d38",
+		"type": "indysoft-custom-driver-configuration",
+		"z": "",
+		"unitId": "custom",
+		"manufacturer": "Fluke",
+		"model": "45"
+	},
+	{
 		"id": "adb57c26.72891",
 		"type": "inject",
 		"z": "3b731b51.7981f4",
@@ -1444,7 +1452,7 @@
 		"z": "3b731b51.7981f4",
 		"name": "DC Volts",
 		"sectionConfigId": "606c1c72.edd354",
-		"x": 220,
+		"x": 180,
 		"y": 180,
 		"wires": [
 			[
@@ -2526,7 +2534,7 @@
 		"z": "3b731b51.7981f4",
 		"name": "Slow Short",
 		"description": "",
-		"x": 800,
+		"x": 760,
 		"y": 180,
 		"wires": [
 			[
@@ -2546,7 +2554,7 @@
 		"dataType": "none",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 520,
+		"x": 480,
 		"y": 180,
 		"wires": [
 			[
@@ -2571,7 +2579,7 @@
 		"y": 180,
 		"wires": [
 			[
-				"f322989a.94d8c8"
+				"7278758d.711f5c"
 			]
 		]
 	},
@@ -2865,7 +2873,7 @@
 		"y": 300,
 		"wires": [
 			[
-				"4ee879d2.d71778"
+				"8496283a.2e3ac8"
 			]
 		]
 	},
@@ -3036,5 +3044,103 @@
 				"88a7dffa.ef2dc"
 			]
 		]
+	},
+	{
+		"id": "8496283a.2e3ac8",
+		"type": "indysoft-user-input",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "",
+		"title": "Connection",
+		"text": "Connect a short to the meter Volt input",
+		"append": "mV",
+		"dataType": "none",
+		"showImage": true,
+		"assetFilename": "IndySoftLogo.png",
+		"x": 490,
+		"y": 360,
+		"wires": [
+			[
+				"4ee879d2.d71778"
+			]
+		]
+	},
+	{
+		"id": "7278758d.711f5c",
+		"type": "indysoft-user-input",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "",
+		"title": "Connection",
+		"text": "Connect calibrator output to meter Volt input",
+		"append": "mV",
+		"dataType": "none",
+		"showImage": true,
+		"assetFilename": "IndySoftLogo.png",
+		"x": 490,
+		"y": 240,
+		"wires": [
+			[
+				"f322989a.94d8c8"
+			]
+		]
+	},
+	{
+		"id": "2bbe00f9.2c1ac",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "Custom driver test",
+		"driverConfigId": "346a7891.e29d38",
+		"instructionSetIds": [
+			"85c5fb83-c653-4d14-87b2-9ffb9dd32bac",
+			"8eaa1f45-3d1b-4500-a3f0-961e836bbcbb"
+		],
+		"x": 470,
+		"y": 820,
+		"wires": [
+			[
+				"662cd9cb.4bdc68"
+			],
+			[
+				"662cd9cb.4bdc68"
+			]
+		]
+	},
+	{
+		"id": "5a5b8d41.d43c34",
+		"type": "inject",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"repeat": "",
+		"crontab": "",
+		"once": false,
+		"onceDelay": 0.1,
+		"topic": "",
+		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
+		"payloadType": "json",
+		"x": 290,
+		"y": 820,
+		"wires": [
+			[
+				"2bbe00f9.2c1ac"
+			]
+		]
+	},
+	{
+		"id": "662cd9cb.4bdc68",
+		"type": "debug",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "true",
+		"targetType": "full",
+		"statusVal": "",
+		"statusType": "auto",
+		"x": 680,
+		"y": 820,
+		"wires": []
 	}
 ]

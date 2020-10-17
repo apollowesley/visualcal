@@ -2,6 +2,7 @@ import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFu
 import RED from 'node-red';
 import VisualCalNodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../main/node-red';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
+import { sleep } from '../drivers/utils';
 
 const nodeRed = RED as NodeRed;
 const visualCalNodeRed = VisualCalNodeRed();
@@ -79,7 +80,8 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
     for (const id of this.instructionSetIds) {
       const instructionSet = driver.instructionSets.find(i => i.id === id);
       if (instructionSet) {
-        instructionSet.instructions.forEach(async (instruction) => {
+        for (const instruction of instructionSet.instructions) {
+          if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
           let response: string | number | ArrayBufferLike | boolean | undefined = undefined;
           switch (instruction.type) {
             case 'Query':
@@ -112,7 +114,8 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
             }
             send([null, { ...msg, payload: { instruction: instruction, response: response } }]);
           }
-        });
+          if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
+        };
       }
     };
     if (done) done();

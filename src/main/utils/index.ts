@@ -14,6 +14,6 @@ export function isMac() {
 }
 
 export const getUserHomeDataPathDir = (currentDir: string) => {
-  if (isDev()) return path.join(__dirname, '..', '..', 'demo');
+  if (isDev()) return path.join(__dirname, '..', '..', '..', 'demo');
   return currentDir;
 }

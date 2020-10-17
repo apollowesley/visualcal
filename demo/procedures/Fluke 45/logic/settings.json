@@ -377,6 +377,26 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
+				"indysoft-custom-driver-configuration": {
+					"name": "indysoft-custom-driver-configuration",
+					"types": [
+						"indysoft-custom-driver-configuration"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-custom-driver-configuration.js"
+				},
+				"indysoft-custom-driver": {
+					"name": "indysoft-custom-driver",
+					"types": [
+						"indysoft-custom-driver"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-custom-driver.js"
+				},
 				"indysoft-device-configuration": {
 					"name": "indysoft-device-configuration",
 					"types": [
@@ -426,16 +446,6 @@
 					"local": false,
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-multi-product-calibrator.js"
-				},
-				"indysoft-device-result": {
-					"name": "indysoft-device-result",
-					"types": [
-						"indysoft-device-result"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-result.js"
 				},
 				"indysoft-mqtt-dynamic-topic-in": {
 					"name": "indysoft-mqtt-dynamic-topic-in",
