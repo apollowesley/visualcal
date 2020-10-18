@@ -57,6 +57,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
   this.driverConfigId = config.driverConfigId;
   this.instructionSetIds = config.instructionSetIds;
   this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+    this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
     const driverConfig = visualCalNodeRed.nodes.find(n => n.id === this.driverConfigId);
     if (!driverConfig) {
       this.error(`Missing configuration node, ${this.driverConfigId}`);
@@ -76,21 +77,24 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
       this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
       return;
     }
-    if (!commInterface.isConnected) await commInterface.connect();
     for (const id of this.instructionSetIds) {
       const instructionSet = driver.instructionSets.find(i => i.id === id);
       if (instructionSet) {
         for (const instruction of instructionSet.instructions) {
+          this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
           if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
           let response: string | number | ArrayBufferLike | boolean | undefined = undefined;
           switch (instruction.type) {
             case 'Query':
+              this.status({ fill: 'green', shape: 'dot', text: 'Waiting for query response...' });
               response = await commInterface.queryString(instruction.command);
               break;
             case 'Read':
+              this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
               response = await commInterface.read();
               break;
             case 'Write':
+              this.status({ fill: 'green', shape: 'dot', text: `Writing command to device: ${instruction.command}` });
               await commInterface.write(new TextEncoder().encode(instruction.command));
               break;
           }

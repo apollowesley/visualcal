@@ -133,6 +133,14 @@
 		"model": "45"
 	},
 	{
+		"id": "21a29742.d8e208",
+		"type": "indysoft-custom-driver-configuration",
+		"z": "",
+		"unitId": "testing",
+		"manufacturer": "Test",
+		"model": "1"
+	},
+	{
 		"id": "adb57c26.72891",
 		"type": "inject",
 		"z": "3b731b51.7981f4",
@@ -173,7 +181,7 @@
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"x": 1850,
-		"y": 720,
+		"y": 800,
 		"wires": []
 	},
 	{
@@ -852,11 +860,11 @@
 		"useDelayBefore": false,
 		"delayBefore": 1000,
 		"x": 1030,
-		"y": 720,
+		"y": 800,
 		"wires": [
 			[],
 			[
-				"9e545689.31ce58"
+				"9e56e588.73b658"
 			]
 		]
 	},
@@ -1813,8 +1821,8 @@
 		"preDelay": 1000,
 		"measure": true,
 		"outputs": 2,
-		"x": 1330,
-		"y": 920,
+		"x": 1310,
+		"y": 700,
 		"wires": [
 			[],
 			[]
@@ -1836,8 +1844,8 @@
 		"preDelay": 1000,
 		"measure": true,
 		"outputs": 2,
-		"x": 1330,
-		"y": 960,
+		"x": 1310,
+		"y": 840,
 		"wires": [
 			[],
 			[]
@@ -3021,7 +3029,7 @@
 		"max": "1000.5",
 		"inputLevel": "1000",
 		"x": 1630,
-		"y": 720,
+		"y": 800,
 		"wires": [
 			[
 				"e691dbf7.db68e8"
@@ -3093,13 +3101,13 @@
 		"id": "9b9e8bfa.2791c8",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
-		"name": "Custom Fluke 45",
+		"name": "UUT: 300V",
 		"driverConfigId": "6b116249.9db85c",
 		"instructionSetIds": [
 			"a4d525f7-ef75-421c-9101-6230a44b55db",
-			"96040aa3-81c4-4d3b-9823-65305e52331e"
+			"a4d525f7-ef75-421c-9101-6230a44b55db"
 		],
-		"x": 1330,
+		"x": 1310,
 		"y": 660,
 		"wires": [
 			[],
@@ -3112,18 +3120,36 @@
 		"id": "9e545689.31ce58",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "UUT: 1000V",
 		"driverConfigId": "94c18173.d0ae9",
 		"instructionSetIds": [
 			"a4d525f7-ef75-421c-9101-6230a44b55db",
-			"96040aa3-81c4-4d3b-9823-65305e52331e"
+			"a4d525f7-ef75-421c-9101-6230a44b55db"
 		],
-		"x": 1320,
-		"y": 720,
+		"x": 1310,
+		"y": 800,
 		"wires": [
 			[],
 			[
 				"99c8cbf2.1cdaf8"
+			]
+		]
+	},
+	{
+		"id": "9e56e588.73b658",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"driverConfigId": "21a29742.d8e208",
+		"instructionSetIds": [
+			"e72589ab-55f0-4948-9d62-3e49027e9366"
+		],
+		"x": 1140,
+		"y": 880,
+		"wires": [
+			[],
+			[
+				"9e545689.31ce58"
 			]
 		]
 	}
