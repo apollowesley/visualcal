@@ -117,7 +117,7 @@ module.exports = (RED: NodeRed) => {
               range: this.range,
               relative: this.relative
             });
-            this.status({ fill: 'green', shape: 'dot', text: `Last measurement = Mode: ${this.mode} - Raw value: ${measurement.raw}` });
+            this.status({ fill: 'green', shape: 'dot', text: `Mode: ${this.mode} - ${measurement.value}` });
             // [done, error, measurement]
             if (msg.payload) {
               msg.payload.value = { 

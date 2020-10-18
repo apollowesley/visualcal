@@ -127,7 +127,7 @@ module.exports = (RED: NodeRed) => {
               rearTerminals: this.rearTerminals,
               acFilterHz: this.setAcFilterHz ? this.acFilterHz : undefined
             });
-            this.status({ fill: 'green', shape: 'dot', text: `Last measurement = Mode: ${this.mode} - Value: ${measurement.toString()}` });
+            this.status({ fill: 'green', shape: 'dot', text: `Mode: ${this.mode} - ${measurement.value}` });
             // [done, error, measurement]
             if (msg.payload) {
               msg.payload.value = { 
