@@ -260,6 +260,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
 
 const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   try {
+    devices = [];
     user = viewInfo.user;
     procedure.setTitle(viewInfo.procedure.name);
     session = viewInfo.session;
@@ -289,7 +290,12 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
       }
       devices.push(device);
     });
-    // if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) devices = session.configuration.devices;
+    if (session.configuration && session.configuration.devices && session.configuration.devices.length > 0) {
+      session.configuration.devices.forEach(d => {
+        const deviceIndex = devices.findIndex(device => device.unitId === d.unitId);
+        if (deviceIndex > -1) devices[deviceIndex] = d;
+      });
+    }
     await devicesTable.setData(devices);
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);

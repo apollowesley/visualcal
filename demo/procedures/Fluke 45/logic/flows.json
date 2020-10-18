@@ -117,10 +117,18 @@
 		"unitId": "calibrator"
 	},
 	{
-		"id": "346a7891.e29d38",
+		"id": "6b116249.9db85c",
 		"type": "indysoft-custom-driver-configuration",
 		"z": "",
 		"unitId": "custom",
+		"manufacturer": "Fluke",
+		"model": "45"
+	},
+	{
+		"id": "94c18173.d0ae9",
+		"type": "indysoft-custom-driver-configuration",
+		"z": "",
+		"unitId": "test",
 		"manufacturer": "Fluke",
 		"model": "45"
 	},
@@ -821,7 +829,7 @@
 		"wires": [
 			[],
 			[
-				"6a3d8e0e.54594"
+				"9b9e8bfa.2791c8"
 			]
 		]
 	},
@@ -848,7 +856,7 @@
 		"wires": [
 			[],
 			[
-				"69314aa6.d4a894"
+				"9e545689.31ce58"
 			]
 		]
 	},
@@ -1805,13 +1813,11 @@
 		"preDelay": 1000,
 		"measure": true,
 		"outputs": 2,
-		"x": 1320,
-		"y": 660,
+		"x": 1330,
+		"y": 920,
 		"wires": [
 			[],
-			[
-				"ee7c3d13.04d0b"
-			]
+			[]
 		]
 	},
 	{
@@ -1831,7 +1837,7 @@
 		"measure": true,
 		"outputs": 2,
 		"x": 1330,
-		"y": 880,
+		"y": 960,
 		"wires": [
 			[],
 			[]
@@ -3084,15 +3090,35 @@
 		]
 	},
 	{
-		"id": "69314aa6.d4a894",
+		"id": "9b9e8bfa.2791c8",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
-		"name": "Custom driver test",
-		"driverConfigId": "346a7891.e29d38",
+		"name": "Custom Fluke 45",
+		"driverConfigId": "6b116249.9db85c",
 		"instructionSetIds": [
-			"8eaa1f45-3d1b-4500-a3f0-961e836bbcbb"
+			"a4d525f7-ef75-421c-9101-6230a44b55db",
+			"96040aa3-81c4-4d3b-9823-65305e52331e"
 		],
 		"x": 1330,
+		"y": 660,
+		"wires": [
+			[],
+			[
+				"ee7c3d13.04d0b"
+			]
+		]
+	},
+	{
+		"id": "9e545689.31ce58",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"driverConfigId": "94c18173.d0ae9",
+		"instructionSetIds": [
+			"a4d525f7-ef75-421c-9101-6230a44b55db",
+			"96040aa3-81c4-4d3b-9823-65305e52331e"
+		],
+		"x": 1320,
 		"y": 720,
 		"wires": [
 			[],
