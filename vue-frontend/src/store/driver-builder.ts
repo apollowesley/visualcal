@@ -186,9 +186,6 @@ const employeesModule = defineModule({
   actions: {
     async init(context) {
       const { commit, dispatch } = actionContext(context);
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(true));
-      window.electron.ipcRenderer.on(IpcChannels.communicationInterface.connect.error, (_, error: Error) => alert(error.message));
-
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.response, () => commit.setIsSelectedCommunicationInterfaceConnected(false));
       window.electron.ipcRenderer.on(IpcChannels.communicationInterface.disconnect.error, (_, error: Error) => alert(error.message));
 
@@ -247,8 +244,16 @@ const employeesModule = defineModule({
       });
     },
     async connect(context) {
-      const { state } = actionContext(context);
+      const { state, commit } = actionContext(context);
       if (!state.selectedCommunicationInterfaceInfo) throw new Error('Selected communication interface info cannot be undefined');
+      window.electron.ipcRenderer.once(IpcChannels.communicationInterface.connect.response, () => {
+        window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.connect.error);
+        commit.setIsSelectedCommunicationInterfaceConnected(true);
+      });
+      window.electron.ipcRenderer.once(IpcChannels.communicationInterface.connect.error, (_, error: Error) => {
+        window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.connect.response);
+        alert(error.message);
+      });
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.connect.request, state.selectedCommunicationInterfaceInfo);
     },
     async disconnect() {

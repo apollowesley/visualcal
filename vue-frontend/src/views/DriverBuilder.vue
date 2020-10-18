@@ -130,12 +130,23 @@
       </v-col>
       <v-col>
         <v-row class="ma-5">
-          <v-col>
+          <v-col
+            cols="1"
+          >
             <v-btn
               :disabled="!canSaveDriver"
               @click.prevent="saveDriver"
             >
               Save Driver
+            </v-btn>
+          </v-col>
+          <v-col
+            cols="1"
+          >
+            <v-btn
+              @click.prevent="clearDriver"
+            >
+              Clear
             </v-btn>
           </v-col>
         </v-row>
@@ -671,6 +682,17 @@ export default class DriverBuilderView extends Vue {
 
   async saveDriver() {
     await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
+  }
+
+  clearDriver() {
+    this.driver = {
+      manufacturer: '',
+      model: '',
+      nomenclature: '',
+      terminator: 'Lf',
+      instructionSets: [],
+      identityQueryCommand: ''
+    }
   }
 
 }
