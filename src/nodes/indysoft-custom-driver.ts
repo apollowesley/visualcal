@@ -3,10 +3,22 @@ import RED from 'node-red';
 import VisualCalNodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../main/node-red';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
-import { Instruction } from 'visualcal-common/dist/driver-builder';
+import { CommandParameter, Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
 
 const nodeRed = RED as NodeRed;
 const visualCalNodeRed = VisualCalNodeRed();
+
+interface CommandParameterArgument {
+  instructionId: string;
+  parameter: CommandParameter;
+  value: string | number | boolean;
+}
+
+interface InstructionSetToRuntime {
+  id: string;
+  instructionSet: InstructionSet;
+  parameterArguments: CommandParameterArgument[];
+}
 
 interface InstructionResponse {
   instruction: Instruction;
@@ -42,12 +54,12 @@ export interface NodeRedNodeUIProperties {
 
 export interface CustomDriverNodeUIProperties extends NodeRedNodeUIProperties {
   driverConfigId: string;
-  instructionSetIds: string[];
+  instructionSets: InstructionSetToRuntime[];
 }
 
 export interface CustomDriverNodeRedRuntimeNode extends NodeRedRuntimeNode {
   driverConfigId: string;
-  instructionSetIds: string[];
+  instructionSets: InstructionSetToRuntime[];
 }
 
 export interface RuntimeNodeInputEventMessagePayload {
@@ -62,7 +74,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
   nodeRed.nodes.createNode(this, config as any);
   if (config.name) this.name = config.name;
   this.driverConfigId = config.driverConfigId;
-  this.instructionSetIds = config.instructionSetIds;
+  this.instructionSets = config.instructionSets;
   this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
     this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
     const driverConfig = visualCalNodeRed.nodes.find(n => n.id === this.driverConfigId);
@@ -87,8 +99,8 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
     const responses: InstructionResponse[] = [];
     let lastRawResponse: string | number | ArrayBufferLike | boolean = '';
     let lastResponse: string | number | ArrayBufferLike | boolean = '';
-    for (const id of this.instructionSetIds) {
-      const instructionSet = driver.instructionSets.find(i => i.id === id);
+    for (const InstructionSetToRuntime of this.instructionSets) {
+      const instructionSet = driver.instructionSets.find(i => i.id === InstructionSetToRuntime.id);
       if (instructionSet) {
         for (const instruction of instructionSet.instructions) {
           this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });

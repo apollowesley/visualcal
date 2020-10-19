@@ -67,7 +67,7 @@
    * @typedef CommandParameterArgument
    * @type {object}
    * @property {string} instructionId
-   * @property {string} parameterId
+   * @property {CommandParameter} parameter
    * @property {string} value
    * 
    * @typedef InstructionSetToRuntime
@@ -154,16 +154,28 @@
                   if (instruction.parameters) {
                     instruction.parameters.forEach(parameter => {
                       const parameterRow = $('<div/>', { style: 'padding-top: 5px;' }).addClass('parameter-row').appendTo(rowContainer);
+                      const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
+                      const newItemCommandParameter = newItem.parameterArguments ? newItem.parameterArguments.find(p => p.parameter.id === parameter.id) : undefined;
                       switch (parameter.type) {
                         case 'list':
-                          const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
                           const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter.id).appendTo(parameterRow);
                           for (let index = 0; index < parameter.listItems.length; index++) {
                             const listItem = parameter.listItems[index];
                             parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
                           };
-                          const newItemCommandParameter = newItem.parameterArguments.find(p => p.parameterId === parameter.id);
                           if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
+                          break;
+                        case 'string':
+                          const parameterStringElement = $('<input/>').addClass(parameter.id).appendTo(parameterRow);
+                          if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
+                          break;
+                        case 'number':
+                          const parametergNumberElement = $('<input type="number"/>').addClass(parameter.id).appendTo(parameterRow);
+                          if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
+                          break;
+                        case 'boolean':
+                          const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter.id).appendTo(parameterRow);
+                          if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
                           break;
                         }
                       });
@@ -241,8 +253,23 @@
                 case 'list':
                   const parameterSelect = parameterRows.children(`.${parameter.id}`);
                   const parameterSelectSelectedOptionElements = parameterSelect.children('option:selected');
-                  const selectedValue = parameterSelectSelectedOptionElements[0].value;
-                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameterId: parameter.id, value: selectedValue });
+                  const selectedValue = parameterSelectSelectedOptionElements ? parameterSelectSelectedOptionElements[0].value : undefined;
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: selectedValue });
+                  break;
+                case 'string':
+                  const stringParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const stringValue = stringParameterElement.val();
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: stringValue });
+                  break;
+                case 'number':
+                  const numnberParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const numberValue = Number(numnberParameterElement.val());
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: numberValue });
+                  break;
+                case 'boolean':
+                  const booleanParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const booleanValue = booleanParameterElement.prop('checked');
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: booleanValue });
                   break;
               }
             });

@@ -822,7 +822,7 @@
 		"wires": [
 			[],
 			[
-				"9e56e588.73b658"
+				"73ae4066.db951"
 			]
 		]
 	},
@@ -3101,6 +3101,21 @@
 											"value": "7"
 										}
 									]
+								},
+								{
+									"id": "e96fda0d-42c5-40ec-b61e-7eff1a1e1b68",
+									"type": "boolean",
+									"prompt": "Bool"
+								},
+								{
+									"id": "9ce72311-5860-4279-b4b8-9b4c14c5b061",
+									"type": "number",
+									"prompt": "Num"
+								},
+								{
+									"id": "03e5327a-c534-47bc-922f-c30589db629f",
+									"type": "string",
+									"prompt": "String"
 								}
 							]
 						}
@@ -3109,8 +3124,74 @@
 				"parameterArguments": [
 					{
 						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
-						"parameterId": "6dc19216-c847-4082-90b4-7dce665d44cd",
+						"parameter": {
+							"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+							"type": "list",
+							"prompt": "Range",
+							"beforeText": " ",
+							"listItems": [
+								{
+									"text": "Auto",
+									"value": "AUTO"
+								},
+								{
+									"text": "1",
+									"value": "1"
+								},
+								{
+									"text": "2",
+									"value": "2"
+								},
+								{
+									"text": "3",
+									"value": "3"
+								},
+								{
+									"text": "4",
+									"value": "4"
+								},
+								{
+									"text": "5",
+									"value": "5"
+								},
+								{
+									"text": "6",
+									"value": "6"
+								},
+								{
+									"text": "7",
+									"value": "7"
+								}
+							]
+						},
 						"value": "3"
+					},
+					{
+						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"parameter": {
+							"id": "e96fda0d-42c5-40ec-b61e-7eff1a1e1b68",
+							"type": "boolean",
+							"prompt": "Bool"
+						},
+						"value": true
+					},
+					{
+						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"parameter": {
+							"id": "9ce72311-5860-4279-b4b8-9b4c14c5b061",
+							"type": "number",
+							"prompt": "Num"
+						},
+						"value": "7"
+					},
+					{
+						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"parameter": {
+							"id": "03e5327a-c534-47bc-922f-c30589db629f",
+							"type": "string",
+							"prompt": "String"
+						},
+						"value": "test"
 					}
 				]
 			},
@@ -3180,13 +3261,33 @@
 		]
 	},
 	{
-		"id": "9e56e588.73b658",
+		"id": "73ae4066.db951",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"driverConfigId": "21a29742.d8e208",
+		"instructionSets": [
+			{
+				"id": "e72589ab-55f0-4948-9d62-3e49027e9366",
+				"instructionSet": {
+					"id": "e72589ab-55f0-4948-9d62-3e49027e9366",
+					"name": "New Instruction Set",
+					"instructions": [
+						{
+							"id": "28fd6651-634b-4ee6-90b9-9cca20f82940",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
 		"x": 1120,
-		"y": 860,
+		"y": 880,
 		"wires": [
 			[],
 			[
