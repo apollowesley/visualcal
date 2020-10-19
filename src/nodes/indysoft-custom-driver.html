@@ -113,10 +113,9 @@
           //   overflow: 'hidden',
           //   whiteSpace: 'nowrap'
           // });
-          const row1 = $('<div/>').appendTo(rowContainer);
-          const row2 = $('<div/>', { style: 'padding-top: 5px;' }).appendTo(rowContainer);
-          const instructionSetSelectLabelElement = $('<label>Instruction Set</label>', { style: 'margin-left: 8px; text-align: center;' }).appendTo(row1);
-          const instructionSetSelectElement = $('<select/>', { style: 'margin-left: 5px; text-align: center;' }).appendTo(row2);
+          const row1 = $('<div/>', { style: 'padding-top: 5px;' }).appendTo(rowContainer);
+          const instructionSetSelectLabelElement = $('<label/>').text('Instruction Set').appendTo(row1);
+          const instructionSetSelectElement = $('<select/>', { style: 'text-align: center;' }).appendTo(row1);
           if (driver) {
             for (let index = 0; index < driver.instructionSets.length; index++) {
               /** @type {InstructionSet} */
@@ -141,7 +140,7 @@
                       switch (parameter.type) {
                         case 'list':
                           const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
-                          const parameterSelectElement = $('<select/>', { style: "margin-left: 5px; text-align: center;" }).appendTo(parameterRow);
+                          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).appendTo(parameterRow);
                           for (let index = 0; index < parameter.listItems.length; index++) {
                             const listItem = parameter.listItems[index];
                             parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
