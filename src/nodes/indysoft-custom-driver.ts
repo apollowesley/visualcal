@@ -3,9 +3,16 @@ import RED from 'node-red';
 import VisualCalNodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../main/node-red';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
+import { Instruction } from 'visualcal-common/dist/driver-builder';
 
 const nodeRed = RED as NodeRed;
 const visualCalNodeRed = VisualCalNodeRed();
+
+interface InstructionResponse {
+  instruction: Instruction;
+  raw: string | number | ArrayBufferLike | boolean;
+  value: string | number | ArrayBufferLike | boolean;
+}
 
 export interface NodeRedNodeUIProperties {
   sectionConfigId?: string;
@@ -77,53 +84,55 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
       this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
       return;
     }
+    const responses: InstructionResponse[] = [];
+    let lastRawResponse: string | number | ArrayBufferLike | boolean = '';
+    let lastResponse: string | number | ArrayBufferLike | boolean = '';
     for (const id of this.instructionSetIds) {
       const instructionSet = driver.instructionSets.find(i => i.id === id);
       if (instructionSet) {
         for (const instruction of instructionSet.instructions) {
           this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
           if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
-          let response: string | number | ArrayBufferLike | boolean | undefined = undefined;
           switch (instruction.type) {
             case 'Query':
               this.status({ fill: 'green', shape: 'dot', text: 'Waiting for query response...' });
-              response = await commInterface.queryString(instruction.command);
+              lastRawResponse = await commInterface.queryString(instruction.command);
               break;
             case 'Read':
               this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
-              response = await commInterface.read();
+              lastRawResponse = await commInterface.read();
               break;
             case 'Write':
               this.status({ fill: 'green', shape: 'dot', text: `Writing command to device: ${instruction.command}` });
               await commInterface.write(new TextEncoder().encode(instruction.command));
               break;
           }
-          const rawResponse = response;
-          if (response) {
+          if (lastRawResponse) {
             if (instruction.responseDataType) {
               switch (instruction.responseDataType) {
                 case 'Binary':
-                  if (typeof response === 'string') response = new TextEncoder().encode(response);
+                  if (typeof lastRawResponse === 'string') lastResponse = new TextEncoder().encode(lastRawResponse);
                   break;
                 case 'Boolean':
-                  response = !!response;
+                  lastResponse = !!lastRawResponse;
                   break;
                 case 'Number':
-                  if (typeof response === 'string') response = parseFloat(response);
-                  if (typeof response === 'object') response = parseFloat(new TextDecoder().decode(response));
+                  if (typeof lastRawResponse === 'string') lastResponse = parseFloat(lastRawResponse);
+                  if (typeof lastRawResponse === 'object') lastResponse = parseFloat(new TextDecoder().decode(lastRawResponse));
                   break;
                 case 'String':
-                  if (typeof response === 'object') response = new TextDecoder().decode(response);
+                  if (typeof lastRawResponse === 'object') lastResponse = new TextDecoder().decode(lastRawResponse);
                   break;
               }
             }
-            this.status({ fill: 'green', shape: 'dot', text: `Last read: ${response}` });
-            send([null, { ...msg, payload: { ...msg.payload, instruction: instruction, value: { raw: rawResponse, value: response } } }]);
+            this.status({ fill: 'green', shape: 'dot', text: `Last read: ${lastResponse}` });
+            if (lastResponse) responses.push({ instruction: instruction, raw: lastRawResponse, value: lastResponse });
           }
           if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
         };
       }
     };
+    send([null, { ...msg, payload: { ...msg.payload, responses: responses, raw: lastRawResponse, value: lastResponse } }]);
     if (done) done();
   });
 }

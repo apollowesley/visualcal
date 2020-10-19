@@ -18,7 +18,35 @@
 </script>
 
 <script type="text/javascript">
+(function() {
+
   /**
+   * @typedef CommandParameterListItem
+   * @type {object}
+   * @property {string} value
+   * @property {string} text
+   * 
+   * @typedef CommandParameter
+   * @type {object}
+   * @property {string} id
+   * @property {string} prompt
+   * @property {string} type
+   * @property {CommandParameterListItem[]} listItems
+   * 
+   * @typedef Instruction
+   * @type {object}
+   * @property {string} id
+   * @property {string} name
+   * @property {string} type
+   * @property {string} command
+   * @property {CommandParameter[]} parameters
+   * 
+   * @typedef InstructionSet
+   * @type {object}
+   * @property {string} id
+   * @property {string} name
+   * @property {Instruction[]} instructions
+   * 
    * @typedef InstructionSetItemParameterArgument
    * @type {object}
    * @property {string} parameterId
@@ -27,7 +55,20 @@
    * @type {object}
    * @property {string} instructionSetId - The ID of the instruction set being referenced by this item
    * @property {InstructionSetItemParameterArgument[]} parameterArguments - The arguments to the parameters of the instruction set referenced by this item
+   * 
+   * @typedef Driver
+   * @type {object}
+   * @property {string} id
+   * @property {string} manufacturer
+   * @property {string} model
+   * @property {string} nomenclature
+   * @property {InstructionSet[]} instructionSets
+   * 
   */
+
+  /** @type {Driver} */
+  let driver;
+
   RED.nodes.registerType('indysoft-custom-driver', {
     category: 'common',
     color: '#a6bbcf',
@@ -59,45 +100,76 @@
 
       }
 
-      let driver;
-
       // Build the Instruction Sets list
       instructionSetsContainerElement.css('min-height', '150px').css('min-width', '450px').editableList({
         header: $("<div>").append($.parseHTML('<div display: inline-grid">Instruction Sets</div>')),
         /**
-         * @param {JQuery} container - The container
+         * @param {JQuery} rowContainer - The container
          * @param {number} index - The index of the item
          * @param {Object} newItem - The new item being added
         */
-        addItem: function(container, index, newItem) {
+        addItem: (rowContainer, index, newItem) => {
           // container.css({
           //   overflow: 'hidden',
           //   whiteSpace: 'nowrap'
           // });
-          const row1 = $('<div/>').appendTo(container);
-          const row2 = $('<div/>', { style: "padding-top: 5px;" }).appendTo(container);
-          // const row3 = $('<div/>',{style:"padding-top: 5px; padding-left: 102px;"}).appendTo(container);
-          const instructionSetSelectLabelElement = $('<label>Instruction Set</label>', { style: "margin-left: 8px; text-align: center;" }).appendTo(row1);
-          const instructionSetSelectElement = $('<select/>', { style: "margin-left: 5px; text-align: center;" }).appendTo(row2);
+          const row1 = $('<div/>').appendTo(rowContainer);
+          const row2 = $('<div/>', { style: 'padding-top: 5px;' }).appendTo(rowContainer);
+          const instructionSetSelectLabelElement = $('<label>Instruction Set</label>', { style: 'margin-left: 8px; text-align: center;' }).appendTo(row1);
+          const instructionSetSelectElement = $('<select/>', { style: 'margin-left: 5px; text-align: center;' }).appendTo(row2);
           if (driver) {
             for (let index = 0; index < driver.instructionSets.length; index++) {
+              /** @type {InstructionSet} */
               const instructionSet = driver.instructionSets[index];
               instructionSetSelectElement.append(`<option value="${instructionSet.id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`);
+              instructionSetSelectElement.change(eventObject => {
+                /** @type {string} */
+                let selectedInstructionSetId;
+                for (const option of eventObject.target.options) {
+                  if (!option.selected) continue;
+                  selectedInstructionSetId = option.value;
+                  break;
+                }
+                rowContainer.children('.parameter-row').remove();
+                if (selectedInstructionSetId) {
+                  /** @type {InstructionSet} */
+                  const selectedInstructionSet = driver.instructionSets.find(i => i.id === selectedInstructionSetId);
+                  selectedInstructionSet.instructions.forEach(instruction => {
+                  if (instruction.parameters) {
+                    instruction.parameters.forEach(parameter => {
+                      const parameterRow = $('<div/>', { style: 'padding-top: 5px;' }).addClass('parameter-row').appendTo(rowContainer);
+                      switch (parameter.type) {
+                        case 'list':
+                          const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
+                          const parameterSelectElement = $('<select/>', { style: "margin-left: 5px; text-align: center;" }).appendTo(parameterRow);
+                          for (let index = 0; index < parameter.listItems.length; index++) {
+                            const listItem = parameter.listItems[index];
+                            parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
+                          };
+                          break;
+                        }
+                      });
+                    }
+                  });
+                }
+              });
             };
+            if (newItem.id) instructionSetSelectElement.val(newItem.id);
+            instructionSetSelectElement.change();
           }
         },
         removable: true,
         /**
          * @param {InstructionSetItem} instructionSet - The instruction set item being removed
         */
-        removeItem: function (instructionSet) {
+        removeItem: (instructionSet) => {
         },
         resizeItem: resizeInstructionSetItem,
         sortable: true,
         /**
          * @param {InstructionSetItem[]} instructionSetElements - The instruction set items
         */
-        sortItems: function(instructionSetElements) {
+        sortItems: (instructionSetElements) => {
 
         }
       });
@@ -154,6 +226,7 @@
       $('#node-input-instruction-sets-container').editableList('height', height);
     }
   });
+})();
 </script>
 
 <script type="text/html" data-help-name="indysoft-custom-driver">

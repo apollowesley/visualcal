@@ -49,62 +49,6 @@
 		"info": ""
 	},
 	{
-		"id": "d0109b77.907688",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "Diode",
-		"shortName": "diode"
-	},
-	{
-		"id": "606c1c72.edd354",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "DC Volts",
-		"shortName": "dcVolts"
-	},
-	{
-		"id": "65fb620a.d4afec",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "AC Volts",
-		"shortName": "acVolts"
-	},
-	{
-		"id": "49286e58.8c493",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "DC Current",
-		"shortName": "dcCurrent"
-	},
-	{
-		"id": "52581738.17ed58",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "AC Current",
-		"shortName": "acCurrent"
-	},
-	{
-		"id": "566af271.885b7c",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "Frequency",
-		"shortName": "frequency"
-	},
-	{
-		"id": "647f4a99.14d164",
-		"type": "indysoft-section-configuration",
-		"z": 0,
-		"name": "Resistance",
-		"shortName": "resistance"
-	},
-	{
-		"id": "7103de52.469e3",
-		"type": "procedure-sidebar",
-		"z": 0,
-		"name": "Fluke 45 Calibration",
-		"shortName": "fluke45calibration"
-	},
-	{
 		"id": "99e08da0.feaeb",
 		"type": "indysoft-device-configuration",
 		"z": "",
@@ -141,47 +85,61 @@
 		"model": "1"
 	},
 	{
-		"id": "adb57c26.72891",
-		"type": "inject",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"repeat": "",
-		"crontab": "",
-		"once": false,
-		"onceDelay": 0.1,
-		"topic": "",
-		"payload": "{\"section\":\"dcVolts\",\"action\":\"DC Volts\"}",
-		"payloadType": "json",
-		"x": 250,
-		"y": 940,
-		"wires": [
-			[
-				"c76a453.fcb2ab8"
-			]
-		]
+		"id": "9728462e.dda138",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "DC Volts",
+		"shortName": "DC Volts"
 	},
 	{
-		"id": "88a7dffa.ef2dc",
-		"type": "debug",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"active": true,
-		"tosidebar": true,
-		"console": false,
-		"tostatus": false,
-		"complete": "true",
-		"targetType": "full",
-		"x": 1010,
-		"y": 940,
-		"wires": []
+		"id": "99aa0f72.f868a",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "AC Volts",
+		"shortName": "AC Volts"
+	},
+	{
+		"id": "f002fcb7.ee29c",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "DC Current",
+		"shortName": "Low"
+	},
+	{
+		"id": "fe82863a.b61818",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "AC Current",
+		"shortName": "AC Current"
+	},
+	{
+		"id": "bfbd84b5.472888",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "Diode",
+		"shortName": "Diode"
+	},
+	{
+		"id": "fc850cc7.5fbbd",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "Frequency",
+		"shortName": "Frequency"
+	},
+	{
+		"id": "fab7bd53.26f0d",
+		"type": "indysoft-section-configuration",
+		"z": "",
+		"name": "Resistance",
+		"shortName": "Resistance"
 	},
 	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"x": 1850,
-		"y": 800,
+		"x": 1810,
+		"y": 860,
 		"wires": []
 	},
 	{
@@ -859,8 +817,8 @@
 		"outputOn": true,
 		"useDelayBefore": false,
 		"delayBefore": 1000,
-		"x": 1030,
-		"y": 800,
+		"x": 910,
+		"y": 880,
 		"wires": [
 			[],
 			[
@@ -1467,7 +1425,7 @@
 		"type": "indysoft-action-start",
 		"z": "3b731b51.7981f4",
 		"name": "DC Volts",
-		"sectionConfigId": "606c1c72.edd354",
+		"sectionConfigId": "9728462e.dda138",
 		"x": 180,
 		"y": 180,
 		"wires": [
@@ -1481,8 +1439,8 @@
 		"type": "indysoft-action-start",
 		"z": "424156ac.d4afe8",
 		"name": "Low",
-		"sectionConfigId": "49286e58.8c493",
-		"x": 270,
+		"sectionConfigId": "f002fcb7.ee29c",
+		"x": 290,
 		"y": 60,
 		"wires": [
 			[
@@ -1495,8 +1453,8 @@
 		"type": "indysoft-action-start",
 		"z": "ea20ecb1.59a94",
 		"name": "Short",
-		"sectionConfigId": "65fb620a.d4afec",
-		"x": 430,
+		"sectionConfigId": "99aa0f72.f868a",
+		"x": 440,
 		"y": 80,
 		"wires": [
 			[
@@ -1509,8 +1467,8 @@
 		"type": "indysoft-action-start",
 		"z": "424156ac.d4afe8",
 		"name": "10A",
-		"sectionConfigId": "49286e58.8c493",
-		"x": 270,
+		"sectionConfigId": "f002fcb7.ee29c",
+		"x": 290,
 		"y": 220,
 		"wires": [
 			[
@@ -1523,8 +1481,8 @@
 		"type": "indysoft-action-start",
 		"z": "1801adb0.01a932",
 		"name": "Low",
-		"sectionConfigId": "52581738.17ed58",
-		"x": 530,
+		"sectionConfigId": "fe82863a.b61818",
+		"x": 550,
 		"y": 220,
 		"wires": [
 			[
@@ -1537,8 +1495,8 @@
 		"type": "indysoft-action-start",
 		"z": "1801adb0.01a932",
 		"name": "10A",
-		"sectionConfigId": "52581738.17ed58",
-		"x": 530,
+		"sectionConfigId": "fe82863a.b61818",
+		"x": 550,
 		"y": 360,
 		"wires": [
 			[
@@ -1551,7 +1509,7 @@
 		"type": "indysoft-action-start",
 		"z": "ea20ecb1.59a94",
 		"name": "AC Volts",
-		"sectionConfigId": "65fb620a.d4afec",
+		"sectionConfigId": "99aa0f72.f868a",
 		"x": 400,
 		"y": 180,
 		"wires": [
@@ -1565,7 +1523,7 @@
 		"type": "indysoft-action-start",
 		"z": "12cb1568.bd710b",
 		"name": "Short",
-		"sectionConfigId": "647f4a99.14d164",
+		"sectionConfigId": "fab7bd53.26f0d",
 		"x": 380,
 		"y": 60,
 		"wires": [
@@ -1579,8 +1537,8 @@
 		"type": "indysoft-action-start",
 		"z": "12cb1568.bd710b",
 		"name": "Ohms",
-		"sectionConfigId": "647f4a99.14d164",
-		"x": 380,
+		"sectionConfigId": "fab7bd53.26f0d",
+		"x": 400,
 		"y": 320,
 		"wires": [
 			[
@@ -1593,7 +1551,7 @@
 		"type": "indysoft-action-start",
 		"z": "62bf87fd.c33688",
 		"name": "Short",
-		"sectionConfigId": "d0109b77.907688",
+		"sectionConfigId": "bfbd84b5.472888",
 		"x": 540,
 		"y": 440,
 		"wires": [
@@ -1607,7 +1565,7 @@
 		"type": "indysoft-action-start",
 		"z": "62bf87fd.c33688",
 		"name": "Open",
-		"sectionConfigId": "d0109b77.907688",
+		"sectionConfigId": "bfbd84b5.472888",
 		"x": 540,
 		"y": 500,
 		"wires": [
@@ -1621,7 +1579,7 @@
 		"type": "indysoft-action-start",
 		"z": "5021c726.2281b8",
 		"name": "Frequency",
-		"sectionConfigId": "566af271.885b7c",
+		"sectionConfigId": "fc850cc7.5fbbd",
 		"x": 450,
 		"y": 200,
 		"wires": [
@@ -1822,7 +1780,7 @@
 		"measure": true,
 		"outputs": 2,
 		"x": 1310,
-		"y": 700,
+		"y": 720,
 		"wires": [
 			[],
 			[]
@@ -1844,8 +1802,8 @@
 		"preDelay": 1000,
 		"measure": true,
 		"outputs": 2,
-		"x": 1310,
-		"y": 840,
+		"x": 1330,
+		"y": 920,
 		"wires": [
 			[],
 			[]
@@ -2521,26 +2479,6 @@
 		]
 	},
 	{
-		"id": "c76a453.fcb2ab8",
-		"type": "indysoft-user-input",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"description": "",
-		"title": "User input test",
-		"text": "Enter a floating point number",
-		"append": "mV",
-		"dataType": "integer",
-		"showImage": true,
-		"assetFilename": "1280theoffice_getty.jpg",
-		"x": 510,
-		"y": 940,
-		"wires": [
-			[
-				"245a7d52.4c6592"
-			]
-		]
-	},
-	{
 		"id": "9b2fbf5a.925e1",
 		"type": "indysoft-testpoint",
 		"z": "3b731b51.7981f4",
@@ -3028,32 +2966,11 @@
 		"min": "999.5",
 		"max": "1000.5",
 		"inputLevel": "1000",
-		"x": 1630,
-		"y": 800,
+		"x": 1570,
+		"y": 860,
 		"wires": [
 			[
 				"e691dbf7.db68e8"
-			]
-		]
-	},
-	{
-		"id": "245a7d52.4c6592",
-		"type": "indysoft-scalar-result",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"description": "50  celsius",
-		"baseQuantity": "temperature",
-		"derivedQuantity": "celsius",
-		"derivedQuantityPrefix": "none",
-		"toleranceType": "limit",
-		"min": "-10",
-		"max": "110",
-		"inputLevel": "50",
-		"x": 810,
-		"y": 940,
-		"wires": [
-			[
-				"88a7dffa.ef2dc"
 			]
 		]
 	},
@@ -3104,8 +3021,8 @@
 		"name": "UUT: 300V",
 		"driverConfigId": "6b116249.9db85c",
 		"instructionSetIds": [
-			"a4d525f7-ef75-421c-9101-6230a44b55db",
-			"a4d525f7-ef75-421c-9101-6230a44b55db"
+			"88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+			"96040aa3-81c4-4d3b-9823-65305e52331e"
 		],
 		"x": 1310,
 		"y": 660,
@@ -3123,11 +3040,10 @@
 		"name": "UUT: 1000V",
 		"driverConfigId": "94c18173.d0ae9",
 		"instructionSetIds": [
-			"a4d525f7-ef75-421c-9101-6230a44b55db",
-			"a4d525f7-ef75-421c-9101-6230a44b55db"
+			"96040aa3-81c4-4d3b-9823-65305e52331e"
 		],
-		"x": 1310,
-		"y": 800,
+		"x": 1330,
+		"y": 860,
 		"wires": [
 			[],
 			[
@@ -3144,8 +3060,8 @@
 		"instructionSetIds": [
 			"e72589ab-55f0-4948-9d62-3e49027e9366"
 		],
-		"x": 1140,
-		"y": 880,
+		"x": 1120,
+		"y": 860,
 		"wires": [
 			[],
 			[
