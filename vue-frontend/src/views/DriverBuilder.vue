@@ -535,8 +535,8 @@ export default class DriverBuilderView extends Vue {
     };
     IEEE4882MandatedCommands.forEach((c) => {
       const instruction: ItemInstruction = {
-        id: uuid(),
         ...c,
+        id: uuid(),
         file: 'json',
       };
       if (SCPIMandatedCategory.children)
@@ -546,8 +546,8 @@ export default class DriverBuilderView extends Vue {
     const SCPIRequiredCategory: Item = { id: uuid(), name: 'SCPI Required', children: [] };
     SCPIRequiredCommands.forEach((c) => {
       const instruction: ItemInstruction = {
-        id: uuid(),
         ...c,
+        id: uuid(),
         file: 'json',
       };
       if (SCPIRequiredCategory.children)

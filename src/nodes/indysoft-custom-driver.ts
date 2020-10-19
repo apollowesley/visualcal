@@ -99,24 +99,46 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
     const responses: InstructionResponse[] = [];
     let lastRawResponse: string | number | ArrayBufferLike | boolean = '';
     let lastResponse: string | number | ArrayBufferLike | boolean = '';
+
+    const buildCommand = (instructionSet: InstructionSet, instruction: Instruction) => {
+      let command = instruction.command;
+      if (instruction.parameters) {
+        instruction.parameters.forEach(parameter => {
+          const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet.id);
+          if (editorInstructionSet) {
+            const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction.id);
+            if (parameterArgument) {
+              if (parameter.beforeText) command += parameter.beforeText;
+              command += parameterArgument.value;
+              if (parameter.afterText) command += parameter.afterText;
+            }
+          }
+        });
+      }
+      return command;
+    }
+
     for (const InstructionSetToRuntime of this.instructionSets) {
       const instructionSet = driver.instructionSets.find(i => i.id === InstructionSetToRuntime.id);
       if (instructionSet) {
         for (const instruction of instructionSet.instructions) {
           this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
           if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
+          let command = '';
           switch (instruction.type) {
             case 'Query':
-              this.status({ fill: 'green', shape: 'dot', text: 'Waiting for query response...' });
-              lastRawResponse = await commInterface.queryString(instruction.command);
+              command = buildCommand(instructionSet, instruction);
+              this.status({ fill: 'green', shape: 'dot', text: `Querying: ${command}` });
+              lastRawResponse = await commInterface.queryString(command);
               break;
             case 'Read':
               this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
               lastRawResponse = await commInterface.read();
               break;
             case 'Write':
-              this.status({ fill: 'green', shape: 'dot', text: `Writing command to device: ${instruction.command}` });
-              await commInterface.write(new TextEncoder().encode(instruction.command));
+              command = buildCommand(instructionSet, instruction);
+              this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
+              await commInterface.write(new TextEncoder().encode(command));
               break;
           }
           if (lastRawResponse) {

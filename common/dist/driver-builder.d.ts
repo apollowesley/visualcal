@@ -109,6 +109,7 @@ export interface CommandParameterArgument {
 }
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
 export interface Instruction {
+    id: string;
     /** The name for this instruction.  This helps differentiate one instruction from another when used in the same instruction set. */
     name: string;
     description?: string;
