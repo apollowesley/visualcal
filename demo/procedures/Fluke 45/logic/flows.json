@@ -3020,9 +3020,119 @@
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 300V",
 		"driverConfigId": "6b116249.9db85c",
-		"instructionSetIds": [
-			"88fc2219-b4ff-474f-8cb9-ca3bd226131d",
-			"96040aa3-81c4-4d3b-9823-65305e52331e"
+		"instructionSets": [
+			{
+				"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+				"instructionSet": {
+					"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"id": "85911bef-6dc7-4f3f-9aeb-c07e318d7eba",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": -1
+						},
+						{
+							"id": "3fe71e78-9bf9-43f2-9e12-2a315ac19ae9",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+				"instructionSet": {
+					"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+					"name": "Set Range",
+					"instructions": [
+						{
+							"id": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "RANGE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+									"type": "list",
+									"prompt": "Range",
+									"beforeText": " ",
+									"listItems": [
+										{
+											"text": "Auto",
+											"value": "AUTO"
+										},
+										{
+											"text": "1",
+											"value": "1"
+										},
+										{
+											"text": "2",
+											"value": "2"
+										},
+										{
+											"text": "3",
+											"value": "3"
+										},
+										{
+											"text": "4",
+											"value": "4"
+										},
+										{
+											"text": "5",
+											"value": "5"
+										},
+										{
+											"text": "6",
+											"value": "6"
+										},
+										{
+											"text": "7",
+											"value": "7"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"parameterId": "6dc19216-c847-4082-90b4-7dce665d44cd",
+						"value": "4"
+					}
+				]
+			},
+			{
+				"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+				"instructionSet": {
+					"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+					"name": "Measure",
+					"instructions": [
+						{
+							"id": "dbac1d79-0012-4f22-9c44-4f3204cff6de",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
 		],
 		"x": 1310,
 		"y": 660,
@@ -3039,9 +3149,6 @@
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 1000V",
 		"driverConfigId": "94c18173.d0ae9",
-		"instructionSetIds": [
-			"96040aa3-81c4-4d3b-9823-65305e52331e"
-		],
 		"x": 1330,
 		"y": 860,
 		"wires": [
@@ -3057,9 +3164,6 @@
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"driverConfigId": "21a29742.d8e208",
-		"instructionSetIds": [
-			"e72589ab-55f0-4948-9d62-3e49027e9366"
-		],
 		"x": 1120,
 		"y": 860,
 		"wires": [

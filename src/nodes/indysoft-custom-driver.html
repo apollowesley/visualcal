@@ -64,10 +64,32 @@
    * @property {string} nomenclature
    * @property {InstructionSet[]} instructionSets
    * 
+   * @typedef CommandParameterArgument
+   * @type {object}
+   * @property {string} instructionId
+   * @property {string} parameterId
+   * @property {string} value
+   * 
+   * @typedef InstructionSetToRuntime
+   * @type {object}
+   * @property {string} id
+   * @property {InstructionSet} instructionSet
+   * @property {CommandParameterArgument[]} parameterArguments
+   * 
   */
 
   /** @type {Driver} */
   let driver;
+
+  /**
+   * @param {JQueryEventObject} eventObject
+   * @returns {string|undefined}
+   */ 
+  function getSelectedOptionValue(eventObject) {
+    for (const option of eventObject.target.options) {
+      if (option.selected) return option.value;
+    }
+  }
 
   RED.nodes.registerType('indysoft-custom-driver', {
     category: 'common',
@@ -75,7 +97,7 @@
     defaults: {
       name: { value: '' },
       driverConfigId: { type: 'indysoft-custom-driver-configuration', required: true },
-      instructionSetIds: { value: [] }
+      instructionSets: { value: [] }
     },
     inputs: 1,
     outputs: 2,
@@ -113,22 +135,17 @@
           //   overflow: 'hidden',
           //   whiteSpace: 'nowrap'
           // });
-          const row1 = $('<div/>', { style: 'padding-top: 5px;' }).appendTo(rowContainer);
+          const row1 = $('<div/>', { style: 'padding-top: 5px;' }).addClass('instruction-set-row').appendTo(rowContainer);
           const instructionSetSelectLabelElement = $('<label/>').text('Instruction Set').appendTo(row1);
           const instructionSetSelectElement = $('<select/>', { style: 'text-align: center;' }).appendTo(row1);
           if (driver) {
             for (let index = 0; index < driver.instructionSets.length; index++) {
               /** @type {InstructionSet} */
               const instructionSet = driver.instructionSets[index];
-              instructionSetSelectElement.append(`<option value="${instructionSet.id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`);
+              instructionSetSelectElement.append(`<option value="${instructionSet.id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`).addClass('instruction-set-select');
               instructionSetSelectElement.change(eventObject => {
                 /** @type {string} */
-                let selectedInstructionSetId;
-                for (const option of eventObject.target.options) {
-                  if (!option.selected) continue;
-                  selectedInstructionSetId = option.value;
-                  break;
-                }
+                const selectedInstructionSetId = getSelectedOptionValue(eventObject);
                 rowContainer.children('.parameter-row').remove();
                 if (selectedInstructionSetId) {
                   /** @type {InstructionSet} */
@@ -140,7 +157,7 @@
                       switch (parameter.type) {
                         case 'list':
                           const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
-                          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).appendTo(parameterRow);
+                          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter.id).appendTo(parameterRow);
                           for (let index = 0; index < parameter.listItems.length; index++) {
                             const listItem = parameter.listItems[index];
                             parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
@@ -175,9 +192,10 @@
 
       const refreshUI = (driver) => {
         if (!driver) return;
-        for (const id of this.instructionSetIds) {
-          const instructionSet = driver.instructionSets.find(i => i.id === id);
-          if (instructionSet && !firstRunCompleted) instructionSetsContainerElement.editableList('addItem', instructionSet);
+        if (this.instructionSets) {
+          for (const instructionSet of this.instructionSets) {
+            if (instructionSet && !firstRunCompleted) instructionSetsContainerElement.editableList('addItem', instructionSet);
+          }
         }
         firstRunCompleted = true;
       }
@@ -185,12 +203,7 @@
       // Detect when driverConfigId changes so we can get the new driver info and refresh the UI
       driverConfigIdElement.change(async (eventObject) => {
         let configNode;
-        let driverConfigIdNodeId = '';
-        for (const option of eventObject.target.options) {
-          if (!option.selected) continue;
-          driverConfigIdNodeId = option.value;
-          break;
-        }
+        driverConfigIdNodeId = getSelectedOptionValue(eventObject);
         RED.nodes.eachConfig((node) => {
           if (node.id === driverConfigIdNodeId) configNode = node;
         });
@@ -203,15 +216,37 @@
     oneditsave: function() {
       /** @type {JQuery} */
       const instructionSetItemElements = $('#node-input-instruction-sets-container').editableList('items');
-      const instructionSetIds = [];
+      const usedInstructionSets = [];
       instructionSetItemElements.each(function() {
         const instructionSetListItemElement = $(this);
-        const instructionSetListItemDivElement = instructionSetListItemElement.children('div');
-        const selectElement = instructionSetListItemDivElement.children('select');
-        const selectedOptionElements = selectElement.children('option:selected');
-        if (selectedOptionElements && selectedOptionElements.length > 0) instructionSetIds.push(selectedOptionElements[0].value);
+        const instructionSetListItemDivElement = instructionSetListItemElement.children('.instruction-set-row');
+        const instructionSetSelectElement = instructionSetListItemDivElement.children('.instruction-set-select');
+        const selectedOptionElements = instructionSetSelectElement.children('option:selected');
+        const instructionSet = driver.instructionSets.find(i => i.id === selectedOptionElements[0].value);
+        /** @type {InstructionSetToRuntime} */
+        const instructionSetInfoToRuntime = {
+          id: instructionSet.id,
+          instructionSet: instructionSet,
+          parameterArguments: []
+        }
+        instructionSet.instructions.forEach(instruction => {
+          if (instruction.parameters) {
+            instruction.parameters.forEach(parameter => {
+              const parameterRows = instructionSetListItemElement.children('.parameter-row');
+              switch (parameter.type) {
+                case 'list':
+                  const parameterSelect = parameterRows.children(`.${parameter.id}`);
+                  const parameterSelectSelectedOptionElements = parameterSelect.children('option:selected');
+                  const selectedValue = parameterSelectSelectedOptionElements[0].value;
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameterId: parameter.id, value: selectedValue });
+                  break;
+              }
+            });
+          }
+        });
+        if (selectedOptionElements && selectedOptionElements.length > 0) usedInstructionSets.push(instructionSetInfoToRuntime);
       });
-      this.instructionSetIds = instructionSetIds;
+      this.instructionSets = usedInstructionSets;
     },
     oneditresize: function(size) {
       let rows = $('#dialog-form>div:not(.node-input-instruction-sets-container-row)');

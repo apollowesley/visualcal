@@ -88,6 +88,7 @@ export interface CommandParameterListItem {
 }
 /** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
 export interface CommandParameter {
+    id: string;
     /** The parameter type.  This determines what is shown to the procedure developer when editing the node that represents it. */
     type: InstructionParameterType;
     /** The prompt to show the procedure developer for this parameter when editing the node that represents it. */
