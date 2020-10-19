@@ -3110,7 +3110,7 @@
 					{
 						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
 						"parameterId": "6dc19216-c847-4082-90b4-7dce665d44cd",
-						"value": "4"
+						"value": "3"
 					}
 				]
 			},
@@ -3149,6 +3149,27 @@
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 1000V",
 		"driverConfigId": "94c18173.d0ae9",
+		"instructionSets": [
+			{
+				"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+				"instructionSet": {
+					"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+					"name": "Measure",
+					"instructions": [
+						{
+							"id": "dbac1d79-0012-4f22-9c44-4f3204cff6de",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
 		"x": 1330,
 		"y": 860,
 		"wires": [
