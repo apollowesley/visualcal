@@ -137,8 +137,13 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
                   break;
               }
             }
-            this.status({ fill: 'green', shape: 'dot', text: `Last read: ${lastResponse}` });
-            if (lastResponse) responses.push({ instruction: instruction, raw: lastRawResponse, value: lastResponse });
+            
+            if (lastResponse) {
+              this.status({ fill: 'green', shape: 'dot', text: `Last read: ${lastResponse}` });
+              responses.push({ instruction: instruction, raw: lastRawResponse, value: lastResponse });
+            } else {
+              this.status({});
+            }
           }
           if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
         };
