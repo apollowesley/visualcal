@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { CommandParameter, CommandParameterListItem } from 'visualcal-common/src/driver-builder';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 
 @Component
@@ -66,6 +66,12 @@ export default class CommandParameterListBuilderDialog extends Vue {
     return this.fTable;
   }
 
+  @Watch('commandParameter')
+  async onCommandParameterChanged() {
+    this.table.clearData();
+    if (this.commandParameter) this.table.setData(this.commandParameter.listItems);
+  }
+
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
@@ -76,8 +82,9 @@ export default class CommandParameterListBuilderDialog extends Vue {
     return table;
   }
 
-  mounted() {
+  async mounted() {
     this.createTable();
+    if (this.commandParameter) await this.table.setData(this.commandParameter.listItems);
   }
 
   async onAddButtonClicked() {

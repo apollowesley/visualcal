@@ -3101,21 +3101,6 @@
 											"value": "7"
 										}
 									]
-								},
-								{
-									"id": "e96fda0d-42c5-40ec-b61e-7eff1a1e1b68",
-									"type": "boolean",
-									"prompt": "Bool"
-								},
-								{
-									"id": "9ce72311-5860-4279-b4b8-9b4c14c5b061",
-									"type": "number",
-									"prompt": "Num"
-								},
-								{
-									"id": "03e5327a-c534-47bc-922f-c30589db629f",
-									"type": "string",
-									"prompt": "String"
 								}
 							]
 						}
@@ -3165,33 +3150,6 @@
 							]
 						},
 						"value": "3"
-					},
-					{
-						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
-						"parameter": {
-							"id": "e96fda0d-42c5-40ec-b61e-7eff1a1e1b68",
-							"type": "boolean",
-							"prompt": "Bool"
-						},
-						"value": true
-					},
-					{
-						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
-						"parameter": {
-							"id": "9ce72311-5860-4279-b4b8-9b4c14c5b061",
-							"type": "number",
-							"prompt": "Num"
-						},
-						"value": "7"
-					},
-					{
-						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
-						"parameter": {
-							"id": "03e5327a-c534-47bc-922f-c30589db629f",
-							"type": "string",
-							"prompt": "String"
-						},
-						"value": "test"
 					}
 				]
 			},
