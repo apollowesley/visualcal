@@ -144,7 +144,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
         };
       }
     };
-    send([null, { ...msg, payload: { ...msg.payload, responses: responses, raw: lastRawResponse, value: lastResponse } }]);
+    send([null, { ...msg, payload: { ...msg.payload, responses: responses, value: { raw: lastRawResponse, value: lastResponse } } }]);
     if (done) done();
   });
 }
