@@ -138,12 +138,10 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
               }
             }
             
-            if (lastResponse) {
-              this.status({ fill: 'green', shape: 'dot', text: `Last read: ${lastResponse}` });
-              responses.push({ instruction: instruction, raw: lastRawResponse, value: lastResponse });
-            } else {
-              this.status({});
-            }
+            this.status({ fill: 'green', shape: 'dot', text: `Last read: ${lastResponse}` });
+            responses.push({ instruction: instruction, raw: lastRawResponse, value: lastResponse });
+          } else {
+            this.status({});
           }
           if (instruction.delayAfter && instruction.delayAfter > 0) await sleep(instruction.delayAfter);
         };
