@@ -128,7 +128,7 @@
         /**
          * @param {JQuery} rowContainer - The container
          * @param {number} index - The index of the item
-         * @param {Object} newItem - The new item being added
+         * @param {InstructionSetToRuntime newItem - The new item being added
         */
         addItem: (rowContainer, index, newItem) => {
           // container.css({
@@ -162,6 +162,8 @@
                             const listItem = parameter.listItems[index];
                             parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
                           };
+                          const newItemCommandParameter = newItem.parameterArguments.find(p => p.parameterId === parameter.id);
+                          if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
                           break;
                         }
                       });
@@ -192,8 +194,10 @@
 
       const refreshUI = (driver) => {
         if (!driver) return;
-        if (this.instructionSets) {
-          for (const instructionSet of this.instructionSets) {
+        /** @type {InstructionSetToRuntime[]} */
+        const instructionSets = this.instructionSets;
+        if (instructionSets) {
+          for (const instructionSet of instructionSets) {
             if (instructionSet && !firstRunCompleted) instructionSetsContainerElement.editableList('addItem', instructionSet);
           }
         }
