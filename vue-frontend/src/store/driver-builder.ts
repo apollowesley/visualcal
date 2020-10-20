@@ -259,12 +259,12 @@ const employeesModule = defineModule({
     async disconnect() {
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
     },
-    async write(context, opts: { instruction: CustomInstruction, arguments?: CommandParameterArgument[] }) {
+    async write(context, opts: { instruction: CustomInstruction, parameterArguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
       return new Promise<void>((resolve, reject) => {
         let command = opts.instruction.command;
-        if (opts.arguments) {
-          for (const argument of opts.arguments) {
+        if (opts.parameterArguments) {
+          for (const argument of opts.parameterArguments) {
             command = `${command}${argument.parameter.beforeText ? argument.parameter.beforeText : ''}${argument.value}${argument.parameter.afterText ? argument.parameter.afterText : ''}`;
           }
         }
@@ -302,11 +302,17 @@ const employeesModule = defineModule({
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request, info);
       });
     },
-    async queryString(context, data: string) {
+    async queryString(context, opts: { instruction: CustomInstruction, parameterArguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
       return new Promise<string>((resolve, reject) => {
+        let command = opts.instruction.command;
+        if (opts.parameterArguments) {
+          for (const argument of opts.parameterArguments) {
+            command = `${command}${argument.parameter.beforeText ? argument.parameter.beforeText : ''}${argument.value}${argument.parameter.afterText ? argument.parameter.afterText : ''}`;
+          }
+        }
         const info: QueryStringInfo = {
-          data: data,
+          data: command,
           deviceGpibAddress: getters.isSelectedInterfaceGpib ? state.deviceGpibAddress : undefined,
           terminator: state.currentDriver.terminator
         };

@@ -76,10 +76,54 @@ export default class DirectControlTesterDialog extends Vue {
   isTesting = false;
   responses: InstructionResponse[] = [];
 
+  private getCommandParameterEditor(cell: Tabulator.CellComponent) {
+    const argument = cell.getRow().getData() as InstructionParameterArgument;
+    let element: HTMLElement;
+    switch (argument.parameter.type) {
+      case 'string':
+         element = document.createElement('input');
+         break;
+      case 'number':
+        element = document.createElement('input');
+        (element as HTMLInputElement).type = 'number';
+        break;
+      case 'boolean':
+        element = document.createElement('input');
+        (element as HTMLInputElement).type = 'checkbox';
+        break;
+      case 'list':
+        element = document.createElement('select');
+        if (argument.parameter.listItems) {
+          for (let index = 0; index < argument.parameter.listItems.length; index++) {
+            const item = argument.parameter.listItems[index];
+            const newOption = document.createElement('option');
+            newOption.selected = index === 0;
+            newOption.label = item.text;
+            newOption.value = item.value;
+            (element as HTMLSelectElement).options.add(newOption);
+          }
+        }
+        (element as HTMLSelectElement).onchange = (ev) => {
+          ev.preventDefault();
+          const selectedOption = (element as HTMLSelectElement).options[(element as HTMLSelectElement).selectedIndex];
+          if (selectedOption) {
+            const selectedValue = selectedOption.value;
+            cell.setValue(selectedValue);
+          }
+        }
+        break;
+    }
+    if (element) {
+      element.style.height = '100%';
+      element.style.width = '100%';
+    }
+    return element;
+  }
+
   private commandArgumentsTableColumns: Tabulator.ColumnDefinition[] = [
     { title: 'Command', field: 'instruction.command' },
     { title: 'Parameter', field: 'parameter.prompt' },
-    { title: 'Value', field: 'value', editable: true, editor: 'input' }
+    { title: 'Value', field: 'value', editable: true, editor: this.getCommandParameterEditor }
   ]
 
   private responsesTableColumns: Tabulator.ColumnDefinition[] = [
@@ -161,16 +205,17 @@ export default class DirectControlTesterDialog extends Vue {
     if (toggleIsTesting) this.isTesting = true;
     let response: ArrayBufferLike | undefined = undefined;
     let responseString = '';
-    let commandArguments: CommandParameterArgument[] | undefined = undefined;
+    const commandParameterArgumentsTableData = this.commandArgumentsTable.getData() as InstructionParameterArgument[];
+    const thisInstructionCommandParameterArguments = commandParameterArgumentsTableData.filter(i => i.instruction.id === instruction.id);
+    const commandArguments: CommandParameterArgument[] = thisInstructionCommandParameterArguments.map(i => {
+      return {
+        parameter: i.parameter,
+        value: i.value
+      }
+    });
     switch (instruction.type) {
       case 'Write':
-        commandArguments = (this.commandArgumentsTable.getData() as InstructionParameterArgument[]).filter(i => i.instruction.id === instruction.id).map(i => {
-          return {
-            parameter: i.parameter,
-            value: i.value
-          }
-        })
-        await this.$store.direct.dispatch.driverBuilder.write({ instruction: instruction, arguments: commandArguments });
+        await this.$store.direct.dispatch.driverBuilder.write({ instruction: instruction, parameterArguments: commandArguments });
         if (toggleIsTesting) this.isTesting = false;
         return undefined;
       case 'Read':
@@ -179,7 +224,7 @@ export default class DirectControlTesterDialog extends Vue {
         if (toggleIsTesting) this.isTesting = false;
         return responseString;
       case 'Query':
-        responseString = await this.$store.direct.dispatch.driverBuilder.queryString(instruction.command);
+        responseString = await this.$store.direct.dispatch.driverBuilder.queryString({ instruction: instruction, parameterArguments: commandArguments });
         if (toggleIsTesting) this.isTesting = false;
         return responseString;
     }
