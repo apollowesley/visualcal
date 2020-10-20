@@ -204,11 +204,11 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     ]},
     { title: 'Numeric Range', columns: [
       { title: 'Use Minimum?', field: 'useMin', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+      { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
       { title: 'Use Maximum?', field: 'useMax', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+      { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
       { title: 'Use Increment?', field: 'useIncrement', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
     ] },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
