@@ -185,7 +185,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   }
 
   getTextBeforeAfterFormatter(cell: Tabulator.CellComponent) {
-    const value = cell.getValue() as string;
+    const value = cell ? cell.getValue() as string : '';
     const div = this.createFormatterDiv(true);
     div.innerText = value ? value.replaceAll(' ', '<space>') : '';
     return div;
@@ -204,11 +204,11 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     ]},
     { title: 'Numeric Range', columns: [
       { title: 'Use Minimum?', field: 'useMin', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
+      { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
       { title: 'Use Maximum?', field: 'useMax', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
+      { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
       { title: 'Use Increment?', field: 'useIncrement', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => cell ? Number(cell.getValue()) : undefined },
+      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
     ] },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]

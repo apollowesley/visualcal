@@ -32,6 +32,14 @@
    * @property {string} prompt
    * @property {string} type
    * @property {CommandParameterListItem[]} listItems
+   * @property {string} falseValue
+   * @property {string} trueValue
+   * @property {boolean} useMin
+   * @property {number} min
+   * @property {boolean} useMax
+   * @property {number} max
+   * @property {boolean} useIncrement
+   * @property {number} increment
    * 
    * @typedef Instruction
    * @type {object}
@@ -170,7 +178,10 @@
                           if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
                           break;
                         case 'number':
-                          const parametergNumberElement = $('<input type="number"/>').addClass(parameter.id).appendTo(parameterRow);
+                          const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter.id).appendTo(parameterRow);
+                          if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
+                          if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
+                          if (parameter.useIncrement) parametergNumberElement.prop('step', parameter.increment);
                           if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
                           break;
                         case 'boolean':
@@ -268,7 +279,8 @@
                   break;
                 case 'boolean':
                   const booleanParameterElement = parameterRows.children(`.${parameter.id}`);
-                  const booleanValue = booleanParameterElement.prop('checked');
+                  const isChecked = booleanParameterElement.prop('checked');
+                  const booleanValue = isChecked ? parameter.trueValue : parameter.falseValue;
                   instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: booleanValue });
                   break;
               }

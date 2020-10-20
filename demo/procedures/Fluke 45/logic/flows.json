@@ -3236,12 +3236,45 @@
 							"order": 0,
 							"name": "Instruction",
 							"type": "Write",
-							"command": "VDC",
-							"readAttempts": 1
+							"command": "RANGE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"id": "e6594d49-0e8e-4d3a-b0d8-9c584461b939",
+									"type": "number",
+									"prompt": "Range?",
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": true,
+									"min": 1,
+									"useMax": true,
+									"max": 7,
+									"useIncrement": true,
+									"increment": 1
+								}
+							]
 						}
 					]
 				},
-				"parameterArguments": []
+				"parameterArguments": [
+					{
+						"instructionId": "28fd6651-634b-4ee6-90b9-9cca20f82940",
+						"parameter": {
+							"id": "e6594d49-0e8e-4d3a-b0d8-9c584461b939",
+							"type": "number",
+							"prompt": "Range?",
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": true,
+							"min": 1,
+							"useMax": true,
+							"max": 7,
+							"useIncrement": true,
+							"increment": 1
+						},
+						"value": 5
+					}
+				]
 			}
 		],
 		"x": 1120,
