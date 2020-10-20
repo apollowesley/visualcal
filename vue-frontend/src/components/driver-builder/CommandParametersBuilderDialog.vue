@@ -3,7 +3,7 @@
     :value="shouldShow"
     persistent
     eager
-    max-width="75%"
+    max-width="95%"
   >
     <CommandParameterListBuilderDialog
       :should-show="shouldShowCommandParameterListBuilderDialog"
@@ -138,13 +138,78 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     return button;
   }
 
+  getCommandParameterFromCell(cell: Tabulator.CellComponent) {
+    return cell.getRow().getData() as CommandParameter;
+  }
+
+  isBoolean(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    return parameter.type === 'boolean';
+  }
+
+  isString(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    return parameter.type === 'string';
+  }
+
+  isNumber(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    return parameter.type === 'number';
+  }
+
+  isList(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    return parameter.type === 'list';
+  }
+
+  createFormatterDiv(editable: boolean) {
+    const div = document.createElement('div') as HTMLDivElement;
+    if (!editable) div.style.backgroundColor = 'silver';
+    div.style.width = '100%';
+    div.style.height = '100%';
+    return div;
+  }
+
+  getBooleanFormatter(cell: Tabulator.CellComponent) {
+    const isBoolean = this.isBoolean(cell);
+    const div = this.createFormatterDiv(isBoolean);
+    if (isBoolean) div.innerText = cell.getValue();
+    return div;
+  }
+
+  getNumberTypeBooleanFormatter(cell: Tabulator.CellComponent) {
+    const isNumber = this.isNumber(cell);
+    const div = this.createFormatterDiv(isNumber);
+    if (isNumber) div.innerText = cell.getValue();
+    return div;
+  }
+
+  getTextBeforeAfterFormatter(cell: Tabulator.CellComponent) {
+    const value = cell.getValue() as string;
+    const div = this.createFormatterDiv(true);
+    div.innerText = value ? value.replaceAll(' ', '<space>') : '';
+    return div;
+  }
+
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
     { title: '', formatter: this.formatEditParameterListCellButton, width: '100' },
     { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
-    { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input' },
-    { title: 'Text After', field: 'afterText', editable: true, editor: 'input' },
+    { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
+    { title: 'Text After', field: 'afterText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
+    { title: 'Boolean Value', columns: [
+      { title: 'False', field: 'falseValue', editable: this.isBoolean, editor: 'input', formatter: this.getBooleanFormatter },
+      { title: 'True', field: 'trueValue', editable: this.isBoolean, editor: 'input', formatter: this.getBooleanFormatter }
+    ]},
+    { title: 'Numeric Range', columns: [
+      { title: 'Use Minimum?', field: 'useMin', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
+      { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+      { title: 'Use Maximum?', field: 'useMax', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
+      { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+      { title: 'Use Increment?', field: 'useIncrement', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
+      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (cell) => Number(cell.getValue()) },
+    ] },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
 
@@ -178,7 +243,15 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     const newParameter: CommandParameter = {
       id: uuid(),
       type: 'boolean',
-      prompt: ''
+      prompt: '',
+      trueValue: '1',
+      falseValue: '0',
+      useMin: false,
+      min: Number.MIN_SAFE_INTEGER,
+      useMax: false,
+      max: Number.MAX_SAFE_INTEGER,
+      useIncrement: false,
+      increment: 1
     };
     await this.table.addData([newParameter]);
   }

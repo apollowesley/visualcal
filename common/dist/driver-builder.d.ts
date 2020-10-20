@@ -99,8 +99,24 @@ export interface CommandParameter {
     afterText?: string;
     /** Whether or not this part is required.  Only used if type is parameter. */
     required?: boolean;
-    /** When this parameters type is set to list, these are the items that will be used for the options available to the user. */
+    /** When this parameter's type is set to list, these are the items that will be used for the options available to the user. */
     listItems?: CommandParameterListItem[];
+    /** When this parameter's type is set to boolean, this is the value that will be combined with the command when the argument is true. */
+    trueValue?: string;
+    /** When this parameter's type is set to boolean, this is the value that will be combined with the command when the argument is false. */
+    falseValue?: string;
+    /** Whether or not to force a minimum value when the parameter's type is set to number. */
+    useMin?: boolean;
+    /** Whether or not to force a maximum value when the parameter's type is set to number. */
+    useMax?: boolean;
+    /** When this parameter's type is set to number, this is the value that will be the minimum number allowed for input. */
+    min?: number;
+    /** When this parameter's type is set to number, this is the value that will be the maximum number allowed for input. */
+    max?: number;
+    /** Whether or not to use the increment. */
+    useIncrement?: boolean;
+    /** The increment allowed between min and max. */
+    increment?: number;
 }
 /** A CommandParameter argument that will be sent along with the command to the device. */
 export interface CommandParameterArgument {
