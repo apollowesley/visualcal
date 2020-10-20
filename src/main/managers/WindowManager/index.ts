@@ -11,6 +11,7 @@ import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
 import VisualCalNodeRedSettings from '../../node-red-settings';
 import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
+import { DriverBuilder } from '../DriverBuilder';
 
 const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
@@ -458,6 +459,11 @@ export class WindowManager extends TypedEmitter<Events> {
     if (!this.mainWindow) throw new Error('Main window must be defined');
     const w = await this.showVueWindow(VisualCalWindow.DriverBuilder, {
       subPath: getSubPath(VisualCalWindow.DriverBuilder)
+    });
+    w.once('closed', () => {
+      setImmediate(async () => {
+        DriverBuilder.instance.disconnect();
+      });
     });
     return w;
   }
