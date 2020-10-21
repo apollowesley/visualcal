@@ -125,6 +125,8 @@ export interface CommandParameter {
   useIncrement?: boolean;
   /** The increment allowed between min and max. */
   increment?: number;
+  /** The optional default value. */
+  default?: string | number | boolean;
 }
 
 /** A CommandParameter argument that will be sent along with the command to the device. */

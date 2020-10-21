@@ -4,6 +4,20 @@ import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, 
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
+import Axios from 'axios';
+
+interface OnlineStoreDriver {
+  _id: string;
+  id: string;
+  name: string;
+  driverManufacturer: string;
+  driverModel: string;
+  driverNomenclature: string;
+}
+
+interface OnlineStore {
+  drivers: OnlineStoreDriver[];
+}
 
 export interface DriverBuilderState {
   instructions: Instruction[];
@@ -13,7 +27,8 @@ export interface DriverBuilderState {
   communicationInterfaceInfos: CommunicationInterfaceConfigurationInfo[];
   selectedCommunicationInterfaceInfo?: CommunicationInterfaceConfigurationInfo;
   deviceGpibAddress: number;
-  isSelectedCommunicationInterfaceConnected: boolean
+  isSelectedCommunicationInterfaceConnected: boolean;
+  onlineStore: OnlineStore;
 }
 
 const employeesModule = defineModule({
@@ -35,7 +50,10 @@ const employeesModule = defineModule({
       communicationInterfaceInfos: [],
       selectedCommunicationInterfaceInfo: undefined,
       deviceGpibAddress: 1,
-      isSelectedCommunicationInterfaceConnected: false
+      isSelectedCommunicationInterfaceConnected: false,
+      onlineStore: {
+        drivers: []
+      }
     }
   },
   getters: {
@@ -181,6 +199,9 @@ const employeesModule = defineModule({
       } else {
         state.drivers.push({ ...value });
       }
+    },
+    setOnlineStore(state, value: OnlineStore) {
+      state.onlineStore = value;
     }
   },
   actions: {
@@ -341,6 +362,12 @@ const employeesModule = defineModule({
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.saveDriver.request, state.currentDriver);
       });
+    },
+    async refreshOnlineStore(context) {
+      const { commit } = actionContext(context);
+      const response = await Axios.get<OnlineStoreDriver[]>('https://visualcalstore.scottpage.us/drivers', { timeout: 1000 });
+      const drivers = response.data;
+      commit.setOnlineStore({ drivers });
     }
   }
 });

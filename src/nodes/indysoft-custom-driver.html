@@ -40,6 +40,7 @@
    * @property {number} max
    * @property {boolean} useIncrement
    * @property {number} increment
+   * @property {string} default
    * 
    * @typedef Instruction
    * @type {object}
@@ -169,6 +170,8 @@
                           const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter.id).appendTo(parameterRow);
                           for (let index = 0; index < parameter.listItems.length; index++) {
                             const listItem = parameter.listItems[index];
+                            let selected = index === 0;
+                            // Use default property value if it exists
                             parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
                           };
                           if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
@@ -176,16 +179,19 @@
                         case 'string':
                           const parameterStringElement = $('<input/>').addClass(parameter.id).appendTo(parameterRow);
                           if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
+                          if (parameter.default) parameterStringElement.val(parameter.default);
                           break;
                         case 'number':
                           const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter.id).appendTo(parameterRow);
                           if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
                           if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
                           if (parameter.useIncrement) parametergNumberElement.prop('step', parameter.increment);
+                          if (parameter.default) parameterStringElement.val(parameter.default);
                           if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
                           break;
                         case 'boolean':
                           const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter.id).appendTo(parameterRow);
+                          if (parameter.default) parameterStringElement.prop('checked', !!parameter.default);
                           if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
                           break;
                         }

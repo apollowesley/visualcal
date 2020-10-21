@@ -5,11 +5,15 @@ import store from './store'
 import vuetify from './plugins/vuetify';
 import { Ipc } from './utils/Ipc';
 import VueDebounce from 'vue-debounce';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 
 Vue.config.productionTip = false;
 
 window.ipc = new Ipc();
 Vue.use(VueDebounce);
+
+Vue.use(VueAxios, axios);
 
 const app = new Vue({
   router,
@@ -19,3 +23,5 @@ const app = new Vue({
 }).$mount('#app');
 
 window.app = app;
+
+export default app;

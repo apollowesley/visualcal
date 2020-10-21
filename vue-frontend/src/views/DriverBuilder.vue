@@ -27,7 +27,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row class="flex-nowrap" style="height: 96vh" no-gutters>
+    <v-row class="flex-nowrap" style="height: 96vh; max-height: 96vh;" no-gutters>
       <v-col cols="2">
         <v-row no-gutters style="height: 2%">
           <v-col>
@@ -40,12 +40,7 @@
               v-model="tree"
               :open="open"
               :items="items"
-              style="
-                height: 100%;
-                width: 100%;
-                background: white;
-                font-size: 14px;
-              "
+              style="height: 92vh; width: 100%; background: white; font-size: 14px; max-height: 92vh; overflow-y: auto;"
               activatable
               item-key="id"
               open-on-click
@@ -135,6 +130,7 @@
           >
             <v-btn
               :disabled="!canSaveDriver"
+              class="mr-3"
               @click.prevent="saveDriver"
             >
               Save Driver
@@ -144,6 +140,7 @@
             cols="1"
           >
             <v-btn
+              class="mr-3"
               @click.prevent="clearDriver"
             >
               Clear
@@ -462,6 +459,12 @@ export default class DriverBuilderView extends Vue {
 
   get drivers() { return this.$store.direct.state.driverBuilder.drivers; }
   get instructionSets() { return this.$store.direct.state.driverBuilder.instructionSets; }
+  get onlineStoreDrivers() { return this.$store.direct.state.driverBuilder.onlineStore.drivers; }
+
+  @Watch('onlineStoreDrivers', { deep: true })
+  onOnlineStoreDriversChanged() {
+    this.refreshOnlineStoreCategory();
+  }
 
   @Watch('drivers', { deep: true })
   onDriversChanged() {
@@ -471,6 +474,51 @@ export default class DriverBuilderView extends Vue {
   @Watch('instructionSets', { deep: true })
   onInstructionSetsChanged() {
     this.refreshInstructionSetsCategory();
+  }
+
+  refreshOnlineStoreCategory() {
+    let onlineStoreCategory = (this.items as Item[]).find(i => i.name === 'Store');
+    let addCategory = onlineStoreCategory === undefined;
+    if (!onlineStoreCategory) onlineStoreCategory = { id: uuid(), name: 'Store', children: [] };
+    onlineStoreCategory.children = [];
+    for (const driver of this.$store.direct.state.driverBuilder.onlineStore.drivers) {
+      let nomenclatureFolder = onlineStoreCategory.children ? (onlineStoreCategory.children as Item[]).find(c => c.name === driver.driverNomenclature) : undefined;
+      if (!nomenclatureFolder) {
+        nomenclatureFolder = {
+          id: driver._id,
+          name: driver.driverNomenclature,
+          children: []
+        };
+        (onlineStoreCategory.children as Item[]).push(nomenclatureFolder);
+      }
+
+      let manufacturerFolder = nomenclatureFolder.children ? (nomenclatureFolder.children as Item[]).find(c => c.name === driver.driverManufacturer) : undefined;
+      if (!manufacturerFolder) {
+        manufacturerFolder = {
+          id: driver._id,
+          name: driver.driverManufacturer,
+          children: []
+        };
+        (nomenclatureFolder.children as Item[]).push(manufacturerFolder);
+      }
+
+      let modelFolder = manufacturerFolder.children ? (manufacturerFolder.children as Item[]).find(c => c.name === driver.driverModel) : undefined;
+      if (!modelFolder) {
+        modelFolder = {
+          id: driver._id,
+          name: driver.driverModel,
+          children: []
+        };
+        (manufacturerFolder.children as Item[]).push(modelFolder);
+      }
+
+      (modelFolder.children as Item[]).push({
+        id: driver.id,
+        name: driver.name,
+        file: 'json'
+      });
+    }
+    if (addCategory) this.items.push(onlineStoreCategory);
   }
 
   refreshInstructionSetsCategory() {
@@ -555,6 +603,11 @@ export default class DriverBuilderView extends Vue {
     });
     (instructionsCategory.children as Item[]).unshift(SCPIRequiredCategory);
     await this.$store.direct.dispatch.driverBuilder.init();
+    try {
+      await this.$store.direct.dispatch.driverBuilder.refreshOnlineStore();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {

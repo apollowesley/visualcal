@@ -52,6 +52,7 @@
 import { CommandParameter, CommandParameterArgument, CustomInstruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
+import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
 
 interface InstructionParameterArgument {
   instruction: CustomInstruction;
@@ -76,48 +77,52 @@ export default class DirectControlTesterDialog extends Vue {
   isTesting = false;
   responses: InstructionResponse[] = [];
 
-  private getCommandParameterEditor(cell: Tabulator.CellComponent) {
+  private getCommandParameterEditor(cell: Tabulator.CellComponent, onRendered: Tabulator.EmptyCallback, success: Tabulator.ValueBooleanCallback, cancel: Tabulator.ValueVoidCallback) {
     const argument = cell.getRow().getData() as InstructionParameterArgument;
-    let element: HTMLElement;
+    let editor: HTMLElement;
     switch (argument.parameter.type) {
       case 'string':
-         element = document.createElement('input');
-         break;
+        editor = stringEditor(cell, onRendered, success, cancel);
+        break;
       case 'number':
-        element = document.createElement('input');
-        (element as HTMLInputElement).type = 'number';
+        editor = numberEditor(cell, onRendered, success, cancel);
         break;
       case 'boolean':
-        element = document.createElement('input');
-        (element as HTMLInputElement).type = 'checkbox';
+        editor = checkboxEditor(cell, onRendered, success, cancel);
         break;
       case 'list':
-        element = document.createElement('select');
+        editor = document.createElement('select');
         if (argument.parameter.listItems) {
           for (let index = 0; index < argument.parameter.listItems.length; index++) {
             const item = argument.parameter.listItems[index];
             const newOption = document.createElement('option');
-            newOption.selected = index === 0;
+            newOption.selected = item.value === cell.getValue();
             newOption.label = item.text;
             newOption.value = item.value;
-            (element as HTMLSelectElement).options.add(newOption);
+            (editor as HTMLSelectElement).options.add(newOption);
           }
         }
-        (element as HTMLSelectElement).onchange = (ev) => {
-          ev.preventDefault();
-          const selectedOption = (element as HTMLSelectElement).options[(element as HTMLSelectElement).selectedIndex];
+        (editor as HTMLSelectElement).onchange = () => {
+          const selectedOption = (editor as HTMLSelectElement).options[(editor as HTMLSelectElement).selectedIndex];
           if (selectedOption) {
-            const selectedValue = selectedOption.value;
-            cell.setValue(selectedValue);
+            success(selectedOption.value);
+          }
+        }
+        (editor as HTMLSelectElement).onblur = () => {
+          const selectedOption = (editor as HTMLSelectElement).options[(editor as HTMLSelectElement).selectedIndex];
+          if (selectedOption) {
+            success(selectedOption.value);
           }
         }
         break;
     }
-    if (element) {
-      element.style.height = '100%';
-      element.style.width = '100%';
+    if (editor) {
+      editor.style.padding = '3px';
+      editor.style.width = '100%';
+      editor.style.boxSizing = 'border-box';
     }
-    return element;
+
+    return editor;
   }
 
   private commandArgumentsTableColumns: Tabulator.ColumnDefinition[] = [

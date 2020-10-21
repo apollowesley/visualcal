@@ -3057,7 +3057,7 @@
 						{
 							"id": "3d50a6ac-9e98-4811-9ce6-96827444f541",
 							"order": 0,
-							"name": "Instruction",
+							"name": "Set range",
 							"type": "Write",
 							"command": "RANGE",
 							"readAttempts": 1,
@@ -3100,7 +3100,11 @@
 											"text": "7",
 											"value": "7"
 										}
-									]
+									],
+									"default": "3",
+									"min": null,
+									"max": null,
+									"increment": null
 								}
 							]
 						}
@@ -3147,7 +3151,11 @@
 									"text": "7",
 									"value": "7"
 								}
-							]
+							],
+							"default": "3",
+							"min": null,
+							"max": null,
+							"increment": null
 						},
 						"value": "3"
 					}

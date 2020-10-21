@@ -54,6 +54,7 @@ import Tabulator from 'tabulator-tables';
 import { CustomInstruction, CommandParameter, CommandParameterListItem } from 'visualcal-common/src/driver-builder';
 import CommandParameterListBuilderDialog from '@/components/driver-builder/CommandParameterListBuilderDialog.vue';
 import { v4 as uuid } from 'uuid';
+import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
 
 @Component({
   components: {
@@ -191,6 +192,13 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     return div;
   }
 
+  getDefaultValueEditor(cell: Tabulator.CellComponent, onRendered: Tabulator.EmptyCallback, success: Tabulator.ValueBooleanCallback, cancel: Tabulator.ValueVoidCallback) {
+    const parameter = this.getParameterFromCell(cell);
+    if (parameter.type === 'boolean') return checkboxEditor(cell, onRendered, success, cancel);
+    if (parameter.type === 'number') return numberEditor(cell, onRendered, success, cancel);
+    return stringEditor(cell, onRendered, success, cancel);
+  }
+
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
@@ -198,6 +206,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
     { title: 'Text After', field: 'afterText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
+    { title: 'Default Value', field: 'default', editable: true, editor: this.getDefaultValueEditor },
     { title: 'Boolean Value', columns: [
       { title: 'False', field: 'falseValue', editable: this.isBoolean, editor: 'input', formatter: this.getBooleanFormatter },
       { title: 'True', field: 'trueValue', editable: this.isBoolean, editor: 'input', formatter: this.getBooleanFormatter }
@@ -244,6 +253,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       id: uuid(),
       type: 'boolean',
       prompt: '',
+      default: false,
       trueValue: '1',
       falseValue: '0',
       useMin: false,

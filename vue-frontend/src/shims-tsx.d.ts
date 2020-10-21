@@ -1,4 +1,4 @@
-import Vue, { VNode } from 'vue'
+import Vue, { VNode } from 'vue';
 import { ipcRenderer } from 'electron';
 import { Ipc } from '@/utils/Ipc';
 
