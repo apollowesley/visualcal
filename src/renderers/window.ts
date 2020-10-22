@@ -65,7 +65,7 @@ window.visualCal = {
   assetManager: new RendererAssetManager(),
   userManager: new RendererUserManager(),
   communicationInterfaceManager: new CommunicationInterfaceManager(),
-  getCustomDriver(manufacturer, model) {
+  getCustomDriver: (manufacturer, model) => {
     return new Promise((resolve, reject) => {
       ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriver.response, (_, driver?: Driver) => {
         ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriver.error);
@@ -78,9 +78,9 @@ window.visualCal = {
       ipcRenderer.send(DriverBuilderIpcChannels.communicationInterface.getDriver.request, { manufacturer: manufacturer, model: model });
     });
   },
-  getCustomDriverIdentityInfos() {
+  getCustomDriverIdentityInfos: () => {
     return new Promise((resolve, reject) => {
-      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.response, (_, infos: { manufactuer: string, model: string, nomenclature: string }) => {
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.response, (_, infos: { manufactuer: string, model: string, nomenclature: string }[]) => {
         ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.error);
         return resolve(infos);
       });

@@ -186,12 +186,12 @@
                           if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
                           if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
                           if (parameter.useIncrement) parametergNumberElement.prop('step', parameter.increment);
-                          if (parameter.default) parameterStringElement.val(parameter.default);
+                          if (parameter.default) parametergNumberElement.val(parameter.default);
                           if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
                           break;
                         case 'boolean':
                           const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter.id).appendTo(parameterRow);
-                          if (parameter.default) parameterStringElement.prop('checked', !!parameter.default);
+                          if (parameter.default) parametergBooleanElement.prop('checked', !!parameter.default);
                           if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
                           break;
                         }

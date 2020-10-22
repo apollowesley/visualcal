@@ -3073,7 +3073,7 @@
 											"value": "AUTO"
 										},
 										{
-											"text": "1",
+											"text": "AC: 0.001-5; DC: 0.01-10",
 											"value": "1"
 										},
 										{
@@ -3102,9 +3102,9 @@
 										}
 									],
 									"default": "3",
-									"min": null,
-									"max": null,
-									"increment": null
+									"min": 0,
+									"max": 0,
+									"increment": 0
 								}
 							]
 						}
@@ -3124,7 +3124,7 @@
 									"value": "AUTO"
 								},
 								{
-									"text": "1",
+									"text": "AC: 0.001-5; DC: 0.01-10",
 									"value": "1"
 								},
 								{
@@ -3153,11 +3153,11 @@
 								}
 							],
 							"default": "3",
-							"min": null,
-							"max": null,
-							"increment": null
+							"min": 0,
+							"max": 0,
+							"increment": 0
 						},
-						"value": "3"
+						"value": "AUTO"
 					}
 				]
 			},
