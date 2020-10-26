@@ -1,7 +1,8 @@
-import { BrowserWindow, shell, MenuItemConstructorOptions, Menu, dialog } from 'electron';
+import { BrowserWindow, MenuItemConstructorOptions, Menu, dialog } from 'electron';
 import { openFlow, saveFlow } from '../menu/menu-actions';
 import { WindowManager } from '../managers/WindowManager';
 import { checkForUpdates } from '../auto-update';
+import { ApplicationManager } from '../managers/ApplicationManager';
 
 interface Options {
   start?: any;
@@ -126,6 +127,22 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Check for updates',
         click: async (menuItem) => await checkForUpdates(menuItem)
+      }
+    ]
+  });
+
+  template.push({
+    label: 'Help',
+    submenu: [
+      {
+        label: 'Version',
+        click: async () => {
+          if (!WindowManager.instance.mainWindow) return;
+          dialog.showMessageBoxSync(WindowManager.instance.mainWindow, {
+            title: 'VisualCal Version',
+            message: ApplicationManager.instance.version
+          });
+        }
       }
     ]
   });

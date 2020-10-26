@@ -8,6 +8,8 @@ import { ExpressServer } from '../../servers/express';
 import { isDev } from '../../utils';
 import { setNoUpdateNotifier } from '../../utils/npm-update-notifier';
 import { WindowManager } from '../WindowManager';
+import fs from 'fs';
+import path from 'path';
 
 interface QuitEventOptions {
   cancel?: boolean;
@@ -34,6 +36,11 @@ export class ApplicationManager extends TypedEmitter<Events> {
   private constructor() {
     super();
     log.info('Loaded');
+  }
+
+  get version() {
+    const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../../package.json')).toString());
+    return packageJson.version as string;
   }
 
   private initIpcListeners() {
