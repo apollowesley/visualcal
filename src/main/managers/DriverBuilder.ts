@@ -32,9 +32,9 @@ export class DriverBuilder extends TypedEmitter<Events> {
 
   }
 
-  get drivers() { return this.fStore.get('drivers'); }
-  get instructions() { return this.fStore.get('instructions'); }
-  get instructionSets() { return this.fStore.get('instructionSets'); }
+  get drivers() { return this.fStore.get('drivers', []); }
+  get instructions() { return this.fStore.get('instructions', []); }
+  get instructionSets() { return this.fStore.get('instructionSets', []); }
 
   async connect(info: CommunicationInterfaceConfigurationInfo) {
     if (this.fCommunicationInterface) throw new Error('Already connected');
