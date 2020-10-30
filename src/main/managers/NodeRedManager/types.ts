@@ -1,5 +1,5 @@
-import { NodeRedRuntimeNode } from '../../@types/logic-server';
-import { NodeRedFlowNode } from '../../@types/node-red-info';
+import { NodeRedRuntimeNode } from '../../../@types/logic-server';
+import { NodeRedFlowNode } from '../../../@types/node-red-info';
 
 export type DeployType = 'full';
 

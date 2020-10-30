@@ -1,12 +1,11 @@
 import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedRuntimeNode } from '../@types/logic-server';
 import RED from 'node-red';
-import VisualCalNodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../main/node-red';
+import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from '../main/managers/NodeRedManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
 import { CommandParameter, Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
 
 const nodeRed = RED as NodeRed;
-const visualCalNodeRed = VisualCalNodeRed();
 
 interface CommandParameterArgument {
   instructionId: string;
@@ -77,7 +76,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
   this.instructionSets = config.instructionSets;
   this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
     this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
-    const driverConfig = visualCalNodeRed.nodes.find(n => n.id === this.driverConfigId);
+    const driverConfig = NodeRedManager.instance.nodes.find(n => n.id === this.driverConfigId);
     if (!driverConfig) {
       this.error(`Missing configuration node, ${this.driverConfigId}`);
       this.status({ fill: 'red', shape: 'dot', text: 'Missing configuration node' });

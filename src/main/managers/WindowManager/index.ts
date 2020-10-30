@@ -5,15 +5,14 @@ import { IpcChannels, VisualCalWindow } from '../../../constants';
 import * as WindowUtils from '../../utils/Window';
 import { getConfig as getWindowConfig } from './WindowConfigs';
 import electronLog from 'electron-log';
-import visualCalNodeRed from '../../node-red';
 import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOptions, setWindowSize, getWindowTitle } from './vue-helper';
 import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
 import VisualCalNodeRedSettings from '../../node-red-settings';
 import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
 import { DriverBuilder } from '../DriverBuilder';
+import { NodeRedManager } from '../NodeRedManager';
 
-const nodeRed = visualCalNodeRed();
 const log = electronLog.scope('WindowManager');
 
 interface Events {
@@ -244,10 +243,10 @@ export class WindowManager extends TypedEmitter<Events> {
       let activeProcedure: Procedure | undefined = undefined;
       if (activeProcedureName) activeProcedure = await global.visualCal.procedureManager.getOne(activeProcedureName);
       let sections: SectionInfo[] | undefined = undefined;
-      if (nodeRed.isRunning) {
-        sections = nodeRed.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+      if (NodeRedManager.instance.isRunning) {
+        sections = NodeRedManager.instance.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
         sections.forEach(s => {
-          s.actions = nodeRed.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+          s.actions = NodeRedManager.instance.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
         });
       }
       const initialLoadData: VisualCalWindowInitialLoadData = {
@@ -379,7 +378,7 @@ export class WindowManager extends TypedEmitter<Events> {
   // Select procedure window
   async showSelectProcedureWindow() {
     global.visualCal.procedureManager.once('activeSet', async () => {
-      await nodeRed.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
+      await NodeRedManager.instance.start(ExpressServer.instance, VisualCalNodeRedSettings, global.visualCal.dirs.html.js);
       await this.showSelectSessionWindow();
       this.closeAllBut(VisualCalWindow.SelectSession);
     });

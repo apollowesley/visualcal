@@ -1,15 +1,15 @@
 import express from 'express';
 import RED from 'node-red';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { NodeRed as NodeRedType, NodeRedRuntimeNode, NodeResetOptions, Settings as NodeRedSettings } from '../../@types/logic-server';
-import { NodeRedFlow, NodeRedFlowNode } from '../../@types/node-red-info';
-import { IndySoftNodeTypeNames } from '../../constants';
-import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
-import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../nodes/indysoft-section-configuration-types';
-import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../nodes/procedure-sidebar-types';
+import { NodeRed as NodeRedType, NodeRedRuntimeNode, NodeResetOptions, Settings as NodeRedSettings } from '../../../@types/logic-server';
+import { NodeRedFlow, NodeRedFlowNode } from '../../../@types/node-red-info';
+import { IndySoftNodeTypeNames } from '../../../constants';
+import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../../nodes/indysoft-action-start-types';
+import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../../nodes/indysoft-section-configuration-types';
+import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
-import { ExpressServer } from '../servers/express';
+import { ExpressServer } from '../../servers/express';
 
 export interface CustomDriverConfigurationNodeEditorDefinition extends NodeRedFlowNode {
   unitId: string;
@@ -27,12 +27,19 @@ interface Events {
   sectionActionReset: (sectionName: string, actionName: string) => void;
 }
 
-class NodeRed extends TypedEmitter<Events> {
+export class NodeRedManager extends TypedEmitter<Events> {
 
-  public static USER = 'VisualCal';
+  public static readonly USER = 'VisualCal';
+
+  public static get instance() { return NodeRedManager.fInstance; }
+  private static fInstance = new NodeRedManager();
 
   private fNodeRed?: NodeRedType;
   private fIsRunning = false;
+
+  private constructor() {
+    super();
+  }
 
   get isRunning() { return this.fIsRunning; }
 
@@ -167,7 +174,7 @@ class NodeRed extends TypedEmitter<Events> {
    */
   async loadFlow(flow: NodeRedFlow, deployType: DeployType = 'full') {
     if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
-    await this.fNodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRed.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
+    await this.fNodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRedManager.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
   }
 
   resetAllNodes() {
@@ -225,15 +232,4 @@ class NodeRed extends TypedEmitter<Events> {
     });
   };
 
-}
-
-const nodeRed = new NodeRed();
-
-export default () => {
-  return nodeRed;
-}
-
-export const destroy = async () => {
-  if (!nodeRed) return;
-  await nodeRed.stop();
 }

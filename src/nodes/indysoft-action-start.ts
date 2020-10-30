@@ -3,10 +3,9 @@ import { IndySoftNodeTypeNames } from '../constants';
 import { RuntimeNode, TriggerOptions } from './indysoft-action-start-types';
 import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
 import RED from 'node-red';
-import VisualCalNodeRed from '../main/node-red';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 
 const nodeRed = RED as NodeRed;
-const visualCalNodeRed = VisualCalNodeRed();
 
 export interface NodeRedNodeUIProperties {
   sectionConfigId?: string;
@@ -52,7 +51,7 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
       this.error('Already running');
       return;
     }
-    visualCalNodeRed.resetConnectedNodes(this);
+    NodeRedManager.instance.resetConnectedNodes(this);
     this.status({
       fill: 'green',
       shape: 'dot',
@@ -74,12 +73,12 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
       return;
     }
     resetStatus();
-    visualCalNodeRed.resetConnectedInstructionNodes(this);
+    NodeRedManager.instance.resetConnectedInstructionNodes(this);
     global.visualCal.actionManager.stateChanged(this, 'stopped', opts);
   });
   this.on('reset', (options?: NodeResetOptions) => {
     resetStatus();
-    visualCalNodeRed.resetConnectedNodes(this, options);
+    NodeRedManager.instance.resetConnectedNodes(this, options);
   });
 }
 

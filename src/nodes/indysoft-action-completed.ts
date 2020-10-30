@@ -1,9 +1,7 @@
 import { NodeProperties } from 'node-red';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
 import { StopOptions } from '../main/managers/ActionManager';
-import VisualCalNodeRed from '../main/node-red';
-
-const nodeRed = VisualCalNodeRed();
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 
 export const NODE_TYPE = 'indysoft-action-completed';
 
@@ -21,7 +19,7 @@ module.exports = (RED: NodeRed) => {
       }
       this.name = config.name;
       // Notify our start action node that we've completed
-      const startNode = nodeRed.visualCalActionStartNodes.find(n => n.runtime.section && msg.payload && n.runtime.section.shortName === msg.payload.section && n.runtime.name === msg.payload.action);
+      const startNode = NodeRedManager.instance.visualCalActionStartNodes.find(n => n.runtime.section && msg.payload && n.runtime.section.shortName === msg.payload.section && n.runtime.name === msg.payload.action);
       if (!startNode) {
         this.error('Unable to locate start node');
         if (done) done();

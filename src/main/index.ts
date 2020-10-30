@@ -14,7 +14,6 @@ import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';
 import { VueManager } from './managers/VueManager';
 import { WindowManager } from './managers/WindowManager';
-import NodeRed from './node-red';
 import VisualCalNodeRedSettings from './node-red-settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { init as nodeRedUtilsInit } from './node-red/utils';
@@ -29,7 +28,6 @@ import { DriverBuilder } from './managers/DriverBuilder';
 // const ident = IndySoftNIGPIB();
 // console.info(ident);
 
-NodeRed();
 const log = electronLog.scope('main');
 
 electronLog.transports.file.level = 'debug';

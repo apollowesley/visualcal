@@ -3,13 +3,12 @@ import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { IpcChannels } from '../../constants';
-import NodeRed, { CustomDriverConfigurationNodeEditorDefinition } from '../node-red';
+import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
 import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
 
 const log = electronLog.scope('SessionManager');
-const nodeRed = NodeRed();
 
 interface Events {
   activeChanged: (session?: Session) => void;
@@ -124,7 +123,7 @@ export class SessionManager extends TypedEmitter<Events> {
       if (throwOnError) throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
     }
     if (!procedure) return undefined;
-    const sections = nodeRed.visualCalSections;
+    const sections = NodeRedManager.instance.visualCalSections;
     const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       user: user,
@@ -136,7 +135,7 @@ export class SessionManager extends TypedEmitter<Events> {
     };
 
     // *** CUSTOM NODES ***
-    const customDriverConfigNodes = nodeRed.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
+    const customDriverConfigNodes = NodeRedManager.instance.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
     customDriverConfigNodes.forEach((n) => {
       const editorDef = n.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
       viewInfo.deviceNodes.push({

@@ -1,9 +1,7 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels, SessionViewRequestResponseInfo, Procedure } from 'visualcal-common/dist/session-view-info';
-import nodeRed from '../node-red';
-
-const visualCalNodeRed = nodeRed();
+import { NodeRedManager } from './NodeRedManager';
 
 interface Events {
   loaded: () => void;
@@ -32,7 +30,7 @@ export class VueManager extends TypedEmitter<Events> {
           name: activeProcedure.name,
           authorOrganization: activeProcedure.authorOrganization,
           authors: activeProcedure.authors,
-          sections: visualCalNodeRed.visualCalSections
+          sections: NodeRedManager.instance.visualCalSections
         }
         const response: SessionViewRequestResponseInfo = {
           procedure: procedure

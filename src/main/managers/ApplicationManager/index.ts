@@ -3,13 +3,13 @@ import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels } from '../../../constants';
 import { saveComparison } from '../../ipc';
-import { destroy as destroyNodeRed } from '../../node-red';
 import { ExpressServer } from '../../servers/express';
 import { isDev } from '../../utils';
 import { setNoUpdateNotifier } from '../../utils/npm-update-notifier';
 import { WindowManager } from '../WindowManager';
 import fs from 'fs';
 import path from 'path';
+import { NodeRedManager } from '../NodeRedManager';
 
 interface QuitEventOptions {
   cancel?: boolean;
@@ -63,7 +63,7 @@ export class ApplicationManager extends TypedEmitter<Events> {
   private async onBeforeQuit() {
     setNoUpdateNotifier(true);
     log.info('Destroying logic server');
-    await destroyNodeRed();
+    await NodeRedManager.instance.stop();
     log.info('Logic server destroyed');
     log.info('Destroying web server');
     await ExpressServer.instance.stop();
