@@ -44,15 +44,16 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   };
 
   write(data: ArrayBufferLike) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<ArrayBufferLike>((resolve, reject) => {
       if (this.isDisconnecting) return resolve();
       if (!this.duplexClient) {
         const err = new Error('Client is undefined');
         this.onError(err);
         return reject(err);
       }
-      const dataString = this.fTextDecoder.decode(data);
-      this.duplexClient.write(`${dataString}\n`, async (writeErr) => {
+      const dataStringWithoutTerminators = this.fTextDecoder.decode(data);
+      const dataString = dataStringWithoutTerminators + '\n';
+      this.duplexClient.write(dataString, async (writeErr) => {
         if (writeErr) return reject(writeErr);
         if (!this.duplexClient) {
           const err = new Error('Client is undefined');
@@ -60,8 +61,9 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
           return reject(err);
         }
         await this.onPrologixDataSent();
-        log.info(`Write`, dataString);
-        return resolve();
+        log.info(`Write`, dataStringWithoutTerminators);
+        const actualWroteData = new TextEncoder().encode(dataString);
+        return resolve(actualWroteData);
       });
     });
   }
@@ -84,7 +86,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
       const handleData = (data: string) => {
         if (this.duplexClient) this.duplexClient.removeAllListeners('error');
         this.fReadlineParser.off('data', handleData);
-        const retVal = this.fTextEncoder.encode(data).buffer;
+        const retVal = this.fTextEncoder.encode(data);
         return resolve(retVal);
       }
       this.duplexClient.once('error', handleError);

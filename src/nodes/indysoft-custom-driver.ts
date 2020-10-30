@@ -137,7 +137,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
             case 'Write':
               command = buildCommand(instructionSet, instruction);
               this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
-              await commInterface.write(new TextEncoder().encode(command));
+              await commInterface.writeString(command);
               break;
           }
           if (lastRawResponse) {

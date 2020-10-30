@@ -51,7 +51,6 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
         this.error('Already running');
         return reject();
       }
-      NodeRedManager.instance.resetConnectedNodes(this);
       this.status({
         fill: 'green',
         shape: 'dot',
@@ -65,22 +64,12 @@ function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNo
           runId: runId
         }
       });
-      global.visualCal.actionManager.stateChanged(this, 'started');
       return resolve();
     });
   };
   this.stop = () => {
     return new Promise<void>((resolve) => {
       resetStatus();
-      NodeRedManager.instance.resetConnectedInstructionNodes(this);
-      global.visualCal.actionManager.stateChanged(this, 'stopped');
-      return resolve();
-    });
-  };
-  this.reset = (options?: NodeResetOptions) => {
-    return new Promise<void>((resolve) => {
-      resetStatus();
-      NodeRedManager.instance.resetConnectedNodes(this, options);
       return resolve();
     });
   };

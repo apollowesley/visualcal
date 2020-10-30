@@ -2,6 +2,7 @@ import { CommunicationInterface } from '../CommunicationInterface';
 import path from 'path';
 import edge from 'electron-edge-js';
 import { EventStatusRegister, EventStatusRegisterValues, GpibInterface, StatusByteRegister } from '../GPIB';
+import electronLog from 'electron-log';
 
 interface ConnectInput {
   board: number;
@@ -33,6 +34,8 @@ interface SelectedDeviceClearInput {
   handle: string;
   deviceAddress: number;
 }
+
+const log = electronLog.scope('NationalInstrumentsGpibInterface');
 
 export class NationalInstrumentsGpibInterface extends CommunicationInterface implements GpibInterface {
 
@@ -203,8 +206,8 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
     });
   }
 
-  write(data: ArrayBufferLike): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  write(data: ArrayBufferLike) {
+    return new Promise<ArrayBufferLike>((resolve, reject) => {
       try {
         if (!this.fHandle) return reject('Not connected');
         const dataUint8Arr = new Uint8Array(data);
@@ -212,14 +215,15 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
         const dataWithTerminators = new Uint8Array(dataUint8Arr.length + terminators.length);
         dataWithTerminators.set(dataUint8Arr);
         if (terminators.length > 0) dataWithTerminators.set(terminators, dataUint8Arr.length);
-        const edigeWriteToDevice = this.getEdgeFunction<WriteToDeviceInput, boolean>('WriteToDevice');
-        edigeWriteToDevice({
+        const edgeWriteToDevice = this.getEdgeFunction<WriteToDeviceInput, boolean>('WriteToDevice');
+        edgeWriteToDevice({
           handle: this.fHandle,
           deviceAddress: this.fDeviceAddress,
           data: dataWithTerminators
         }, (err) => {
           if (err) return reject(err);
-          return resolve();
+          log.info(`Write`, new TextDecoder().decode(dataWithTerminators));
+          return resolve(dataWithTerminators);
         });
       } catch (error) {
         return reject(error);

@@ -1,19 +1,15 @@
 import { ipcMain } from 'electron';
+import { TypedEmitter } from 'tiny-typed-emitter';
+import { LogicRun } from 'visualcal-common/dist/result';
 import { ActionState, IpcChannels, VisualCalWindow } from '../../constants';
+import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
 import { loadDevices } from '../node-red/utils';
 import { DeviceManager } from './DeviceManager';
-import { BeforeWriteStringResult } from '../../drivers/devices/Device';
+import { NodeRedManager } from './NodeRedManager';
+import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
 import { WindowManager } from './WindowManager';
-import { RunManager } from './RunManager';
-import { TypedEmitter } from 'tiny-typed-emitter';
-import { NodeRedManager } from './NodeRedManager';
-
-interface Events {
-  actionStarted: (opts: StartOptions) => void;
-  actionStopped: (opts: StopOptions) => void;
-}
 
 export interface StartOptions {
   sectionId: string;
@@ -24,13 +20,15 @@ export interface StartOptions {
   deviceConfig?: CommunicationInterfaceDeviceNodeConfiguration[];
 }
 
-export interface StopOptions {
-  runId: string;
+interface Events {
+  actionStarted: (opts: StartOptions) => void;
+  actionStopped: (runId: string) => void;
 }
 
 export class ActionManager extends TypedEmitter<Events> {
 
   private fUserManager: UserManager
+  private fCurrentRun?: LogicRun<string, number>;
 
   constructor(userManager: UserManager) {
     super();
@@ -44,23 +42,26 @@ export class ActionManager extends TypedEmitter<Events> {
       }
     });
 
-    ipcMain.on(IpcChannels.actions.stop.request, async (event, opts: StopOptions) => {
+    ipcMain.on(IpcChannels.actions.stop.request, async (event) => {
       try {
-        await this.stop(opts);
+        await this.stop();
         event.reply(IpcChannels.actions.stop.response);
       } catch (error) {
-        event.reply(IpcChannels.actions.stop.error, { opts: opts, err: error });
+        event.reply(IpcChannels.actions.stop.error, { err: error });
       }
     });
   }
 
+  get isRunning() { return this.fCurrentRun !== undefined; }
+  get currentRun() { return this.fCurrentRun; }
+
   async start(opts: StartOptions) {
-    const run = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
+    this.fCurrentRun = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
     await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
     loadDevices(opts.session);
     if (opts.interceptDeviceWrites) {
       for (const device of DeviceManager.instance.devices) {
-        device.once('writeCancelled', async () => await this.stop({ runId: run.id }));
+        device.once('writeCancelled', async () => await this.stop());
         device.onBeforeWriteString = async (device, iface, data) => {
           return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
             ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
@@ -88,28 +89,32 @@ export class ActionManager extends TypedEmitter<Events> {
     } else {
       await global.visualCal.communicationInterfaceManager.connectAll();
     }
-    await NodeRedManager.instance.startAction(opts.sectionId, opts.actionId, run.id);
+    await NodeRedManager.instance.startAction(opts.sectionId, opts.actionId, this.fCurrentRun.id);
     this.emit('actionStarted', opts);
-    return run;
+    ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: opts.sectionId, action: opts.actionId, state: 'started' });
+    return this.fCurrentRun;
   }
 
-  async stop(opts: StopOptions) {
+  async stop() {
+    await NodeRedManager.instance.stopCurrentAction();
+    await global.visualCal.communicationInterfaceManager.disconnectAll();
     for (const device of DeviceManager.instance.devices) {
       device.onBeforeWriteString = undefined;
     }
-    await global.visualCal.communicationInterfaceManager.disconnectAll();
-    if (!opts) return;
-    await NodeRedManager.instance.stopCurrentAction();
-    RunManager.instance.stopRun(opts.runId);
-    this.emit('actionStopped', opts);
+    if (!this.currentRun) return;
+    if (this.currentRun.sectionId && this.currentRun.actionId) {
+      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
+    }
+    RunManager.instance.stopRun(this.currentRun);
+    this.emit('actionStopped', this.currentRun.id);
+    this.fCurrentRun = undefined;
   }
 
-  stateChanged(node: IndySoftActionStartRuntimeNode, state: ActionState, opts?: StopOptions) {
-    setImmediate(async () => {
-      if (!node.section) throw new Error(`indysoft-action-start node section property is not defined for node ${node.id}`);
-      if (state === 'stopped' && opts) await this.stop(opts);
-      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: node.section.name, action: node.name, state: state });
-    });
+  async complete() {
+    if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
+      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'completed' });
+    }
+    await this.stop();
   }
 
 }

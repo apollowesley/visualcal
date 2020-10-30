@@ -12,7 +12,7 @@ import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
-import { StartOptions, StopOptions } from '../../../../main/managers/ActionManager';
+import { StartOptions } from '../../../../main/managers/ActionManager';
 
 const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
 const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
@@ -236,10 +236,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   }
   session.configuration.devices = devices;
   if (session.lastSectionName && session.lastActionName) {
-    const stopOpts: StopOptions = {
-      runId: runHandler.currentRunId || ''
-    }
-    window.visualCal.actionManager.stop(stopOpts);
+    window.visualCal.actionManager.stop();
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {

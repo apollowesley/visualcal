@@ -83,16 +83,19 @@ export class RunManager extends TypedEmitter<Events> {
       results: []
     }
     this.setOne(run);
-    ipcMain.sendToAll(IpcChannels.runStarted, run);
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.runStarted, run);
+    });
     return run;
   }
 
-  stopRun(runId: string) {
-    const run = this.getOne(runId);
-    if (!run) throw new Error(`Run with Id, ${runId}, does not exist`);
+  stopRun(run: LogicRun<string, number>) {
+    if (!run) throw new Error('run argument is required');
     run.stopTimestamp = new Date();
     this.setOne(run);
-    ipcMain.sendToAll(IpcChannels.runStopped, run.id);
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.runStopped, run.id);
+    });
   }
 
   addResult(runId: string, result: LogicResult<string, number>) {
@@ -100,8 +103,9 @@ export class RunManager extends TypedEmitter<Events> {
     if (!run) throw new Error(`Run with Id, ${runId}, does not exist`);
     run.results.push(result);
     this.setOne(run);
-    ipcMain.sendToAll(IpcChannels.resultAdded, result);
-
+    setImmediate(() => {
+      ipcMain.sendToAll(IpcChannels.resultAdded, result);
+    });
   }
 
   private initIpcHandlers() {

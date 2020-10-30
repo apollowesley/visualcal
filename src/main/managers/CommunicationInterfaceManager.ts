@@ -9,6 +9,7 @@ import { NationalInstrumentsGpibInterface } from '../../drivers/communication-in
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
 import { IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/bench-configuration';
 import { getSerialPorts } from '../../drivers/utils';
+import { logToCurrentActionRun } from './current-action-log-handler';
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
@@ -171,63 +172,74 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
   private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceConnected', communicationInterface, err);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.connected, { name: communicationInterface.name, err: err });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Connected' });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.connected, { interfaceName: communicationInterface.name, err: err });
     });
   }
 
   private onInterfaceConnecting(communicationInterface: ICommunicationInterface) {
     this.emit('interfaceConnecting', communicationInterface);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.connecting, { name: communicationInterface.name });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Connecting' });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.connecting, { interfaceName: communicationInterface.name });
     });
   }
 
   private onInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceDataReceived', communicationInterface, data);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.dataReceived, { name: communicationInterface.name, data: data });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Data received', data: data });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.dataReceived, { interfaceName: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceStringReceived(communicationInterface: ICommunicationInterface, data: string) {
     this.emit('interfaceStringReceived', communicationInterface, data);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.stringReceived, { name: communicationInterface.name, data: data });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `String data received: ${data}`, data: data });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.stringReceived, { interfaceName: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceDisconnecting(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceDisconnecting', communicationInterface, err);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnecting, { name: communicationInterface.name, err: err });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Disconnecting', error: err });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnecting, { interfaceName: communicationInterface.name, err: err });
     });
   }
 
   private onInterfaceDisconnected(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceDisconnected', communicationInterface, err);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnected, { name: communicationInterface.name, err: err });
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Disconnected', error: err });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnected, { interfaceName: communicationInterface.name, err: err });
     });
   }
 
   private onInterfaceBeforeWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceBeforeWrite', communicationInterface, data);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.beforeWrite, { name: communicationInterface.name, data: data });
+      const dataString = new TextDecoder().decode(data);
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Sending data: ${dataString}`, data: data });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.beforeWrite, { interfaceName: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceAfterWrite(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceAfterWrite', communicationInterface, data);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.afterWrite, { name: communicationInterface.name, data: data });
+      const dataString = new TextDecoder().decode(data);
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Data sent: ${dataString}`, data: data });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.afterWrite, { interfaceName: communicationInterface.name, data: data });
     });
   }
 
   private onInterfaceError(communicationInterface: ICommunicationInterface, err: Error) {
-    this.emit('interfaceDisconnected', communicationInterface, err);
+    this.emit('interfaceError', communicationInterface, err);
     setImmediate(() => {
-      ipcMain.sendToAll(IpcChannels.communicationInterface.error, { name: communicationInterface.name, err: err});
+      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Error: ${err.message}`, error: err });
+      ipcMain.sendToAll(IpcChannels.communicationInterface.error, { interfaceName: communicationInterface.name, err: err});
     });
   }
 

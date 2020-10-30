@@ -2,7 +2,7 @@ import { ipcRenderer } from 'electron';
 import { ActionState, IpcChannels } from '../../constants';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { TriggerOptions } from '../../nodes/indysoft-action-start-types';
-import { StartOptions, StopOptions } from '../../main/managers/ActionManager';
+import { StartOptions } from '../../main/managers/ActionManager';
 
 export interface StateChangeInfo {
   state: ActionState;
@@ -41,8 +41,8 @@ export class RendererActionManager extends TypedEmitter<Events> {
     ipcRenderer.send(IpcChannels.actions.start.request, opts);
   }
 
-  stop(opts: StopOptions) {
-    ipcRenderer.send(IpcChannels.actions.stop.request, opts);
+  stop() {
+    ipcRenderer.send(IpcChannels.actions.stop.request);
   }
 
   reset(opts: TriggerOptions) {

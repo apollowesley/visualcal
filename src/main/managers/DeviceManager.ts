@@ -6,6 +6,7 @@ import { Fluke45 } from '../../drivers/devices/digital-multimeters/Fluke45';
 import { Keysight34401A } from '../../drivers/devices/digital-multimeters/Keysight34401A';
 import { Fluke5522A } from '../../drivers/devices/multi-product-calibrators/Fluke5522ADevice';
 import electronLog from 'electron-log';
+import { logToCurrentActionRun } from './current-action-log-handler';
 
 const log = electronLog.scope('DeviceManager');
 
@@ -35,8 +36,21 @@ export class DeviceManager extends TypedEmitter<Events> {
   private addDevice(deviceName: string, device: Device) {
     if (this.fDevices.has(deviceName)) throw new Error(`Device, ${deviceName}, already exists`);
     this.fDevices.set(deviceName, device);
-    device.on('stringReceived', (iface, data) => ipcMain.sendToAll(IpcChannels.device.onReadString, { interfaceName: iface.name, deviceName: device.name, data: data }));
-    device.on('write', (iface, data) => ipcMain.sendToAll(IpcChannels.device.onWrite, { interfaceName: iface.name, deviceName: device.name, data: data }));
+    device.on('stringReceived', (iface, data) => {
+      setImmediate(() => {
+        if (device.communicationInterface) logToCurrentActionRun({ interfaceName: device.communicationInterface.name, deviceName: deviceName, message: `Data received: ${data}`, data: data });
+        ipcMain.sendToAll(IpcChannels.device.onReadString, { interfaceName: iface.name, deviceName: device.name, data: data });
+      });
+    });
+    device.on('write', (iface, data) => {
+      setImmediate(() => {
+        if (device.communicationInterface) {
+          const dataString = new TextDecoder().decode(data);
+          logToCurrentActionRun({ interfaceName: device.communicationInterface.name, deviceName: deviceName, message: `Data sent: ${dataString}`, data: data });
+        }
+        ipcMain.sendToAll(IpcChannels.device.onWrite, { interfaceName: iface.name, deviceName: device.name, data: data });
+      });
+    });
   }
 
   get(driverName: 'Fluke 45', deviceName: string): Fluke45;

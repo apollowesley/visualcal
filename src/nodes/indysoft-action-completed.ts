@@ -1,6 +1,5 @@
 import { NodeProperties } from 'node-red';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
-import { StopOptions } from '../main/managers/ActionManager';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
 
 export const NODE_TYPE = 'indysoft-action-completed';
@@ -11,7 +10,7 @@ module.exports = (RED: NodeRed) => {
     const reset = () => {
       this.status({});
     };
-    this.on('input', (msg: VisualCalNodeRedNodeInputMessage, _send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+    this.on('input', async (msg: VisualCalNodeRedNodeInputMessage, _send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       if (!msg.payload || !msg.payload.runId) {
         this.error('Message missing payload', msg);
         if (done) done();
@@ -25,11 +24,7 @@ module.exports = (RED: NodeRed) => {
         if (done) done();
         return;
       }
-      const opts: StopOptions = {
-        runId: msg.payload.runId ? msg.payload.runId : 'unknown'
-      }
-      startNode.runtime.emit('stop', opts);
-      global.visualCal.actionManager.stateChanged(startNode.runtime, 'completed');
+      await global.visualCal.actionManager.complete();
       this.status({
         fill: 'blue',
         shape: 'dot',

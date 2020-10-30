@@ -191,6 +191,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     if (this.fCurrentStartActionNode) throw new Error(`An action is already running, ${this.fCurrentStartActionNode.runtime.section} - ${this.fCurrentStartActionNode.runtime.name}`);
     this.fCurrentStartActionNode = this.getActionStartNode(sectionName, actionName);
     if (!this.fCurrentStartActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
+    this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
     await this.fCurrentStartActionNode.runtime.start(runId);
     this.emit('sectionActionStarted', sectionName, actionName, runId);
   }
@@ -202,6 +203,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     const section = this.fCurrentStartActionNode.runtime.section.name;
     const action = this.fCurrentStartActionNode.runtime.name;
     await this.fCurrentStartActionNode.runtime.stop();
+    this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
     this.fCurrentStartActionNode = undefined;
     this.emit('sectionActionStopped', section, action);
   }

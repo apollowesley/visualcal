@@ -102,8 +102,8 @@ export class SerialInterface extends CommunicationInterface {
     });
   }
 
-  write(data: ArrayBuffer): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  write(data: ArrayBuffer) {
+    return new Promise<ArrayBufferLike>((resolve, reject) => {
       if (!this.fClient) return reject('client is undefined');
       const dataString = this.fTextDecoder.decode(data);
       this.fClient.write(`${dataString}\n`, (writeErr) => {
@@ -114,7 +114,9 @@ export class SerialInterface extends CommunicationInterface {
             return reject(drainErr);
           }
           log.info(`PrologixGpibUsbInterface.write`, dataString);
-          return resolve();
+          log.info(`Write`, dataString);
+          const actualWroteData = new TextEncoder().encode(dataString);
+          return resolve(actualWroteData);
         });
       });
     });

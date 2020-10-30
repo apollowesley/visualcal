@@ -1,4 +1,7 @@
 import { CommunicationInterface } from './CommunicationInterface';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('EmulatedCommunicationInterface');
 
 export class EmulatedCommunicationInterface extends CommunicationInterface {
 
@@ -25,8 +28,11 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
     return Promise.resolve(new TextEncoder().encode((Math.random() * 100.0).toString()));
   }
 
-  async write(data: ArrayBufferLike): Promise<void> {
-    await Promise.resolve();
+  async write(data: ArrayBufferLike) {
+    const dataStringWithoutTerminators = new TextDecoder().decode(data);
+    const dataString = dataStringWithoutTerminators + '\n';
+    log.info(`Write`, dataStringWithoutTerminators);
+    return Promise.resolve(data);
   } 
 
 }

@@ -188,7 +188,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     }
   }
 
-  abstract write(data: ArrayBufferLike): Promise<void>;
+  abstract write(data: ArrayBufferLike): Promise<ArrayBufferLike>;
   abstract read(): Promise<ArrayBufferLike>;
 
   protected async onBeforeWrite(data: ArrayBufferLike) {
@@ -205,19 +205,19 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
 
   async writeData(data: ArrayBufferLike) {
     await this.onBeforeWrite(data);
-    await this.write(data);
-    await this.onAfterWrite(data);
+    const actualWroteData = await this.write(data);
+    await this.onAfterWrite(actualWroteData);
   }
 
   protected async onBeforeRead() {
     if (this.delayBeforeRead) await sleep(this.delayBeforeRead);
-    this.emit('beforeRead', this);
+    setImmediate(() => this.emit('beforeRead', this));
     await Promise.resolve();
   }
 
   protected async onAfterRead(data: ArrayBufferLike) {
     if (this.delayAfterRead) await sleep(this.delayAfterRead);
-    this.emit('afterRead', this, data);
+    setImmediate(() => this.emit('afterRead', this, data));
     await Promise.resolve();
   }
 
@@ -225,12 +225,15 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await this.onBeforeRead();
     const data = await this.read();
     await this.onAfterRead(data);
+    setImmediate(() => this.emit('dataReceived', this, data));
     return data;
   }
 
   async readString(): Promise<string> {
     const data = await this.readData();
-    return new TextDecoder().decode(data);
+    const dataString = new TextDecoder().decode(data);
+    setImmediate(() => this.emit('stringReceived', this, dataString));
+    return dataString;
   }
 
   async writeInt8(data: number): Promise<void> {
