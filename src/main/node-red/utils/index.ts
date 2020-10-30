@@ -4,6 +4,7 @@ import path from 'path';
 import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
 import { DeviceManager, DriverName } from '../../managers/DeviceManager';
+import { NodeRedManager } from '../../managers/NodeRedManager';
 
 interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -41,7 +42,7 @@ export const getDeviceConfig = (unitId: string) => {
 
 const findNodesByDeviceConfigurationNode = (deviceConfigNodeId: string) => {
   const retVal: DeviceNodeProperties[] = [];
-  global.visualCal.nodeRed.app.nodes.eachNode(node => {
+  NodeRedManager.instance.nodeRed.nodes.eachNode(node => {
     const nodeAny = node as DeviceNodeProperties;
     if (nodeAny.deviceConfigId === deviceConfigNodeId) retVal.push(nodeAny);
     return retVal;
@@ -51,13 +52,13 @@ const findNodesByDeviceConfigurationNode = (deviceConfigNodeId: string) => {
 
 export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
   const retVal: DeviceNodeDriverRequirementsInfo[] = [];
-  global.visualCal.nodeRed.app.nodes.eachNode((node) => {
+  NodeRedManager.instance.nodeRed.nodes.eachNode((node) => {
     if (node.type === 'indysoft-device-configuration') {
       const configNode = node as DeviceConfigurationNode;
       const deviceNodes = findNodesByDeviceConfigurationNode(node.id);
       if (deviceNodes && deviceNodes.length > 0) {
         const firstDeviceNodeDefId = deviceNodes[0].deviceConfigId; // Only need the first since all device nodes are assumed to use a single device
-        const firstDeviceNode = global.visualCal.nodeRed.app.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
+        const firstDeviceNode = NodeRedManager.instance.nodeRed.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
         if (!firstDeviceNode) throw new Error(`Unable to locate node runtime for node id ${firstDeviceNodeDefId}`);
         const availableDrivers = getDriverInfosForDevice(configNode.unitId);
         const isGeneric = firstDeviceNode.deviceDriverRequiredCategories && firstDeviceNode.deviceDriverRequiredCategories.length > 0;
@@ -85,7 +86,7 @@ const getDriverInfosForDevice = (deviceName: string) => {
   if (!deviceConfigNode) return [];
   const deviceOwners = findNodesByDeviceConfigurationNode(deviceConfigNode.id);
   if (!deviceOwners) return [];
-  let deviceOwnerRuntimeNodes = deviceOwners.map(node => global.visualCal.nodeRed.app.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
+  let deviceOwnerRuntimeNodes = deviceOwners.map(node => NodeRedManager.instance.nodeRed.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
   if (!deviceOwnerRuntimeNodes) return [];
 
   const retVal: DriversPackageJsonDriver[] = [];
@@ -116,8 +117,8 @@ const getDriverInfosForDevice = (deviceName: string) => {
 
 export const getAllNodes = (): NodeRedRuntimeNode[] => {
   const retVal: NodeRedRuntimeNode[] = [];
-  global.visualCal.nodeRed.app.nodes.eachNode(np => {
-    const n = global.visualCal.nodeRed.app.nodes.getNode(np.id) as NodeRedRuntimeNode;
+  NodeRedManager.instance.nodeRed.nodes.eachNode(np => {
+    const n = NodeRedManager.instance.nodeRed.nodes.getNode(np.id) as NodeRedRuntimeNode;
     if (n && n.type !== 'tab') retVal.push(n);
   });
   return retVal;

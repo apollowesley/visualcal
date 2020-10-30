@@ -34,12 +34,13 @@ export class NodeRedManager extends TypedEmitter<Events> {
   public static get instance() { return NodeRedManager.fInstance; }
   private static fInstance = new NodeRedManager();
 
-  private fNodeRed?: NodeRedType;
   private fIsRunning = false;
 
   private constructor() {
     super();
   }
+
+  get nodeRed() { return RED as NodeRedType; }
 
   get isRunning() { return this.fIsRunning; }
 
@@ -48,17 +49,16 @@ export class NodeRedManager extends TypedEmitter<Events> {
       if (this.isRunning) return reject(new Error('Already running'));
       if (!server.expressInstance || !server.httpInstance) return reject('ExpressServer is not running');
       this.emit('starting');
-      this.fNodeRed = RED as NodeRedType;
-      this.fNodeRed.init(server.httpInstance, settings);
+      this.nodeRed.init(server.httpInstance, settings);
       nodeRedRequestHook(server.expressInstance);
-      server.expressInstance.use(settings.httpAdminRoot, global.visualCal.nodeRed.app.httpAdmin);
-      server.expressInstance.use(settings.httpNodeRoot, global.visualCal.nodeRed.app.httpNode);
+      server.expressInstance.use(settings.httpAdminRoot, NodeRedManager.instance.nodeRed.httpAdmin);
+      server.expressInstance.use(settings.httpNodeRoot, NodeRedManager.instance.nodeRed.httpNode);
       server.expressInstance.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-      if (!this.fNodeRed) {
+      if (!this.nodeRed) {
         await this.stop();
         return reject(new Error('node-red must be defined'));
       }
-      await this.fNodeRed.start();
+      await this.nodeRed.start();
       this.fIsRunning = true;
       this.emit('started');
       return resolve();
@@ -66,8 +66,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
   }
 
   async stop() {
-    if (this.fNodeRed) await this.fNodeRed.stop();
-    this.fNodeRed = undefined;
+    await this.nodeRed.stop();
     this.fIsRunning = false;
   }
 
@@ -75,9 +74,9 @@ export class NodeRedManager extends TypedEmitter<Events> {
    * Get all editor node definitions
    */
   get editorNodes() {
-    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
+    if (!this.nodeRed || !this.isRunning) throw new Error('Not running');
     const nodes: NodeRedFlowNode[] = [];
-    this.fNodeRed.nodes.eachNode((node => nodes.push(node as NodeRedFlowNode)));
+    this.nodeRed.nodes.eachNode((node => nodes.push(node as NodeRedFlowNode)));
     return nodes;
   }
 
@@ -85,12 +84,12 @@ export class NodeRedManager extends TypedEmitter<Events> {
    * Get all runtime nodes
    */
   get runtimeNodes() {
-    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
+    if (!this.nodeRed || !this.isRunning) throw new Error('Not running');
     const nodes: NodeRedRuntimeNode[] = [];
     const editorNodes = this.editorNodes;
     editorNodes.forEach(editorNode => {
-      if (!this.fNodeRed) throw new Error('Not running');
-      const runtimeNode = this.fNodeRed.nodes.getNode(editorNode.id);
+      if (!this.nodeRed) throw new Error('Not running');
+      const runtimeNode = this.nodeRed.nodes.getNode(editorNode.id);
       if (runtimeNode) {
         nodes.push(runtimeNode);
       }
@@ -173,13 +172,13 @@ export class NodeRedManager extends TypedEmitter<Events> {
    * @param deployType How node-red should deploy this flow
    */
   async loadFlow(flow: NodeRedFlow, deployType: DeployType = 'full') {
-    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
-    await this.fNodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRedManager.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
+    if (!this.isRunning) throw new Error('Not running');
+    await this.nodeRed.runtime.flows.setFlows({ flows: { flows: flow }, user: NodeRedManager.USER }, deployType); // TODO: node-red setFlows doesn't look right, even though this works
   }
 
   resetAllNodes() {
-    if (!this.fNodeRed || !this.isRunning) throw new Error('Not running');
-    this.fNodeRed.runtime.events.emit('reset');
+    if (!this.isRunning) throw new Error('Not running');
+    this.nodeRed.runtime.events.emit('reset');
   }
 
   startActionNode(sectionName: string, actionName: string, runId: string) {

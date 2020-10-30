@@ -4,7 +4,6 @@ import { isDev, isMac } from './utils';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
 import { SessionManager } from './managers/SessionManager';
-import { NodeRed } from '../@types/logic-server';
 import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
@@ -25,9 +24,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     logger: log,
     isMac: isMac(),
     isDev: isDev(),
-    nodeRed: {
-      app: RED as NodeRed
-    },
     config: {
       httpServer: {
         port: serverListenPort

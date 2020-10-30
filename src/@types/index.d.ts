@@ -105,9 +105,6 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   communicationInterfaceManager: import('../main/managers/CommunicationInterfaceManager').CommunicationInterfaceManager;
   dirs: VisualCalAugmentDirs;
   files: VisualCalAugmentFiles;
-  nodeRed: {
-    app: import('./logic-server').NodeRed;
-  };
 }
 
 interface VisualCalWindowAugment extends VisualCalAugment {

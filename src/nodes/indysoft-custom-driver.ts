@@ -89,7 +89,7 @@ function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: Cust
       this.status({ fill: 'red', shape: 'dot', text: 'Missing driver' });
       return;
     }
-    const commInterface = global.visualCal.nodeRed.app.settings.getCommunicationInterfaceForDevice(driverConfigEditorDef.unitId);
+    const commInterface = NodeRedManager.instance.nodeRed.settings.getCommunicationInterfaceForDevice(driverConfigEditorDef.unitId);
     if (!commInterface) {
       this.error(`Missing communication interface for device, ${driverConfigEditorDef.unitId}`);
       this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });

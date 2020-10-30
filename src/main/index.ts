@@ -21,6 +21,7 @@ import { ExpressServer } from './servers/express';
 import { getUserHomeDataPathDir, isDev } from './utils';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
 import { DriverBuilder } from './managers/DriverBuilder';
+import { NodeRedManager } from './managers/NodeRedManager';
 
 // *** TESTING NI-GPIB DRIVER ***
 // import IndySoftNIGPIB from 'indysoft-ni-gpib';
@@ -82,7 +83,6 @@ async function load() {
   log.info('Initializing Logic Server utils');
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
-  global.visualCal.nodeRed.app = RED as RealNodeRed;
   if (isDev()) initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }

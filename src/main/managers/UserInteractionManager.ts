@@ -2,13 +2,14 @@ import { EventEmitter } from 'events';
 import { ipcMain, dialog } from 'electron';
 import { IpcChannels } from '../../constants';
 import { WindowManager } from './WindowManager';
+import { NodeRedManager } from './NodeRedManager';
 
 export class UserInteractionManager extends EventEmitter {
 
   constructor() {
     super();
     ipcMain.on(IpcChannels.user.input.result, (_, result: UserInputResponse) => {
-      const node = global.visualCal.nodeRed.app.settings.findNodeById(result.nodeId);
+      const node = NodeRedManager.instance.nodeRed.settings.findNodeById(result.nodeId);
       if (!node) {
         dialog.showErrorBox('User Input Error', 'Unable to locate node that requested a response.');
         return;
