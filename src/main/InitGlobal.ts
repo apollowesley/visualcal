@@ -1,4 +1,3 @@
-import * as RED from 'node-red';
 import NodeRedSettings from './node-red-settings';
 import { isDev, isMac } from './utils';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
@@ -21,7 +20,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   const userManager = new UserManager();
 
   global.visualCal = {
-    logger: log,
     isMac: isMac(),
     isDev: isDev(),
     config: {
@@ -32,7 +30,6 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     dirs: localDirs,
     files: localFiles,
     log: {
-      result: (result: LogicResult<string, number>) => log.info('result', result),
       info: (msg: any) => log.info(msg),
       warn: (msg: any) => log.warn(msg),
       error: (msg: any) => log.error(msg)

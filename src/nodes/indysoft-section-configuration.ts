@@ -1,11 +1,9 @@
-import { NodeRed } from '../@types/logic-server';
+import { NodeRed, NodeRedRuntimeNode, NodeRedNodeUIProperties } from '../@types/logic-server';
 import { IndySoftNodeTypeNames } from '../constants';
-import { RuntimeNode, RuntimeProperties } from './indysoft-section-configuration-types';
 
 module.exports = (RED: NodeRed) => {
-  function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
+  function nodeConstructor(this: NodeRedRuntimeNode, config: NodeRedNodeUIProperties) {
     RED.nodes.createNode(this, config);
-    this.shortName = config.shortName;
   }
   RED.nodes.registerType(IndySoftNodeTypeNames.SectionConfiguration, nodeConstructor);
 };

@@ -244,9 +244,9 @@ export class WindowManager extends TypedEmitter<Events> {
       if (activeProcedureName) activeProcedure = await global.visualCal.procedureManager.getOne(activeProcedureName);
       let sections: SectionInfo[] | undefined = undefined;
       if (NodeRedManager.instance.isRunning) {
-        sections = NodeRedManager.instance.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+        sections = NodeRedManager.instance.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, actions: [] }; });
         sections.forEach(s => {
-          s.actions = NodeRedManager.instance.getActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+          s.actions = NodeRedManager.instance.getActionStartNodesForSection(s.name).map(a => { return { name: a.runtime.name }; });
         });
       }
       const initialLoadData: VisualCalWindowInitialLoadData = {

@@ -5,7 +5,6 @@ interface ActionStatus {
 
 interface SectionStatus {
   name: string;
-  shortName: string;
   actions: ActionStatus[];
 }
 

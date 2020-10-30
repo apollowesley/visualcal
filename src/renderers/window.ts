@@ -53,7 +53,6 @@ window.visualCal = {
     }
   },
   log: {
-    result: (result: LogicResult<string, number>) => ipcRenderer.send(IpcChannels.log.result, result),
     info: (msg: any) => ipcRenderer.send(IpcChannels.log.info, msg),
     warn: (msg: any) => ipcRenderer.send(IpcChannels.log.warn, msg),
     error: (msg: any) => ipcRenderer.send(IpcChannels.log.error, msg)

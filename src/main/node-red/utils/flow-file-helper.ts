@@ -1,9 +1,7 @@
 import fs from 'fs-extra';
 import { NodeRedFlowNode } from '../../../@types/node-red-info';
-import sanitizeDirectory from 'sanitize-filename';
 import { IndySoftNodeTypeNames } from '../../../constants';
 import { EditorNode as IndySoftActionStartEditorNode } from '../../../nodes/indysoft-action-start-types';
-import { EditorNode as IndySoftSectionConfigurationEditorNode } from '../../../nodes/indysoft-section-configuration-types';
 
 export default class FlowFileHelper {
 
@@ -26,7 +24,7 @@ export default class FlowFileHelper {
   }
 
   get sections() {
-    return this.nodes.filter(n => n.type === IndySoftNodeTypeNames.SectionConfiguration) as IndySoftSectionConfigurationEditorNode[];
+    return this.nodes.filter(n => n.type === IndySoftNodeTypeNames.SectionConfiguration) as NodeRedFlowNode[];
   }
 
   get actions() {
@@ -38,7 +36,7 @@ export default class FlowFileHelper {
   }
 
   findSection(shortName: string) {
-    return this.sections.find(s => s.shortName.toUpperCase() === shortName.toUpperCase());
+    return this.sections.find(s => s.name.toUpperCase() === shortName.toUpperCase());
   }
 
   getSectionActions(sectionShortName: string) {
@@ -50,12 +48,10 @@ export default class FlowFileHelper {
   addSection(name: string, generateId: () => string) {
     const existingSection = this.sections.find(n => n.name.toUpperCase() === name.toUpperCase());
     if (existingSection) throw new Error(`A section named "${name}" already exists`);
-    const shortName = sanitizeDirectory(name.replace(' ', ''));
-    const newSection: IndySoftSectionConfigurationEditorNode = {
+    const newSection: NodeRedFlowNode = {
       id: generateId(),
       disabled: false,
       name: name,
-      shortName: shortName,
       info: '',
       type: IndySoftNodeTypeNames.SectionConfiguration
     };

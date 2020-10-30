@@ -76,26 +76,13 @@ interface VisualCalAugment {
   isMac: boolean,
   config: VisualCalConfig;
   log: {
-    result(result: LogicResult): void;
     info(msg: any, ...args: any[]): void;
     warn(msg: any, ...args: any[]): void;
     error(msg: any, ...args: any[]): void;
   };
 }
 
-interface NodeRedUtils {
-  actions: {
-    trigger: (section: string, action: string) => void;
-    stop: (section: string, action: string) => void;
-    reset: (section: string, action: string) => void;
-  };
-  nodes: {
-    find: (name: string) => import('./logic-server').NodeRedRuntimeNode | undefined;
-  }
-}
-
 interface VisualCalGlobalAugment extends VisualCalAugment {
-  logger: import('electron-log').LogFunctions;
   procedureManager: import('../main/managers/ProcedureManager').ProcedureManager;
   sessionManager: import('../main/managers/SessionManager').SessionManager;
   actionManager: import('../main/managers/ActionManager').ActionManager;

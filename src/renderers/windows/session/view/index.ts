@@ -245,7 +245,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   } else {
     const startOpts: StartOptions = {
       actionId: action.name,
-      sectionId: section.shortName,
+      sectionId: section.name,
       runDescription: runName,
       session: session
     };

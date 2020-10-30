@@ -1,14 +1,16 @@
 import { NodeRedNodeUIProperties, NodeRedRuntimeNode } from '../@types/logic-server';
 import { NodeRedFlowNode } from '../@types/node-red-info';
-import { RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from './indysoft-section-configuration-types';
 
 export interface EditorNode extends NodeRedFlowNode {
   sectionConfigId: string;
 }
 
 export interface RuntimeNode extends NodeRedRuntimeNode {
-  section?: IndySoftSectionConfigurationRuntimeNode;
+  section?: NodeRedRuntimeNode;
   isRunning: boolean;
+  start: (runId?: string) => Promise<void>;
+  stop: () => Promise<void>;
+  reset: () => Promise<void>;
 }
 
 export interface RuntimeProperties extends NodeRedNodeUIProperties {

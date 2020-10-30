@@ -27,7 +27,6 @@ interface ActionInfo {
 
 interface SectionInfo {
   name: string;
-  shortName: string;
   actions: ActionInfo[];
 }
 

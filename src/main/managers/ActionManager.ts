@@ -88,7 +88,7 @@ export class ActionManager extends TypedEmitter<Events> {
     } else {
       await global.visualCal.communicationInterfaceManager.connectAll();
     }
-    NodeRedManager.instance.startActionNode(opts.sectionId, opts.actionId, run.id);
+    await NodeRedManager.instance.startAction(opts.sectionId, opts.actionId, run.id);
     this.emit('actionStarted', opts);
     return run;
   }
@@ -99,9 +99,7 @@ export class ActionManager extends TypedEmitter<Events> {
     }
     await global.visualCal.communicationInterfaceManager.disconnectAll();
     if (!opts) return;
-    const run = RunManager.instance.getOne(opts.runId);
-    if (!run) return;
-    NodeRedManager.instance.stopActionNode(run.sectionId, run.actionId);
+    await NodeRedManager.instance.stopCurrentAction();
     RunManager.instance.stopRun(opts.runId);
     this.emit('actionStopped', opts);
   }

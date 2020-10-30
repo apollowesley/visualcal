@@ -19,7 +19,7 @@ module.exports = (RED: NodeRed) => {
       }
       this.name = config.name;
       // Notify our start action node that we've completed
-      const startNode = NodeRedManager.instance.visualCalActionStartNodes.find(n => n.runtime.section && msg.payload && n.runtime.section.shortName === msg.payload.section && n.runtime.name === msg.payload.action);
+      const startNode = NodeRedManager.instance.visualCalActionStartNodes.find(n => n.runtime.section && msg.payload && n.runtime.section.name === msg.payload.section && n.runtime.name === msg.payload.action);
       if (!startNode) {
         this.error('Unable to locate start node');
         if (done) done();

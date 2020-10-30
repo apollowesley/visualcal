@@ -1,5 +1,6 @@
 import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions } from '../@types/logic-server';
+import { CancelActionReason, NodeRedManager } from '../main/managers/NodeRedManager';
 
 export const NODE_TYPE = 'indysoft-user-input';
 
@@ -66,6 +67,8 @@ module.exports = (RED: NodeRed) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.currentMessage.payload as any).value = options.result;
         this.send(this.currentMessage);
+      } else {
+        NodeRedManager.instance.cancelCurrentAction(CancelActionReason.user);
       }
       this.currentMessage = undefined;
     });

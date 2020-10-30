@@ -5,11 +5,14 @@ import { NodeRed as NodeRedType, NodeRedRuntimeNode, NodeResetOptions, Settings 
 import { NodeRedFlow, NodeRedFlowNode } from '../../../@types/node-red-info';
 import { IndySoftNodeTypeNames } from '../../../constants';
 import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../../nodes/indysoft-action-start-types';
-import { EditorNode as IndySoftSectionConfigurationEditorNode, RuntimeNode as IndySoftSectionConfigurationRuntimeNode } from '../../../nodes/indysoft-section-configuration-types';
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../../nodes/procedure-sidebar-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../../servers/express';
+
+export const enum CancelActionReason {
+  user
+}
 
 export interface CustomDriverConfigurationNodeEditorDefinition extends NodeRedFlowNode {
   unitId: string;
@@ -25,6 +28,7 @@ interface Events {
   sectionActionStarted: (sectionName: string, actionName: string, runId: string) => void;
   sectionActionStopped: (sectionName: string, actionName: string) => void;
   sectionActionReset: (sectionName: string, actionName: string) => void;
+  sectionActionCancelled: (sectionName: string, actionName: string, reason: CancelActionReason, reasonText?: string) => void;
 }
 
 export class NodeRedManager extends TypedEmitter<Events> {
@@ -143,20 +147,20 @@ export class NodeRedManager extends TypedEmitter<Events> {
     return undefined;
   }
 
-  get visualCalSectionConfigurationNodes() { return this.findTypedNodesByType<IndySoftSectionConfigurationEditorNode, IndySoftSectionConfigurationRuntimeNode>(IndySoftNodeTypeNames.SectionConfiguration); }
+  get visualCalSectionConfigurationNodes() { return this.findTypedNodesByType<NodeRedFlowNode, NodeRedRuntimeNode>(IndySoftNodeTypeNames.SectionConfiguration); }
 
   get visualCalActionStartNodes() { return this.findTypedNodesByType<IndySoftActionStartEditorNode, IndySoftActionStartRuntimeNode>(IndySoftNodeTypeNames.ActionStart); }
 
   getActionStartNodesForSection = (sectionName: string) => {
     let actionStartNodes = this.visualCalActionStartNodes;
-    actionStartNodes = actionStartNodes.filter(n => n.runtime.section !== undefined && n.runtime.section.shortName.toLocaleUpperCase() === sectionName.toLocaleUpperCase());
+    actionStartNodes = actionStartNodes.filter(n => n.runtime.section !== undefined && n.runtime.section.name.toLocaleUpperCase() === sectionName.toLocaleUpperCase());
     return actionStartNodes;
   }
 
   get sections() {
-    const sections: SectionInfo[] = this.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+    const sections: SectionInfo[] = this.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, actions: [] }; });
     sections.forEach(s => {
-      s.actions = this.getActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+      s.actions = this.getActionStartNodesForSection(s.name).map(a => { return { name: a.runtime.name }; });
     });
     return sections;
   }
@@ -181,27 +185,34 @@ export class NodeRedManager extends TypedEmitter<Events> {
     this.nodeRed.runtime.events.emit('reset');
   }
 
-  startActionNode(sectionName: string, actionName: string, runId: string) {
-    const startActionNode = this.getActionStartNode(sectionName, actionName);
-    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
-    if (startActionNode.runtime.isRunning) throw new Error('Already running');
-    startActionNode.runtime.emit('start', runId);
+  private fCurrentStartActionNode?: NodeRedTypedNode<IndySoftActionStartEditorNode, IndySoftActionStartRuntimeNode>;
+
+  async startAction(sectionName: string, actionName: string, runId: string) {
+    if (this.fCurrentStartActionNode) throw new Error(`An action is already running, ${this.fCurrentStartActionNode.runtime.section} - ${this.fCurrentStartActionNode.runtime.name}`);
+    this.fCurrentStartActionNode = this.getActionStartNode(sectionName, actionName);
+    if (!this.fCurrentStartActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
+    await this.fCurrentStartActionNode.runtime.start(runId);
     this.emit('sectionActionStarted', sectionName, actionName, runId);
   }
 
-  stopActionNode(sectionName: string, actionName: string) {
-    const startActionNode = this.getActionStartNode(sectionName, actionName);
-    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
-    startActionNode.runtime.emit('stop');
-    this.emit('sectionActionStopped', sectionName, actionName);
+  async stopCurrentAction() {
+    await global.visualCal.communicationInterfaceManager.disconnectAll();
+    if (!this.fCurrentStartActionNode) return;
+    if (!this.fCurrentStartActionNode.runtime.section) throw new Error(`Start action node is missing its configuration node, ${this.fCurrentStartActionNode.id}`);
+    const section = this.fCurrentStartActionNode.runtime.section.name;
+    const action = this.fCurrentStartActionNode.runtime.name;
+    await this.fCurrentStartActionNode.runtime.stop();
+    this.fCurrentStartActionNode = undefined;
+    this.emit('sectionActionStopped', section, action);
   }
 
-  resetActionNode(sectionName: string, actionName: string) {
-    const startActionNode = this.getActionStartNode(sectionName, actionName);
-    if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
-    this.stopActionNode(sectionName, actionName);
-    startActionNode.runtime.emit('reset');
-    this.emit('sectionActionReset', sectionName, actionName);
+  async cancelCurrentAction(reason: CancelActionReason, reasonText?: string) {
+    if (!this.fCurrentStartActionNode) return;
+    if (!this.fCurrentStartActionNode.runtime.section) return;
+    const section = this.fCurrentStartActionNode.runtime.section.name;
+    const action = this.fCurrentStartActionNode.runtime.name;
+    await this.stopCurrentAction();
+    this.emit('sectionActionCancelled', section, action, reason, reasonText);
   }
 
   /**
