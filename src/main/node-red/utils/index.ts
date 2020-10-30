@@ -39,11 +39,11 @@ export const getDeviceConfig = (unitId: string) => {
   return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
 }
 
-const findDeviceConfigurationNodeOwners = (configNodeId: string) => {
+const findNodesByDeviceConfigurationNode = (deviceConfigNodeId: string) => {
   const retVal: DeviceNodeProperties[] = [];
   global.visualCal.nodeRed.app.nodes.eachNode(node => {
     const nodeAny = node as DeviceNodeProperties;
-    if (nodeAny.deviceConfigId === configNodeId) retVal.push(nodeAny);
+    if (nodeAny.deviceConfigId === deviceConfigNodeId) retVal.push(nodeAny);
     return retVal;
   });
   return retVal;
@@ -54,7 +54,7 @@ export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
   global.visualCal.nodeRed.app.nodes.eachNode((node) => {
     if (node.type === 'indysoft-device-configuration') {
       const configNode = node as DeviceConfigurationNode;
-      const deviceNodes = findDeviceConfigurationNodeOwners(node.id);
+      const deviceNodes = findNodesByDeviceConfigurationNode(node.id);
       if (deviceNodes && deviceNodes.length > 0) {
         const firstDeviceNodeDefId = deviceNodes[0].deviceConfigId; // Only need the first since all device nodes are assumed to use a single device
         const firstDeviceNode = global.visualCal.nodeRed.app.nodes.getNode(firstDeviceNodeDefId) as NodeRedCommunicationInterfaceRuntimeNode;
@@ -83,7 +83,7 @@ const getDeviceDriverInfos = (opts?: { category: string; }) => {
 const getDriverInfosForDevice = (deviceName: string) => {
   const deviceConfigNode = findNodesByType('indysoft-device-configuration').find(node => (node as any).unitId.toUpperCase() === deviceName.toUpperCase());
   if (!deviceConfigNode) return [];
-  const deviceOwners = findDeviceConfigurationNodeOwners(deviceConfigNode.id);
+  const deviceOwners = findNodesByDeviceConfigurationNode(deviceConfigNode.id);
   if (!deviceOwners) return [];
   let deviceOwnerRuntimeNodes = deviceOwners.map(node => global.visualCal.nodeRed.app.nodes.getNode(node.id) as NodeRedCommunicationInterfaceRuntimeNode);
   if (!deviceOwnerRuntimeNodes) return [];
