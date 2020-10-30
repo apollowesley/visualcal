@@ -45,15 +45,15 @@ electronIpcLog((event: ElectronIpcLogEvent) => {
   log.info(...args);
 });
 
-function copyDemo(userHomeDataDirPath: string) {
+const copyDemo = async (userHomeDataDirPath: string) => {
   const demoDirPath = path.join(global.visualCal.dirs.base, 'demo');
   const demoDirExists = fs.existsSync(userHomeDataDirPath);
   if (demoDirExists) return;
-  fs.mkdirSync(userHomeDataDirPath, { recursive: true });
-  fsExtra.copySync(demoDirPath, userHomeDataDirPath, { recursive: true });
+  await fsPromises.mkdir(userHomeDataDirPath, { recursive: true });
+  await fsExtra.copy(demoDirPath, userHomeDataDirPath, { recursive: true });
 }
 
-async function ensureNodeRedNodeExamplesDirExists(appBaseDirPath: string) {
+const ensureNodeRedNodeExamplesDirExists = async (appBaseDirPath: string) => {
   if (isDev()) return; // We use the demo directory, in this repo, during dev.  So, prevent copying over the same directory/files.
   const nodeRedNodeExamplesDirPath = path.join(appBaseDirPath, 'node_modules', '@node-red', 'nodes', 'examples');
   if (!fs.existsSync(nodeRedNodeExamplesDirPath)) {
@@ -77,7 +77,7 @@ async function load() {
   initGlobal(appBaseDirPath, userHomeDataDirPath);
   await WindowManager.instance.ShowLoading();
   log.info('Ensuring demo exists in user folder');
-  copyDemo(userHomeDataDirPath);
+  await copyDemo(userHomeDataDirPath);
   VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
@@ -85,13 +85,14 @@ async function load() {
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   await nodeRedUtilsInit();
   global.visualCal.nodeRed.app = RED as RealNodeRed;
-  initIpcMonitor();
+  if (isDev()) initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }
 
 // TODO: TESTING ONLY!!!
 async function testingOnly() {
-  if (!isDev()) return;
+  // if (!isDev()) return; // Online needed when there's something to test here
+  return;
 }
 
 const run = async () => {
