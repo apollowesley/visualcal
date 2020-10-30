@@ -138,9 +138,9 @@ export class NodeRedManager extends TypedEmitter<Events> {
     return typedNodes;
   }
 
-  get visualCalProcedureSidebarNode() {
+  get procedureSidebarNode() {
     const procedureNodes = this.findTypedNodesByType<IndySoftProcedureSideBarEditorNode, IndySoftProcedureSidebarRuntimeNode>(IndySoftNodeTypeNames.Procedure);
-    if (procedureNodes) return procedureNodes[0];
+    if (procedureNodes && procedureNodes.length > 0) return procedureNodes[0];
     return undefined;
   }
 
@@ -148,22 +148,22 @@ export class NodeRedManager extends TypedEmitter<Events> {
 
   get visualCalActionStartNodes() { return this.findTypedNodesByType<IndySoftActionStartEditorNode, IndySoftActionStartRuntimeNode>(IndySoftNodeTypeNames.ActionStart); }
 
-  get visualCalSections() {
-    const sections: SectionInfo[] = this.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
-    sections.forEach(s => {
-      s.actions = this.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
-    });
-    return sections;
-  }
-
-  getVisualCalActionStartNodesForSection = (sectionName: string) => {
+  getActionStartNodesForSection = (sectionName: string) => {
     let actionStartNodes = this.visualCalActionStartNodes;
     actionStartNodes = actionStartNodes.filter(n => n.runtime.section !== undefined && n.runtime.section.shortName.toLocaleUpperCase() === sectionName.toLocaleUpperCase());
     return actionStartNodes;
   }
 
-  getVisualCalActionStartNode(sectionName: string, actionName: string) {
-    const nodes = this.getVisualCalActionStartNodesForSection(sectionName);
+  get sections() {
+    const sections: SectionInfo[] = this.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
+    sections.forEach(s => {
+      s.actions = this.getActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+    });
+    return sections;
+  }
+
+  getActionStartNode(sectionName: string, actionName: string) {
+    const nodes = this.getActionStartNodesForSection(sectionName);
     return nodes.find(n => n.runtime.name.toLocaleUpperCase() === actionName.toLocaleUpperCase());
   }
 
@@ -182,25 +182,25 @@ export class NodeRedManager extends TypedEmitter<Events> {
     this.fNodeRed.runtime.events.emit('reset');
   }
 
-  startVisualCalActionStartNode(sectionName: string, actionName: string, runId: string) {
-    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+  startActionNode(sectionName: string, actionName: string, runId: string) {
+    const startActionNode = this.getActionStartNode(sectionName, actionName);
     if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
     if (startActionNode.runtime.isRunning) throw new Error('Already running');
     startActionNode.runtime.emit('start', runId);
     this.emit('sectionActionStarted', sectionName, actionName, runId);
   }
 
-  stopVisualCalActionStartNode(sectionName: string, actionName: string) {
-    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+  stopActionNode(sectionName: string, actionName: string) {
+    const startActionNode = this.getActionStartNode(sectionName, actionName);
     if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
     startActionNode.runtime.emit('stop');
     this.emit('sectionActionStopped', sectionName, actionName);
   }
 
-  resetVisualCalActionStartNode(sectionName: string, actionName: string) {
-    const startActionNode = this.getVisualCalActionStartNode(sectionName, actionName);
+  resetActionNode(sectionName: string, actionName: string) {
+    const startActionNode = this.getActionStartNode(sectionName, actionName);
     if (!startActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
-    this.stopVisualCalActionStartNode(sectionName, actionName);
+    this.stopActionNode(sectionName, actionName);
     startActionNode.runtime.emit('reset');
     this.emit('sectionActionReset', sectionName, actionName);
   }

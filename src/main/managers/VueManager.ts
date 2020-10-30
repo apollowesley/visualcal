@@ -30,7 +30,7 @@ export class VueManager extends TypedEmitter<Events> {
           name: activeProcedure.name,
           authorOrganization: activeProcedure.authorOrganization,
           authors: activeProcedure.authors,
-          sections: NodeRedManager.instance.visualCalSections
+          sections: NodeRedManager.instance.sections
         }
         const response: SessionViewRequestResponseInfo = {
           procedure: procedure

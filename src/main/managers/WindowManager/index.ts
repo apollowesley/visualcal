@@ -246,7 +246,7 @@ export class WindowManager extends TypedEmitter<Events> {
       if (NodeRedManager.instance.isRunning) {
         sections = NodeRedManager.instance.visualCalSectionConfigurationNodes.map(n => { return { name: n.runtime.name, shortName: n.runtime.shortName, actions: [] }; });
         sections.forEach(s => {
-          s.actions = NodeRedManager.instance.getVisualCalActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
+          s.actions = NodeRedManager.instance.getActionStartNodesForSection(s.shortName).map(a => { return { name: a.runtime.name }; });
         });
       }
       const initialLoadData: VisualCalWindowInitialLoadData = {

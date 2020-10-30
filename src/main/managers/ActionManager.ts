@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { ActionState, IpcChannels, VisualCalWindow } from '../../constants';
-import { RuntimeNode as IndySoftActionStartRuntimeNode, TriggerOptions } from '../../nodes/indysoft-action-start-types';
+import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
 import { loadDevices } from '../node-red/utils';
 import { DeviceManager } from './DeviceManager';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
@@ -88,7 +88,7 @@ export class ActionManager extends TypedEmitter<Events> {
     } else {
       await global.visualCal.communicationInterfaceManager.connectAll();
     }
-    NodeRedManager.instance.startVisualCalActionStartNode(opts.sectionId, opts.actionId, run.id);
+    NodeRedManager.instance.startActionNode(opts.sectionId, opts.actionId, run.id);
     this.emit('actionStarted', opts);
     return run;
   }
@@ -101,7 +101,7 @@ export class ActionManager extends TypedEmitter<Events> {
     if (!opts) return;
     const run = RunManager.instance.getOne(opts.runId);
     if (!run) return;
-    NodeRedManager.instance.stopVisualCalActionStartNode(run.sectionId, run.actionId);
+    NodeRedManager.instance.stopActionNode(run.sectionId, run.actionId);
     RunManager.instance.stopRun(opts.runId);
     this.emit('actionStopped', opts);
   }

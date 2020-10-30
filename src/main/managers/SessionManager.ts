@@ -123,7 +123,7 @@ export class SessionManager extends TypedEmitter<Events> {
       if (throwOnError) throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
     }
     if (!procedure) return undefined;
-    const sections = NodeRedManager.instance.visualCalSections;
+    const sections = NodeRedManager.instance.sections;
     const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       user: user,

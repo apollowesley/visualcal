@@ -12,7 +12,7 @@
       <v-container>
         <v-row no-gutters>
           <v-col>
-            <h2>Interfaces</h2>
+            <h2>Results</h2>
           </v-col>
         </v-row>
         <v-row>
