@@ -85,6 +85,7 @@ const employeesModule = defineModule({
     setCurrentDriver(state, value: Driver) {
       const driverString = JSON.stringify(value);
       const driver = JSON.parse(driverString) as Driver;
+      state.currentDriver.instructionSets = [];
       state.currentDriver = driver;
     },
     setManufacturer(state, value: string) {
