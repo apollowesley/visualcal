@@ -4,7 +4,6 @@ import path from 'path';
 import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
 import { DeviceManager, DriverName } from '../../managers/DeviceManager';
-import { config } from 'mathjs';
 
 interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
