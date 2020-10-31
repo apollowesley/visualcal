@@ -106,7 +106,6 @@ status.on('stateChanged', (info) => updateStartStopActionButton(info));
 //  Main log handler
 // ================================================================================================
 const mainLog = new MainLogHandler({
-  clearButtonElementId: 'vc-clear-button',
   tableId: 'vc-session-log'
 });
 // ************************************************************************************************
@@ -115,7 +114,6 @@ const mainLog = new MainLogHandler({
 //  Device log handler
 // ================================================================================================
 const deviceLog = new DeviceLogHandler({
-  clearButtonElementId: 'vc-clear-device-log',
   tableId: 'vc-comm-interface-log'
 });
 // ************************************************************************************************
@@ -225,6 +223,8 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
   const section = procedure.sectionHandler.selectedItem;
   const action = procedure.actionHandler.selectedItem;
   const runName = procedure.runName ? procedure.runName : new Date().toUTCString();
+  mainLog.clear();
+  deviceLog.clear();
   if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;

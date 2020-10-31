@@ -3,6 +3,7 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
 import { IpcChannels, VisualCalWindow } from '../../constants';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
+import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
 import { DeviceManager } from './DeviceManager';
 import { CancelActionReason, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
@@ -42,7 +43,7 @@ export class ActionManager extends TypedEmitter<Events> {
 
     ipcMain.on(IpcChannels.actions.stop.request, async (event) => {
       try {
-        await this.stop();
+        await this.cancel(CancelActionReason.user, 'User clicked stop button');
         event.reply(IpcChannels.actions.stop.response);
       } catch (error) {
         event.reply(IpcChannels.actions.stop.error, { err: error });
@@ -55,11 +56,11 @@ export class ActionManager extends TypedEmitter<Events> {
 
   async start(opts: StartOptions) {
     this.fCurrentRun = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
-    await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
+    await CommunicationInterfaceManager.instance.loadFromSession(opts.session);
     NodeRedManager.instance.utils.loadDevices(opts.session);
     if (opts.interceptDeviceWrites) {
       for (const device of DeviceManager.instance.devices) {
-        device.once('writeCancelled', async () => await this.stop());
+        device.once('writeCancelled', async () => await this.cancel(CancelActionReason.user, 'User clicked stop button'));
         device.onBeforeWriteString = async (device, iface, data) => {
           return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
             ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
@@ -83,9 +84,9 @@ export class ActionManager extends TypedEmitter<Events> {
     if (opts.deviceConfig) {
       const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
       this.fUserManager.setDeviceConfigs(opts.session.username, opts.session.name, opts.deviceConfig);
-      await global.visualCal.communicationInterfaceManager.connectAll(interfaceNames);
+      await CommunicationInterfaceManager.instance.connectAll(interfaceNames);
     } else {
-      await global.visualCal.communicationInterfaceManager.connectAll();
+      await CommunicationInterfaceManager.instance.connectAll();
     }
     await NodeRedManager.instance.startAction(opts.sectionId, opts.actionId, this.fCurrentRun.id);
     this.emit('actionStarted', opts);
@@ -102,18 +103,22 @@ export class ActionManager extends TypedEmitter<Events> {
 
   async stop() {
     await NodeRedManager.instance.stopCurrentAction();
-    this.endCurrentRun(true);
     if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
-      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
+      const section = this.currentRun.sectionId;
+      const action = this.currentRun.actionId;
+      setImmediate(() => ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: section, action: action, state: 'stopped' }));
     }
+    this.endCurrentRun(true);
   }
 
   async cancel(reason: CancelActionReason, reasonText?: string) {
     await NodeRedManager.instance.cancelCurrentAction(reason, reasonText);
-    this.endCurrentRun(true);
     if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
-      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
+      const section = this.currentRun.sectionId;
+      const action = this.currentRun.actionId;
+      setImmediate(() => ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: section, action: action, state: 'stopped' }));
     }
+    this.endCurrentRun(false);
   }
 
   async complete() {

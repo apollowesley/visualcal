@@ -10,6 +10,7 @@ import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/b
 import { IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/bench-configuration';
 import { getSerialPorts } from '../../drivers/utils';
 import { logToCurrentActionRun } from './current-action-log-handler';
+import electronLog from 'electron-log';
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
@@ -25,14 +26,20 @@ interface Events {
   interfaceAfterWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
 }
 
+const log = electronLog.scope('CommunicationInterfaceManager');
+
 export class CommunicationInterfaceManager extends TypedEmitter<Events> {
+
+  public static get instance() { return CommunicationInterfaceManager.fInstance; }
+  private static fInstance = new CommunicationInterfaceManager();
 
   private fInterfaces: CommunicationInterface[];
 
-  constructor() {
+  private constructor() {
     super();
     this.fInterfaces = [];
     this.initIpcListeners();
+    log.info('Loaded');
   }
 
   add(communicationInterface: CommunicationInterface) {

@@ -6,6 +6,7 @@ import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/b
 import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo, Driver } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
+import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
 
 interface Events {
   connected: () => void;
@@ -38,7 +39,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
   async connect(info: CommunicationInterfaceConfigurationInfo) {
     if (this.fCommunicationInterface) throw new Error('Already connected');
     try {
-      this.fCommunicationInterface = global.visualCal.communicationInterfaceManager.createFromInfo(info);
+      this.fCommunicationInterface = CommunicationInterfaceManager.instance.createFromInfo(info);
       await this.fCommunicationInterface.connect();
     } catch (error) {
       await this.disconnect();

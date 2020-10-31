@@ -89,7 +89,6 @@ interface VisualCalGlobalAugment extends VisualCalAugment {
   userInteractionManager: import('../main/managers/UserInteractionManager').UserInteractionManager;
   assetManager: import('../main/managers/AssetManager').AssetManager;
   userManager: import('../main/managers/UserManager').UserManager;
-  communicationInterfaceManager: import('../main/managers/CommunicationInterfaceManager').CommunicationInterfaceManager;
   dirs: VisualCalAugmentDirs;
   files: VisualCalAugmentFiles;
 }

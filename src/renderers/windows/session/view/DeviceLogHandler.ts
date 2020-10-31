@@ -7,7 +7,6 @@ import { CommInterfaceLogEntry } from 'visualcal-common/dist/result';
 
 interface ConstructorOptions {
   tableId: string;
-  clearButtonElementId: string;
 }
 
 interface Events {
@@ -17,14 +16,10 @@ interface Events {
 export class DeviceLogHandler extends TypedEmitter<Events> {
 
   private fTable: Tabulator;
-  private fClearButtonElement: HTMLButtonElement;
   private fEntries: CommInterfaceLogEntry[] = [];
 
   constructor(opts: ConstructorOptions) {
     super();
-    this.fClearButtonElement = document.getElementById(opts.clearButtonElementId) as HTMLButtonElement;
-    this.fClearButtonElement.addEventListener('click', () => this.clear());
-
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
       layout: 'fitColumns',

@@ -5,6 +5,7 @@ import { DeviceNodeProperties } from '../../../@types/logic-nodes';
 import { DriversPackageJson, DriversPackageJsonDriver } from '../../../@types/drivers-package-json';
 import { DeviceManager, DriverName } from '../../managers/DeviceManager';
 import { NodeRedManager } from '../../managers/NodeRedManager';
+import { CommunicationInterfaceManager } from '../../managers/CommunicationInterfaceManager';
 
 interface DeviceCommunicationInterfaceNamePair {
   deviceName: string;
@@ -20,7 +21,7 @@ const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = []
 const getCommunicationInterfaceForDevice = (deviceName: string) => {
   const pair = deviceCommunicationInterfaces.find(dci => dci.deviceName.toLowerCase() === deviceName.toLowerCase());
   if (!pair) return undefined;
-  const ci = global.visualCal.communicationInterfaceManager.find(pair.communicationInterfaceName);
+  const ci = CommunicationInterfaceManager.instance.find(pair.communicationInterfaceName);
   return ci;
 };
 

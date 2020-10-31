@@ -1,4 +1,3 @@
-import NodeRedSettings from './node-red/settings';
 import { isDev, isMac } from './utils';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
@@ -7,11 +6,9 @@ import { ActionManager } from './managers/ActionManager';
 import { UserInteractionManager } from './managers/UserInteractionManager';
 import { AssetManager } from './managers/AssetManager';
 import { UserManager } from './managers/UserManager';
-import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronLog from 'electron-log';
-import { LogicResult } from 'visualcal-common/dist/result';
 
-const log = electronLog.scope('VisualCal');
+const log = electronLog.scope('global (PLEASE REMOVE)');
 
 export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
   globalWindowInfoInit(baseAppDirPath, userHomeDataDirPath);
@@ -39,8 +36,7 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     actionManager: new ActionManager(userManager),
     userInteractionManager: new UserInteractionManager(),
     assetManager: new AssetManager(),
-    userManager: userManager,
-    communicationInterfaceManager: new CommunicationInterfaceManager()
+    userManager: userManager
   };
 
 }

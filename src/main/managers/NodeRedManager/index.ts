@@ -12,6 +12,7 @@ import { ExpressServer } from '../../servers/express';
 import NodeRedVisualCalUtils from '../../node-red/utils';
 import electronLog from 'electron-log';
 import { DeviceManager } from '../DeviceManager';
+import { CommunicationInterfaceManager } from '../CommunicationInterfaceManager';
 
 export const enum CancelActionReason {
   user
@@ -210,7 +211,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     for (const device of DeviceManager.instance.devices) {
       device.onBeforeWriteString = undefined;
     }
-    await global.visualCal.communicationInterfaceManager.disconnectAll();
+    await CommunicationInterfaceManager.instance.disconnectAll();
     if (!this.fCurrentStartActionNode) return;
     if (!this.fCurrentStartActionNode.runtime.section) throw new Error(`Start action node is missing its configuration node, ${this.fCurrentStartActionNode.id}`);
     const section = this.fCurrentStartActionNode.runtime.section.name;

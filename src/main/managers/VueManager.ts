@@ -2,10 +2,13 @@ import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels, SessionViewRequestResponseInfo, Procedure } from 'visualcal-common/dist/session-view-info';
 import { NodeRedManager } from './NodeRedManager';
+import electronLog from 'electron-log';
 
 interface Events {
   loaded: () => void;
 }
+
+const log = electronLog.scope('VueManager');
 
 export class VueManager extends TypedEmitter<Events> {
 
@@ -15,7 +18,7 @@ export class VueManager extends TypedEmitter<Events> {
   private constructor() {
     super();
     this.emit('loaded');
-    console.info('Loaded');
+    log.info('Loaded');
     this.initIpcHandlers();
   }
 

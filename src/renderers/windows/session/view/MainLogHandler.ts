@@ -3,7 +3,6 @@ import Tabulator from 'tabulator-tables';
 
 interface ConstructorOptions {
   tableId: string;
-  clearButtonElementId: string;
 }
 
 interface Events {
