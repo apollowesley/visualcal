@@ -17,7 +17,7 @@ interface DeviceCommunicationInterfaceNamePair {
 let driversPackagejson: DriversPackageJson;
 const deviceCommunicationInterfaces: DeviceCommunicationInterfaceNamePair[] = [];
 
-export const getCommunicationInterfaceForDevice = (deviceName: string) => {
+const getCommunicationInterfaceForDevice = (deviceName: string) => {
   const pair = deviceCommunicationInterfaces.find(dci => dci.deviceName.toLowerCase() === deviceName.toLowerCase());
   if (!pair) return undefined;
   const ci = global.visualCal.communicationInterfaceManager.find(pair.communicationInterfaceName);
@@ -28,7 +28,7 @@ const clearDeviceCommunicationInterfaces = () => {
   deviceCommunicationInterfaces.length = 0;
 };
 
-export const getDriverForDevice = (deviceName: string) => {
+const getDriverForDevice = (deviceName: string) => {
   const device = deviceCommunicationInterfaces.find(d => d.deviceName.toLocaleUpperCase() === deviceName.toUpperCase());
   if (!device || !device.deviceDriver) return null;
   const deviceDriver = driversPackagejson.visualcal.drivers.devices.find(d => d.manufacturer === device.deviceDriver?.manufacturer && d.model === device.deviceDriver.deviceModel);
@@ -36,7 +36,7 @@ export const getDriverForDevice = (deviceName: string) => {
   return DeviceManager.instance.get(deviceDriver.displayName as DriverName, device.deviceName) as IControllableDevice;
 };
 
-export const getDeviceConfig = (unitId: string) => {
+const getDeviceConfig = (unitId: string) => {
   return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
 }
 
@@ -50,7 +50,7 @@ const findNodesByDeviceConfigurationNode = (deviceConfigNodeId: string) => {
   return retVal;
 };
 
-export const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
+const getDeviceConfigurationNodeInfosForCurrentFlow = () => {
   const retVal: DeviceNodeDriverRequirementsInfo[] = [];
   NodeRedManager.instance.nodeRed.nodes.eachNode((node) => {
     if (node.type === 'indysoft-device-configuration') {
@@ -115,7 +115,7 @@ const getDriverInfosForDevice = (deviceName: string) => {
   return retVal;
 };
 
-export const getAllNodes = (): NodeRedRuntimeNode[] => {
+const getAllNodes = (): NodeRedRuntimeNode[] => {
   const retVal: NodeRedRuntimeNode[] = [];
   NodeRedManager.instance.nodeRed.nodes.eachNode(np => {
     const n = NodeRedManager.instance.nodeRed.nodes.getNode(np.id) as NodeRedRuntimeNode;
@@ -124,11 +124,11 @@ export const getAllNodes = (): NodeRedRuntimeNode[] => {
   return retVal;
 };
 
-export const findNodesByType = (type: string): NodeRedRuntimeNode[] => {
+const findNodesByType = (type: string): NodeRedRuntimeNode[] => {
   return getAllNodes().filter(n => n.type.toLowerCase() === type.toLowerCase());
 };
 
-export const findNodeById = (id: string): NodeRedRuntimeNode | undefined => {
+const findNodeById = (id: string): NodeRedRuntimeNode | undefined => {
   return getAllNodes().find(n => n.id.toLowerCase() === id.toLowerCase());
 };
 
@@ -137,7 +137,7 @@ export const findNodeById = (id: string): NodeRedRuntimeNode | undefined => {
  * @param id The id of the node that hosts the configuration
  * @param configName The property name of the configuration id
  */
-export const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNode | undefined => {
+const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNode | undefined => {
   const node = findNodeById(id);
   // eslint-disable-next-line
   const configId = (node as any)[configName] as string | undefined;
@@ -145,7 +145,7 @@ export const getNodeConfig = (id: string, configName: string): NodeRedRuntimeNod
   return findNodeById(configId);
 };
 
-export const loadDevices = (session: Session) => {
+const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
   session.configuration.devices.forEach(deviceConfig => {
@@ -178,8 +178,19 @@ export const loadDevices = (session: Session) => {
   });
 }
 
-export const init = async () => {
+const init = async () => {
   const driversPackagejsonPath = path.join(global.visualCal.dirs.drivers.base, 'package.json');
   const driversPackageJsonString = (await fsPromises.readFile(driversPackagejsonPath)).toString();
   driversPackagejson = JSON.parse(driversPackageJsonString);
 };
+
+// Support legacy IndySoft nodes that still util this util module
+export default {
+  init,
+  getCommunicationInterfaceForDevice,
+  getDriverForDevice,
+  getDeviceConfig,
+  getDeviceConfigurationNodeInfosForCurrentFlow,
+  findNodeById,
+  loadDevices
+}

@@ -2,10 +2,11 @@ import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { DigitalMultimeterDevice, DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
 import { NodeLogManager } from '../main/managers/NodeLogManager';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 
-export const NODE_TYPE = 'indysoft-device-digital-multimeter';
+const NODE_TYPE = 'indysoft-device-digital-multimeter';
 
-export interface RuntimeProperties extends DeviceNodeProperties {
+interface RuntimeProperties extends DeviceNodeProperties {
   mode: string;
   samplesPerSecond: string;
   samplesPerSecondType: string;
@@ -17,7 +18,7 @@ export interface RuntimeProperties extends DeviceNodeProperties {
   preDelay: string;
 }
 
-export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
+interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   mode: string;
   samplesPerSecond: number;
   expectedInput: number;
@@ -28,7 +29,7 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   device?: DigitalMultimeterDevice;
 }
 
-export interface RuntimeNodeInputEventMessagePayload {
+interface RuntimeNodeInputEventMessagePayload {
   runId: string;
   section: string;
   action: string;
@@ -38,13 +39,13 @@ export interface RuntimeNodeInputEventMessagePayload {
   address?: number;
 }
 
-export interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {
+interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {
   emulated?: boolean;
   address?: number;
   payload?: RuntimeNodeInputEventMessagePayload;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.deviceDriverRequiredCategories = ['Digital Multimeter'];
@@ -72,17 +73,7 @@ module.exports = (RED: NodeRed) => {
     };
     this.on('input', async (msg: NodeRedNodeMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
-        if (!RED.settings.getCommunicationInterfaceForDevice) {
-          const errMsg = 'Node is not being used with a VisualCal server';
-          this.error(errMsg, msg);
-          this.status({
-            fill: 'red',
-            shape: 'dot',
-            text: errMsg
-          });
-          return;
-        }
-        this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
+        this.communicationInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;
           this.error(errMsg, msg);
@@ -95,7 +86,7 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
-        this.device = RED.settings.getDriverForDevice(this.deviceConfigNode.unitId) as DigitalMultimeterDevice;
+        this.device = NodeRedManager.instance.utils.getDriverForDevice(this.deviceConfigNode.unitId) as DigitalMultimeterDevice;
         if (!this.device) {
           const errMsg = `Could not find driver for device '${this.deviceConfigNode.unitId}'`;
           NodeLogManager.instance.error(this, new Error(errMsg));

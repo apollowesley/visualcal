@@ -14,9 +14,8 @@ import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';
 import { VueManager } from './managers/VueManager';
 import { WindowManager } from './managers/WindowManager';
-import VisualCalNodeRedSettings from './node-red-settings';
+import VisualCalNodeRedSettings from './node-red/settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
-import { init as nodeRedUtilsInit } from './node-red/utils';
 import { ExpressServer } from './servers/express';
 import { getUserHomeDataPathDir, isDev } from './utils';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
@@ -79,10 +78,9 @@ async function load() {
   await copyDemo(userHomeDataDirPath);
   VisualCalNodeRedSettings.userDir = path.join(global.visualCal.dirs.userHomeData.base, 'logic');
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
-  VisualCalNodeRedSettings.driversRoot = global.visualCal.dirs.drivers.base;
   log.info('Initializing Logic Server utils');
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
-  await nodeRedUtilsInit();
+  await NodeRedManager.instance.utils.init();
   if (isDev()) initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }

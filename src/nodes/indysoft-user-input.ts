@@ -2,9 +2,9 @@ import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions } from '../@types/logic-server';
 import { CancelActionReason, NodeRedManager } from '../main/managers/NodeRedManager';
 
-export const NODE_TYPE = 'indysoft-user-input';
+const NODE_TYPE = 'indysoft-user-input';
 
-export interface RuntimeProperties extends NodeProperties {
+interface RuntimeProperties extends NodeProperties {
   title: string;
   text: string;
   append?: string;
@@ -13,7 +13,7 @@ export interface RuntimeProperties extends NodeProperties {
   assetFilename?: string;
 }
 
-export interface RuntimeNode extends NodeRedRuntimeNode {
+interface RuntimeNode extends NodeRedRuntimeNode {
   title: string;
   text: string;
   append?: string;
@@ -23,7 +23,7 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   currentMessage?: VisualCalNodeRedNodeInputMessage;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.title = config.title;
@@ -35,7 +35,7 @@ module.exports = (RED: NodeRed) => {
     const resetStatus = () => {
       this.status({});
     };
-    this.on('input', async (msg: VisualCalNodeRedNodeInputMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+    this.on('input', async (msg: VisualCalNodeRedNodeInputMessage, _: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       if (!msg.payload || !msg.payload.section || !msg.payload.action) return;
       // We got an input directly from the previous node, so we need to send our info to the frontend and wait for a response
       this.currentMessage = msg;

@@ -38,7 +38,6 @@ export interface Settings {
   userDir: string;
   nodesDir: string | undefined;
   httpStatic?: string;
-  driversRoot: string;
   httpAdminRoot: string;
   httpNodeRoot: string;
   flowFile?: string;
@@ -48,13 +47,7 @@ export interface Settings {
   tcpMsgQueueSize?: number;
   currentProcedureShortName?: string;
   paletteCategories?: string[];
-  getCommunicationInterfaceForDevice: (deviceName: string) => ICommunicationInterface | undefined;
-  getDriverForDevice: (deviceName: string) => IControllableDevice | null;
-  getAllNodes(): NodeRedRuntimeNode[];
-  findNodesByType(type: string): NodeRedRuntimeNode[];
-  findNodeById(id: string): NodeRedRuntimeNode | undefined;
-  getNodeConfig(id: string, configName: string): NodeRedRuntimeNode | undefined;
-  functionGlobalContext: VisualCalContextGlobal;
+  functionGlobalContext?: unknown;
   logging?: NodeRedLogging;
   editorTheme?: {
     projects?: {

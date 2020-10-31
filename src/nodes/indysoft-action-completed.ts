@@ -2,9 +2,9 @@ import { NodeProperties } from 'node-red';
 import type { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions, NodeRed } from '../@types/logic-server';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
 
-export const NODE_TYPE = 'indysoft-action-completed';
+const NODE_TYPE = 'indysoft-action-completed';
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: NodeRedRuntimeNode, config: NodeProperties) {
     RED.nodes.createNode(this, config);
     const reset = () => {

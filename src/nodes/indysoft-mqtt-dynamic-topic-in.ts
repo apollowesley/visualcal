@@ -2,9 +2,9 @@ import { NodeProperties } from 'node-red';
 import { isUtf8 } from 'is-utf8';
 import { NodeRedRuntimeNode, NodeRed } from '../@types/logic-server';
 
-export const NODE_TYPE = 'indysoft-mqtt-dynamic-topic-in';
+const NODE_TYPE = 'indysoft-mqtt-dynamic-topic-in';
 
-export interface MqttBrokerNode extends NodeRedRuntimeNode {
+interface MqttBrokerNode extends NodeRedRuntimeNode {
   broker: string;
   connected: boolean;
   register(node: NodeRedRuntimeNode): void;
@@ -13,14 +13,14 @@ export interface MqttBrokerNode extends NodeRedRuntimeNode {
   unsubscribe(topic: string, ref: any, removed: boolean): void;
 }
 
-export interface RuntimeProperties extends NodeProperties {
+interface RuntimeProperties extends NodeProperties {
   topic: string;
   qos: number;
   brokerId: string;
   dataType: string;
 }
 
-export interface RuntimeNode extends NodeRedRuntimeNode {
+interface RuntimeNode extends NodeRedRuntimeNode {
   topic: string;
   qos: number;
   brokerId: string;
@@ -29,7 +29,7 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   onSubscribed(topic: string, payload: any, packet: { qos: number; retain: boolean }): void;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.topic = config.topic;

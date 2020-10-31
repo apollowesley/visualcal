@@ -1,4 +1,4 @@
-import NodeRedSettings from './node-red-settings';
+import NodeRedSettings from './node-red/settings';
 import { isDev, isMac } from './utils';
 import { init as globalWindowInfoInit, serverListenPort, dirs, files } from '../common/global-window-info';
 import { ProcedureManager } from './managers/ProcedureManager';
@@ -43,5 +43,4 @@ export const init = (baseAppDirPath: string, userHomeDataDirPath: string) => {
     communicationInterfaceManager: new CommunicationInterfaceManager()
   };
 
-  NodeRedSettings.functionGlobalContext.visualCal = global.visualCal;
 }

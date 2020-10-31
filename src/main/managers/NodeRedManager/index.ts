@@ -9,6 +9,8 @@ import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySo
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../../servers/express';
+import NodeRedVisualCalUtils from '../../node-red/utils';
+import electronLog from 'electron-log';
 
 export const enum CancelActionReason {
   user
@@ -31,6 +33,8 @@ interface Events {
   sectionActionCancelled: (sectionName: string, actionName: string, reason: CancelActionReason, reasonText?: string) => void;
 }
 
+const log = electronLog.scope('NodeRedManager');
+
 export class NodeRedManager extends TypedEmitter<Events> {
 
   public static readonly USER = 'VisualCal';
@@ -42,30 +46,35 @@ export class NodeRedManager extends TypedEmitter<Events> {
 
   private constructor() {
     super();
+    log.info('Loaded');
   }
 
   get nodeRed() { return RED as NodeRedType; }
 
+  get utils() { return NodeRedVisualCalUtils; }
+
   get isRunning() { return this.fIsRunning; }
 
   start(server: ExpressServer, settings: NodeRedSettings, nodeScriptsDirPath: string) {
-    return new Promise<Error | void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
+      log.info('Starting');
       if (this.isRunning) return reject(new Error('Already running'));
       if (!server.expressInstance || !server.httpInstance) return reject('ExpressServer is not running');
       this.emit('starting');
+      log.info('Initializing node-red');
       this.nodeRed.init(server.httpInstance, settings);
+      log.info('Initialized node-red');
       nodeRedRequestHook(server.expressInstance);
       server.expressInstance.use(settings.httpAdminRoot, NodeRedManager.instance.nodeRed.httpAdmin);
       server.expressInstance.use(settings.httpNodeRoot, NodeRedManager.instance.nodeRed.httpNode);
       server.expressInstance.use('/nodes-public', express.static(nodeScriptsDirPath)); // Some node-red nodes need external JS files, like indysoft-scalar-result needs quantities.js
-      if (!this.nodeRed) {
-        await this.stop();
-        return reject(new Error('node-red must be defined'));
-      }
-      await this.nodeRed.start();
-      this.fIsRunning = true;
-      this.emit('started');
-      return resolve();
+      log.info('Starting node-red');
+      this.nodeRed.start().then(() => {
+        this.fIsRunning = true;
+        this.emit('started');
+        log.info('Started node-red');
+        return resolve();
+      });
     });
   }
 

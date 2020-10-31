@@ -8,7 +8,7 @@ import electronLog from 'electron-log';
 import { getSubPath, defaultWindowConstructorOptions, coerceWindowConstructorOptions, setWindowSize, getWindowTitle } from './vue-helper';
 import { isDev } from '../../utils';
 import { ExpressServer } from '../../servers/express';
-import VisualCalNodeRedSettings from '../../node-red-settings';
+import VisualCalNodeRedSettings from '../../node-red/settings';
 import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
 import { DriverBuilder } from '../DriverBuilder';
 import { NodeRedManager } from '../NodeRedManager';

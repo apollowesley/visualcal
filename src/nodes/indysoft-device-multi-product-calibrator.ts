@@ -2,10 +2,11 @@ import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRed, DeviceConfigurationNode, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { MultiProductCalibratorDevice } from '../drivers/devices/multi-product-calibrators/MultiProductCalibrator';
 import { NodeLogManager } from '../main/managers/NodeLogManager';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 
-export const NODE_TYPE = 'indysoft-device-multi-product-calibrator';
+const NODE_TYPE = 'indysoft-device-multi-product-calibrator';
 
-export interface RuntimeProperties extends DeviceNodeProperties {
+interface RuntimeProperties extends DeviceNodeProperties {
   mode: string;
   amps?: string;
   volts?: string;
@@ -16,7 +17,7 @@ export interface RuntimeProperties extends DeviceNodeProperties {
   delayBefore?: string;
 }
 
-export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
+interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   mode: string;
   amps: number;
   volts: number;
@@ -28,7 +29,7 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   device?: MultiProductCalibratorDevice;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.deviceDriverRequiredCategories = ['Multi-Product Calibrator'];
@@ -55,7 +56,7 @@ module.exports = (RED: NodeRed) => {
     };
     this.on('input', async (msg: NodeRedNodeMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
-        this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
+        this.communicationInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;
           NodeLogManager.instance.error(this, new Error(errMsg));
@@ -69,7 +70,7 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
-        this.device = await RED.settings.getDriverForDevice(this.deviceConfigNode.unitId) as MultiProductCalibratorDevice;
+        this.device = await NodeRedManager.instance.utils.getDriverForDevice(this.deviceConfigNode.unitId) as MultiProductCalibratorDevice;
         if (!this.device) {
           const errMsg = `Could not find driver for device '${this.deviceConfigNode.unitId}'`;
           NodeLogManager.instance.error(this, new Error(errMsg));

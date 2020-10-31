@@ -4,7 +4,6 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { IpcChannels } from '../../constants';
 import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
-import { getDeviceConfigurationNodeInfosForCurrentFlow } from '../node-red/utils';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
 
@@ -69,7 +68,7 @@ export class SessionManager extends TypedEmitter<Events> {
 
     ipcMain.on(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.request, (event) => {
       try {
-        const retVal = getDeviceConfigurationNodeInfosForCurrentFlow();
+        const retVal = NodeRedManager.instance.utils.getDeviceConfigurationNodeInfosForCurrentFlow();
         event.reply(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.response, retVal);
       } catch (error) {
         event.reply(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.error, error);
@@ -124,7 +123,7 @@ export class SessionManager extends TypedEmitter<Events> {
     }
     if (!procedure) return undefined;
     const sections = NodeRedManager.instance.sections;
-    const deviceConfigurationNodeInfosForCurrentFlow = getDeviceConfigurationNodeInfosForCurrentFlow();
+    const deviceConfigurationNodeInfosForCurrentFlow = NodeRedManager.instance.utils.getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       user: user,
       session: activeSession,

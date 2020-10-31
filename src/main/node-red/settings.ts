@@ -1,21 +1,13 @@
-import * as path from 'path';
-import * as os from 'os';
-import type { Settings } from '../@types/logic-server';
-import { findNodeById, findNodesByType, getAllNodes, getCommunicationInterfaceForDevice, getDriverForDevice, getNodeConfig } from './node-red/utils';
+import path from 'path';
+import os from 'os';
+import type { Settings as NodeRedSettings } from '../../@types/logic-server';
 import electronLog from 'electron-log';
 
 const log = electronLog.scope('Logic server');
 
 // const levels = ['', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
 
-const settings: Settings = {
-  driversRoot: '',
-  findNodeById: findNodeById,
-  findNodesByType: findNodesByType,
-  getAllNodes: getAllNodes,
-  getCommunicationInterfaceForDevice: getCommunicationInterfaceForDevice,
-  getDriverForDevice: getDriverForDevice,
-  getNodeConfig: getNodeConfig,
+const settings: NodeRedSettings = {
   credentialSecret: 'IndySoft#927',
   paletteCategories: ['Actions', 'User', 'Results', 'Digital Multimeter', 'Multi Product Calibrator', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
   httpAdminRoot: '/red',  // set to false to disable editor and deploy
@@ -27,11 +19,11 @@ const settings: Settings = {
     palette: { editable: true },
     page: {
       title: 'VisualCal Logic Editor',
-      css: path.resolve(__dirname, '..', '..', 'node_modules', '@node-red-contrib-themes', 'midnight-red', 'theme.css')
+      css: path.resolve(__dirname, '..', '..', '..', 'node_modules', '@node-red-contrib-themes', 'midnight-red', 'theme.css')
     },
     header: {
       title: 'VisualCal - Logic Editor',
-      image: path.join(__dirname, '..', '..', 'public', 'indysoft-logo.svg'),
+      image: path.join(__dirname, '..', '..', '..', 'public', 'indysoft-logo.svg'),
       url: 'https://www.indysoft.com/assets/img/indysoft-logo_wht.svg'
     },
     menu: {
@@ -41,11 +33,8 @@ const settings: Settings = {
       }
     }
   },
-  nodesDir: path.resolve(__dirname, '..', 'nodes'),
-  functionGlobalContext: {
-    indySoftLogicServerVersion: '0.1.0',
-    visualCal: global.visualCal
-  },    // enables global context - add extras here if you need them
+  nodesDir: path.resolve(__dirname, '..', '..', 'nodes'),
+  functionGlobalContext: {},
   logging: {
     electronLog: {
       level: 'debug',

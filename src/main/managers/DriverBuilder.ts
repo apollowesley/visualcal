@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
 import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
-import { mod } from 'mathjs';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
 import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo, Driver } from 'visualcal-common/dist/driver-builder';

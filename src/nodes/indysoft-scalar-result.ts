@@ -5,11 +5,11 @@ import { v4 as uuid } from 'uuid';
 import { RunManager } from '../main/managers/RunManager';
 import { NumericMeasurement, LogicResult } from 'visualcal-common/dist/result';
 
-export const NODE_TYPE = 'indysoft-scalar-result';
+const NODE_TYPE = 'indysoft-scalar-result';
 
 const log = electronLog.scope(NODE_TYPE);
 
-export interface RuntimeProperties extends NodeProperties {
+interface RuntimeProperties extends NodeProperties {
   description: string;
   baseQuantity?: string;
   derivedQuantity?: string;
@@ -22,7 +22,7 @@ export interface RuntimeProperties extends NodeProperties {
   max: string;
 }
 
-export interface RuntimeNode extends NodeRedRuntimeNode {
+interface RuntimeNode extends NodeRedRuntimeNode {
   description: string;
   baseQuantity?: string;
   derivedQuantity?: string;
@@ -33,17 +33,17 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   max: number;
 }
 
-export interface InputMessagePayload {
+interface InputMessagePayload {
   runId: string;
   value: string | number | NumericMeasurement<string, number>;
   result?: LogicResult<string, number>; // Used for output message
 }
 
-export interface InputMessage extends NodeRedNodeMessage {
+interface InputMessage extends NodeRedNodeMessage {
   payload: InputMessagePayload;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.description = config.description;

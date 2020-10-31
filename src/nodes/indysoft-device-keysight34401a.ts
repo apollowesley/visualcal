@@ -2,13 +2,13 @@ import { DeviceNodeProperties } from '../@types/logic-nodes';
 import { NodeRedCommunicationInterfaceRuntimeNode, NodeRedNodeMessage, NodeRed, DeviceConfigurationNode, NodeRedNodeSendFunction, NodeRedNodeDoneFunction } from '../@types/logic-server';
 import { Keysight34401A } from '../drivers/devices/digital-multimeters/Keysight34401A';
 import { DigitalMultimeterMode } from '../drivers/devices/digital-multimeters/DigitalMultimeter';
-import { getDeviceConfig } from '../main/node-red/utils';
 import { DeviceManager } from '../main/managers/DeviceManager';
 import { NumericMeasurement } from 'visualcal-common/dist/result';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 
-export const NODE_TYPE = 'indysoft-device-keysight34401a';
+const NODE_TYPE = 'indysoft-device-keysight34401a';
 
-export interface RuntimeProperties extends DeviceNodeProperties {
+interface RuntimeProperties extends DeviceNodeProperties {
   mode: string;
   setRate: boolean;
   rate: string;
@@ -23,7 +23,7 @@ export interface RuntimeProperties extends DeviceNodeProperties {
   preDelay: string;
 }
 
-export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
+interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   mode: string;
   setRate: boolean;
   rate: number;
@@ -39,7 +39,7 @@ export interface RuntimeNode extends NodeRedCommunicationInterfaceRuntimeNode {
   acFilterHz: number;
 }
 
-export interface RuntimeNodeInputEventMessagePayload {
+interface RuntimeNodeInputEventMessagePayload {
   unitId?: string;
   rate?: number;
   range?: number;
@@ -48,11 +48,11 @@ export interface RuntimeNodeInputEventMessagePayload {
   value: NumericMeasurement<string, number>;
 }
 
-export interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {
+interface RuntimeNodeInputEventMessage extends NodeRedNodeMessage {
   payload?: RuntimeNodeInputEventMessagePayload;
 }
 
-module.exports = (RED: NodeRed) => {
+module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
     this.isDevice = true;
@@ -86,17 +86,7 @@ module.exports = (RED: NodeRed) => {
     this.device = DeviceManager.instance.get('Keysight 34401A', this.deviceConfigNode.unitId);
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       const handleInput = async () => {
-        if (!RED.settings.getCommunicationInterfaceForDevice) {
-          const errMsg = 'Node is not being used with a VisualCal server';
-          this.error(errMsg, msg);
-          this.status({
-            fill: 'red',
-            shape: 'dot',
-            text: errMsg
-          });
-          return;
-        }
-        this.communicationInterface = RED.settings.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
+        this.communicationInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(this.deviceConfigNode.unitId);
         if (!this.communicationInterface) {
           const errMsg = `Could not find interface for device '${this.deviceConfigNode.unitId}'`;
           this.error(errMsg, msg);
@@ -109,7 +99,7 @@ module.exports = (RED: NodeRed) => {
           if (done) done();
           return;
         }
-        const devConfig = getDeviceConfig(this.deviceConfigNode.unitId);
+        const devConfig = NodeRedManager.instance.utils.getDeviceConfig(this.deviceConfigNode.unitId);
         this.device.setCommunicationInterface(this.communicationInterface);
         try {
           const ibd = this.device as IControllableDevice;

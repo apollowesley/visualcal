@@ -1,10 +1,8 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
-import { ActionState, IpcChannels, VisualCalWindow } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
-import { RuntimeNode as IndySoftActionStartRuntimeNode } from '../../nodes/indysoft-action-start-types';
-import { loadDevices } from '../node-red/utils';
 import { DeviceManager } from './DeviceManager';
 import { NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
@@ -58,7 +56,7 @@ export class ActionManager extends TypedEmitter<Events> {
   async start(opts: StartOptions) {
     this.fCurrentRun = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
     await global.visualCal.communicationInterfaceManager.loadFromSession(opts.session);
-    loadDevices(opts.session);
+    NodeRedManager.instance.utils.loadDevices(opts.session);
     if (opts.interceptDeviceWrites) {
       for (const device of DeviceManager.instance.devices) {
         device.once('writeCancelled', async () => await this.stop());
