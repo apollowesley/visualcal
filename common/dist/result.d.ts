@@ -52,6 +52,7 @@ export interface LogicRunBasicInfo {
     startTimestamp: Date;
     stopTimestamp?: Date;
     description: string;
+    isCompleted?: boolean;
     notes?: Note[];
 }
 export interface CommInterfaceLogEntry {
@@ -59,8 +60,8 @@ export interface CommInterfaceLogEntry {
     timestamp?: Date;
     interfaceName: string;
     message: string;
-    data?: ArrayBuffer | string | number;
     error?: Error | string;
+    data?: ArrayBuffer | string | number;
     deviceName?: string;
 }
 export interface LogicRun<TRaw, TValue> extends LogicRunBasicInfo {

@@ -1,6 +1,6 @@
 import { NodeProperties } from 'node-red';
 import { NodeRedRuntimeNode, VisualCalNodeRedNodeInputMessage, NodeRed, NodeRedNodeSendFunction, NodeRedNodeDoneFunction, NodeResetOptions } from '../@types/logic-server';
-import { CancelActionReason, NodeRedManager } from '../main/managers/NodeRedManager';
+import { CancelActionReason } from '../main/managers/NodeRedManager';
 
 const NODE_TYPE = 'indysoft-user-input';
 
@@ -60,7 +60,7 @@ module.exports = function(RED: NodeRed) {
       });
       if (done) done();
     });
-    this.on('response', (options: UserInputResponse) => {
+    this.on('response', async (options: UserInputResponse) => {
       // We got a response from the frontend, or our original message is missing properties.  Either way, we're free to forward the message to the next node
       this.status({});
       if (!options.cancel && this.currentMessage) {
@@ -68,7 +68,7 @@ module.exports = function(RED: NodeRed) {
         (this.currentMessage.payload as any).value = options.result;
         this.send(this.currentMessage);
       } else {
-        NodeRedManager.instance.cancelCurrentAction(CancelActionReason.user);
+        await global.visualCal.actionManager.cancel(CancelActionReason.user);
       }
       this.currentMessage = undefined;
     });

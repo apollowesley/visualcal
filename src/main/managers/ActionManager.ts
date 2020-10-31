@@ -4,7 +4,7 @@ import { LogicRun } from 'visualcal-common/dist/result';
 import { IpcChannels, VisualCalWindow } from '../../constants';
 import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { DeviceManager } from './DeviceManager';
-import { NodeRedManager } from './NodeRedManager';
+import { CancelActionReason, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
 import { WindowManager } from './WindowManager';
@@ -93,19 +93,27 @@ export class ActionManager extends TypedEmitter<Events> {
     return this.fCurrentRun;
   }
 
-  async stop() {
-    await NodeRedManager.instance.stopCurrentAction();
-    await global.visualCal.communicationInterfaceManager.disconnectAll();
-    for (const device of DeviceManager.instance.devices) {
-      device.onBeforeWriteString = undefined;
-    }
+  private endCurrentRun(isCompleted = true) {
     if (!this.currentRun) return;
-    if (this.currentRun.sectionId && this.currentRun.actionId) {
-      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
-    }
-    RunManager.instance.stopRun(this.currentRun);
+    RunManager.instance.stopRun(this.currentRun, isCompleted);
     this.emit('actionStopped', this.currentRun.id);
     this.fCurrentRun = undefined;
+  }
+
+  async stop() {
+    await NodeRedManager.instance.stopCurrentAction();
+    this.endCurrentRun(true);
+    if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
+      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
+    }
+  }
+
+  async cancel(reason: CancelActionReason, reasonText?: string) {
+    await NodeRedManager.instance.cancelCurrentAction(reason, reasonText);
+    this.endCurrentRun(true);
+    if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
+      ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'stopped' });
+    }
   }
 
   async complete() {

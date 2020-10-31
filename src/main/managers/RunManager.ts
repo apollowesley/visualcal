@@ -89,9 +89,10 @@ export class RunManager extends TypedEmitter<Events> {
     return run;
   }
 
-  stopRun(run: LogicRun<string, number>) {
+  stopRun(run: LogicRun<string, number>, isCompleted = true) {
     if (!run) throw new Error('run argument is required');
     run.stopTimestamp = new Date();
+    run.isCompleted = isCompleted;
     this.setOne(run);
     setImmediate(() => {
       ipcMain.sendToAll(IpcChannels.runStopped, run.id);
