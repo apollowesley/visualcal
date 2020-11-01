@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 export declare const IpcChannels: {
     communicationInterface: {
         getLibrary: {
@@ -170,4 +171,10 @@ export interface Driver {
     terminator: string;
     instructionSets: InstructionSet[];
 }
+export interface StoreDriver {
+    driverManufacturer: string;
+    driverModel: string;
+    driverNomenclature: string;
+}
+export declare type StoreMongooseDriver = StoreDriver & mongoose.Document;
 export {};

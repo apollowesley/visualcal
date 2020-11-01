@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface IDriver {
-  driverManufacturer: string;
-  driverModel: string;
-  driverNomenclature: string;
-}
+import { StoreMongooseDriver } from 'visualcal-common/dist/driver-builder';
 
 interface DriverDoc extends mongoose.Document {
   driverManufacturer: string;
@@ -14,8 +9,8 @@ interface DriverDoc extends mongoose.Document {
 
 interface DriverModelInterface extends mongoose.Model<DriverDoc> {
   getAll(): Promise<DriverDoc[]>;
-  build(driver: IDriver): DriverDoc;
-  add(driver: IDriver): Promise<DriverDoc>;
+  build(driver: StoreMongooseDriver): DriverDoc;
+  add(driver: StoreMongooseDriver): Promise<DriverDoc>;
 }
 
 const driverSchema = new mongoose.Schema({
@@ -25,7 +20,7 @@ const driverSchema = new mongoose.Schema({
   driverNomenclature: { type: String, required: true }
 });
 
-driverSchema.statics.build = (driver: IDriver) => {
+driverSchema.statics.build = (driver: StoreMongooseDriver) => {
   return new Driver(driver);
 };
 
@@ -33,7 +28,7 @@ driverSchema.statics.getAll = async () => {
   return await Driver.find().exec();
 }
 
-driverSchema.statics.add = async (driver: IDriver & mongoose.Document) => {
+driverSchema.statics.add = async (driver: StoreMongooseDriver) => {
   const existing = await Driver.findOne({ _id: driver._id });
   if (existing) throw new Error('Driver already exists');
   const newDriver = Driver.build(driver);
