@@ -17,12 +17,12 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { v4 as uuid } from 'uuid';
-import { CustomInstruction, Instruction } from 'visualcal-common/src/driver-builder';
+import { Instruction } from 'visualcal-common/src/driver-builder';
 
 @Component
 export default class InstructionTableComponent extends Vue {
 
-  @Prop({ type: Array, required: true }) instructions!: CustomInstruction[];
+  @Prop({ type: Array, required: true }) instructions!: Instruction[];
 
   private fTable?: Tabulator;
 
@@ -37,14 +37,14 @@ export default class InstructionTableComponent extends Vue {
     return this.fTable;
   }
 
-  private async setData(instructions: CustomInstruction[]) {
+  private async setData(instructions: Instruction[]) {
     const stringCopy = JSON.stringify(instructions);
     const copy = JSON.parse(stringCopy);
     await this.table.setData(copy);
     this.table.redraw();
   }
 
-  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
+  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as Instruction; }
 
   private getIsResponseDataTypeEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
@@ -127,10 +127,10 @@ export default class InstructionTableComponent extends Vue {
 
   private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
-    const instructions: CustomInstruction[] = [];
+    const instructions: Instruction[] = [];
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
-      const instruction = row.getData() as CustomInstruction;
+      const instruction = row.getData() as Instruction;
       instruction.order = index;
       instructions.push(instruction);
     }
@@ -170,7 +170,7 @@ export default class InstructionTableComponent extends Vue {
         label: 'Delete',
         action: (_, row) => {
           this.table.deleteRow(row);
-          this.$emit('instruction-removed', row.getData() as CustomInstruction);
+          this.$emit('instruction-removed', row.getData() as Instruction);
         }
       }
     ];
@@ -185,7 +185,7 @@ export default class InstructionTableComponent extends Vue {
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),
       cellEdited: (cell) => {
-        const instruction = cell.getRow().getData() as CustomInstruction;
+        const instruction = cell.getRow().getData() as Instruction;
         this.$emit('instruction-updated', instruction);
         this.table.redraw();
       },
@@ -211,18 +211,13 @@ export default class InstructionTableComponent extends Vue {
     if (!event.dataTransfer) return;
     const instructionString = event.dataTransfer.getData('application/json');
     const instruction = JSON.parse(instructionString) as Instruction;
-    const customInstruction: CustomInstruction = {
-      ...instruction,
-      id: uuid(),
-      readAttempts: 1,
-      order: -1
-    }
-    await this.table.addData([customInstruction]);
-    this.$emit('instruction-added', customInstruction);
+    instruction.order = -1;
+    await this.table.addData([instruction]);
+    this.$emit('instruction-added', instruction);
   }
 
   async addNewInstruction() {
-    const newInstruction: CustomInstruction = {
+    const newInstruction: Instruction = {
       id: uuid(),
       order: this.table.getRows().length,
       name: 'Instruction',

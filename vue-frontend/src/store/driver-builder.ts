@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, CustomInstruction, Driver, Instruction, InstructionSet, Library } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
@@ -123,12 +123,12 @@ const employeesModule = defineModule({
       if (setIndex < 0) return;
       state.currentDriver.instructionSets.splice(setIndex, 1);
     },
-    addNewDriverInstructionToSet(state, opts: { instructionSetId: string, newInstruction: CustomInstruction }) {
+    addNewDriverInstructionToSet(state, opts: { instructionSetId: string, newInstruction: Instruction }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions.push({ ...opts.newInstruction });
     },
-    updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetId: string, instruction: CustomInstruction }) {
+    updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetId: string, instruction: Instruction }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
@@ -142,7 +142,7 @@ const employeesModule = defineModule({
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
     },
-    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: CustomInstruction, parameters?: CommandParameter[] }) {
+    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: Instruction, parameters?: CommandParameter[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
@@ -151,7 +151,7 @@ const employeesModule = defineModule({
       opts.parameters && opts.parameters.length > 0 ? instruction.parameters = opts.parameters : instruction.parameters = undefined;
       instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
     },
-    setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: CustomInstruction[] }) {
+    setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: Instruction[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions = opts.instructions;
@@ -214,6 +214,10 @@ const employeesModule = defineModule({
       await dispatch.refreshCommunicationInterfaceInfos();
       await dispatch.initCommunicationInterfaces();
 
+      await dispatch.refreshLibrary();
+    },
+    async refreshLibrary(context) {
+      const { commit } = actionContext(context);
       return new Promise<void>((resolve) => {
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.getLibrary.response, (_, library: Library) => {
           commit.setLibrary(library);
@@ -281,7 +285,7 @@ const employeesModule = defineModule({
     async disconnect() {
       window.electron.ipcRenderer.send(IpcChannels.communicationInterface.disconnect.request);
     },
-    async write(context, opts: { instruction: CustomInstruction, parameterArguments?: CommandParameterArgument[] }) {
+    async write(context, opts: { instruction: Instruction, parameterArguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
       return new Promise<void>((resolve, reject) => {
         let command = opts.instruction.command;
@@ -324,7 +328,7 @@ const employeesModule = defineModule({
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.read.request, info);
       });
     },
-    async queryString(context, opts: { instruction: CustomInstruction, parameterArguments?: CommandParameterArgument[] }) {
+    async queryString(context, opts: { instruction: Instruction, parameterArguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
       return new Promise<string>((resolve, reject) => {
         let command = opts.instruction.command;

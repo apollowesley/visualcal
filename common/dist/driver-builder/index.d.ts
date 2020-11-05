@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+export * from './store';
+import { DataType, InstructionParameterType, InstructionType } from './common';
 export declare const IpcChannels: {
     communicationInterface: {
         getLibrary: {
@@ -79,11 +80,9 @@ export interface WriteInfo extends CommunicationInterfaceActionInfo {
 export interface QueryStringInfo extends CommunicationInterfaceActionInfo {
     data: string;
 }
-declare type InstructionType = 'Read' | 'Write' | 'Query';
-declare type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
-declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
 /** An item for a command parameter when its type is set to "list" */
 export interface CommandParameterListItem {
+    id: string;
     text: string;
     value: string;
 }
@@ -129,6 +128,8 @@ export interface CommandParameterArgument {
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
 export interface Instruction {
     id: string;
+    /** The position this instruction exists in an InstructionSet. */
+    order?: number;
     /** The name for this instruction.  This helps differentiate one instruction from another when used in the same instruction set. */
     name: string;
     description?: string;
@@ -149,11 +150,6 @@ export interface Instruction {
     /** The optional command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
     parameters?: CommandParameter[];
 }
-/** Extended instruction with tracking information for use with custom commands. */
-export interface CustomInstruction extends Instruction {
-    id: string;
-    order: number;
-}
 /** Instructions mandated by IEEE 488.2 and SCPI */
 export declare const IEEE4882MandatedCommands: Instruction[];
 /** Instructions required by SCPI */
@@ -161,7 +157,7 @@ export declare const SCPIRequiredCommands: Instruction[];
 export interface InstructionSet {
     id: string;
     name: string;
-    instructions: CustomInstruction[];
+    instructions: Instruction[];
 }
 export interface Driver {
     manufacturer: string;
@@ -171,10 +167,3 @@ export interface Driver {
     terminator: string;
     instructionSets: InstructionSet[];
 }
-export interface StoreDriver {
-    driverManufacturer: string;
-    driverModel: string;
-    driverNomenclature: string;
-}
-export declare type StoreMongooseDriver = StoreDriver & mongoose.Document;
-export {};

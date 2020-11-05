@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { CustomInstruction } from 'visualcal-common/src/driver-builder';
+import { Instruction } from 'visualcal-common/src/driver-builder';
 
 @Component
 /**
@@ -45,7 +45,7 @@ export default class InstructionSetsTableComponent extends Vue {
     await this.instructionSetsTable.setData(this.instructionSets);
   }
 
-  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CustomInstruction; }
+  private getInstructionFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as Instruction; }
 
   private getCommandTypeEditorParams(): Tabulator.SelectParams {
     return {

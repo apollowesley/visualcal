@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { getHome } from './getHome';
 import { getAll as getAllDrivers, add as addDriver } from './DriverLibrary';
 import cors from 'cors';
+import { init as initWebSocketServer } from './SocketIo';
 
 dotEnvConfig();
 
@@ -22,6 +23,8 @@ app.use(bodyParser.json());
 app.get('/', getHome);
 app.get('/drivers', async (req, res) => await getAllDrivers(req, res));
 app.post('/drivers', async (req, res) => await addDriver(req, res));
+
+initWebSocketServer(server);
 
 server.listen(PORT, async () => {
   console.info(`Started listening on port ${PORT}`);

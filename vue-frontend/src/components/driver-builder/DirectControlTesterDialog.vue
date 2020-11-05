@@ -49,20 +49,20 @@
 </template>
 
 <script lang="ts">
-import { CommandParameter, CommandParameterArgument, CustomInstruction, InstructionSet } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
 
 interface InstructionParameterArgument {
-  instruction: CustomInstruction;
+  instruction: Instruction;
   parameter: CommandParameter;
   value: string | number | boolean;
 }
 
 interface InstructionResponse {
   timestamp: string;
-  instruction: CustomInstruction;
+  instruction: Instruction;
   response?: string | ArrayBufferLike;
 }
 
@@ -206,7 +206,7 @@ export default class DirectControlTesterDialog extends Vue {
     }
   }
 
-  async onTestInstruction(instruction: CustomInstruction, toggleIsTesting = true) {
+  async onTestInstruction(instruction: Instruction, toggleIsTesting = true) {
     if (toggleIsTesting) this.isTesting = true;
     let response: ArrayBufferLike | undefined = undefined;
     let responseString = '';

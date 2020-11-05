@@ -43,9 +43,11 @@
 </template>
 
 <script lang="ts">
-import { CommandParameter, CommandParameterListItem } from 'visualcal-common/src/driver-builder';
+import { CommandParameter } from 'visualcal-common/src/driver-builder';
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
+import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
+import { v4 as uuid } from 'uuid';
 
 @Component
 export default class CommandParameterListBuilderDialog extends Vue {
@@ -72,11 +74,24 @@ export default class CommandParameterListBuilderDialog extends Vue {
     if (this.commandParameter) this.table.setData(this.commandParameter.listItems);
   }
 
+  private createRowContextMenu(): (Tabulator.MenuObject<Tabulator.RowComponent> | Tabulator.MenuSeparator)[] {
+    const menu: Tabulator.RowContextMenuSignature = [
+      {
+        label: 'Delete',
+        action: (_, row) => {
+          this.table.deleteRow(row);
+        }
+      }
+    ];
+    return menu;
+  }
+
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
       layout: 'fitColumns',
-      columns: this.columns
+      columns: this.columns,
+      rowContextMenu: this.createRowContextMenu
     });
     this.fTable = table;
     return table;
@@ -89,6 +104,7 @@ export default class CommandParameterListBuilderDialog extends Vue {
 
   async onAddButtonClicked() {
     const newOption: CommandParameterListItem = {
+      id: uuid(),
       text: '',
       value: ''
     }

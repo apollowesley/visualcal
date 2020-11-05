@@ -181,7 +181,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
 import { Item, ItemInstruction } from '@/components/driver-builder/InstructionsAndTemplatesItemInterfaces';
-import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, CustomInstruction, InstructionSet } from 'visualcal-common/src/driver-builder';
+import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
@@ -212,9 +212,8 @@ import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/
 export default class DriverBuilderView extends Vue {
 
   shouldCommandBuilderDialogShow = false;
-  commandBuilderDialogInstruction: CustomInstruction = {
+  commandBuilderDialogInstruction: Instruction = {
     id: 'new',
-    order: 0,
     name: '',
     type: 'Write',
     command: 'Command?',
@@ -371,7 +370,7 @@ export default class DriverBuilderView extends Vue {
     }
   }
 
-  onCommandParametersBuilderDialogSave(instruction: CustomInstruction, parameters: CommandParameter[]) {
+  onCommandParametersBuilderDialogSave(instruction: Instruction, parameters: CommandParameter[]) {
     this.shouldCommandBuilderDialogShow = false;
     const instructionSet = this.$store.direct.state.driverBuilder.currentDriver.instructionSets[this.expandedInstructionSet];
     if (!instructionSet) return;
@@ -382,7 +381,7 @@ export default class DriverBuilderView extends Vue {
     });
   }
 
-  onInstructionTableComponentEditInstructionCommand(instruction: CustomInstruction) {
+  onInstructionTableComponentEditInstructionCommand(instruction: Instruction) {
     this.commandBuilderDialogInstruction = instruction;
     this.shouldCommandBuilderDialogShow = true;
   }
@@ -412,22 +411,22 @@ export default class DriverBuilderView extends Vue {
     this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet.id);
   }
 
-  onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: CustomInstruction) {
+  onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: Instruction) {
     this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({
       instructionSetId: instructionSet.id,
       newInstruction: newInstruction,
     });
   }
 
-  onInstructionTableComponentInstructionUpdated(instructionSet: InstructionSet, instruction: CustomInstruction) {
+  onInstructionTableComponentInstructionUpdated(instructionSet: InstructionSet, instruction: Instruction) {
     this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instruction: instruction });
   }
 
-  onInstructionTableComponentInstructionRemoved(instructionSet: InstructionSet, instruction: CustomInstruction) {
+  onInstructionTableComponentInstructionRemoved(instructionSet: InstructionSet, instruction: Instruction) {
     this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instructionId: instruction.id });
   }
 
-  async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: CustomInstruction[]) {
+  async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: Instruction[]) {
     this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet.id, instructions: instructions });
   }
 
@@ -443,6 +442,7 @@ export default class DriverBuilderView extends Vue {
 
   async saveDriver() {
     await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
+    await this.$store.direct.dispatch.driverBuilder.refreshLibrary();
   }
 
   clearDriver() {

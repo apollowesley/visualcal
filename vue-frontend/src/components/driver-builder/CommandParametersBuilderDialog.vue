@@ -51,10 +51,11 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { CustomInstruction, CommandParameter, CommandParameterListItem } from 'visualcal-common/src/driver-builder';
+import { Instruction, CommandParameter } from 'visualcal-common/src/driver-builder';
 import CommandParameterListBuilderDialog from '@/components/driver-builder/CommandParameterListBuilderDialog.vue';
 import { v4 as uuid } from 'uuid';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
+import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
 
 @Component({
   components: {
@@ -64,7 +65,7 @@ import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-he
 export default class CommandParametersBuilderDialogComponent extends Vue {
 
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
-  @Prop({ type: Object, required: true }) instruction!: CustomInstruction;
+  @Prop({ type: Object, required: true }) instruction!: Instruction;
 
   private fTable?: Tabulator;
   shouldShowCommandParameterListBuilderDialog = false;
@@ -112,12 +113,11 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     const rows = table.getRows();
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
-      const instruction = row.getData() as CustomInstruction;
+      const instruction = row.getData() as Instruction;
       instruction.order = index;
     }
     table.redraw(true);
   }
-
   private formatEditParameterListCellButton(cell: Tabulator.CellComponent) {
     const parameter = cell.getRow().getData() as CommandParameter;
     const isListType = parameter.type === 'list';

@@ -1,0 +1,13 @@
+node_modules
+dist
+.devcontainer
+.vscode
+.git
+.gitignore
+vue-frontend
+build
+bootstrap-studio
+bug-fixes
+public
+ni-gpib
+.editorconfig
