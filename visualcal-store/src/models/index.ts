@@ -1,4 +1,4 @@
-import { Driver } from './Driver';
+import { Driver } from './driver';
 import { InstructionSet } from './InstructionSet';
 import { Instruction } from './Instruction';
 import { CommandParameter } from './CommandParameter';

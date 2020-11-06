@@ -85,6 +85,11 @@
               <v-list-item-title>Edit</v-list-item-title>
             </v-list-item>
             <v-list-item
+              @click="saveDriverToStore"
+            >
+              <v-list-item-title>Save to store</v-list-item-title>
+            </v-list-item>
+            <v-list-item
               @click="removeDriverFromLibrary"
             >
               <v-list-item-title>Remove</v-list-item-title>
@@ -233,7 +238,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
 
       (modelFolder.children as Item[]).push({
         id: driver.id,
-        name: driver.name,
+        name: 'Driver',
         file: 'json'
       });
     }
@@ -282,6 +287,11 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
     if (!this.itemDriver) return;
     this.$store.direct.commit.driverBuilder.setCurrentDriver(this.itemDriver);
     this.itemDriver = undefined;
+  }
+
+  async saveDriverToStore() {
+    if (!this.itemDriver) return;
+    await this.$store.direct.dispatch.driverBuilder.saveDriverToStore(this.itemDriver);
   }
 
   async removeDriverFromLibrary() {

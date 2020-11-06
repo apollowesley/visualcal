@@ -13,7 +13,7 @@
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
       "env": {
-        "VUE_SERVER": "http://10.0.0.70:8080/vue"
+        "VUE_SERVER": "http://localhost:8080/vue"
       },
       "preLaunchTask": "npm: copydrivers:packagejson",
       "args": ["--disable-gpu"],
@@ -31,7 +31,7 @@
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
       "env": {
-        "VUE_SERVER": "http://10.0.0.70:8080/vue"
+        "VUE_SERVER": "http://localhost:8080/vue"
       },
       "preLaunchTask": "tsc: build - tsconfig.json - Windows",
       "args": ["--disable-gpu"],

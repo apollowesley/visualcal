@@ -11,7 +11,7 @@
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},
 
-	"appPort": ["3927:80"],
+	"appPort": ["3928:80"],
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [

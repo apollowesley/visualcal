@@ -1,22 +1,13 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { v4 as uuid } from 'uuid';
 import Axios from 'axios';
 
-interface OnlineStoreDriver {
-  _id: string;
-  id: string;
-  name: string;
-  driverManufacturer: string;
-  driverModel: string;
-  driverNomenclature: string;
-}
-
 interface OnlineStore {
-  drivers: OnlineStoreDriver[];
+  drivers: StoreDriver[];
 }
 
 export interface DriverBuilderState {
@@ -370,9 +361,13 @@ const employeesModule = defineModule({
     },
     async refreshOnlineStore(context) {
       const { commit } = actionContext(context);
-      const response = await Axios.get<OnlineStoreDriver[]>('https://visualcalstore.scottpage.us/drivers', { timeout: 1000 });
+      const response = await Axios.get<StoreDriver[]>('https://visualcalstore.scottpage.us/drivers', { timeout: 10000 });
       const drivers = response.data;
       commit.setOnlineStore({ drivers });
+    },
+    async saveDriverToStore(_, driver: Driver) {
+      const response = await Axios.post<StoreDriver>('https://visualcalstore.scottpage.us/drivers', driver, { timeout: 10000 });
+      console.info(response);
     }
   }
 });

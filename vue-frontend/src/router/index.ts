@@ -60,6 +60,11 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "view-results" */ '@/views/DriverBuilder.vue')
   },
   {
+    path: '/gridstacktest',
+    name: 'GridStackTest',
+    component: () => import(/* webpackChunkName: "view-gridstack-test" */ '@/views/GridStackTest.vue')
+  },
+  {
     path: '*',
     component: () => import(/* webpackChunkName: "view-no-route" */ '@/views/NoRoute.vue')
   }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { StoreDriver } from 'visualcal-common/dist/driver-builder';
+import { Driver, StoreDriver } from 'visualcal-common/dist/driver-builder';
 import models from './models';
 
 export const getAll = async (_: Request, res: Response) => {
@@ -7,10 +7,23 @@ export const getAll = async (_: Request, res: Response) => {
   return res.json(drivers);
 }
 
-export const add = async (req: Request, res: Response) => {
-  const bodyDriver = req.body as StoreDriver;
+export const add = async (req: Request<unknown, unknown, Driver>, res: Response<StoreDriver | Error>) => {
+  const bodyDriver = req.body;
   try {
-    const addedDriver = await models.Driver.add(bodyDriver);
+    let driver = await models.Driver.findOne({ driverManufacturer: bodyDriver.manufacturer, driverModel: bodyDriver.model, driverNomenclature: bodyDriver.nomenclature });
+    if (!driver) {
+      driver = await models.Driver.create();
+    }
+    driver.driverManufacturer = bodyDriver.manufacturer;
+    driver.driverModel = bodyDriver.manufacturer;
+    driver.driverNomenclature = bodyDriver.nomenclature;
+    driver.instructionSets = [];
+    bodyDriver.instructionSets.forEach(is => {
+      if (driver) {
+        driver.instructionSets.push();
+      }
+    });
+    const addedDriver = await models.Driver.add(driver);
     return res.json(addedDriver);
   } catch (error) {
     res.statusCode = 400;
