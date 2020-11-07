@@ -211,7 +211,7 @@ export default class DirectControlTesterDialog extends Vue {
     let response: ArrayBufferLike | undefined = undefined;
     let responseString = '';
     const commandParameterArgumentsTableData = this.commandArgumentsTable.getData() as InstructionParameterArgument[];
-    const thisInstructionCommandParameterArguments = commandParameterArgumentsTableData.filter(i => i.instruction.id === instruction.id);
+    const thisInstructionCommandParameterArguments = commandParameterArgumentsTableData.filter(i => i.instruction._id === instruction._id);
     const commandArguments: CommandParameterArgument[] = thisInstructionCommandParameterArguments.map(i => {
       return {
         parameter: i.parameter,

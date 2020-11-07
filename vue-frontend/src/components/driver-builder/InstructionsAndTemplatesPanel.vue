@@ -13,7 +13,7 @@
           :items="items"
           style="height: 92vh; width: 100%; background: white; font-size: 14px; max-height: 92vh; overflow-y: auto;"
           activatable
-          item-key="id"
+          item-key="_id"
           open-on-click
           dense
         >
@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import { Vue, Component, Watch, Prop } from "vue-property-decorator";
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 import { Driver, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
 import { Item } from './InstructionsAndTemplatesItemInterfaces';
 
@@ -154,11 +154,11 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
   refreshInstructionSetsCategory() {
     let instructionSetsCategory = (this.items as Item[]).find(i => i.name === 'Your Instruction Sets');
     let addCategory = instructionSetsCategory === undefined;
-    if (!instructionSetsCategory) instructionSetsCategory = { id: uuid(), name: 'Your Instruction Sets', children: [] };
+    if (!instructionSetsCategory) instructionSetsCategory = { _id: generateUuid(), name: 'Your Instruction Sets', children: [] };
     instructionSetsCategory.children = [];
     for (const instructionSet of this.instructionSets) {
       (instructionSetsCategory.children as unknown[]).push({
-        id: instructionSet.id,
+        _id: instructionSet._id,
         name: instructionSet.name,
         file: 'json',
         instructionSet: { ...instructionSet }
@@ -172,26 +172,26 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
     if (!driversCategory) return;
     driversCategory.children = [];
     for (const driver of this.drivers) {
-      let manufacturerItem = (driversCategory.children as Item[]).find(c => c.name === driver.manufacturer);
+      let manufacturerItem = (driversCategory.children as Item[]).find(c => c.name === driver.driverManufacturer);
       if (!manufacturerItem) {
         manufacturerItem = {
-          id: uuid(),
-          name: driver.manufacturer,
+          _id: generateUuid(),
+          name: driver.driverManufacturer,
           children: []
         };
         (driversCategory.children as Item[]).push(manufacturerItem);
       }
-      let modelItem = (manufacturerItem.children as Item[]).find(c => c.name === driver.model);
+      let modelItem = (manufacturerItem.children as Item[]).find(c => c.name === driver.driverModel);
       if (!modelItem) {
         modelItem = {
-          id: uuid(),
-          name: driver.model,
+          _id: generateUuid(),
+          name: driver.driverModel,
           children: []
         };
         (manufacturerItem.children as Item[]).push(modelItem);
       }
       const driverItem = {
-        id: uuid(),
+        _id: generateUuid(),
         name: 'Driver',
         file: 'json',
         driver: { ...driver }
@@ -203,13 +203,13 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
   refreshOnlineStoreCategory() {
     let onlineStoreCategory = (this.items as Item[]).find(i => i.name === 'Store');
     let addCategory = onlineStoreCategory === undefined;
-    if (!onlineStoreCategory) onlineStoreCategory = { id: uuid(), name: 'Store', children: [] };
+    if (!onlineStoreCategory) onlineStoreCategory = { _id: generateUuid(), name: 'Store', children: [] };
     onlineStoreCategory.children = [];
     for (const driver of this.$store.direct.state.driverBuilder.onlineStore.drivers) {
       let nomenclatureFolder = onlineStoreCategory.children ? (onlineStoreCategory.children as Item[]).find(c => c.name === driver.driverNomenclature) : undefined;
       if (!nomenclatureFolder) {
         nomenclatureFolder = {
-          id: driver._id,
+          _id: driver._id,
           name: driver.driverNomenclature,
           children: []
         };
@@ -219,7 +219,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
       let manufacturerFolder = nomenclatureFolder.children ? (nomenclatureFolder.children as Item[]).find(c => c.name === driver.driverManufacturer) : undefined;
       if (!manufacturerFolder) {
         manufacturerFolder = {
-          id: driver._id,
+          _id: driver._id,
           name: driver.driverManufacturer,
           children: []
         };
@@ -229,7 +229,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
       let modelFolder = manufacturerFolder.children ? (manufacturerFolder.children as Item[]).find(c => c.name === driver.driverModel) : undefined;
       if (!modelFolder) {
         modelFolder = {
-          id: driver._id,
+          _id: driver._id,
           name: driver.driverModel,
           children: []
         };
@@ -237,7 +237,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
       }
 
       (modelFolder.children as Item[]).push({
-        id: driver.id,
+        _id: driver._id,
         name: 'Driver',
         file: 'json'
       });

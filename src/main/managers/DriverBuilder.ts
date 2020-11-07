@@ -7,6 +7,7 @@ import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
+import { Types } from 'mongoose';
 
 interface Events {
   connected: () => void;
@@ -29,7 +30,6 @@ export class DriverBuilder extends TypedEmitter<Events> {
   private constructor() {
     super();
     log.info('Loaded');
-
   }
 
   get drivers() { return this.fStore.get('drivers', []); }
@@ -103,7 +103,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
 
   saveDriver(driver: Driver) {
     const drivers = this.drivers;
-    const existingDriverIndex = drivers.findIndex(d => d.manufacturer === driver.manufacturer && d.model === driver.model && d.nomenclature === driver.nomenclature);
+    const existingDriverIndex = drivers.findIndex(d => d.driverManufacturer === driver.driverManufacturer && d.driverModel === driver.driverModel && d.driverNomenclature === driver.driverNomenclature);
     if (existingDriverIndex > -1) {
       drivers[existingDriverIndex] = driver;
     } else {
@@ -113,15 +113,15 @@ export class DriverBuilder extends TypedEmitter<Events> {
   }
 
   getDriver(manufacturer: string, model: string) {
-    return this.drivers.find(d => d.manufacturer === manufacturer && d.model === model);
+    return this.drivers.find(d => d.driverManufacturer === manufacturer && d.driverModel === model);
   }
 
   getDriverIdentityInfos() {
     return this.drivers.map(d => {
       return {
-        manufacturer: d.manufacturer,
-        model: d.model,
-        nomenclature: d.nomenclature
+        manufacturer: d.driverManufacturer,
+        model: d.driverModel,
+        nomenclature: d.driverNomenclature
       }
     });
   }

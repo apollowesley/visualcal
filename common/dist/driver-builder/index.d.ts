@@ -1,5 +1,4 @@
-export * from './store';
-import { DataType, InstructionParameterType, InstructionType } from './common';
+import mongoose from 'mongoose';
 export declare const IpcChannels: {
     communicationInterface: {
         getLibrary: {
@@ -59,6 +58,9 @@ export declare const IpcChannels: {
         };
     };
 };
+export declare type InstructionType = 'Read' | 'Write' | 'Query';
+export declare type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
+export declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
 export interface Library {
     drivers: Driver[];
     instructionSets: InstructionSet[];
@@ -82,13 +84,13 @@ export interface QueryStringInfo extends CommunicationInterfaceActionInfo {
 }
 /** An item for a command parameter when its type is set to "list" */
 export interface CommandParameterListItem {
-    id: string;
+    _id: string;
     text: string;
     value: string;
 }
 /** Represents a text segment of a command (i.e. the main body of the command or an parameter).  The final command will be assembled from these parts.  Note that the main part must exist, and only one main part can exist. */
 export interface CommandParameter {
-    id: string;
+    _id: string;
     /** The parameter type.  This determines what is shown to the procedure developer when editing the node that represents it. */
     type: InstructionParameterType;
     /** The prompt to show the procedure developer for this parameter when editing the node that represents it. */
@@ -114,9 +116,9 @@ export interface CommandParameter {
     /** When this parameter's type is set to number, this is the value that will be the maximum number allowed for input. */
     max?: number;
     /** Whether or not to use the increment. */
-    useIncrement?: boolean;
+    useMinMaxIncrement?: boolean;
     /** The increment allowed between min and max. */
-    increment?: number;
+    minMaxIncrement?: number;
     /** The optional default value. */
     default?: string | number | boolean;
 }
@@ -127,7 +129,7 @@ export interface CommandParameterArgument {
 }
 /** An instruction, or command, that is sent to a device during a write or query.  The Instruction interface is intended for use with command templates.  See CustomInstruction for use when implementing the actual command in the builder. */
 export interface Instruction {
-    id: string;
+    _id: string;
     /** The position this instruction exists in an InstructionSet. */
     order?: number;
     /** The name for this instruction.  This helps differentiate one instruction from another when used in the same instruction set. */
@@ -155,15 +157,20 @@ export declare const IEEE4882MandatedCommands: Instruction[];
 /** Instructions required by SCPI */
 export declare const SCPIRequiredCommands: Instruction[];
 export interface InstructionSet {
-    id: string;
+    _id: string;
     name: string;
     instructions: Instruction[];
 }
 export interface Driver {
-    manufacturer: string;
-    model: string;
-    nomenclature: string;
+    driverManufacturer: string;
+    driverModel: string;
+    driverNomenclature: string;
     identityQueryCommand?: string;
     terminator: string;
     instructionSets: InstructionSet[];
 }
+export declare type StoreDriver = Driver & mongoose.Document;
+export declare type StoreInstructionSet = InstructionSet & mongoose.Document;
+export declare type StoreInstruction = Instruction & mongoose.Document;
+export declare type StoreCommandParameter = CommandParameter & mongoose.Document;
+export declare type StoreCommandParameterListItem = CommandParameterListItem & mongoose.Document;

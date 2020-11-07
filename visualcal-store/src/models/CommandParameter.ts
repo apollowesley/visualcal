@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
-import { StoreCommandParameter } from 'visualcal-common/dist/driver-builder';
+import { CommandParameter as CommandParameterInterface, StoreCommandParameter } from 'visualcal-common/dist/driver-builder';
+import { CommandParameterListItemSchema } from './CommandParameterListItem';
 
-const commandParameterSchema = new mongoose.Schema({
+export const CommandParameterSchema = new mongoose.Schema<CommandParameterInterface>({
   type: { type: String, required: true },
   prompt: { type: String, required: true },
   beforeText: { type: String, required: false },
   afterText: { type: String, required: false },
   required: { type: Boolean, required: false },
-  listItems: [{ type: mongoose.Schema.Types.ObjectId, required: true }],
   trueValue: { type: String, required: false },
   falseValue: { type: String, required: false },
   useMin: { type: Boolean, required: false },
@@ -16,28 +16,29 @@ const commandParameterSchema = new mongoose.Schema({
   max: { type: Number, required: false },
   useMinMaxIncrement: { type: Boolean, required: false },
   minMaxIncrement: { type: Number, required: false },
-  default: { type: mongoose.Schema.Types.Mixed, required: false }
+  default: { type: mongoose.Schema.Types.Mixed, required: false },
+  listItems: [{ type: CommandParameterListItemSchema, required: false }]
 });
 
 export interface CommandParameterStatic extends mongoose.Model<StoreCommandParameter> {
   getAll(): Promise<StoreCommandParameter[]>;
-  build(driver: StoreCommandParameter): StoreCommandParameter;
-  add(driver: StoreCommandParameter): Promise<StoreCommandParameter>;
+  build(driver: CommandParameterInterface): StoreCommandParameter;
+  add(driver: CommandParameterInterface): Promise<StoreCommandParameter>;
 }
 
-commandParameterSchema.statics.build = (parameter: StoreCommandParameter) => {
+CommandParameterSchema.statics.build = (parameter: CommandParameterInterface) => {
   return new CommandParameter(parameter);
 };
 
-commandParameterSchema.statics.getAll = async () => {
+CommandParameterSchema.statics.getAll = async () => {
   return await CommandParameter.find().exec();
 }
 
-commandParameterSchema.statics.add = async (parameter: StoreCommandParameter) => {
+CommandParameterSchema.statics.add = async (parameter: CommandParameterInterface) => {
   const existing = await CommandParameter.findOne({ _id: parameter._id });
   if (existing) throw new Error('Command parameter already exists');
   const newItem = CommandParameter.build(parameter);
   return newItem.save();
 }
 
-export const CommandParameter = mongoose.model<StoreCommandParameter, CommandParameterStatic>('CommandParameter', commandParameterSchema);
+export const CommandParameter = mongoose.model<StoreCommandParameter, CommandParameterStatic>('CommandParameter', CommandParameterSchema);

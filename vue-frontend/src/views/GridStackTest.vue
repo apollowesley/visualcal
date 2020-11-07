@@ -9,7 +9,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { GridStack } from 'gridstack';
 import 'gridstack/dist/gridstack.css';
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 
 @Component
 export default class GridStackTestView extends Vue {
@@ -38,9 +38,9 @@ export default class GridStackTestView extends Vue {
       gridElement.ondragend = () => table.redraw();
       gridElement.onresize = () => table.redraw();
       gridElement.appendChild(tableElement);
-      const data: { id: string, name: string }[] = [];
+      const data: { _id: string, name: string }[] = [];
       for (let index = 0; index < 11; index++) {
-        data.push({ id: uuid(), name: `Test ${index}` });
+        data.push({ _id: generateUuid(), name: `Test ${index}` });
       }
       await table.setData(data);
     }

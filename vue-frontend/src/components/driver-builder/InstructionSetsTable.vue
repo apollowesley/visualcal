@@ -136,6 +136,7 @@ export default class InstructionSetsTableComponent extends Vue {
     row.getElement().appendChild(holderElement);
 
     const instructionsTable = new Tabulator(tableElement, {
+      index: '_id',
       layout: 'fitDataStretch',
       movableRows: true,
       columns: [

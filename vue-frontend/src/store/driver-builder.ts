@@ -3,7 +3,7 @@ import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/be
 import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 import Axios from 'axios';
 
 interface OnlineStore {
@@ -31,9 +31,9 @@ const employeesModule = defineModule({
       instructionSets: [],
       drivers: [],
       currentDriver: {
-        manufacturer: '',
-        model: '',
-        nomenclature: '',
+        driverManufacturer: '',
+        driverModel: '',
+        driverNomenclature: '',
         identityQueryCommand: '*IDN?',
         terminator: 'Lf',
         instructionSets: []
@@ -80,13 +80,13 @@ const employeesModule = defineModule({
       state.currentDriver = driver;
     },
     setManufacturer(state, value: string) {
-      state.currentDriver.manufacturer = value;
+      state.currentDriver.driverManufacturer = value;
     },
     setModel(state, value: string) {
-      state.currentDriver.model = value;
+      state.currentDriver.driverModel = value;
     },
     setNomenclature(state, value: string) {
-      state.currentDriver.nomenclature = value;
+      state.currentDriver.driverNomenclature = value;
     },
     setIdentityQueryCommand(state, value?: string) {
       state.currentDriver.identityQueryCommand = value;
@@ -103,52 +103,52 @@ const employeesModule = defineModule({
         state.currentDriver.instructionSets.push(newInstructionSet);
       } else {
         state.currentDriver.instructionSets.push({
-          id: uuid(),
+          _id: generateUuid(),
           name: 'New Instruction Set',
           instructions: []
         });
       }
     },
     removeDriverInstructionSet(state, id: string) {
-      const setIndex = state.currentDriver.instructionSets.findIndex(i => i.id === id);
+      const setIndex = state.currentDriver.instructionSets.findIndex(i => i._id === id);
       if (setIndex < 0) return;
       state.currentDriver.instructionSets.splice(setIndex, 1);
     },
     addNewDriverInstructionToSet(state, opts: { instructionSetId: string, newInstruction: Instruction }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions.push({ ...opts.newInstruction });
     },
     updateDriverInstructionFromInstructionSet(state,  opts: { instructionSetId: string, instruction: Instruction }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
-      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
+      const instructionIndex = instructionSet.instructions.findIndex(i => i._id === opts.instruction._id);
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1, { ...opts.instruction });
     },
     removeDriverInstructionFromInstructionSet(state, opts: { instructionSetId: string, instructionId: string }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
-      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instructionId);
+      const instructionIndex = instructionSet.instructions.findIndex(i => i._id === opts.instructionId);
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
     },
     setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: Instruction, parameters?: CommandParameter[] }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
-      const instructionIndex = instructionSet.instructions.findIndex(i => i.id === opts.instruction.id);
+      const instructionIndex = instructionSet.instructions.findIndex(i => i._id === opts.instruction._id);
       if (instructionIndex <= -1) return;
       const instruction = instructionSet.instructions[instructionIndex];
       opts.parameters && opts.parameters.length > 0 ? instruction.parameters = opts.parameters : instruction.parameters = undefined;
       instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
     },
     setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: Instruction[] }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.instructionSetId);
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
       instructionSet.instructions = opts.instructions;
     },
-    renameInstructionSet(state, opts: { id: string, oldName: string, newName: string }) {
-      const instructionSet = state.currentDriver.instructionSets.find(i => i.id === opts.id);
+    renameInstructionSet(state, opts: { _id: string, oldName: string, newName: string }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts._id);
       if (!instructionSet) return;
       instructionSet.name = opts.newName;
     },
@@ -167,7 +167,7 @@ const employeesModule = defineModule({
       state.isSelectedCommunicationInterfaceConnected = value;
     },
     saveInstructionSetToLibrary(state, value: InstructionSet) {
-      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i.id === value.id);
+      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i._id === value._id);
       if (existingInstructionSetIndex > -1) {
         state.instructionSets[existingInstructionSetIndex] = value;
       } else {
@@ -175,17 +175,17 @@ const employeesModule = defineModule({
       }
     },
     removeInstructionSetFromLibrary(state, value: InstructionSet) {
-      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i.id === value.id);
+      const existingInstructionSetIndex = state.instructionSets.findIndex(i => i._id === value._id);
       if (existingInstructionSetIndex <= -1) return;
       state.instructionSets.splice(existingInstructionSetIndex, 1);
     },
     removeDriverFromLibrary(state, value: Driver) {
-      const existingDriverIndex = state.drivers.findIndex(i => i.manufacturer === value.manufacturer && i.model === value.model && i.nomenclature === value.nomenclature);
+      const existingDriverIndex = state.drivers.findIndex(i => i.driverManufacturer === value.driverManufacturer && i.driverModel === value.driverModel && i.driverNomenclature === value.driverNomenclature);
       if (existingDriverIndex <= -1) return;
       state.drivers.splice(existingDriverIndex, 1);
     },
     addOrReplaceDriverInLibrary(state, value: Driver) {
-      const existingDriverIndex = state.drivers.findIndex(i => i.manufacturer === value.manufacturer && i.model === value.model && i.nomenclature === value.nomenclature);
+      const existingDriverIndex = state.drivers.findIndex(i => i.driverManufacturer === value.driverManufacturer && i.driverModel === value.driverModel && i.driverNomenclature === value.driverNomenclature);
       if (existingDriverIndex > -1) {
         state.drivers[existingDriverIndex] = { ...value };
       } else {

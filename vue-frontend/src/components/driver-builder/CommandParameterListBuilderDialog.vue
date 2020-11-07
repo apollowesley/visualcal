@@ -47,7 +47,7 @@ import { CommandParameter } from 'visualcal-common/src/driver-builder';
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 
 @Component
 export default class CommandParameterListBuilderDialog extends Vue {
@@ -89,6 +89,7 @@ export default class CommandParameterListBuilderDialog extends Vue {
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
+      index: '_id',
       layout: 'fitColumns',
       columns: this.columns,
       rowContextMenu: this.createRowContextMenu
@@ -104,7 +105,7 @@ export default class CommandParameterListBuilderDialog extends Vue {
 
   async onAddButtonClicked() {
     const newOption: CommandParameterListItem = {
-      id: uuid(),
+      _id: generateUuid(),
       text: '',
       value: ''
     }

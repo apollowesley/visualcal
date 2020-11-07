@@ -121,7 +121,7 @@
             >
               <v-expansion-panel
                 v-for="instructionSet in driver.instructionSets"
-                :key="instructionSet.id"
+                :key="instructionSet._id"
                 class="grey"
                 dense
               >
@@ -187,7 +187,7 @@ import CommandParametersBuilderDialogComponent from "@/components/driver-builder
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
 import DirectControlComponent from "@/components/driver-builder/DirectControlComponent.vue";
 import DirectControlTesterDialog from "@/components/driver-builder/DirectControlTesterDialog.vue";
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/InstructionsAndTemplatesPanel.vue';
 
 // const MockDriver: Driver = {
@@ -213,58 +213,58 @@ export default class DriverBuilderView extends Vue {
 
   shouldCommandBuilderDialogShow = false;
   commandBuilderDialogInstruction: Instruction = {
-    id: 'new',
+    _id: 'new',
     name: '',
     type: 'Write',
     command: 'Command?',
   };
 
   shouldRenameInstructionSetDialogShow = false;
-  selectedRenameInstructionSet: InstructionSet = { id: uuid(), name: "", instructions: [] };
+  selectedRenameInstructionSet: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
 
   expandedInstructionSet = 0;
 
   shouldDirectControlTesterDialogShow = false;
-  selectedInstructionSetUnderTest: InstructionSet = { id: uuid(), name: "", instructions: [] };
+  selectedInstructionSetUnderTest: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
 
   rules: VuetifyRule[] = [requiredRule];
 
   items: Item[] = [
     {
-      id: uuid(),
+      _id: generateUuid(),
       name: 'Built-in',
       children: [
         {
-          id: uuid(),
+          _id: generateUuid(),
           name: "Instructions",
           children: [
-            { id: uuid(), name: "Digital Multimeter" },
-            { id: uuid(), name: "Signal Generator" },
-            { id: uuid(), name: "Waveform Generator" }
+            { _id: generateUuid(), name: "Digital Multimeter" },
+            { _id: generateUuid(), name: "Signal Generator" },
+            { _id: generateUuid(), name: "Waveform Generator" }
           ]
         },
         {
-          id: uuid(),
+          _id: generateUuid(),
           name: "Instruction Sets",
           children: []
         }
       ]
     },
     {
-      id: uuid(),
+      _id: generateUuid(),
       name: "Categories",
       children: [
         {
-          id: uuid(),
+          _id: generateUuid(),
           name: "Digital Multimeter",
           children: [
             {
-              id: uuid(),
+              _id: generateUuid(),
               name: 'Measure AC Volts',
               file: 'json'
             },
             {
-              id: uuid(),
+              _id: generateUuid(),
               name: 'Measure DC Volts',
               file: 'json'
             }
@@ -273,7 +273,7 @@ export default class DriverBuilderView extends Vue {
       ]
     },
     {
-      id: uuid(),
+      _id: generateUuid(),
       name: "Drivers",
       children: []
     }
@@ -291,21 +291,21 @@ export default class DriverBuilderView extends Vue {
   }
 
   get manufacturer() {
-    return this.driver.manufacturer;
+    return this.driver.driverManufacturer;
   }
   set manufacturer(value: string) {
     this.$store.direct.commit.driverBuilder.setManufacturer(value);
   }
 
   get model() {
-    return this.driver.model;
+    return this.driver.driverModel;
   }
   set model(value: string) {
     this.$store.direct.commit.driverBuilder.setModel(value);
   }
 
   get nomenclature() {
-    return this.driver.nomenclature;
+    return this.driver.driverNomenclature;
   }
   set nomenclature(value: string) {
     this.$store.direct.commit.driverBuilder.setNomenclature(value);
@@ -337,25 +337,25 @@ export default class DriverBuilderView extends Vue {
     if (!instructionsCategory) return;
     if (!instructionsCategory.children) instructionsCategory.children = [];
     const SCPIMandatedCategory: Item = {
-      id: uuid(),
+      _id: generateUuid(),
       name: 'IEEE 488.2 / SCPI Mandated',
       children: [],
     };
     IEEE4882MandatedCommands.forEach((c) => {
       const instruction: ItemInstruction = {
         ...c,
-        id: uuid(),
+        _id: generateUuid(),
         file: 'json',
       };
       if (SCPIMandatedCategory.children)
         SCPIMandatedCategory.children.push(instruction);
     });
     (instructionsCategory.children as Item[]).unshift(SCPIMandatedCategory);
-    const SCPIRequiredCategory: Item = { id: uuid(), name: 'SCPI Required', children: [] };
+    const SCPIRequiredCategory: Item = { _id: generateUuid(), name: 'SCPI Required', children: [] };
     SCPIRequiredCommands.forEach((c) => {
       const instruction: ItemInstruction = {
         ...c,
-        id: uuid(),
+        _id: generateUuid(),
         file: 'json',
       };
       if (SCPIRequiredCategory.children)
@@ -375,7 +375,7 @@ export default class DriverBuilderView extends Vue {
     const instructionSet = this.$store.direct.state.driverBuilder.currentDriver.instructionSets[this.expandedInstructionSet];
     if (!instructionSet) return;
     this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandParameters({
-      instructionSetId: instructionSet.id,
+      instructionSetId: instructionSet._id,
       instruction: instruction,
       parameters: parameters
     });
@@ -401,33 +401,33 @@ export default class DriverBuilderView extends Vue {
   }) {
     this.shouldRenameInstructionSetDialogShow = false;
     this.$store.direct.commit.driverBuilder.renameInstructionSet({
-      id: opts.originalInstructionSet.id,
+      _id: opts.originalInstructionSet._id,
       oldName: opts.originalInstructionSet.name,
       newName: opts.newName,
     });
   }
 
   removeInstructionSet(instructionSet: InstructionSet) {
-    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet.id);
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionSet(instructionSet._id);
   }
 
   onInstructionTableComponentInstructionAdded(instructionSet: InstructionSet, newInstruction: Instruction) {
     this.$store.direct.commit.driverBuilder.addNewDriverInstructionToSet({
-      instructionSetId: instructionSet.id,
+      instructionSetId: instructionSet._id,
       newInstruction: newInstruction,
     });
   }
 
   onInstructionTableComponentInstructionUpdated(instructionSet: InstructionSet, instruction: Instruction) {
-    this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instruction: instruction });
+    this.$store.direct.commit.driverBuilder.updateDriverInstructionFromInstructionSet({ instructionSetId: instructionSet._id, instruction: instruction });
   }
 
   onInstructionTableComponentInstructionRemoved(instructionSet: InstructionSet, instruction: Instruction) {
-    this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetId: instructionSet.id, instructionId: instruction.id });
+    this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetId: instructionSet._id, instructionId: instruction._id });
   }
 
   async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: Instruction[]) {
-    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet.id, instructions: instructions });
+    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet._id, instructions: instructions });
   }
 
   onTestInstructionSetButtonClicked(instructionSet: InstructionSet) {
@@ -447,9 +447,9 @@ export default class DriverBuilderView extends Vue {
 
   clearDriver() {
     this.driver = {
-      manufacturer: '',
-      model: '',
-      nomenclature: '',
+      driverManufacturer: '',
+      driverModel: '',
+      driverNomenclature: '',
       terminator: 'Lf',
       instructionSets: [],
       identityQueryCommand: ''

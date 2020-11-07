@@ -53,7 +53,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { Instruction, CommandParameter } from 'visualcal-common/src/driver-builder';
 import CommandParameterListBuilderDialog from '@/components/driver-builder/CommandParameterListBuilderDialog.vue';
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
 import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
 
@@ -70,7 +70,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   private fTable?: Tabulator;
   shouldShowCommandParameterListBuilderDialog = false;
   parameterForListBuilderDialog: CommandParameter = {
-    id: uuid(),
+    _id: generateUuid(),
     type: 'list',
     prompt: ''
   }
@@ -216,8 +216,8 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       { title: 'Minimum', field: 'min', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
       { title: 'Use Maximum?', field: 'useMax', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
       { title: 'Maximum', field: 'max', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
-      { title: 'Use Increment?', field: 'useIncrement', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
-      { title: 'Increment', field: 'increment', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
+      { title: 'Use Increment?', field: 'useMinMaxIncrement', editable: this.isNumber, editor: 'tickCross', formatter: this.getNumberTypeBooleanFormatter },
+      { title: 'Increment', field: 'minMaxIncrement', editable: this.isNumber, editor: 'input', formatter: this.getNumberTypeBooleanFormatter, accessor: (value) => Number(value) },
     ] },
     { title: 'Description', field: 'description', editable: true, editor: 'input' }
   ]
@@ -237,6 +237,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
+      index: '_id',
       layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
@@ -250,7 +251,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
 
   async addNewCommandPart() {
     const newParameter: CommandParameter = {
-      id: uuid(),
+      _id: generateUuid(),
       type: 'boolean',
       prompt: '',
       default: false,
@@ -260,8 +261,8 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       min: Number.MIN_SAFE_INTEGER,
       useMax: false,
       max: Number.MAX_SAFE_INTEGER,
-      useIncrement: false,
-      increment: 1
+      useMinMaxIncrement: false,
+      minMaxIncrement: 1
     };
     await this.table.addData([newParameter]);
   }

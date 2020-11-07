@@ -16,7 +16,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { v4 as uuid } from 'uuid';
+import { generateUuid } from '@/utils/uuid';
 import { Instruction } from 'visualcal-common/src/driver-builder';
 
 @Component
@@ -180,6 +180,7 @@ export default class InstructionTableComponent extends Vue {
   private createTable() {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
+      index: '_id',
       layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
@@ -218,7 +219,7 @@ export default class InstructionTableComponent extends Vue {
 
   async addNewInstruction() {
     const newInstruction: Instruction = {
-      id: uuid(),
+      _id: generateUuid(),
       order: this.table.getRows().length,
       name: 'Instruction',
       type: 'Write',
