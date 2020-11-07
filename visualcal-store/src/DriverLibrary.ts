@@ -7,7 +7,7 @@ export const getAll = async (_: Request, res: Response) => {
   return res.json(drivers);
 }
 
-export const add = async (req: Request<unknown, unknown, Driver>, res: Response<StoreDriver | Error>) => {
+export const addOrUpdate = async (req: Request<unknown, unknown, Driver>, res: Response<StoreDriver | Error>) => {
   let bodyDriver = req.body;
   try {
     let driver = await models.Driver.findOne({ driverManufacturer: bodyDriver.driverManufacturer, driverModel: bodyDriver.driverModel, driverNomenclature: bodyDriver.driverNomenclature });

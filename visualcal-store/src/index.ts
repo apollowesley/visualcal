@@ -4,7 +4,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose'; 
 import { getHome } from './getHome';
-import { getAll as getAllDrivers, add as addDriver } from './DriverLibrary';
+import { getAll as getAllDrivers, addOrUpdate as addOrUpdateDriver } from './DriverLibrary';
 import cors from 'cors';
 import { init as initWebSocketServer } from './SocketIo';
 
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 app.get('/', getHome);
 app.get('/drivers', async (req, res) => await getAllDrivers(req, res));
-app.post('/drivers', async (req, res) => await addDriver(req, res));
+app.post('/drivers', async (req, res) => await addOrUpdateDriver(req, res));
 
 initWebSocketServer(server);
 
