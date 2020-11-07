@@ -14,7 +14,7 @@ export const addOrUpdate = async (req: Request<unknown, unknown, Driver>, res: R
     if (!driver) {
       driver = await models.Driver.create(bodyDriver);
     } else {
-      await driver.update(bodyDriver);
+      await driver.updateOne(bodyDriver);
     }
     driver = await driver.save();
     return res.json(driver);
