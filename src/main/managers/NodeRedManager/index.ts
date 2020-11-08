@@ -202,7 +202,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     if (this.fCurrentStartActionNode) throw new Error(`An action is already running, ${this.fCurrentStartActionNode.runtime.section} - ${this.fCurrentStartActionNode.runtime.name}`);
     this.fCurrentStartActionNode = this.getActionStartNode(sectionName, actionName);
     if (!this.fCurrentStartActionNode) throw new Error(`Unable to find action start node, ${actionName} for section ${sectionName}`);
-    this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
+    await this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
     await this.fCurrentStartActionNode.runtime.start(runId);
     this.emit('sectionActionStarted', sectionName, actionName, runId);
   }
@@ -217,7 +217,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     const section = this.fCurrentStartActionNode.runtime.section.name;
     const action = this.fCurrentStartActionNode.runtime.name;
     await this.fCurrentStartActionNode.runtime.stop();
-    this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
+    await this.resetConnectedNodes(this.fCurrentStartActionNode.runtime);
     this.fCurrentStartActionNode = undefined;
     this.emit('sectionActionStopped', section, action);
   }
@@ -232,30 +232,31 @@ export class NodeRedManager extends TypedEmitter<Events> {
   }
 
   /**
-   * Resets all instruction nodes (indysoft-instruction-, and currently indysoft-dialog-)
+   * Resets all instruction nodes (indysoft-instruction-*, and currently indysoft-dialog-*)
    * @param startFrom Node to start resetting from, not including this node
    */
-  resetConnectedInstructionNodes(startFrom: NodeRedRuntimeNode) {
+  async resetConnectedInstructionNodes(startFrom: NodeRedRuntimeNode) {
     if (!startFrom.wires) return;
-    startFrom.wires.forEach(nodeId => {
+    for (const nodeId of startFrom.wires) {
       const currentNode = this.runtimeNodes.find(n => n.id === nodeId);
-      if (currentNode && currentNode.type === IndySoftNodeTypeNames.UserInput) {
-        currentNode.emit('reset');
-        this.resetConnectedInstructionNodes(currentNode);
+      if (currentNode && currentNode.reset) {
+        await currentNode.reset();
+        await this.resetConnectedInstructionNodes(currentNode);
       }
-    });
+    };
   };
 
-  resetConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) {
+  async resetConnectedNodes(startFrom: NodeRedRuntimeNode, options?: NodeResetOptions) {
     if (options && options.targetId !== startFrom.id) return;
-    if (!startFrom.wires) return;
-    startFrom.wires.forEach(nodeId => {
+    if (!startFrom.wires || (startFrom.wires && startFrom.wires.length <= 0)) return;
+    for (const nodeId of startFrom.wires) {
       const currentNode = this.runtimeNodes.find(n => n.id === nodeId);
-      if (currentNode) {
+      if (currentNode && currentNode.reset) {
+        await currentNode.reset();
         currentNode.emit('reset');
-        this.resetConnectedNodes(currentNode, options);
+        await this.resetConnectedNodes(currentNode, options);
       }
-    });
+    };
   };
 
 }

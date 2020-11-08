@@ -31,17 +31,22 @@ interface NodeRedNodeUIProperties {
 
 module.exports = function(RED: NodeRed) {
   function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNodeUIProperties) {
-    const log = electronLog.scope(IndySoftNodeTypeNames.ActionStart);
+    const log = electronLog.scope(`${IndySoftNodeTypeNames.ActionStart}|${this.id}`);
     RED.nodes.createNode(this, config as any);
     if (config.sectionConfigId) this.section = RED.nodes.getNode(config.sectionConfigId) as NodeRedRuntimeNode;
     if (config.name) this.name = config.name;
     this.isRunning = false;
     const resetStatus = () => {
       this.isRunning = false;
-      this.status({});
+      this.status({
+        fill: 'grey',
+        shape: 'dot',
+        text: 'Ready'
+      });
     };
     this.start = (runId?: string) => {
       return new Promise<void>((resolve, reject) => {
+        log.info('Starting');
         if (!this.section) {
           this.error('Missing secton configuration');
           return reject();
@@ -72,6 +77,12 @@ module.exports = function(RED: NodeRed) {
         return resolve();
       });
     };
+    this.reset = () => {
+      return new Promise<void>((resolve) => {
+        resetStatus();
+        return resolve();
+      })
+    }
   }
   RED.nodes.registerType(IndySoftNodeTypeNames.ActionStart, indySoftActionStartNodeConstructor as any);
 };

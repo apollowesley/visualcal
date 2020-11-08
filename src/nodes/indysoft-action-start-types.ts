@@ -10,6 +10,7 @@ export interface RuntimeNode extends NodeRedRuntimeNode {
   isRunning: boolean;
   start: (runId?: string) => Promise<void>;
   stop: () => Promise<void>;
+  reset: () => Promise<void>;
 }
 
 export interface RuntimeProperties extends NodeRedNodeUIProperties {

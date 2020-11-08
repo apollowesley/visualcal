@@ -61,14 +61,7 @@
 	{
 		"id": "6b116249.9db85c",
 		"type": "indysoft-custom-driver-configuration",
-		"unitId": "custom",
-		"manufacturer": "Fluke",
-		"model": "45"
-	},
-	{
-		"id": "94c18173.d0ae9",
-		"type": "indysoft-custom-driver-configuration",
-		"unitId": "test",
+		"unitId": "UUT",
 		"manufacturer": "Fluke",
 		"model": "45"
 	},
@@ -108,12 +101,17 @@
 		"name": "Resistance"
 	},
 	{
+		"id": "1ceffd37.f80163",
+		"type": "indysoft-section-configuration",
+		"name": "Test Section"
+	},
+	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"x": 1810,
-		"y": 860,
+		"x": 1870,
+		"y": 720,
 		"wires": []
 	},
 	{
@@ -553,7 +551,7 @@
 		"wires": [
 			[],
 			[
-				"c0657a6c.87dfe8"
+				"b995b989.fd32a8"
 			]
 		]
 	},
@@ -580,7 +578,7 @@
 		"wires": [
 			[],
 			[
-				"7ebbc73b.d43178"
+				"7991e954.ef2c78"
 			]
 		]
 	},
@@ -607,7 +605,7 @@
 		"wires": [
 			[],
 			[
-				"dcb8f71c.ffcee8"
+				"323959aa.a45ee6"
 			]
 		]
 	},
@@ -634,7 +632,7 @@
 		"wires": [
 			[],
 			[
-				"2d4823d3.64552c"
+				"2010d827.93d1b8"
 			]
 		]
 	},
@@ -661,7 +659,7 @@
 		"wires": [
 			[],
 			[
-				"dc3542eb.fccd3"
+				"ec8cd5fc.090848"
 			]
 		]
 	},
@@ -688,7 +686,7 @@
 		"wires": [
 			[],
 			[
-				"5a0ff748.62e178"
+				"abdcad8b.3d539"
 			]
 		]
 	},
@@ -715,7 +713,7 @@
 		"wires": [
 			[],
 			[
-				"e8468592.507cc8"
+				"e071b35b.4f29f"
 			]
 		]
 	},
@@ -742,7 +740,7 @@
 		"wires": [
 			[],
 			[
-				"37995141.cc2bde"
+				"fa4b35b2.c48088"
 			]
 		]
 	},
@@ -791,8 +789,8 @@
 		"outputOn": true,
 		"useDelayBefore": false,
 		"delayBefore": 1000,
-		"x": 910,
-		"y": 880,
+		"x": 810,
+		"y": 720,
 		"wires": [
 			[],
 			[
@@ -1484,8 +1482,8 @@
 		"z": "ea20ecb1.59a94",
 		"name": "AC Volts",
 		"sectionConfigId": "99aa0f72.f868a",
-		"x": 400,
-		"y": 180,
+		"x": 600,
+		"y": 460,
 		"wires": [
 			[
 				"f98ba7e9.e870b8"
@@ -1560,227 +1558,6 @@
 			[
 				"218d1673.282e0a"
 			]
-		]
-	},
-	{
-		"id": "c0657a6c.87dfe8",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: Short Slow",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "0",
-		"setRange": true,
-		"range": "1",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1340,
-		"y": 180,
-		"wires": [
-			[],
-			[
-				"461430ff.ae1cf"
-			]
-		]
-	},
-	{
-		"id": "7ebbc73b.d43178",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 90mV Slow",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "0",
-		"setRange": true,
-		"range": "1",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1340,
-		"y": 240,
-		"wires": [
-			[],
-			[
-				"5126dcaf.ba7fa4"
-			]
-		]
-	},
-	{
-		"id": "dcb8f71c.ffcee8",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 900mV Slow",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "0",
-		"setRange": true,
-		"range": "2",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1340,
-		"y": 300,
-		"wires": [
-			[],
-			[
-				"5edb87d3.b97eb8"
-			]
-		]
-	},
-	{
-		"id": "2d4823d3.64552c",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: Short",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "1",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1320,
-		"y": 360,
-		"wires": [
-			[],
-			[
-				"3f67b25a.9f73ee"
-			]
-		]
-	},
-	{
-		"id": "dc3542eb.fccd3",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 300mV",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "1",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1320,
-		"y": 420,
-		"wires": [
-			[],
-			[
-				"6147a3da.8209bc"
-			]
-		]
-	},
-	{
-		"id": "5a0ff748.62e178",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 3V",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "2",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1310,
-		"y": 480,
-		"wires": [
-			[],
-			[
-				"7dd2b513.b7d09c"
-			]
-		]
-	},
-	{
-		"id": "e8468592.507cc8",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: -3V",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "2",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1310,
-		"y": 540,
-		"wires": [
-			[],
-			[
-				"1a9682bf.9cb08d"
-			]
-		]
-	},
-	{
-		"id": "6a3d8e0e.54594",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 300V",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "4",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1310,
-		"y": 720,
-		"wires": [
-			[],
-			[]
-		]
-	},
-	{
-		"id": "7c6d0d33.dad3c4",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 1000V",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "5",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1330,
-		"y": 920,
-		"wires": [
-			[],
-			[]
 		]
 	},
 	{
@@ -2428,31 +2205,6 @@
 		]
 	},
 	{
-		"id": "37995141.cc2bde",
-		"type": "indysoft-device-fluke45",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 30V",
-		"deviceConfigId": "99e08da0.feaeb",
-		"mode": "vdc",
-		"setRate": true,
-		"rate": "1",
-		"setRange": true,
-		"range": "3",
-		"relative": false,
-		"usePreDelay": true,
-		"preDelay": 1000,
-		"measure": true,
-		"outputs": 2,
-		"x": 1310,
-		"y": 600,
-		"wires": [
-			[],
-			[
-				"26b600d5.6fc36"
-			]
-		]
-	},
-	{
 		"id": "9b2fbf5a.925e1",
 		"type": "indysoft-testpoint",
 		"z": "3b731b51.7981f4",
@@ -2940,8 +2692,8 @@
 		"min": "999.5",
 		"max": "1000.5",
 		"inputLevel": "1000",
-		"x": 1570,
-		"y": 860,
+		"x": 1630,
+		"y": 720,
 		"wires": [
 			[
 				"e691dbf7.db68e8"
@@ -2992,26 +2744,26 @@
 		"id": "9b9e8bfa.2791c8",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
-		"name": "UUT: 300V",
+		"name": "UUT: 300V Medium",
 		"driverConfigId": "6b116249.9db85c",
 		"instructionSets": [
 			{
-				"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+				"id": "5fa62123b58a446c0e8a60fc",
 				"instructionSet": {
-					"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+					"_id": "5fa62123b58a446c0e8a60fc",
 					"name": "Set mode DC Volts",
 					"instructions": [
 						{
-							"id": "85911bef-6dc7-4f3f-9aeb-c07e318d7eba",
+							"_id": "5fa62123b58a446c0e8a60fd",
 							"name": "Clear Status Command",
 							"type": "Write",
 							"command": "*CLS",
 							"file": "json",
 							"readAttempts": 1,
-							"order": -1
+							"order": 0
 						},
 						{
-							"id": "3fe71e78-9bf9-43f2-9e12-2a315ac19ae9",
+							"_id": "5fa62123b58a446c0e8a60fe",
 							"order": 1,
 							"name": "Set mode DC Volts",
 							"type": "Write",
@@ -3023,13 +2775,13 @@
 				"parameterArguments": []
 			},
 			{
-				"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+				"id": "5fa62123b58a446c0e8a6101",
 				"instructionSet": {
-					"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+					"_id": "5fa62123b58a446c0e8a6101",
 					"name": "Set Voltage Range",
 					"instructions": [
 						{
-							"id": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+							"_id": "5fa62123b58a446c0e8a6102",
 							"order": 0,
 							"name": "Set range",
 							"type": "Write",
@@ -3037,30 +2789,35 @@
 							"readAttempts": 1,
 							"parameters": [
 								{
-									"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+									"_id": "5fa62123b58a446c0e8a6103",
 									"type": "list",
 									"prompt": "Range",
 									"beforeText": " ",
 									"listItems": [
 										{
 											"text": "300mV",
-											"value": "1"
+											"value": "1",
+											"_id": "5fa62123b58a446c0e8a6104"
 										},
 										{
 											"text": "3V",
-											"value": "2"
+											"value": "2",
+											"_id": "5fa62123b58a446c0e8a6105"
 										},
 										{
 											"text": "30V",
-											"value": "3"
+											"value": "3",
+											"_id": "5fa62123b58a446c0e8a6106"
 										},
 										{
 											"text": "300V",
-											"value": "4"
+											"value": "4",
+											"_id": "5fa62123b58a446c0e8a6107"
 										},
 										{
 											"text": "750VAC or 1000VDC",
-											"value": "5"
+											"value": "5",
+											"_id": "5fa62123b58a446c0e8a6108"
 										}
 									],
 									"default": "3",
@@ -3074,32 +2831,37 @@
 				},
 				"parameterArguments": [
 					{
-						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"instructionId": "5fa62123b58a446c0e8a6102",
 						"parameter": {
-							"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+							"_id": "5fa62123b58a446c0e8a6103",
 							"type": "list",
 							"prompt": "Range",
 							"beforeText": " ",
 							"listItems": [
 								{
 									"text": "300mV",
-									"value": "1"
+									"value": "1",
+									"_id": "5fa62123b58a446c0e8a6104"
 								},
 								{
 									"text": "3V",
-									"value": "2"
+									"value": "2",
+									"_id": "5fa62123b58a446c0e8a6105"
 								},
 								{
 									"text": "30V",
-									"value": "3"
+									"value": "3",
+									"_id": "5fa62123b58a446c0e8a6106"
 								},
 								{
 									"text": "300V",
-									"value": "4"
+									"value": "4",
+									"_id": "5fa62123b58a446c0e8a6107"
 								},
 								{
 									"text": "750VAC or 1000VDC",
-									"value": "5"
+									"value": "5",
+									"_id": "5fa62123b58a446c0e8a6108"
 								}
 							],
 							"default": "3",
@@ -3112,49 +2874,13 @@
 				]
 			},
 			{
-				"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+				"id": "5fa62123b58a446c0e8a60ff",
 				"instructionSet": {
-					"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
+					"_id": "5fa62123b58a446c0e8a60ff",
 					"name": "Measure",
 					"instructions": [
 						{
-							"id": "dbac1d79-0012-4f22-9c44-4f3204cff6de",
-							"order": 0,
-							"name": "Measure",
-							"type": "Query",
-							"command": "MEAS1?",
-							"readAttempts": 1,
-							"responseDataType": "Number"
-						}
-					]
-				},
-				"parameterArguments": []
-			}
-		],
-		"x": 1310,
-		"y": 660,
-		"wires": [
-			[],
-			[
-				"ee7c3d13.04d0b"
-			]
-		]
-	},
-	{
-		"id": "9e545689.31ce58",
-		"type": "indysoft-custom-driver",
-		"z": "3b731b51.7981f4",
-		"name": "UUT: 1000V",
-		"driverConfigId": "94c18173.d0ae9",
-		"instructionSets": [
-			{
-				"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
-				"instructionSet": {
-					"id": "96040aa3-81c4-4d3b-9823-65305e52331e",
-					"name": "Measure",
-					"instructions": [
-						{
-							"id": "dbac1d79-0012-4f22-9c44-4f3204cff6de",
+							"_id": "5fa62123b58a446c0e8a6100",
 							"order": 0,
 							"name": "Measure",
 							"type": "Query",
@@ -3168,7 +2894,43 @@
 			}
 		],
 		"x": 1330,
-		"y": 860,
+		"y": 660,
+		"wires": [
+			[],
+			[
+				"ee7c3d13.04d0b"
+			]
+		]
+	},
+	{
+		"id": "9e545689.31ce58",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 1000V",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1310,
+		"y": 720,
 		"wires": [
 			[],
 			[
@@ -3180,26 +2942,26 @@
 		"id": "73ae4066.db951",
 		"type": "indysoft-custom-driver",
 		"z": "3b731b51.7981f4",
-		"name": "",
-		"driverConfigId": "94c18173.d0ae9",
+		"name": "UUT: Mode and Range",
+		"driverConfigId": "6b116249.9db85c",
 		"instructionSets": [
 			{
-				"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+				"id": "5fa62123b58a446c0e8a60fc",
 				"instructionSet": {
-					"id": "a4d525f7-ef75-421c-9101-6230a44b55db",
+					"_id": "5fa62123b58a446c0e8a60fc",
 					"name": "Set mode DC Volts",
 					"instructions": [
 						{
-							"id": "85911bef-6dc7-4f3f-9aeb-c07e318d7eba",
+							"_id": "5fa62123b58a446c0e8a60fd",
 							"name": "Clear Status Command",
 							"type": "Write",
 							"command": "*CLS",
 							"file": "json",
 							"readAttempts": 1,
-							"order": -1
+							"order": 0
 						},
 						{
-							"id": "3fe71e78-9bf9-43f2-9e12-2a315ac19ae9",
+							"_id": "5fa62123b58a446c0e8a60fe",
 							"order": 1,
 							"name": "Set mode DC Volts",
 							"type": "Write",
@@ -3211,13 +2973,13 @@
 				"parameterArguments": []
 			},
 			{
-				"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+				"id": "5fa62123b58a446c0e8a6101",
 				"instructionSet": {
-					"id": "88fc2219-b4ff-474f-8cb9-ca3bd226131d",
+					"_id": "5fa62123b58a446c0e8a6101",
 					"name": "Set Voltage Range",
 					"instructions": [
 						{
-							"id": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+							"_id": "5fa62123b58a446c0e8a6102",
 							"order": 0,
 							"name": "Set range",
 							"type": "Write",
@@ -3225,30 +2987,35 @@
 							"readAttempts": 1,
 							"parameters": [
 								{
-									"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+									"_id": "5fa62123b58a446c0e8a6103",
 									"type": "list",
 									"prompt": "Range",
 									"beforeText": " ",
 									"listItems": [
 										{
 											"text": "300mV",
-											"value": "1"
+											"value": "1",
+											"_id": "5fa62123b58a446c0e8a6104"
 										},
 										{
 											"text": "3V",
-											"value": "2"
+											"value": "2",
+											"_id": "5fa62123b58a446c0e8a6105"
 										},
 										{
 											"text": "30V",
-											"value": "3"
+											"value": "3",
+											"_id": "5fa62123b58a446c0e8a6106"
 										},
 										{
 											"text": "300V",
-											"value": "4"
+											"value": "4",
+											"_id": "5fa62123b58a446c0e8a6107"
 										},
 										{
 											"text": "750VAC or 1000VDC",
-											"value": "5"
+											"value": "5",
+											"_id": "5fa62123b58a446c0e8a6108"
 										}
 									],
 									"default": "3",
@@ -3262,32 +3029,37 @@
 				},
 				"parameterArguments": [
 					{
-						"instructionId": "3d50a6ac-9e98-4811-9ce6-96827444f541",
+						"instructionId": "5fa62123b58a446c0e8a6102",
 						"parameter": {
-							"id": "6dc19216-c847-4082-90b4-7dce665d44cd",
+							"_id": "5fa62123b58a446c0e8a6103",
 							"type": "list",
 							"prompt": "Range",
 							"beforeText": " ",
 							"listItems": [
 								{
 									"text": "300mV",
-									"value": "1"
+									"value": "1",
+									"_id": "5fa62123b58a446c0e8a6104"
 								},
 								{
 									"text": "3V",
-									"value": "2"
+									"value": "2",
+									"_id": "5fa62123b58a446c0e8a6105"
 								},
 								{
 									"text": "30V",
-									"value": "3"
+									"value": "3",
+									"_id": "5fa62123b58a446c0e8a6106"
 								},
 								{
 									"text": "300V",
-									"value": "4"
+									"value": "4",
+									"_id": "5fa62123b58a446c0e8a6107"
 								},
 								{
 									"text": "750VAC or 1000VDC",
-									"value": "5"
+									"value": "5",
+									"_id": "5fa62123b58a446c0e8a6108"
 								}
 							],
 							"default": "3",
@@ -3300,12 +3072,1438 @@
 				]
 			}
 		],
-		"x": 1120,
-		"y": 880,
+		"x": 1040,
+		"y": 720,
 		"wires": [
 			[],
 			[
 				"9e545689.31ce58"
+			]
+		]
+	},
+	{
+		"id": "b995b989.fd32a8",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: Short Slow",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "S"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1320,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"461430ff.ae1cf"
+			]
+		]
+	},
+	{
+		"id": "7991e954.ef2c78",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 90mV Slow",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "S"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 240,
+		"wires": [
+			[],
+			[
+				"5126dcaf.ba7fa4"
+			]
+		]
+	},
+	{
+		"id": "323959aa.a45ee6",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 900mV Slow",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "S"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 300,
+		"wires": [
+			[],
+			[
+				"5edb87d3.b97eb8"
+			]
+		]
+	},
+	{
+		"id": "2010d827.93d1b8",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: Short Medium",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "M"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"3f67b25a.9f73ee"
+			]
+		]
+	},
+	{
+		"id": "ec8cd5fc.090848",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 300mV Medium",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "M"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1340,
+		"y": 420,
+		"wires": [
+			[],
+			[
+				"6147a3da.8209bc"
+			]
+		]
+	},
+	{
+		"id": "abdcad8b.3d539",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 3V Medium",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "M"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 480,
+		"wires": [
+			[],
+			[
+				"7dd2b513.b7d09c"
+			]
+		]
+	},
+	{
+		"id": "e071b35b.4f29f",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: -3V Medium",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "M"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 540,
+		"wires": [
+			[],
+			[
+				"1a9682bf.9cb08d"
+			]
+		]
+	},
+	{
+		"id": "fa4b35b2.c48088",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "UUT: 30V Medium",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60fc",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60fc",
+					"name": "Set mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a60fd",
+							"name": "Clear Status Command",
+							"type": "Write",
+							"command": "*CLS",
+							"file": "json",
+							"readAttempts": 1,
+							"order": 0
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a60fe",
+							"order": 1,
+							"name": "Set mode DC Volts",
+							"type": "Write",
+							"command": "VDC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa62123b58a446c0e8a610b",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a610b",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610c",
+							"order": 0,
+							"name": "Set range auto",
+							"type": "Write",
+							"command": "AUTO",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			},
+			{
+				"id": "5fa7762a0d39ec00009f98cc",
+				"instructionSet": {
+					"_id": "5fa7762a0d39ec00009f98cc",
+					"name": "Set Rate",
+					"instructions": [
+						{
+							"_id": "5fa776390d39ec00009f98cd",
+							"order": 0,
+							"name": "Set Rate",
+							"type": "Write",
+							"command": "RATE",
+							"readAttempts": 1,
+							"parameters": [
+								{
+									"_id": "5fa776480d39ec00009f98ce",
+									"type": "list",
+									"prompt": "Rate?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": " ",
+									"listItems": [
+										{
+											"_id": "5fa776580d39ec00009f98cf",
+											"text": "Slow - 2.5 RPS",
+											"value": "S"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d0",
+											"text": "Medium - 5 RPS",
+											"value": "M"
+										},
+										{
+											"_id": "5fa776a10d39ec00009f98d1",
+											"text": "Fast - 10 RPS",
+											"value": "F"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				"parameterArguments": [
+					{
+						"instructionId": "5fa776390d39ec00009f98cd",
+						"parameter": {
+							"_id": "5fa776480d39ec00009f98ce",
+							"type": "list",
+							"prompt": "Rate?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"beforeText": " ",
+							"listItems": [
+								{
+									"_id": "5fa776580d39ec00009f98cf",
+									"text": "Slow - 2.5 RPS",
+									"value": "S"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d0",
+									"text": "Medium - 5 RPS",
+									"value": "M"
+								},
+								{
+									"_id": "5fa776a10d39ec00009f98d1",
+									"text": "Fast - 10 RPS",
+									"value": "F"
+								}
+							]
+						},
+						"value": "M"
+					}
+				]
+			},
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1330,
+		"y": 600,
+		"wires": [
+			[],
+			[
+				"26b600d5.6fc36"
+			]
+		]
+	},
+	{
+		"id": "f9dd2559.8df4e8",
+		"type": "debug",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "false",
+		"statusVal": "",
+		"statusType": "auto",
+		"x": 1310,
+		"y": 920,
+		"wires": []
+	},
+	{
+		"id": "7f948829.713de8",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 1020,
+		"y": 920,
+		"wires": [
+			[],
+			[
+				"f9dd2559.8df4e8"
+			]
+		]
+	},
+	{
+		"id": "461ec5d2.4ae7bc",
+		"type": "indysoft-action-start",
+		"z": "3b731b51.7981f4",
+		"name": "Test Action",
+		"sectionConfigId": "1ceffd37.f80163",
+		"x": 720,
+		"y": 920,
+		"wires": [
+			[
+				"7f948829.713de8"
 			]
 		]
 	}

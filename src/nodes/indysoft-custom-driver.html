@@ -23,12 +23,13 @@
   /**
    * @typedef CommandParameterListItem
    * @type {object}
+   * @property {string} _id
    * @property {string} value
    * @property {string} text
    * 
    * @typedef CommandParameter
    * @type {object}
-   * @property {string} id
+   * @property {string} _id
    * @property {string} prompt
    * @property {string} type
    * @property {CommandParameterListItem[]} listItems
@@ -38,13 +39,13 @@
    * @property {number} min
    * @property {boolean} useMax
    * @property {number} max
-   * @property {boolean} useIncrement
-   * @property {number} increment
+   * @property {boolean} useMinMaxIncrement
+   * @property {number} minMaxIncrement
    * @property {string} default
    * 
    * @typedef Instruction
    * @type {object}
-   * @property {string} id
+   * @property {string} _id
    * @property {string} name
    * @property {string} type
    * @property {string} command
@@ -52,7 +53,7 @@
    * 
    * @typedef InstructionSet
    * @type {object}
-   * @property {string} id
+   * @property {string} _id
    * @property {string} name
    * @property {Instruction[]} instructions
    * 
@@ -79,9 +80,9 @@
    * @property {CommandParameter} parameter
    * @property {string} value
    * 
-   * @typedef InstructionSetToRuntime
+   * @typedef UIInstructionSet
    * @type {object}
-   * @property {string} id
+   * @property {string} _id
    * @property {InstructionSet} instructionSet
    * @property {CommandParameterArgument[]} parameterArguments
    * 
@@ -137,7 +138,7 @@
         /**
          * @param {JQuery} rowContainer - The container
          * @param {number} index - The index of the item
-         * @param {InstructionSetToRuntime newItem - The new item being added
+         * @param {UIInstructionSet newItem - The new item being added
         */
         addItem: (rowContainer, index, newItem) => {
           // container.css({
@@ -151,23 +152,23 @@
             for (let index = 0; index < driver.instructionSets.length; index++) {
               /** @type {InstructionSet} */
               const instructionSet = driver.instructionSets[index];
-              instructionSetSelectElement.append(`<option value="${instructionSet.id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`).addClass('instruction-set-select');
+              instructionSetSelectElement.append(`<option value="${instructionSet._id}" ${index === 0 ? 'selected' : ''}>${instructionSet.name}</option>`).addClass('instruction-set-select');
               instructionSetSelectElement.change(eventObject => {
                 /** @type {string} */
                 const selectedInstructionSetId = getSelectedOptionValue(eventObject);
                 rowContainer.children('.parameter-row').remove();
                 if (selectedInstructionSetId) {
                   /** @type {InstructionSet} */
-                  const selectedInstructionSet = driver.instructionSets.find(i => i.id === selectedInstructionSetId);
+                  const selectedInstructionSet = driver.instructionSets.find(i => i._id === selectedInstructionSetId);
                   selectedInstructionSet.instructions.forEach(instruction => {
                   if (instruction.parameters) {
                     instruction.parameters.forEach(parameter => {
                       const parameterRow = $('<div/>', { style: 'padding-top: 5px;' }).addClass('parameter-row').appendTo(rowContainer);
                       const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
-                      const newItemCommandParameter = newItem.parameterArguments ? newItem.parameterArguments.find(p => p.parameter.id === parameter.id) : undefined;
+                      const newItemCommandParameter = newItem.parameterArguments ? newItem.parameterArguments.find(p => p.parameter._id === parameter._id) : undefined;
                       switch (parameter.type) {
                         case 'list':
-                          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter.id).appendTo(parameterRow);
+                          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter._id).appendTo(parameterRow);
                           for (let index = 0; index < parameter.listItems.length; index++) {
                             const listItem = parameter.listItems[index];
                             let selected = index === 0;
@@ -177,12 +178,12 @@
                           if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
                           break;
                         case 'string':
-                          const parameterStringElement = $('<input/>').addClass(parameter.id).appendTo(parameterRow);
+                          const parameterStringElement = $('<input/>').addClass(parameter._id).appendTo(parameterRow);
                           if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
                           if (parameter.default) parameterStringElement.val(parameter.default);
                           break;
                         case 'number':
-                          const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter.id).appendTo(parameterRow);
+                          const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter._id).appendTo(parameterRow);
                           if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
                           if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
                           if (parameter.useIncrement) parametergNumberElement.prop('step', parameter.increment);
@@ -190,7 +191,7 @@
                           if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
                           break;
                         case 'boolean':
-                          const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter.id).appendTo(parameterRow);
+                          const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter._id).appendTo(parameterRow);
                           if (parameter.default) parametergBooleanElement.prop('checked', !!parameter.default);
                           if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
                           break;
@@ -223,7 +224,7 @@
 
       const refreshUI = (driver) => {
         if (!driver) return;
-        /** @type {InstructionSetToRuntime[]} */
+        /** @type {UIInstructionSet[]} */
         const instructionSets = this.instructionSets;
         if (instructionSets) {
           for (const instructionSet of instructionSets) {
@@ -236,7 +237,7 @@
       // Detect when driverConfigId changes so we can get the new driver info and refresh the UI
       driverConfigIdElement.change(async (eventObject) => {
         let configNode;
-        driverConfigIdNodeId = getSelectedOptionValue(eventObject);
+        const driverConfigIdNodeId = getSelectedOptionValue(eventObject);
         RED.nodes.eachConfig((node) => {
           if (node.id === driverConfigIdNodeId) configNode = node;
         });
@@ -255,10 +256,10 @@
         const instructionSetListItemDivElement = instructionSetListItemElement.children('.instruction-set-row');
         const instructionSetSelectElement = instructionSetListItemDivElement.children('.instruction-set-select');
         const selectedOptionElements = instructionSetSelectElement.children('option:selected');
-        const instructionSet = driver.instructionSets.find(i => i.id === selectedOptionElements[0].value);
-        /** @type {InstructionSetToRuntime} */
+        const instructionSet = driver.instructionSets.find(i => i._id === selectedOptionElements[0].value);
+        /** @type {UIInstructionSet} */
         const instructionSetInfoToRuntime = {
-          id: instructionSet.id,
+          id: instructionSet._id,
           instructionSet: instructionSet,
           parameterArguments: []
         }
@@ -268,26 +269,26 @@
               const parameterRows = instructionSetListItemElement.children('.parameter-row');
               switch (parameter.type) {
                 case 'list':
-                  const parameterSelect = parameterRows.children(`.${parameter.id}`);
+                  const parameterSelect = parameterRows.children(`.${parameter._id}`);
                   const parameterSelectSelectedOptionElements = parameterSelect.children('option:selected');
                   const selectedValue = parameterSelectSelectedOptionElements ? parameterSelectSelectedOptionElements[0].value : undefined;
-                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: selectedValue });
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: selectedValue });
                   break;
                 case 'string':
-                  const stringParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const stringParameterElement = parameterRows.children(`.${parameter._id}`);
                   const stringValue = stringParameterElement.val();
-                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: stringValue });
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue });
                   break;
                 case 'number':
-                  const numnberParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const numnberParameterElement = parameterRows.children(`.${parameter._id}`);
                   const numberValue = Number(numnberParameterElement.val());
-                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: numberValue });
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue });
                   break;
                 case 'boolean':
-                  const booleanParameterElement = parameterRows.children(`.${parameter.id}`);
+                  const booleanParameterElement = parameterRows.children(`.${parameter._id}`);
                   const isChecked = booleanParameterElement.prop('checked');
                   const booleanValue = isChecked ? parameter.trueValue : parameter.falseValue;
-                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction.id, parameter: parameter, value: booleanValue });
+                  instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: booleanValue });
                   break;
               }
             });

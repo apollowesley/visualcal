@@ -10,8 +10,8 @@ interface CommandParameterArgument {
   value: string | number | boolean;
 }
 
-interface InstructionSetToRuntime {
-  _id: string;
+interface UIInstructionSet {
+  id: string;
   instructionSet: InstructionSet;
   parameterArguments: CommandParameterArgument[];
 }
@@ -50,12 +50,12 @@ interface NodeRedNodeUIProperties {
 
 interface CustomDriverNodeUIProperties extends NodeRedNodeUIProperties {
   driverConfigId: string;
-  instructionSets: InstructionSetToRuntime[];
+  instructionSets: UIInstructionSet[];
 }
 
 interface CustomDriverNodeRedRuntimeNode extends NodeRedRuntimeNode {
   driverConfigId: string;
-  instructionSets: InstructionSetToRuntime[];
+  instructionSets: UIInstructionSet[];
 }
 
 interface RuntimeNodeInputEventMessagePayload {
@@ -101,7 +101,7 @@ module.exports = function(RED: NodeRed) {
         let command = instruction.command;
         if (instruction.parameters) {
           instruction.parameters.forEach(parameter => {
-            const editorInstructionSet = this.instructionSets.find(i => i._id === instructionSet._id);
+            const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
             if (editorInstructionSet) {
               const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction._id);
               if (parameterArgument) {
@@ -116,7 +116,7 @@ module.exports = function(RED: NodeRed) {
       };
 
       for (const InstructionSetToRuntime of this.instructionSets) {
-        const instructionSet = driver.instructionSets.find(i => i._id === InstructionSetToRuntime._id);
+        const instructionSet = driver.instructionSets.find(i => i._id === InstructionSetToRuntime.id);
         if (instructionSet) {
           for (const instruction of instructionSet.instructions) {
             this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });

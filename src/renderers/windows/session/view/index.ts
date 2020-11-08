@@ -235,7 +235,7 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     return;
   }
   session.configuration.devices = devices;
-  if (session.lastSectionName && session.lastActionName) {
+  if ((session.lastSectionName && session.lastActionName) || startStopActionButtonElement.textContent === 'Stop') {
     window.visualCal.actionManager.stop();
     session.lastSectionName = undefined;
     session.lastActionName = undefined;

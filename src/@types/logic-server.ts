@@ -129,6 +129,7 @@ interface NodeRedContext {
 export interface NodeRedRuntimeNode extends NodeRedNode {
   context(): NodeRedContext;
   wires?: string[];
+  reset?: () => Promise<void>;
 }
 
 interface NodeRedGlobalCommsConnection {
