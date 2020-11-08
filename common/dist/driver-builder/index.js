@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SCPIRequiredCommands = exports.IEEE4882MandatedCommands = exports.IpcChannels = void 0;
+exports.STORE_UPDATED = exports.SCPIRequiredCommands = exports.IEEE4882MandatedCommands = exports.IpcChannels = void 0;
 exports.IpcChannels = {
     communicationInterface: {
         getLibrary: {
@@ -90,4 +90,5 @@ exports.SCPIRequiredCommands = [
     { _id: 'a2174281-7a9e-41b4-97ec-01da025a291c', name: 'Status Questionable Enable Query', type: 'Query', command: 'STATus:QUEStionable:ENABle?', responseDataType: 'Number' },
     { _id: 'be4fd43b-5149-40fa-86ad-cb30b4d48fa1', name: 'Status Preset Command', type: 'Write', command: 'STATus:PRESet' }
 ];
+exports.STORE_UPDATED = 'STORE-UPDATED';
 //# sourceMappingURL=index.js.map

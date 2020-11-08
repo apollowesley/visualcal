@@ -1,10 +1,11 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver, STORE_UPDATED } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { generateUuid } from '@/utils/uuid';
 import Axios from 'axios';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 
 interface OnlineStore {
   drivers: StoreDriver[];
@@ -206,6 +207,8 @@ const employeesModule = defineModule({
       await dispatch.initCommunicationInterfaces();
 
       await dispatch.refreshLibrary();
+
+      await dispatch.initSocketIo();
     },
     async refreshLibrary(context) {
       const { commit } = actionContext(context);
@@ -216,6 +219,32 @@ const employeesModule = defineModule({
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.getLibrary.request);
       });
+    },
+    async initSocketIo(context) {
+      const { dispatch } = actionContext(context);
+      let pingTimer: NodeJS.Timeout | null = null;
+      const storeSocket = new ReconnectingWebSocket('wss://visualcalstore.scottpage.us', [], {
+        connectionTimeout: 20000,
+        maxRetries: Infinity,
+        startClosed: false
+      });
+      storeSocket.onopen = () => {
+        pingTimer = setInterval(() => {
+          if (storeSocket) {
+            storeSocket.send('PING');
+          }
+        }, 30000);
+      };
+      storeSocket.onclose = () => {
+        if (pingTimer) clearInterval(pingTimer);
+        pingTimer = null;
+      };
+      storeSocket.onerror = (err) => console.info('Store WebSocket error: ', err);
+      storeSocket.onmessage = async (ev) => {
+        if (typeof ev.data === 'string' && ev.data === STORE_UPDATED) {
+          await dispatch.refreshOnlineStore();
+        }
+      }
     },
     async initCommunicationInterfaces(context) {
       const { state, commit } = actionContext(context);
@@ -366,8 +395,7 @@ const employeesModule = defineModule({
       commit.setOnlineStore({ drivers });
     },
     async saveDriverToStore(_, driver: Driver) {
-      const response = await Axios.post<StoreDriver>('https://visualcalstore.scottpage.us/drivers', driver, { timeout: 10000 });
-      console.info(response);
+      await Axios.post<StoreDriver>('https://visualcalstore.scottpage.us/drivers', driver, { timeout: 10000 });
     }
   }
 });

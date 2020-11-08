@@ -174,3 +174,4 @@ export declare type StoreInstructionSet = InstructionSet & mongoose.Document;
 export declare type StoreInstruction = Instruction & mongoose.Document;
 export declare type StoreCommandParameter = CommandParameter & mongoose.Document;
 export declare type StoreCommandParameterListItem = CommandParameterListItem & mongoose.Document;
+export declare const STORE_UPDATED = "STORE-UPDATED";

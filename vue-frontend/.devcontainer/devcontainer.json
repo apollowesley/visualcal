@@ -11,6 +11,8 @@
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},
 
+	"appPort": ["8080:80"],
+
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"dbaeumer.vscode-eslint",
@@ -22,7 +24,9 @@
 		"eg2.vscode-npm-script",
 		"ms-vscode.vscode-typescript-next",
 		"eamodio.gitlens",
-		"hollowtree.vue-snippets"
+		"hollowtree.vue-snippets",
+		"coenraads.bracket-pair-colorizer",
+		"sdras.vue-vscode-snippets"
 	]
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

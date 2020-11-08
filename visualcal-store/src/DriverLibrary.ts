@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Driver, StoreDriver } from 'visualcal-common/dist/driver-builder';
 import models from './models';
+import { notifyStoreUpdated } from './SocketIo';
 
 export const getAll = async (_: Request, res: Response) => {
   const drivers = await models.Driver.getAll();
@@ -17,6 +18,7 @@ export const addOrUpdate = async (req: Request<unknown, unknown, Driver>, res: R
       await driver.updateOne(bodyDriver);
     }
     driver = await driver.save();
+    notifyStoreUpdated();
     return res.json(driver);
   } catch (error) {
     res.statusCode = 400;

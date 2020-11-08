@@ -1,15 +1,24 @@
 import http from 'http';
-import socketIo from 'socket.io';
+import ws from 'ws';
+import { STORE_UPDATED } from 'visualcal-common/dist/driver-builder';
 
-export let webSocketServer: socketIo.Server;
-
-const onConnection = (socket: socketIo.Socket) => {
-  console.info(`New socket.io connection: ${socket}`);
-}
+export let webSocketServer: ws.Server;
 
 export const init = (server: http.Server) => {
-  webSocketServer = socketIo(server, {
-    transports: [ 'websocket' ]
+  webSocketServer = new ws.Server({ noServer: true });
+  webSocketServer.on('connection', (socket) => {
+    socket.on('message', (data) => {
+      if (typeof data === 'string' && data === 'PING') socket.send('PONG');
+    });
   });
-  webSocketServer.on('connection', onConnection);
+
+  server.on('upgrade', (request, socket, head) => {
+    webSocketServer.handleUpgrade(request, socket, head, socket => {
+      webSocketServer.emit('connection', socket, request);
+    });
+  });
+}
+
+export const notifyStoreUpdated = () => {
+  setImmediate(() => webSocketServer.clients.forEach(client => client.send(STORE_UPDATED)));
 }

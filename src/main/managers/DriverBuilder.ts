@@ -7,7 +7,6 @@ import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
-import { Types } from 'mongoose';
 
 interface Events {
   connected: () => void;

@@ -17,3 +17,5 @@ USER node
 
 # [Optional] Uncomment if you want to install more global node packages
 RUN npm install -g @vue/cli
+
+EXPOSE 8080

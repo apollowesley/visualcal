@@ -17,6 +17,9 @@
           open-on-click
           dense
         >
+          <template v-slot="{ item }">
+            {{ item.name }}
+          </template>
           <template v-slot:prepend="{ item, open }">
             <v-icon v-if="!item.file">
               {{ open ? "mdi-folder-open" : "mdi-folder" }}
