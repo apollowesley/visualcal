@@ -66,15 +66,15 @@ export class ActionManager extends TypedEmitter<Events> {
           return new Promise(async (resolve, reject) => {
             if (typeof data !== 'string') return resolve({ data });
             ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return resolve(args);
             });
             ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return reject(error);
             });
             ipcMain.once(IpcChannels.device.beforeWriteString.cancel, async (_, args: { data: string, cancel: boolean }) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               await this.stop();
               return resolve(args);
             });
