@@ -1,15 +1,6 @@
 import { NodeRed, DeviceConfigurationNode } from '../@types/logic-server';
 import { DeviceConfigurationProperties } from '../@types/logic-nodes';
-
-interface ConfigurationNode extends DeviceConfigurationNode {
-  manufacturer: string;
-  model: string;
-}
-
-interface ConfigurationProperties extends DeviceConfigurationProperties {
-  manufacturer: string;
-  model: string;
-}
+import { ConfigurationNode, ConfigurationProperties } from './indysoft-custom-driver-configuration-types';
 
 module.exports = function(RED: NodeRed) {
 

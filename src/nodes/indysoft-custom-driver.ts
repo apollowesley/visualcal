@@ -2,61 +2,8 @@ import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFu
 import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from '../main/managers/NodeRedManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
-import { CommandParameter, Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
-
-interface CommandParameterArgument {
-  instructionId: string;
-  parameter: CommandParameter;
-  value: string | number | boolean;
-}
-
-interface UIInstructionSet {
-  id: string;
-  instructionSet: InstructionSet;
-  parameterArguments: CommandParameterArgument[];
-}
-
-interface InstructionResponse {
-  instruction: Instruction;
-  raw: string | number | ArrayBufferLike | boolean;
-  value: string | number | ArrayBufferLike | boolean;
-}
-
-interface NodeRedNodeUIProperties {
-  sectionConfigId?: string;
-  name?: string;
-  category: string;
-  defaults: any;
-  credentials?: any;
-  inputs?: number;
-  outputs?: number;
-  color: string;
-  paletteLabel?: string | any;
-  label?: string | any;
-  labelStyle?: string | any;
-  inputLabels?: string[] | any;
-  outputLabels?: string[] | any;
-  icon?: string;
-  align?: 'left' | 'right';
-  button?: any;
-  oneditprepare?: () => void;
-  oneditsave?: () => void;
-  oneditcancel?: () => void;
-  oneditdelete?: () => void;
-  oneditresize?: () => void;
-  onpaletteadd?: () => void;
-  onpaletteremove?: () => void;
-}
-
-interface CustomDriverNodeUIProperties extends NodeRedNodeUIProperties {
-  driverConfigId: string;
-  instructionSets: UIInstructionSet[];
-}
-
-interface CustomDriverNodeRedRuntimeNode extends NodeRedRuntimeNode {
-  driverConfigId: string;
-  instructionSets: UIInstructionSet[];
-}
+import { Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
+import { CustomDriverNodeRedRuntimeNode, InstructionResponse, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode } from './indysoft-custom-driver-types';
 
 interface RuntimeNodeInputEventMessagePayload {
   temp: number;
@@ -74,22 +21,21 @@ module.exports = function(RED: NodeRed) {
     this.instructionSets = config.instructionSets;
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
       this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
-      const driverConfig = NodeRedManager.instance.nodes.find(n => n.id === this.driverConfigId);
+      const driverConfig = findCustomDriverConfigRuntimeNode(this);
       if (!driverConfig) {
         this.error(`Missing configuration node, ${this.driverConfigId}`);
         this.status({ fill: 'red', shape: 'dot', text: 'Missing configuration node' });
         return;
       }
-      const driverConfigEditorDef = driverConfig.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
-      const driver = DriverBuilder.instance.getDriver(driverConfigEditorDef.manufacturer, driverConfigEditorDef.model);
+      const driver = DriverBuilder.instance.getDriver(driverConfig.manufacturer, driverConfig.model);
       if (!driver) {
-        this.error(`Missing driver, ${driverConfigEditorDef.manufacturer} ${driverConfigEditorDef.model}`);
+        this.error(`Missing driver, ${driverConfig.manufacturer} ${driverConfig.model}`);
         this.status({ fill: 'red', shape: 'dot', text: 'Missing driver' });
         return;
       }
-      const commInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(driverConfigEditorDef.unitId);
+      const commInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(driverConfig.unitId);
       if (!commInterface) {
-        this.error(`Missing communication interface for device, ${driverConfigEditorDef.unitId}`);
+        this.error(`Missing communication interface for device, ${driverConfig.unitId}`);
         this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
         return;
       }
@@ -121,12 +67,17 @@ module.exports = function(RED: NodeRed) {
           for (const instruction of instructionSet.instructions) {
             this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
             if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
-            let command = '';
+            let command: number | string | boolean | ArrayBufferLike = '';
             switch (instruction.type) {
               case 'Query':
                 command = buildCommand(instructionSet, instruction);
                 this.status({ fill: 'green', shape: 'dot', text: `Querying: ${command}` });
-                lastRawResponse = await commInterface.queryString(command);
+                if (this.onBeforeWrite) {
+                  const beforeWriteResponse = await this.onBeforeWrite(command);
+                  command = beforeWriteResponse.data;
+                  if (beforeWriteResponse.cancel) return;
+                }
+                lastRawResponse = await commInterface.queryString(command.toString());
                 break;
               case 'Read':
                 this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
@@ -135,7 +86,12 @@ module.exports = function(RED: NodeRed) {
               case 'Write':
                 command = buildCommand(instructionSet, instruction);
                 this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
-                await commInterface.writeString(command);
+                if (this.onBeforeWrite) {
+                  const beforeWriteResponse = await this.onBeforeWrite(command);
+                  command = beforeWriteResponse.data;
+                  if (beforeWriteResponse.cancel) return;
+                }
+                await commInterface.writeString(command.toString());
                 break;
             }
             if (lastRawResponse) {

@@ -1,12 +1,14 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
-import { IpcChannels } from '../../constants';
+import { IpcChannels, VisualCalWindow } from '../../constants';
+import { CustomDriverNodeRedRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-custom-driver-types';
 // import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
-import { CancelActionReason, NodeRedManager } from './NodeRedManager';
+import { CancelActionReason, CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
+import { WindowManager } from './WindowManager';
 
 export interface StartOptions {
   sectionId: string;
@@ -57,29 +59,37 @@ export class ActionManager extends TypedEmitter<Events> {
     await CommunicationInterfaceManager.instance.loadFromSession(opts.session);
     NodeRedManager.instance.utils.loadDevices(opts.session);
     // TODO: Implmenet interceptDeviceWrites for Custom Drivers
-    // if (opts.interceptDeviceWrites) {
-    //   for (const device of DeviceManager.instance.devices) {
-    //     device.once('writeCancelled', async () => await this.cancel(CancelActionReason.user, 'User clicked stop button'));
-    //     device.onBeforeWriteString = async (device, iface, data) => {
-    //       return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
-    //         ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
-    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-    //           return resolve(args);
-    //         });
-    //         ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
-    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-    //           return reject(error);
-    //         });
-    //         ipcMain.once(IpcChannels.device.beforeWriteString.cancel, (_, args: { data: string, cancel: boolean }) => {
-    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-    //           return resolve(args);
-    //         });
-    //         const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
-    //         deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: device.name, ifaceName: iface.name, data });
-    //       });
-    //     }
-    //   }
-    // }
+    if (opts.interceptDeviceWrites) {
+      const customDriverNodes = NodeRedManager.instance.findTypedNodesByType<CustomDriverConfigurationNodeEditorDefinition, CustomDriverNodeRedRuntimeNode>('indysoft-custom-driver');
+      for (const customDriverNode of customDriverNodes) {
+        customDriverNode.runtime.onBeforeWrite = (data) => {
+          return new Promise(async (resolve, reject) => {
+            if (typeof data !== 'string') return resolve({ data });
+            ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              return resolve(args);
+            });
+            ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              return reject(error);
+            });
+            ipcMain.once(IpcChannels.device.beforeWriteString.cancel, async (_, args: { data: string, cancel: boolean }) => {
+              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+              await this.stop();
+              return resolve(args);
+            });
+            const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
+            const driverConfig = findCustomDriverConfigRuntimeNode(customDriverNode.runtime);
+            if (driverConfig) {
+              const commInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(driverConfig.unitId);
+              if (commInterface) {
+                deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: driverConfig?.unitId, ifaceName: commInterface.name, data });
+              }
+            }
+          });
+        }
+      };
+    }
     if (opts.deviceConfig) {
       const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
       this.fUserManager.setDeviceConfigs(opts.session.username, opts.session.name, opts.deviceConfig);
