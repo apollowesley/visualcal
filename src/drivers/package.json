@@ -30,58 +30,5 @@
     "eslint": "^7.1.0",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
-  },
-  "visualcal": {
-    "drivers": {
-      "interfaces": [
-        {
-          "displayName": "Prologix GPIB TCP",
-          "className": "PrologixGpibTcpInterface",
-          "path": "dist/communication-interfaces/prologix/PrologixGpibTcpInterface.js"
-        },
-        {
-          "displayName": "Prologix GPIB USB",
-          "className": "PrologixGpibUsbInterface",
-          "path": "dist/communication-interfaces/prologix/PrologixGpibUsbInterface.js"
-        },
-        {
-          "displayName": "Emulated",
-          "className": "EmulatedCommunicationInterface",
-          "path": "dist/communication-interfaces/EmulatedCommunicationInterface.js"
-        }
-      ],
-      "devices": [
-        {
-          "displayName": "Fluke 45",
-          "className": "Fluke45",
-          "manufacturer": "Fluke",
-          "model": "45",
-          "categories": [
-            "Digital Multimeter"
-          ],
-          "path": "dist/devices/digital-multimeters/Fluke45.js"
-        },
-        {
-          "displayName": "Keysight 34401A",
-          "className": "Keysight34401A",
-          "manufacturer": "Keysight",
-          "model": "34401A",
-          "categories": [
-            "Digital Multimeter"
-          ],
-          "path": "dist/devices/digital-multimeters/Keysight34401A.js"
-        },
-        {
-          "displayName": "Fluke 5522A",
-          "className": "Fluke5522A",
-          "manufacturer": "Fluke",
-          "model": "5522A",
-          "categories": [
-            "Multi-Product Calibrator"
-          ],
-          "path": "dist/devices/multi-product-calibrators/Fluke5522ADevice.js"
-        }
-      ]
-    }
   }
 }

@@ -68,8 +68,7 @@ export class SessionManager extends TypedEmitter<Events> {
 
     ipcMain.on(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.request, (event) => {
       try {
-        const retVal = NodeRedManager.instance.utils.getDeviceConfigurationNodeInfosForCurrentFlow();
-        event.reply(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.response, retVal);
+        event.reply(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.response, []);
       } catch (error) {
         event.reply(IpcChannels.session.getDeviceConfigurationNodeInfosForCurrentFlow.error, error);
       }
@@ -122,30 +121,23 @@ export class SessionManager extends TypedEmitter<Events> {
       if (throwOnError) throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
     }
     if (!procedure) return undefined;
+    const customDriverConfigNodes = NodeRedManager.instance.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
     const sections = NodeRedManager.instance.sections;
-    const deviceConfigurationNodeInfosForCurrentFlow = NodeRedManager.instance.utils.getDeviceConfigurationNodeInfosForCurrentFlow();
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       user: user,
       session: activeSession,
       procedure: procedure,
       sections: sections,
       benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
-      deviceNodes: deviceConfigurationNodeInfosForCurrentFlow
+      deviceNodes: customDriverConfigNodes.map(n => {
+        const editorDef = n.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
+        return {
+          configNodeId: editorDef.id,
+          unitId: editorDef.unitId,
+          isCustom: true
+        };
+      })
     };
-
-    // *** CUSTOM NODES ***
-    const customDriverConfigNodes = NodeRedManager.instance.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
-    customDriverConfigNodes.forEach((n) => {
-      const editorDef = n.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
-      viewInfo.deviceNodes.push({
-        configNodeId: editorDef.id,
-        unitId: editorDef.unitId,
-        availableDrivers: viewInfo.deviceNodes.length >= 1 ? viewInfo.deviceNodes[0].availableDrivers : [],
-        isCustom: true
-      });
-    });
-    // ********************
-
     return viewInfo;
   }
 

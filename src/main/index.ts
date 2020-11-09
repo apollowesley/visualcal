@@ -3,10 +3,8 @@ import electronIpcLog from 'electron-ipc-log';
 import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
-import RED from 'node-red';
 import path from 'path';
 import { init as initMainMenu } from './menu';
-import { NodeRed as RealNodeRed } from '../@types/logic-server';
 import { VisualCalWindow } from '../constants';
 import { installVueDevTools } from './dev';
 import { init as initGlobal } from './InitGlobal';
@@ -80,7 +78,6 @@ async function load() {
   VisualCalNodeRedSettings.storageModule = VisualCalLogicServerFileSystem;
   log.info('Initializing Logic Server utils');
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
-  await NodeRedManager.instance.utils.init();
   if (isDev()) initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
 }

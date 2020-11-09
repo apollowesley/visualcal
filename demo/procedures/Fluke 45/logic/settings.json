@@ -397,56 +397,6 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-custom-driver.js"
 				},
-				"indysoft-device-configuration": {
-					"name": "indysoft-device-configuration",
-					"types": [
-						"indysoft-device-configuration"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-configuration.js"
-				},
-				"indysoft-device-digital-multimeter": {
-					"name": "indysoft-device-digital-multimeter",
-					"types": [
-						"indysoft-device-digital-multimeter"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-digital-multimeter.js"
-				},
-				"indysoft-device-fluke45": {
-					"name": "indysoft-device-fluke45",
-					"types": [
-						"indysoft-device-fluke45"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-fluke45.js"
-				},
-				"indysoft-device-keysight34401a": {
-					"name": "indysoft-device-keysight34401a",
-					"types": [
-						"indysoft-device-keysight34401a"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-keysight34401a.js"
-				},
-				"indysoft-device-multi-product-calibrator": {
-					"name": "indysoft-device-multi-product-calibrator",
-					"types": [
-						"indysoft-device-multi-product-calibrator"
-					],
-					"enabled": true,
-					"local": false,
-					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-device-multi-product-calibrator.js"
-				},
 				"indysoft-mqtt-dynamic-topic-in": {
 					"name": "indysoft-mqtt-dynamic-topic-in",
 					"types": [

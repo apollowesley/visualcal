@@ -1,14 +1,12 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
-import { IpcChannels, VisualCalWindow } from '../../constants';
-import { BeforeWriteStringResult } from '../../drivers/devices/Device';
+import { IpcChannels } from '../../constants';
+// import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
-import { DeviceManager } from './DeviceManager';
 import { CancelActionReason, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
-import { WindowManager } from './WindowManager';
 
 export interface StartOptions {
   sectionId: string;
@@ -58,29 +56,30 @@ export class ActionManager extends TypedEmitter<Events> {
     this.fCurrentRun = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
     await CommunicationInterfaceManager.instance.loadFromSession(opts.session);
     NodeRedManager.instance.utils.loadDevices(opts.session);
-    if (opts.interceptDeviceWrites) {
-      for (const device of DeviceManager.instance.devices) {
-        device.once('writeCancelled', async () => await this.cancel(CancelActionReason.user, 'User clicked stop button'));
-        device.onBeforeWriteString = async (device, iface, data) => {
-          return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
-            ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-              return resolve(args);
-            });
-            ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-              return reject(error);
-            });
-            ipcMain.once(IpcChannels.device.beforeWriteString.cancel, (_, args: { data: string, cancel: boolean }) => {
-              WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
-              return resolve(args);
-            });
-            const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
-            deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: device.name, ifaceName: iface.name, data });
-          });
-        }
-      }
-    }
+    // TODO: Implmenet interceptDeviceWrites for Custom Drivers
+    // if (opts.interceptDeviceWrites) {
+    //   for (const device of DeviceManager.instance.devices) {
+    //     device.once('writeCancelled', async () => await this.cancel(CancelActionReason.user, 'User clicked stop button'));
+    //     device.onBeforeWriteString = async (device, iface, data) => {
+    //       return new Promise<BeforeWriteStringResult>(async (resolve, reject) => {
+    //         ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
+    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+    //           return resolve(args);
+    //         });
+    //         ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
+    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+    //           return reject(error);
+    //         });
+    //         ipcMain.once(IpcChannels.device.beforeWriteString.cancel, (_, args: { data: string, cancel: boolean }) => {
+    //           WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
+    //           return resolve(args);
+    //         });
+    //         const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
+    //         deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: device.name, ifaceName: iface.name, data });
+    //       });
+    //     }
+    //   }
+    // }
     if (opts.deviceConfig) {
       const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
       this.fUserManager.setDeviceConfigs(opts.session.username, opts.session.name, opts.deviceConfig);

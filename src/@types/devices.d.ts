@@ -32,14 +32,6 @@ interface ICommunicationInterface {
   readString(): Promise<string>;
 }
 
-interface IControllableDevice extends IDevice {
-  name: string;
-  communicationInterface?: ICommunicationInterface;
-  setCommunicationInterface(communicationInterface: ICommunicationInterface): void;
-  isGpib?: boolean;
-  gpibPrimaryAddress?: number;
-}
-
 interface ReadQueueItem {
   callback: (data: ArrayBuffer, cancelled = false) => void;
   cancelCallback?: () => void;
@@ -76,15 +68,8 @@ interface DeviceNodeDriverRequirementsInfo {
   configNodeId: string;
   unitId: string;
   driverCategories?: string[]; // Only found on generic device nodes
-  availableDrivers: import('./drivers-package-json').DriversPackageJsonDriver[];
   isGeneric?: boolean;
   isCustom?: boolean;
-}
-
-interface DeviceDriverInfo {
-  manufacturer: string;
-  deviceModel: string;
-  categories: string[];
 }
 
 interface CommunicationInterfaceDeviceNodeConfiguration {
@@ -93,10 +78,8 @@ interface CommunicationInterfaceDeviceNodeConfiguration {
   interfaceName: string;
   gpib?: GpibDeviceConfiguration;
   gpibAddress: number;
-  driverDisplayName: string;
   isGeneric?: boolean;
   isCustom?: boolean;
-  driver?: DeviceDriverInfo;
 }
 
 interface CommunicationConfiguration {

@@ -11,7 +11,6 @@ import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../../servers/express';
 import NodeRedVisualCalUtils from '../../node-red/utils';
 import electronLog from 'electron-log';
-import { DeviceManager } from '../DeviceManager';
 import { CommunicationInterfaceManager } from '../CommunicationInterfaceManager';
 
 export const enum CancelActionReason {
@@ -208,9 +207,6 @@ export class NodeRedManager extends TypedEmitter<Events> {
   }
 
   async stopCurrentAction() {
-    for (const device of DeviceManager.instance.devices) {
-      device.onBeforeWriteString = undefined;
-    }
     await CommunicationInterfaceManager.instance.disconnectAll();
     if (!this.fCurrentStartActionNode) return;
     if (!this.fCurrentStartActionNode.runtime.section) throw new Error(`Start action node is missing its configuration node, ${this.fCurrentStartActionNode.id}`);

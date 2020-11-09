@@ -23,16 +23,6 @@ let user: User | undefined = undefined;
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
 let deviceConfigurationNodeInfosForCurrentFlow: DeviceNodeDriverRequirementsInfo[] = [];
 
-const devicesTableGetDrivers = (cell: Tabulator.CellComponent) => {
-  const deviceInfo = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
-  const foundDeviceConfig = deviceConfigurationNodeInfosForCurrentFlow.find(d => d.unitId === deviceInfo.unitId);
-  if (!foundDeviceConfig) throw new Error('Unable to find device config');
-  const retVal: Tabulator.SelectParams = {
-    values: foundDeviceConfig.availableDrivers.map(d => d.displayName)
-  };
-  return retVal;
-};
-
 const getBenchConfigurationInterfaces = () => {
   if (!user || !session) return [];
   const sessionConfiguration = session.configuration;
@@ -56,7 +46,6 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   layout: 'fitColumns',
   columns: [
     { title: 'Device Unit Id', field: 'unitId' },
-    { title: 'Driver', field: 'driverDisplayName', editor: 'select', editorParams: (cell: Tabulator.CellComponent) => devicesTableGetDrivers(cell) },
     { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => getDevicesTableGetCommInterfaces() },
     { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]

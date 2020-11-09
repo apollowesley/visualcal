@@ -342,8 +342,6 @@ export interface NodeRedCommunicationInterfaceRuntimeNode extends NodeRedRuntime
   deviceDriverRequiredCategories: string[];
   deviceConfigNode: DeviceConfigurationNode;
   communicationInterface?: ICommunicationInterface;
-  device?: IControllableDevice;
-  specificDriverInfo?: DriverInfo;
 }
 
 export interface DeviceConfigurationNode extends NodeRedRuntimeNode {
