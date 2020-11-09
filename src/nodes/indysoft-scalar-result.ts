@@ -15,7 +15,6 @@ interface RuntimeProperties extends NodeProperties {
   derivedQuantity?: string;
   derivedQuantityPrefix?: string;
   deviceType: string;
-  multimeterMode: string;
   toleranceType: string;
   inputLevel: string;
   min: string;

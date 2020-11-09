@@ -57,7 +57,6 @@ interface VisualCalAugmentDirs {
   drivers: {
     base: string;
     communicationInterfaces: string;
-    devices: string;
   }
   userHomeData: {
     base: string;

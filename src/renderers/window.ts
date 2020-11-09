@@ -13,7 +13,6 @@ import { CommunicationInterfaceManager } from './managers/CommunicationInterface
 import electronIpcLog from 'electron-ipc-log';
 import { removeDesignTimeFromAllElements } from './utils/runtime';
 import electronLog from 'electron-log';
-import { LogicResult } from 'visualcal-common/dist/result';
 import { Driver, IpcChannels as DriverBuilderIpcChannels } from 'visualcal-common/dist/driver-builder';
 
 electronLog.transports.file.level = 'debug';

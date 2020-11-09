@@ -51,8 +51,6 @@ const loadDevices = (session: Session) => {
         gpibAddress: deviceConfig.gpibAddress
       })
     }
-    // const driverDisplayName = deviceConfig.driver ? `${deviceConfig.driver.manufacturer} ${deviceConfig.driver.deviceModel}` : '';
-    // assignDriverToDevice(deviceConfig.unitId, driverDisplayName);
   });
 }
 

@@ -40,8 +40,7 @@ export const init = (appBase: string, userHomeBase: string) => {
     public: publicPath,
     drivers: {
       base: path.join(distPath, 'drivers'),
-      communicationInterfaces: path.join(distPath, 'drivers', 'communication-interfaces'),
-      devices: path.join(distPath, 'drivers', 'devices')
+      communicationInterfaces: path.join(distPath, 'drivers', 'communication-interfaces')
     },
     html: {
       bootstrapStudio: bootstrapStudioHtmlPath,
