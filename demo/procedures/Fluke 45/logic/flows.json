@@ -101,11 +101,6 @@
 		"name": "Resistance"
 	},
 	{
-		"id": "1ceffd37.f80163",
-		"type": "indysoft-section-configuration",
-		"name": "Test Section"
-	},
-	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
@@ -4438,72 +4433,6 @@
 			[],
 			[
 				"26b600d5.6fc36"
-			]
-		]
-	},
-	{
-		"id": "f9dd2559.8df4e8",
-		"type": "debug",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"active": true,
-		"tosidebar": true,
-		"console": false,
-		"tostatus": false,
-		"complete": "false",
-		"statusVal": "",
-		"statusType": "auto",
-		"x": 1310,
-		"y": 920,
-		"wires": []
-	},
-	{
-		"id": "7f948829.713de8",
-		"type": "indysoft-custom-driver",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"driverConfigId": "6b116249.9db85c",
-		"instructionSets": [
-			{
-				"id": "5fa62123b58a446c0e8a60ff",
-				"instructionSet": {
-					"_id": "5fa62123b58a446c0e8a60ff",
-					"name": "Measure",
-					"instructions": [
-						{
-							"_id": "5fa62123b58a446c0e8a6100",
-							"order": 0,
-							"name": "Measure",
-							"type": "Query",
-							"command": "MEAS1?",
-							"readAttempts": 1,
-							"responseDataType": "Number"
-						}
-					]
-				},
-				"parameterArguments": []
-			}
-		],
-		"x": 1020,
-		"y": 920,
-		"wires": [
-			[],
-			[
-				"f9dd2559.8df4e8"
-			]
-		]
-	},
-	{
-		"id": "461ec5d2.4ae7bc",
-		"type": "indysoft-action-start",
-		"z": "3b731b51.7981f4",
-		"name": "Test Action",
-		"sectionConfigId": "1ceffd37.f80163",
-		"x": 720,
-		"y": 920,
-		"wires": [
-			[
-				"7f948829.713de8"
 			]
 		]
 	}
