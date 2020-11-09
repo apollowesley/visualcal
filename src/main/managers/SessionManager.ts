@@ -140,7 +140,7 @@ export class SessionManager extends TypedEmitter<Events> {
       viewInfo.deviceNodes.push({
         configNodeId: editorDef.id,
         unitId: editorDef.unitId,
-        availableDrivers: viewInfo.deviceNodes[0].availableDrivers,
+        availableDrivers: viewInfo.deviceNodes.length >= 1 ? viewInfo.deviceNodes[0].availableDrivers : [],
         isCustom: true
       });
     });

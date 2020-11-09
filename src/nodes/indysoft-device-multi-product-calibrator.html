@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="indysoft-device-multi-product-calibrator">
+<script type="text/html" data-template-name="indysoft-device-multi-product-calibrator">
   <div class="form-row">
       <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
       <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
@@ -58,7 +58,7 @@
 
   RED.nodes.registerType('indysoft-device-multi-product-calibrator', {
     color: '#d47f7f',
-    category: 'Multi Product Calibrator',
+    category: 'Drivers',
     defaults: {
       name: { value: '' },
       deviceConfigId: { type: 'indysoft-device-configuration', required: true },

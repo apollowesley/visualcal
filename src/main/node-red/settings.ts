@@ -9,7 +9,7 @@ const log = electronLog.scope('Logic server');
 
 const settings: NodeRedSettings = {
   credentialSecret: 'IndySoft#927',
-  paletteCategories: ['Actions', 'User', 'Results', 'Digital Multimeter', 'Multi Product Calibrator', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
+  paletteCategories: ['Procedure', 'Drivers', 'Bulk Operations', 'subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
   httpAdminRoot: '/red',  // set to false to disable editor and deploy
   httpNodeRoot: '/',
   userDir: path.join(os.homedir(), '.visualcal', 'logic'),

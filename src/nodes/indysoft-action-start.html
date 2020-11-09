@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="indysoft-action-start">
+<script type="text/html" data-template-name="indysoft-action-start">
   <div class="form-row">
     <label for="node-input-sectionConfigId"><i class="fa fa-tag"></i> Section</label>
     <input type="text" id="node-input-sectionConfigId" style="display: inline-block; width: auto; vertical-align: top;">
@@ -9,14 +9,14 @@
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="indysoft-action-start">
+<script type="text/html" data-help-name="indysoft-action-start">
   <p>Used to invoke a flow from the front-end</p>
 </script>
 
 <script>
 const IndySoftActionStartNodeConfig = {
   color: '#34a1eb',
-  category: 'Actions',
+  category: 'Procedure',
   defaults: {
     name: { value: 'MyAction', required: true },
     sectionConfigId: { type: 'indysoft-section-configuration', required: true }

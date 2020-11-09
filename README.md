@@ -13,5 +13,6 @@
 - The frontend-vue app can be run in dev mode, and the main app is coded to accomidate running it that way
 - In the VisualCal main window, open the Vue Test Window from the Development menu
 - To build, first build the frontend-vue app so the files end up in ```visualcal/public/vue```, then deploy as usual since the public directory and it's contents are included during publish
+- Set PKG_CONFIG_PATH environment variable to the Mono Framework install location for Edge (i.e. ```export PKG_CONFIG_PATH=/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig/``` on Mac)
 
 *** NOTE: THE ABOVE DOCUMENT HAS NOT BEEN TESTED WITH PUBLISH ***
