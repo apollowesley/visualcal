@@ -33,6 +33,8 @@ interface VisualCalCRUDViewDir {
 
 interface VisualCalAugmentDirs {
   base: string;
+  dist: string,
+  nodes: string,
   public: string;
   html: {
     windows: string;

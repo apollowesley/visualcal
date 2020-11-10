@@ -37,6 +37,8 @@ export const init = (appBase: string, userHomeBase: string) => {
   const renderersSessionPath = path.join(renderersWindowsPath, 'session');
   dirs = {
     base: appBase,
+    dist: distPath,
+    nodes: path.join(distPath, 'nodes'),
     public: publicPath,
     drivers: {
       base: path.join(distPath, 'drivers'),
