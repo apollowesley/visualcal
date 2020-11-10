@@ -12,7 +12,7 @@ interface ConnectInput {
 }
 
 interface ConnectOutput {
-  Handle: string;
+  handle: string;
 }
 
 interface DisconnectInput {
@@ -197,7 +197,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
           cicImmediate: true
         }, (err, result) => {
           if (err) return reject(err);
-          this.fHandle = result.Handle;
+          this.fHandle = result.handle;
           return resolve();
         });
       } catch (error) {
