@@ -8,7 +8,8 @@ export class EmulatedCommunicationInterface extends CommunicationInterface {
   private isConnectedInternal: boolean = false;
 
   async onConnect(): Promise<void> {
-    await Promise.resolve();
+    this.isConnectedInternal = true;
+    return await Promise.resolve();
   }
 
   async onDisconnect(): Promise<void> {
