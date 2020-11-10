@@ -4,21 +4,20 @@ import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
 import path from 'path';
-import { init as initMainMenu } from './menu';
 import { VisualCalWindow } from '../constants';
 import { installVueDevTools } from './dev';
 import { init as initGlobal } from './InitGlobal';
 import initIpcMonitor from './ipc';
 import { ApplicationManager } from './managers/ApplicationManager';
+import { DriverBuilder } from './managers/DriverBuilder';
 import { VueManager } from './managers/VueManager';
 import { WindowManager } from './managers/WindowManager';
+import { init as initMainMenu } from './menu';
 import VisualCalNodeRedSettings from './node-red/settings';
 import { VisualCalLogicServerFileSystem } from './node-red/storage/index';
 import { ExpressServer } from './servers/express';
 import { getUserHomeDataPathDir, isDev } from './utils';
 import { setNoUpdateNotifier } from './utils/npm-update-notifier';
-import { DriverBuilder } from './managers/DriverBuilder';
-import { NodeRedManager } from './managers/NodeRedManager';
 
 // *** TESTING NI-GPIB DRIVER ***
 // import IndySoftNIGPIB from 'indysoft-ni-gpib';
