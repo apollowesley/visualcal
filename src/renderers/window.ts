@@ -88,6 +88,19 @@ window.visualCal = {
       });
       ipcRenderer.send(DriverBuilderIpcChannels.communicationInterface.getDriverIdentityInfos.request);
     });
+  },
+  getDriverCategories: () => {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverCategories.response, (_, infos: { _id: string, name: string, instructionSets: string[] }[]) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriverCategories.error);
+        return resolve(infos);
+      });
+      ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriverCategories.error, (_, error: Error) => {
+        ipcRenderer.removeAllListeners(DriverBuilderIpcChannels.communicationInterface.getDriverCategories.response);
+        return reject(error);
+      });
+      ipcRenderer.send(DriverBuilderIpcChannels.communicationInterface.getDriverCategories.request);
+    });
   }
 };
 

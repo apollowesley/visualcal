@@ -26,6 +26,11 @@ export declare const IpcChannels: {
             response: string;
             error: string;
         };
+        getDriverCategories: {
+            request: string;
+            response: string;
+            error: string;
+        };
         getStatus: {
             request: string;
             response: string;
@@ -65,6 +70,7 @@ export interface Library {
     drivers: Driver[];
     instructionSets: InstructionSet[];
     instructions: Instruction[];
+    categories: DriverCategory[];
 }
 export interface Status {
     communicationInterfaceName?: string;
@@ -168,6 +174,11 @@ export interface Driver {
     identityQueryCommand?: string;
     terminator: string;
     instructionSets: InstructionSet[];
+}
+export interface DriverCategory {
+    _id: string;
+    name: string;
+    instructionSets: string[];
 }
 export declare type StoreDriver = Driver & mongoose.Document;
 export declare type StoreInstructionSet = InstructionSet & mongoose.Document;

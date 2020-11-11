@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver, STORE_UPDATED } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver, STORE_UPDATED, DriverCategory } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { generateUuid } from '@/utils/uuid';
@@ -14,6 +14,7 @@ interface OnlineStore {
 export interface DriverBuilderState {
   instructions: Instruction[];
   instructionSets: InstructionSet[];
+  categories: DriverCategory[];
   drivers: Driver[];
   currentDriver: Driver;
   communicationInterfaceInfos: CommunicationInterfaceConfigurationInfo[];
@@ -30,6 +31,7 @@ const employeesModule = defineModule({
     return {
       instructions: [],
       instructionSets: [],
+      categories: [],
       drivers: [],
       currentDriver: {
         driverManufacturer: '',
@@ -61,7 +63,8 @@ const employeesModule = defineModule({
       return {
         drivers: state.drivers,
         instructionSets: state.instructionSets,
-        instructions: state.instructions
+        instructions: state.instructions,
+        categories: state.categories
       }
     }
   },
@@ -70,6 +73,7 @@ const employeesModule = defineModule({
       state.drivers = value.drivers;
       state.instructionSets = value.instructionSets;
       state.instructions = value.instructions;
+      state.categories = value.categories;
     },
     setInstructions(state, value: Instruction[]) {
       state.instructions = value;

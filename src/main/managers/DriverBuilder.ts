@@ -34,6 +34,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
   get drivers() { return this.fStore.get('drivers', []); }
   get instructions() { return this.fStore.get('instructions', []); }
   get instructionSets() { return this.fStore.get('instructionSets', []); }
+  get categories() { return this.fStore.get('categories', []); }
 
   async connect(info: CommunicationInterfaceConfigurationInfo) {
     if (this.fCommunicationInterface) throw new Error('Already connected');
@@ -93,6 +94,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
     if (!library.drivers) library.drivers = [];
     if (!library.instructionSets) library.instructionSets = [];
     if (!library.instructions) library.instructions = [];
+    if (!library.categories) library.categories = [];
     return library;
   }
 
@@ -133,6 +135,11 @@ export class DriverBuilder extends TypedEmitter<Events> {
     ipcMain.on(IpcChannels.communicationInterface.getDriverIdentityInfos.request, (event) => {
       if (event.sender.isDestroyed()) return;
       return event.reply(IpcChannels.communicationInterface.getDriverIdentityInfos.response, this.getDriverIdentityInfos());
+    });
+
+    ipcMain.on(IpcChannels.communicationInterface.getDriverCategories.request, (event) => {
+      if (event.sender.isDestroyed()) return;
+      return event.reply(IpcChannels.communicationInterface.getDriverCategories.response, this.categories);
     });
 
     ipcMain.on(IpcChannels.communicationInterface.getLibrary.request, (event) => {

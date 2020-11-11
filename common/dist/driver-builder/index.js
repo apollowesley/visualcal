@@ -28,6 +28,11 @@ exports.IpcChannels = {
             response: 'driver-builder-get-driver-identity-infos-response',
             error: 'driver-builder-get-driver-identity-infos-error'
         },
+        getDriverCategories: {
+            request: 'driver-builder-get-driver-categories--request',
+            response: 'driver-builder-get-driver-categories--request',
+            error: 'driver-builder-get-driver-categories--request'
+        },
         getStatus: {
             request: 'driver-builder-get-status-request',
             response: 'driver-builder-get-status-response',

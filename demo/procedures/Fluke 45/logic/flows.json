@@ -53,7 +53,8 @@
 		"type": "indysoft-custom-driver-configuration",
 		"unitId": "UUT",
 		"manufacturer": "Fluke",
-		"model": "45"
+		"model": "45",
+		"useCategories": false
 	},
 	{
 		"id": "9728462e.dda138",
@@ -699,7 +700,7 @@
 		"append": "mV",
 		"dataType": "none",
 		"showImage": true,
-		"assetFilename": "IndySoftLogo.png",
+		"assetFilename": "connection-diagram.png",
 		"x": 790,
 		"y": 200,
 		"wires": [

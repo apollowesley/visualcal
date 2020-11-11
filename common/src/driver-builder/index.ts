@@ -27,6 +27,11 @@ export const IpcChannels = {
       response: 'driver-builder-get-driver-identity-infos-response',
       error: 'driver-builder-get-driver-identity-infos-error'
     },
+    getDriverCategories: {
+      request: 'driver-builder-get-driver-categories--request',
+      response: 'driver-builder-get-driver-categories--request',
+      error: 'driver-builder-get-driver-categories--request'
+    },
     getStatus: {
       request: 'driver-builder-get-status-request',
       response: 'driver-builder-get-status-response',
@@ -68,6 +73,7 @@ export interface Library {
   drivers: Driver[];
   instructionSets: InstructionSet[];
   instructions: Instruction[];
+  categories: DriverCategory[];
 }
 
 export interface Status {
@@ -209,6 +215,12 @@ export interface Driver {
   identityQueryCommand?: string;
   terminator: string;
   instructionSets: InstructionSet[]
+}
+
+export interface DriverCategory {
+  _id: string;
+  name: string;
+  instructionSets: string[];
 }
 
 export type StoreDriver = Driver & mongoose.Document;

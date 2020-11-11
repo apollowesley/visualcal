@@ -141,12 +141,12 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
 
   @Watch('onlineStoreDrivers', { deep: true })
   onOnlineStoreDriversChanged() {
-    this.refreshOnlineStoreCategory();
+    this.refreshOnlineStore();
   }
 
   @Watch('drivers', { deep: true })
   onDriversChanged() {
-    this.refreshDriversCategory();
+    this.refreshDrivers();
   }
 
   @Watch('instructionSets', { deep: true })
@@ -170,19 +170,19 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
     if (addCategory) this.items.push(instructionSetsCategory);
   }
 
-  refreshDriversCategory() {
-    const driversCategory = (this.items as Item[]).find(i => i.name === 'Drivers');
-    if (!driversCategory) return;
-    driversCategory.children = [];
+  refreshDrivers() {
+    const driversItem = (this.items as Item[]).find(i => i.name === 'Drivers');
+    if (!driversItem) return;
+    driversItem.children = [];
     for (const driver of this.drivers) {
-      let manufacturerItem = (driversCategory.children as Item[]).find(c => c.name === driver.driverManufacturer);
+      let manufacturerItem = (driversItem.children as Item[]).find(c => c.name === driver.driverManufacturer);
       if (!manufacturerItem) {
         manufacturerItem = {
           _id: generateUuid(),
           name: driver.driverManufacturer,
           children: []
         };
-        (driversCategory.children as Item[]).push(manufacturerItem);
+        (driversItem.children as Item[]).push(manufacturerItem);
       }
       let modelItem = (manufacturerItem.children as Item[]).find(c => c.name === driver.driverModel);
       if (!modelItem) {
@@ -203,20 +203,27 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
     }
   }
 
-  refreshOnlineStoreCategory() {
-    let onlineStoreCategory = (this.items as Item[]).find(i => i.name === 'Store');
-    let addCategory = onlineStoreCategory === undefined;
-    if (!onlineStoreCategory) onlineStoreCategory = { _id: generateUuid(), name: 'Store', children: [] };
-    onlineStoreCategory.children = [];
+  refreshCategories() {
+    const categoriesItem = (this.items as Item[]).find(i => i.name === 'Categories');
+    if (!categoriesItem) return;
+    categoriesItem.children = [];
+    
+  }
+
+  refreshOnlineStore() {
+    let onlineStoreItem = (this.items as Item[]).find(i => i.name === 'Store');
+    let addCategory = onlineStoreItem === undefined;
+    if (!onlineStoreItem) onlineStoreItem = { _id: generateUuid(), name: 'Store', children: [] };
+    onlineStoreItem.children = [];
     for (const driver of this.$store.direct.state.driverBuilder.onlineStore.drivers) {
-      let nomenclatureFolder = onlineStoreCategory.children ? (onlineStoreCategory.children as Item[]).find(c => c.name === driver.driverNomenclature) : undefined;
+      let nomenclatureFolder = onlineStoreItem.children ? (onlineStoreItem.children as Item[]).find(c => c.name === driver.driverNomenclature) : undefined;
       if (!nomenclatureFolder) {
         nomenclatureFolder = {
           _id: driver._id,
           name: driver.driverNomenclature,
           children: []
         };
-        (onlineStoreCategory.children as Item[]).push(nomenclatureFolder);
+        (onlineStoreItem.children as Item[]).push(nomenclatureFolder);
       }
 
       let manufacturerFolder = nomenclatureFolder.children ? (nomenclatureFolder.children as Item[]).find(c => c.name === driver.driverManufacturer) : undefined;
@@ -245,7 +252,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
         file: 'json'
       });
     }
-    if (addCategory) this.items.push(onlineStoreCategory);
+    if (addCategory) this.items.push(onlineStoreItem);
   }
 
   onDragStart(event: DragEvent, instruction: Instruction) {

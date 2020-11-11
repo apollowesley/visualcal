@@ -1,42 +1,61 @@
-<script type="text/x-red" data-template-name="indysoft-custom-driver-configuration">
+<script type="text/html" data-template-name="indysoft-custom-driver-configuration">
   <div class="form-row">
     <label for="node-config-input-unitId"><i class="fa fa-tag"></i> Unit Id</label>
     <input type="text" id="node-config-input-unitId">
   </div>
   <div class="form-row">
-    <label for="node-config-input-manufacturer"><i class="fa fa-tag"></i> Manufacturer</label>
-    <select id="node-config-input-manufacturer">
-    </select>
+    <label for="node-config-input-useCategories"><i class="fa fa-tag"></i> Use Categories?</label>
+    <input id="node-config-input-useCategories" type="checkbox">
   </div>
-  <div class="form-row">
-    <label for="node-config-input-model"><i class="fa fa-tag"></i> Model</label>
-    <select id="node-config-input-model">
-    </select>
+  <div class="form-row" id="indysoft-custom-driver-config-categories-row">
+    <label for="node-config-input-categories"><i class="fa fa-tag"></i> Available Categories</label>
+    <fieldset id="node-config-input-categories" class="driver-categories-checkbox-group"></fieldset>
+  </div>
+  <div id="indysoft-custom-driver-config-specific-driver-group">
+    <div class="form-row">
+      <label for="node-config-input-manufacturer"><i class="fa fa-tag"></i> Manufacturer</label>
+      <select id="node-config-input-manufacturer">
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-model"><i class="fa fa-tag"></i> Model</label>
+      <select id="node-config-input-model">
+      </select>
+    </div>
   </div>
 </script>
 
-<script type="text/x-red" data-help-name="indysoft-custom-driver-configuration">
+<script type="text/html" data-help-name="indysoft-custom-driver-configuration">
   <p>Provides a UI for defining a custom driver.</p>
 </script>
 
 <script type="text/javascript">
+  (function () {
   /**
+   * 
+   * @typedef DriverCategory
+   * @type {object}
+   * @property {string} _id - Identity
+   * @property {string} name - Name
+   * @property {string[]} instructionSets
+   * 
    * manufactuer: string, model: string, nomenclature: string
    * @typedef CustomDriverIdentityInfo
    * @type {object}
    * @property {string} manufacturer
    * @property {string} model
    * @property {string} nomenclature
+   * 
    */
 
-  (function () {
     RED.nodes.registerType('indysoft-custom-driver-configuration', {
       color: '#67F36E',
       category: 'config',
       defaults: {
         unitId: { value: '', required: true },
         manufacturer: { value: '', required: true },
-        model: { value: '', required: true }
+        model: { value: '', required: true },
+        useCategories: { value: false, required: false }
       },
       inputs: 0,
       outputs: 0,
@@ -48,13 +67,46 @@
         return this.name ? 'node_label_italic' : '';
       },
       oneditprepare: async function() {
+        /** @type {HTMLInputElement} */
+        const useCategoriesCheckboxElement = document.getElementById('node-config-input-useCategories');
+        /** @type {HTMLFieldSetElement} */
+        const categoriesListElement = document.getElementById('node-config-input-categories');
+        /** @type {HTMLDivElement} */
+        const categoriesListRow = document.getElementById('indysoft-custom-driver-config-categories-row');
+
+        /** @type {HTMLDivElement} */
+        const specificDriverGroupElement = document.getElementById('indysoft-custom-driver-config-specific-driver-group');
         /** @type {HTMLSelectElement} */
-        const manufacturerSelectElement = document.getElementById('node-config-input-manufacturer');
+        const manufacturerSelectElement = document.getElementById('node-config-input-manufacturer');1
         /** @type {HTMLSelectElement} */
         const modelSelectElement = document.getElementById('node-config-input-model');
+
         /** @type {CustomDriverIdentityInfo[]} */
         const driverIdentityInfos = await visualCal.getCustomDriverIdentityInfos();
         const manufacturers = driverIdentityInfos.map(d => d.manufacturer).filter((value, index, self) => self.indexOf(value) === index).sort();
+
+        /** @type {DriverCategory[]} */
+        const driverCategories = await visualCal.getDriverCategories();
+
+        for (const driverCategory of driverCategories) {
+          const driverCategoryLabelElement = document.createElement('label');
+          const driverCategoryCheckElement = document.createElement('input');
+
+          driverCategoryCheckElement.id = driverCategory._id;
+          driverCategoryCheckElement.type = 'checkbox';
+          driverCategoryCheckElement.dataset.categoryId = driverCategory._id;
+
+          driverCategoryLabelElement.textContent = driverCategory.name;
+
+          driverCategoryLabelElement.append(driverCategoryCheckElement);
+          categoriesListElement.append(driverCategoryLabelElement);
+        }
+
+        useCategoriesCheckboxElement.onchange = () => {
+          const isChecked = Boolean(useCategoriesCheckboxElement.checked);
+          specificDriverGroupElement.style.display = isChecked ? 'none' : 'block';
+          categoriesListRow.style.display = isChecked ? 'block' : 'none';
+        }
 
         manufacturers.forEach(manufacturer => {
           const option = document.createElement('option');
@@ -89,7 +141,8 @@
           }
         };
 
-        $(manufacturerSelectElement).change();
+        manufacturerSelectElement.dispatchEvent(new Event('change'));
+        useCategoriesCheckboxElement.dispatchEvent(new Event('change'));
       },
       oneditsave: function() {
         /** @type {HTMLSelectElement} */
@@ -106,3 +159,29 @@
   })();
 
 </script>
+
+<style>
+.driver-categories-checkbox-group {
+  border-style: solid !important;
+  border-width: 1px !important;
+  border-color: #2D3239 !important;
+  border-radius: 3px !important;
+  margin: 0px !important;
+  margin-left: 0px !important;
+  padding: 2px !important;
+  width: 20em !important;
+  display: inline-block !important;
+  min-height: 34px !important;
+  overflow: auto !important;
+}
+
+.driver-categories-checkbox-group label{
+  width: 12em !important;
+  float: left !important;
+}
+
+.driver-categories-checkbox-group input{
+  width: 2em !important;
+  float: right !important;
+}
+</style>
