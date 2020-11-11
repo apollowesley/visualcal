@@ -136,6 +136,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
   };
 
   get drivers() { return this.$store.direct.state.driverBuilder.drivers; }
+  get driverCategories() { return this.$store.direct.state.driverBuilder.categories; }
   get instructionSets() { return this.$store.direct.state.driverBuilder.instructionSets; }
   get onlineStoreDrivers() { return this.$store.direct.state.driverBuilder.onlineStore.drivers; }
 
@@ -152,6 +153,11 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
   @Watch('instructionSets', { deep: true })
   onInstructionSetsChanged() {
     this.refreshInstructionSetsCategory();
+  }
+
+  @Watch('driverCategories', { deep: true })
+  onDriverCategoriesChanged() {
+    this.refreshCategories();
   }
 
   refreshInstructionSetsCategory() {
@@ -204,10 +210,31 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
   }
 
   refreshCategories() {
-    const categoriesItem = (this.items as Item[]).find(i => i.name === 'Categories');
-    if (!categoriesItem) return;
+    let categoriesItem = (this.items as Item[]).find(i => i.name === 'Categories');
+    let addCategory = categoriesItem === undefined;
+    if (!categoriesItem) categoriesItem = { _id: generateUuid(), name: 'Categories', children: [] };
     categoriesItem.children = [];
-    
+    for (const driverCategory of this.driverCategories) {
+      let driverCategoryItem = (categoriesItem.children as Item[]).find(c => c.name === driverCategory.name);
+      if (!driverCategoryItem) {
+        driverCategoryItem = {
+          _id: generateUuid(),
+          name: driverCategory.name,
+          children: []
+        };
+        (categoriesItem.children as Item[]).push(driverCategoryItem);
+      }
+      if (!driverCategory.instructionSets) continue;
+      for (const instructionSet of driverCategory.instructionSets) {
+        const instructionSetItem = {
+          _id: instructionSet,
+          name: instructionSet,
+          file: 'json'
+        };
+        (driverCategoryItem.children as Item[]).push(instructionSetItem);
+      }
+    }
+    if (addCategory) this.items.push(categoriesItem);
   }
 
   refreshOnlineStore() {
