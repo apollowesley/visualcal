@@ -72,6 +72,7 @@
                     v-model="nomenclature"
                     :rules="rules"
                     label="Nomenclature"
+                    persistent-hint
                     hint="Instrument class or description"
                   />
                 </v-col>
@@ -81,6 +82,7 @@
                   <v-text-field
                     v-model="identityQueryCommand"
                     label="Identity Query Command"
+                    persistent-hint
                     hint="Command sent to instrument to ask it for it's identity"
                   />
                 </v-col>
@@ -95,7 +97,15 @@
                       { text: 'Carriage return / Line feed', value: 'CrLf' },
                     ]"
                     label="Terminator"
+                    persistent-hint
                     hint="Character(s) used to signal the end of a read/write"
+                  />
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    label="Categories"
+                    persistent-hint
+                    hint="List of categories this driver claims"
                   />
                 </v-col>
               </v-row>
