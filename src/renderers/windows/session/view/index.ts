@@ -45,7 +45,8 @@ const devicesTable = new Tabulator('#vc-devices-tabulator', {
   data: devices,
   layout: 'fitColumns',
   columns: [
-    { title: 'Device Unit Id', field: 'unitId' },
+    { title: 'Unit Id', field: 'unitId' },
+    { title: 'Driver', field: 'driverName', editable: false },
     { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => getDevicesTableGetCommInterfaces() },
     { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
   ]
