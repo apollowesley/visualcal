@@ -4,6 +4,7 @@ pwd
 
 # Build common package
 pushd ./common
+npm install
 npm run build
 popd
 

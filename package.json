@@ -8,7 +8,7 @@
   "scripts": {
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
-    "release": "electron-builder build -p never",
+    "release": "./node_modules/.bin/electron-builder build -p never",
     "release:publish": "electron-builder build -p always",
     "preinstall": "cd common && tsc",
     "postinstall": "electron-builder install-app-deps && patch-package",
