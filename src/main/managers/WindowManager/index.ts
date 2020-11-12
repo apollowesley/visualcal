@@ -130,6 +130,7 @@ export class WindowManager extends TypedEmitter<Events> {
   get benchConfigViewWindow() { return this.get(VisualCalWindow.BenchConfigView); }
   get deviceBeforeWriteWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
   get vueTestWindow() { return this.get(VisualCalWindow.DeviceBeforeWrite); }
+  get gridstackTestWindow() { return this.get(VisualCalWindow.GridstackTest); }
 
   isWindowLoaded(id: VisualCalWindow) {
     const exists = Array.from(this.fWindows).find(w => w.visualCal.id === id) !== undefined;
@@ -218,6 +219,10 @@ export class WindowManager extends TypedEmitter<Events> {
 
   async createWindow(id: VisualCalWindow, parent?: BrowserWindow, maximize: boolean = false, onShow?: (bw: BrowserWindow) => void, onClosed?: () => void, onWebContentsDidFinishLoading?: (bw: BrowserWindow) => void) {
     let w = this.get(id);
+    if (w) {
+      w.focus();
+      return w;
+    }
     const config = getWindowConfig(id, parent);
     w = this.createBrowserWindow(config);
     w.on('show', () => {
@@ -271,7 +276,11 @@ export class WindowManager extends TypedEmitter<Events> {
       onShow?: (bw: BrowserWindow) => void
     ) {
     return new Promise<BrowserWindow>(async (resolve, reject) => {
-      if (WindowManager.instance.isWindowLoaded(id)) return reject('Already opened');
+      const existingWindow = this.get(id);
+      if (existingWindow) {
+        existingWindow.focus();
+        return resolve();
+      }
       if (opts && !opts.windowOpts) {
         opts.windowOpts = defaultWindowConstructorOptions;
       } else if (opts && opts.windowOpts) {
@@ -463,6 +472,14 @@ export class WindowManager extends TypedEmitter<Events> {
       setImmediate(async () => {
         DriverBuilder.instance.disconnect();
       });
+    });
+    return w;
+  }
+
+  async showGridstackTestWindow() {
+    if (!this.mainWindow) throw new Error('Main window must be defined');
+    const w = await this.showVueWindow(VisualCalWindow.GridstackTest, {
+      subPath: getSubPath(VisualCalWindow.GridstackTest)
     });
     return w;
   }

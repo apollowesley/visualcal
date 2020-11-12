@@ -154,16 +154,23 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Reload',
         accelerator: 'CmdOrCtrl+R',
-        click(_, focusedWindow) {
+        click: (_, focusedWindow) => {
           if (focusedWindow) focusedWindow.reload();
         }
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: 'F12',
-        click(_, focusedWindow) {
+        click: (_, focusedWindow) => {
           if (focusedWindow) focusedWindow.webContents.toggleDevTools();
         }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Gridstack Test',
+        click: async () => await WindowManager.instance.showGridstackTestWindow()
       }
     ]
   })

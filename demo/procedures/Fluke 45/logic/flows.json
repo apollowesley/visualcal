@@ -49,6 +49,13 @@
 		"info": ""
 	},
 	{
+		"id": "533e5248.89764c",
+		"type": "tab",
+		"label": "Slew Test",
+		"disabled": false,
+		"info": ""
+	},
+	{
 		"id": "6b116249.9db85c",
 		"type": "indysoft-custom-driver-configuration",
 		"unitId": "UUT",
@@ -97,6 +104,11 @@
 		"unitId": "Calibrator",
 		"manufacturer": "Fluke",
 		"model": "5522A"
+	},
+	{
+		"id": "2458bc1.707ec44",
+		"type": "indysoft-section-configuration",
+		"name": "Slew"
 	},
 	{
 		"id": "e691dbf7.db68e8",
@@ -13122,6 +13134,205 @@
 			[],
 			[
 				"cb91711a.d52fc"
+			]
+		]
+	},
+	{
+		"id": "89974b9.32e93b8",
+		"type": "indysoft-action-start",
+		"z": "533e5248.89764c",
+		"name": "Test",
+		"sectionConfigId": "2458bc1.707ec44",
+		"x": 470,
+		"y": 280,
+		"wires": [
+			[
+				"285180a9.aecef"
+			]
+		]
+	},
+	{
+		"id": "e0dfd279.c2527",
+		"type": "indysoft-action-completed",
+		"z": "533e5248.89764c",
+		"name": "",
+		"x": 1710,
+		"y": 280,
+		"wires": []
+	},
+	{
+		"id": "c617865c.dc9178",
+		"type": "indysoft-custom-driver",
+		"z": "533e5248.89764c",
+		"name": "UUT Measure",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a60ff",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a60ff",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 0,
+							"name": "Measure",
+							"type": "Query",
+							"command": "MEAS1?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 980,
+		"y": 280,
+		"wires": [
+			[],
+			[
+				"660983c6.a4fb7c"
+			]
+		]
+	},
+	{
+		"id": "285180a9.aecef",
+		"type": "indysoft-custom-driver",
+		"z": "533e5248.89764c",
+		"name": "UUT Set mode AC volts",
+		"driverConfigId": "6b116249.9db85c",
+		"instructionSets": [
+			{
+				"id": "5fa62123b58a446c0e8a6109",
+				"instructionSet": {
+					"_id": "5fa62123b58a446c0e8a6109",
+					"name": "Set mode AC Volts",
+					"instructions": [
+						{
+							"_id": "5fa62123b58a446c0e8a610a",
+							"order": 0,
+							"name": "Set mode AC Volts",
+							"type": "Write",
+							"command": "VAC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"parameterArguments": []
+			}
+		],
+		"x": 750,
+		"y": 220,
+		"wires": [
+			[],
+			[
+				"c617865c.dc9178"
+			]
+		]
+	},
+	{
+		"id": "df307f22.a957b",
+		"type": "link in",
+		"z": "533e5248.89764c",
+		"name": "Repeat slew measurement",
+		"links": [
+			"5a3c3cf3.56e614"
+		],
+		"x": 695,
+		"y": 400,
+		"wires": [
+			[
+				"4ef96714.853c48"
+			]
+		]
+	},
+	{
+		"id": "5a3c3cf3.56e614",
+		"type": "link out",
+		"z": "533e5248.89764c",
+		"name": "",
+		"links": [
+			"df307f22.a957b"
+		],
+		"x": 1375,
+		"y": 360,
+		"wires": []
+	},
+	{
+		"id": "660983c6.a4fb7c",
+		"type": "switch",
+		"z": "533e5248.89764c",
+		"name": "Check within range",
+		"property": "payload.value.value",
+		"propertyType": "msg",
+		"rules": [
+			{
+				"t": "btwn",
+				"v": "-0.05",
+				"vt": "num",
+				"v2": "0.05",
+				"v2t": "num"
+			},
+			{
+				"t": "else"
+			}
+		],
+		"checkall": "true",
+		"repair": false,
+		"outputs": 2,
+		"x": 1190,
+		"y": 280,
+		"wires": [
+			[
+				"8759d5dd.3b27a8"
+			],
+			[
+				"5a3c3cf3.56e614"
+			]
+		]
+	},
+	{
+		"id": "4ef96714.853c48",
+		"type": "delay",
+		"z": "533e5248.89764c",
+		"name": "",
+		"pauseType": "delay",
+		"timeout": "1",
+		"timeoutUnits": "seconds",
+		"rate": "1",
+		"nbRateUnits": "1",
+		"rateUnits": "second",
+		"randomFirst": "1",
+		"randomLast": "5",
+		"randomUnits": "seconds",
+		"drop": false,
+		"x": 780,
+		"y": 320,
+		"wires": [
+			[
+				"c617865c.dc9178"
+			]
+		]
+	},
+	{
+		"id": "8759d5dd.3b27a8",
+		"type": "indysoft-scalar-result",
+		"z": "533e5248.89764c",
+		"name": "",
+		"description": "0  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-0.05",
+		"max": "0.05",
+		"inputLevel": "0",
+		"x": 1470,
+		"y": 280,
+		"wires": [
+			[
+				"e0dfd279.c2527"
 			]
 		]
 	}

@@ -42,6 +42,12 @@ export const setWindowSize = (id: VisualCalWindow, opts?: BrowserWindowConstruct
       opts.height = undefined;
       opts.width = undefined;
       opts.titleBarStyle = undefined;
+    case VisualCalWindow.GridstackTest:
+      opts.resizable = true;
+      opts.maximizable = true;
+      opts.height = undefined;
+      opts.width = undefined;
+      opts.titleBarStyle = undefined;
   }
   return opts;
 }
@@ -61,7 +67,9 @@ export const getWindowTitle = (windowId: VisualCalWindow) => {
     case VisualCalWindow.Results:
       return 'VisualCal Results';
     case VisualCalWindow.DriverBuilder:
-      return 'VisualCal Driver Builder'
+      return 'VisualCal Driver Builder';
+    case VisualCalWindow.GridstackTest:
+      return 'VisualCal Gridstack Test';
   }
   return 'VisualCal';
 }
@@ -82,6 +90,8 @@ export const getSubPath = (windowId: VisualCalWindow) => {
       return '/results';
     case VisualCalWindow.DriverBuilder:
       return '/driver-builder';
+    case VisualCalWindow.GridstackTest:
+      return '/gridstacktest';
   }
   return '/';
 }

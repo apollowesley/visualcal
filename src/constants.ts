@@ -18,7 +18,8 @@ export const enum VisualCalWindow {
   DeviceBeforeWrite = 'device-before-write',
   VueTestWindow = 'vue-test-window',
   Results = 'results',
-  DriverBuilder = 'driver-builder'
+  DriverBuilder = 'driver-builder',
+  GridstackTest = 'gridstack-test'
 }
 
 export const enum WindowPathType {
