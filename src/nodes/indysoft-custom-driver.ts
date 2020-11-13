@@ -79,6 +79,14 @@ module.exports = function(RED: NodeRed) {
 
       for (const InstructionSetToRuntime of this.instructionSets) {
         const instructionSet = driver.instructionSets.find(i => i._id === InstructionSetToRuntime.id);
+        if (driver.terminator) {
+          try {
+            await commInterface.setEndOfStringTerminator(driver.terminator as EndOfStringTerminator);
+          } catch (error) {
+            this.status({ fill: 'red', shape: 'dot', text: error.message });
+            console.error('Error occured setting EOS terminator on communication interface', driver.terminator, error);
+          }
+        }
         if (instructionSet) {
           for (const instruction of instructionSet.instructions) {
             this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
@@ -94,13 +102,16 @@ module.exports = function(RED: NodeRed) {
                   if (beforeWriteResponse.cancel) return;
                 }
                 lastRawResponse = await commInterface.queryString(command.toString());
+                DriverBuilder.instance.notifyFrontendDriverReadString(commInterface.name, driverConfig.unitId, lastRawResponse);
                 break;
               case 'Read':
                 this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
                 lastRawResponse = await commInterface.read();
+                DriverBuilder.instance.notifyFrontendDriverReadString(commInterface.name, driverConfig.unitId, lastRawResponse);
                 break;
               case 'Write':
                 command = buildCommand(instructionSet, instruction);
+                DriverBuilder.instance.notifyFrontendDriverWrite(commInterface.name, driverConfig.unitId, command);
                 this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
                 if (this.onBeforeWrite) {
                   const beforeWriteResponse = await this.onBeforeWrite(command);

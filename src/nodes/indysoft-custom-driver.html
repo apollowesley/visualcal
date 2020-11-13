@@ -202,12 +202,12 @@
     outputs: 2,
     icon: "circuit.png",
     label: function () {
-      return this.name || 'Custom Driver';
+      return this.name || 'Instrument Driver';
     },
     labelStyle: function () {
       return this.name ? 'node_label_italic' : '';
     },
-    paletteLabel: 'Custom Driver',
+    paletteLabel: 'Instrument Driver',
     outputLabels: function (index) {
       if (index === 0) return 'Error';
       return 'Data';

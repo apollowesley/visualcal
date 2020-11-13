@@ -47,7 +47,7 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
 
     ipcRenderer.on(IpcChannels.device.onReadString, async (_, info: { interfaceName: string, deviceName: string, data: string }) => await this.add({ interfaceName: info.interfaceName, deviceName: info.deviceName, message: `Data received: ${info.data}` }));
     ipcRenderer.on(IpcChannels.device.onWrite, async (_, info: { interfaceName: string, deviceName: string, data: ArrayBuffer }) => {
-      const dataString = new TextDecoder().decode(info.data);
+      const dataString = Array.isArray(info.data) ? new TextDecoder().decode(info.data) : info.data;
       await this.add({ interfaceName: info.interfaceName, deviceName: info.deviceName, message: `Data sent: ${dataString}` });
     });
   }
