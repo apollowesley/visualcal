@@ -245,11 +245,21 @@ export default class DirectControlTesterDialog extends Vue {
   @Watch('shouldShow')
   async onShouldShowChanged() {
     if (!this.shouldShow) return;
-    const parameters: InstructionParameterArgument[] = [];
+    const preParameters: InstructionParameterArgument[] = [];
+    const postParameters: InstructionParameterArgument[] = [];
     for (const instruction of this.instructionSet.instructions) {
-      if (instruction.parameters) {
-        for (const parameter of instruction.parameters) {
-          parameters.push({
+      if (instruction.preParameters) {
+        for (const parameter of instruction.preParameters) {
+          preParameters.push({
+            instruction: instruction,
+            parameter: parameter,
+            value: ''
+          })
+        }
+      }
+      if (instruction.postParameters) {
+        for (const parameter of instruction.postParameters) {
+          postParameters.push({
             instruction: instruction,
             parameter: parameter,
             value: ''
@@ -257,7 +267,7 @@ export default class DirectControlTesterDialog extends Vue {
         }
       }
     }
-    await this.commandArgumentsTable.setData(parameters);
+    await this.commandArgumentsTable.setData({ preParameters, postParameters });
   }
 
 }

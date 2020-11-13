@@ -79,6 +79,12 @@ async function load() {
   await ExpressServer.instance.start(global.visualCal.config.httpServer.port);
   if (isDev()) initIpcMonitor();
   VueManager.instance.once('loaded', () => console.info('VueManager.loaded'));
+  try {
+    // TODO: Remove after we're sure all other dev machines have been updated to use new pre/post parameters
+    DriverBuilder.instance.removeOldCommandParametersFromInstructions();
+  } catch (error) {
+    console.error('Error removing old command parameters from driver instructions', error);
+  }
 }
 
 // TODO: TESTING ONLY!!!

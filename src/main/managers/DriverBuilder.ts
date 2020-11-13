@@ -3,10 +3,18 @@ import electronStore from 'electron-cfg';
 import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
-import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo, Driver } from 'visualcal-common/dist/driver-builder';
+import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo, Status, WriteInfo, Driver, CommandParameter } from 'visualcal-common/dist/driver-builder';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
+
+interface OldInstructionWithParameters {
+  parameters: CommandParameter[];
+}
+
+interface OptionalParameters {
+  parameters?: CommandParameter[];
+}
 
 interface Events {
   connected: () => void;
@@ -35,6 +43,24 @@ export class DriverBuilder extends TypedEmitter<Events> {
   get instructions() { return this.fStore.get('instructions', []); }
   get instructionSets() { return this.fStore.get('instructionSets', []); }
   get categories() { return this.fStore.get('categories', []); }
+
+  /** Temp to remove old parameters prop from instructions, and replace with preParametersr/postParameters */
+  // TODO: Remove after we're sure all other dev machines have been updated to use new pre/post parameters
+  removeOldCommandParametersFromInstructions() {
+    const tempDrivers = this.drivers;
+    tempDrivers.forEach(driver => {
+      driver.instructionSets.forEach(instructionSet => {
+        instructionSet.instructions.forEach(instruction => {
+          const oldInstructionWithParameters = (instruction as unknown) as OldInstructionWithParameters;
+          if (oldInstructionWithParameters.parameters) {
+            instruction.postParameters = oldInstructionWithParameters.parameters;
+            delete ((oldInstructionWithParameters as unknown) as OptionalParameters).parameters;
+          }
+        });
+      });
+    });
+    this.fStore.set('drivers', tempDrivers);
+  }
 
   async connect(info: CommunicationInterfaceConfigurationInfo) {
     if (this.fCommunicationInterface) throw new Error('Already connected');

@@ -2,7 +2,8 @@
   <v-container fluid class="grey" style="height: 100vh">
     <CommandParametersBuilderDialogComponent
       :should-show="shouldCommandBuilderDialogShow"
-      :instruction="commandBuilderDialogInstruction"
+      :parameters="commandBuilderDialogInstructionCommandParameters"
+      :parameters-type="commandBuilderDialogInstructionCommandParametersType"
       @save="onCommandParametersBuilderDialogSave"
       @cancel="shouldCommandBuilderDialogShow = false"
     />
@@ -171,7 +172,8 @@
                 <v-expansion-panel-content>
                   <InstructionTableComponent
                     :instructions="instructionSet.instructions"
-                    @edit-instruction-command="onInstructionTableComponentEditInstructionCommand"
+                    @edit-instruction-pre-parameters="onInstructionTableComponentEditPreParameters"
+                    @edit-instruction-post-parameters="onInstructionTableComponentEditPostParameters"
                     @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
                     @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
                     @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
@@ -191,7 +193,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
 import { Item, ItemInstruction } from '@/components/driver-builder/InstructionsAndTemplatesItemInterfaces';
-import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
+import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet, CommandParameterType } from 'visualcal-common/src/driver-builder';
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
@@ -228,6 +230,9 @@ export default class DriverBuilderView extends Vue {
     type: 'Write',
     command: 'Command?',
   };
+
+  commandBuilderDialogInstructionCommandParameters: CommandParameter[] = [];
+  commandBuilderDialogInstructionCommandParametersType: CommandParameterType = 'pre';
 
   shouldRenameInstructionSetDialogShow = false;
   selectedRenameInstructionSet: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
@@ -380,19 +385,38 @@ export default class DriverBuilderView extends Vue {
     }
   }
 
-  onCommandParametersBuilderDialogSave(instruction: Instruction, parameters: CommandParameter[]) {
+  onCommandParametersBuilderDialogSave(instruction: Instruction, parameters: CommandParameter[], parametersType: CommandParameterType) {
     this.shouldCommandBuilderDialogShow = false;
     const instructionSet = this.$store.direct.state.driverBuilder.currentDriver.instructionSets[this.expandedInstructionSet];
     if (!instructionSet) return;
-    this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandParameters({
-      instructionSetId: instructionSet._id,
-      instruction: instruction,
-      parameters: parameters
-    });
+    switch (parametersType) {
+      case 'pre':
+        this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandPreParameters({
+          instructionSetId: instructionSet._id,
+          instruction: instruction,
+          parameters: parameters
+        });
+        break;
+      case 'post':
+        this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandPostParameters({
+          instructionSetId: instructionSet._id,
+          instruction: instruction,
+          parameters: parameters
+        });
+    }
   }
 
-  onInstructionTableComponentEditInstructionCommand(instruction: Instruction) {
+  onInstructionTableComponentEditPreParameters(instruction: Instruction) {
     this.commandBuilderDialogInstruction = instruction;
+    this.commandBuilderDialogInstructionCommandParameters = instruction.preParameters ? instruction.preParameters : [];
+    this.commandBuilderDialogInstructionCommandParametersType = 'pre';
+    this.shouldCommandBuilderDialogShow = true;
+  }
+
+  onInstructionTableComponentEditPostParameters(instruction: Instruction) {
+    this.commandBuilderDialogInstruction = instruction;
+    this.commandBuilderDialogInstructionCommandParameters = instruction.postParameters ? instruction.postParameters : [];
+    this.commandBuilderDialogInstructionCommandParametersType = 'post';
     this.shouldCommandBuilderDialogShow = true;
   }
 

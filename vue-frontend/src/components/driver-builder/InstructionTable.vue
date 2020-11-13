@@ -17,7 +17,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { generateUuid } from '@/utils/uuid';
-import { Instruction } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, Instruction } from 'visualcal-common/src/driver-builder';
 
 @Component
 export default class InstructionTableComponent extends Vue {
@@ -58,6 +58,11 @@ export default class InstructionTableComponent extends Vue {
   }
 
   private getIsReadAttemptsEditable(cell: Tabulator.CellComponent) {
+    const instruction = this.getInstructionFromCell(cell);
+    return instruction.type === 'Read' || instruction.type === 'Query';
+  }
+
+  private getisReadResponseNameEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
     return instruction.type === 'Read' || instruction.type === 'Query';
   }
@@ -125,6 +130,21 @@ export default class InstructionTableComponent extends Vue {
     return div;
   }
 
+  private formatResponseNameCell(cell: Tabulator.CellComponent) {
+    const isEditable = this.getisReadResponseNameEditable(cell);
+    const div = document.createElement('div') as HTMLDivElement;
+    div.style.backgroundColor = isEditable ? '' :'#b5b5b5';
+    div.style.height = '100%';
+    div.style.width = '100%';
+    if (isEditable) div.innerText = cell.getValue() ? cell.getValue() : '';
+    return div;
+  }
+
+  private getParametersFormatter(cell: Tabulator.CellComponent, type: 'pre' | 'post') {
+    const parameters = type === 'pre' ? cell.getRow().getData().preParameters as CommandParameter[] : cell.getRow().getData().postParameters;
+    return parameters ? parameters.length.toString() : '0';
+  }
+
   private reorderInstructions(table: Tabulator) {
     const rows = table.getRows();
     const instructions: Instruction[] = [];
@@ -144,14 +164,16 @@ export default class InstructionTableComponent extends Vue {
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
-      { title: 'Read attempts before failure', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell }
+      { title: 'Read attempts before failure', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell },
+      { title: 'Tag Name', field: 'responseName', editable: this.getisReadResponseNameEditable, editor: 'input', formatter: this.formatResponseNameCell }
     ]},
     { title: 'Timing (in addition to interface timing)', columns: [
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
+    { title: 'Prepend Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', cell.getRow().getData()) },
     { title: 'Command*', field: 'command', editable: true, validator: 'required', editor: 'input' },
-    { title: 'Parameters (Click to edit)', editable: false, formatter: (cell) => cell.getRow().getData().parameters ? cell.getRow().getData().parameters.length.toString() : '0', cellClick: (_, cell) => this.$emit('edit-instruction-command', cell.getRow().getData()) },
+    { title: 'Append Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', cell.getRow().getData()) },
     { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' }
   ]
 

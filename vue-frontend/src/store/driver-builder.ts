@@ -7,6 +7,14 @@ import { generateUuid } from '@/utils/uuid';
 import Axios from 'axios';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
+interface OldInstructionWithParameters {
+  parameters: CommandParameter[];
+}
+
+interface OptionalParameters {
+  parameters?: CommandParameter[];
+}
+
 interface OnlineStore {
   drivers: StoreDriver[];
 }
@@ -70,6 +78,17 @@ const employeesModule = defineModule({
   },
   mutations: {
     setLibrary(state, value: Library) {
+      value.drivers.forEach(driver => {
+        driver.instructionSets.forEach(instructionSet => {
+          instructionSet.instructions.forEach(instruction => {
+            const oldInstructionWithParameters = (instruction as unknown) as OldInstructionWithParameters;
+            if (oldInstructionWithParameters.parameters) {
+              instruction.postParameters = oldInstructionWithParameters.parameters;
+              delete ((oldInstructionWithParameters as unknown) as OptionalParameters).parameters;
+            }
+          });
+        });
+      });
       state.drivers = value.drivers;
       state.instructionSets = value.instructionSets;
       state.instructions = value.instructions;
@@ -138,13 +157,22 @@ const employeesModule = defineModule({
       if (instructionIndex <= -1) return;
       instructionSet.instructions.splice(instructionIndex, 1);
     },
-    setDriverInstructionSetInstructionCommandParameters(state, opts: { instructionSetId: string, instruction: Instruction, parameters?: CommandParameter[] }) {
+    setDriverInstructionSetInstructionCommandPreParameters(state, opts: { instructionSetId: string, instruction: Instruction, parameters?: CommandParameter[] }) {
       const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
       if (!instructionSet) return;
       const instructionIndex = instructionSet.instructions.findIndex(i => i._id === opts.instruction._id);
       if (instructionIndex <= -1) return;
       const instruction = instructionSet.instructions[instructionIndex];
-      opts.parameters && opts.parameters.length > 0 ? instruction.parameters = opts.parameters : instruction.parameters = undefined;
+      opts.parameters && opts.parameters.length > 0 ? instruction.preParameters = opts.parameters : instruction.preParameters = undefined;
+      instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
+    },
+    setDriverInstructionSetInstructionCommandPostParameters(state, opts: { instructionSetId: string, instruction: Instruction, parameters?: CommandParameter[] }) {
+      const instructionSet = state.currentDriver.instructionSets.find(i => i._id === opts.instructionSetId);
+      if (!instructionSet) return;
+      const instructionIndex = instructionSet.instructions.findIndex(i => i._id === opts.instruction._id);
+      if (instructionIndex <= -1) return;
+      const instruction = instructionSet.instructions[instructionIndex];
+      opts.parameters && opts.parameters.length > 0 ? instruction.postParameters = opts.parameters : instruction.postParameters = undefined;
       instructionSet.instructions.splice(instructionIndex, 1, { ...instruction });
     },
     setInstructionSetInstructionsOrder(state, opts: { instructionSetId: string, instructions: Instruction[] }) {

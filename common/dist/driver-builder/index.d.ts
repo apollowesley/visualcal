@@ -66,6 +66,7 @@ export declare const IpcChannels: {
 export declare type InstructionType = 'Read' | 'Write' | 'Query';
 export declare type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
 export declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
+export declare type CommandParameterType = 'pre' | 'post';
 export interface Library {
     drivers: Driver[];
     instructionSets: InstructionSet[];
@@ -147,6 +148,8 @@ export interface Instruction {
     responseDataType?: DataType;
     /** Number of failed reads before throwing an error. */
     readAttempts?: number;
+    /** Name used to tag the response from a read or query, to be used by other instructions that follow this one. */
+    responseName?: string;
     /** Length of time, in milliseconds, to delay before invoking this instruction. */
     delayBefore?: number;
     /** Length of time, in milliseconds, to delay after invoking this instruction. */
@@ -155,8 +158,10 @@ export interface Instruction {
     helpUri?: string;
     /** The command that is sent to the device, without parameters. */
     command: string;
-    /** The optional command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
-    parameters?: CommandParameter[];
+    /** The optional pre-command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
+    preParameters?: CommandParameter[];
+    /** The optional post-command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
+    postParameters?: CommandParameter[];
 }
 /** Instructions mandated by IEEE 488.2 and SCPI */
 export declare const IEEE4882MandatedCommands: Instruction[];

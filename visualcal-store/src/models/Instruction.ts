@@ -8,11 +8,13 @@ export const InstructionSchema = new mongoose.Schema<InstructionInterface>({
   type: { type: String, required: true },
   responseDataType: { type: String, required: false },
   readAttempts: { type: Number, required: false },
+  responseName: { type: String, required: false },
   delayBefore: { type: Number, required: false },
   delayAfter: { type: Number, required: false },
   helpUri: { type: String, required: false },
   command: { type: String, required: true },
-  parameters: [{ type: CommandParameterSchema, required: false }]
+  preParameters: [{ type: CommandParameterSchema, required: false }],
+  postParameters: [{ type: CommandParameterSchema, required: false }]
 });
 
 export interface InstructionStatic extends mongoose.Model<StoreInstruction> {

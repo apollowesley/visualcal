@@ -51,7 +51,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { Instruction, CommandParameter } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterType } from 'visualcal-common/src/driver-builder';
 import CommandParameterListBuilderDialog from '@/components/driver-builder/CommandParameterListBuilderDialog.vue';
 import { generateUuid } from '@/utils/uuid';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
@@ -65,7 +65,15 @@ import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
 export default class CommandParametersBuilderDialogComponent extends Vue {
 
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
-  @Prop({ type: Object, required: true }) instruction!: Instruction;
+  @Prop({ type: Array, required: false }) parameters?: CommandParameter[];
+  @Prop({ type: String, required: true }) parametersType!: CommandParameterType;
+
+  get actualParameters() { return this.parameters ? this.parameters : []; }
+  get tableElement() { return this.$refs.commandBuilderTableElement as HTMLDivElement; }
+  get table() {
+    if (!this.fTable) this.fTable = this.createTable();
+    return this.fTable;
+  }
 
   private fTable?: Tabulator;
   shouldShowCommandParameterListBuilderDialog = false;
@@ -79,15 +87,8 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   async onInstructionChanged() {
     if (!this.shouldShow) return;
     // If we have an array of InstructionCommandPart, the we use the instruction.command.  Otherwise we create a new array with a main using the existing command text
-    const parameters: CommandParameter[] = (this.instruction.parameters) ? this.instruction.parameters : [];
     while (!this.$refs.commandBuilderTableElement) await this.$nextTick(); // TODO: Find a better way to wait for table $ref to exist
-    await this.table.setData(parameters);
-  }
-
-  get tableElement() { return this.$refs.commandBuilderTableElement as HTMLDivElement; }
-  get table() {
-    if (!this.fTable) this.fTable = this.createTable();
-    return this.fTable;
+    await this.table.setData(this.actualParameters);
   }
 
   private getParameterTypeEditorParams(): Tabulator.SelectParams {
@@ -109,15 +110,16 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     this.table.redraw(true);
   }
 
-  private reorderInstructions(table: Tabulator) {
-    const rows = table.getRows();
-    for (let index = 0; index < rows.length; index++) {
-      const row = rows[index];
-      const instruction = row.getData() as Instruction;
-      instruction.order = index;
-    }
-    table.redraw(true);
-  }
+  // private reorderInstructions(table: Tabulator) {
+  //   const rows = table.getRows();
+  //   for (let index = 0; index < rows.length; index++) {
+  //     const row = rows[index];
+  //     const instruction = row.getData() as Instruction;
+  //     instruction.order = index;
+  //   }
+  //   table.redraw(true);
+  // }
+  
   private formatEditParameterListCellButton(cell: Tabulator.CellComponent) {
     const parameter = cell.getRow().getData() as CommandParameter;
     const isListType = parameter.type === 'list';
@@ -242,7 +244,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       columns: this.columns,
       movableRows: true,
       cellEdited: () => { table.redraw(true); },
-      rowMoved: () => { this.reorderInstructions(table); },
+      // rowMoved: () => { this.reorderInstructions(table); },
       rowContextMenu: this.createRowContextMenu()
     });
     this.fTable = table;
@@ -268,7 +270,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   }
 
   onSaveClicked() {
-    this.$emit('save', this.instruction, this.table.getData() as CommandParameter[]);
+    this.$emit('save', this.table.getData() as CommandParameter[], this.parametersType);
   }
 
   onCommandParameterListBuilderDialogSave(items: CommandParameterListItem[]) {

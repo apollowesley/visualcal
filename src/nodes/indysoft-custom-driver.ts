@@ -45,19 +45,35 @@ module.exports = function(RED: NodeRed) {
 
       const buildCommand = (instructionSet: InstructionSet, instruction: Instruction) => {
         let command = instruction.command;
-        if (instruction.parameters) {
-          instruction.parameters.forEach(parameter => {
+        let preCommandParameters = '';
+        let postCommandParameters = '';
+        if (instruction.preParameters) {
+          instruction.preParameters.forEach(parameter => {
             const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
             if (editorInstructionSet) {
               const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction._id);
               if (parameterArgument) {
-                if (parameter.beforeText) command += parameter.beforeText;
-                command += parameterArgument.value;
-                if (parameter.afterText) command += parameter.afterText;
+                if (parameter.beforeText) preCommandParameters += parameter.beforeText;
+                preCommandParameters += parameterArgument.value;
+                if (parameter.afterText) preCommandParameters += parameter.afterText;
               }
             }
           });
         }
+        if (instruction.postParameters) {
+          instruction.postParameters.forEach(parameter => {
+            const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
+            if (editorInstructionSet) {
+              const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction._id);
+              if (parameterArgument) {
+                if (parameter.beforeText) postCommandParameters += parameter.beforeText;
+                postCommandParameters += parameterArgument.value;
+                if (parameter.afterText) postCommandParameters += parameter.afterText;
+              }
+            }
+          });
+        }
+        command = `${preCommandParameters}${command}${postCommandParameters}`;
         return command;
       };
 
