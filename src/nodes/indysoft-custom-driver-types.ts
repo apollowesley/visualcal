@@ -44,7 +44,8 @@ export interface InstructionResponse {
 export interface UIInstructionSet {
   id: string;
   instructionSet: InstructionSet;
-  parameterArguments: CommandParameterArgument[];
+  preParameterArguments?: CommandParameterArgument[];
+  postParameterArguments?: CommandParameterArgument[];
 }
 
 export type BeforeWriteResponse = { data: string | number | boolean | ArrayBufferLike, cancel?: boolean };

@@ -1,5 +1,5 @@
-import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction, NodeRedRuntimeNode } from '../@types/logic-server';
-import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from '../main/managers/NodeRedManager';
+import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction } from '../@types/logic-server';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
 import { Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
@@ -50,8 +50,8 @@ module.exports = function(RED: NodeRed) {
         if (instruction.preParameters) {
           instruction.preParameters.forEach(parameter => {
             const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
-            if (editorInstructionSet) {
-              const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction._id);
+            if (editorInstructionSet && editorInstructionSet.preParameterArguments && Array.isArray(editorInstructionSet.preParameterArguments)) {
+              const parameterArgument = editorInstructionSet.preParameterArguments.find(a => a.instructionId === instruction._id);
               if (parameterArgument) {
                 if (parameter.beforeText) preCommandParameters += parameter.beforeText;
                 preCommandParameters += parameterArgument.value;
@@ -63,8 +63,8 @@ module.exports = function(RED: NodeRed) {
         if (instruction.postParameters) {
           instruction.postParameters.forEach(parameter => {
             const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
-            if (editorInstructionSet) {
-              const parameterArgument = editorInstructionSet.parameterArguments.find(a => a.instructionId === instruction._id);
+            if (editorInstructionSet && editorInstructionSet.postParameterArguments && Array.isArray(editorInstructionSet.postParameterArguments)) {
+              const parameterArgument = editorInstructionSet.postParameterArguments.find(a => a.instructionId === instruction._id);
               if (parameterArgument) {
                 if (parameter.beforeText) postCommandParameters += parameter.beforeText;
                 postCommandParameters += parameterArgument.value;

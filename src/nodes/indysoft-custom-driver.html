@@ -50,7 +50,8 @@
    * @property {string} name
    * @property {string} type
    * @property {string} command
-   * @property {CommandParameter[]} parameters
+   * @property {CommandParameter[]} preParameters
+   * @property {CommandParameter[]} postParameters
    * 
    * @typedef InstructionSet
    * @type {object}
@@ -65,7 +66,8 @@
    * @typedef InstructionSetItem
    * @type {object}
    * @property {string} instructionSetId - The ID of the instruction set being referenced by this item
-   * @property {InstructionSetItemParameterArgument[]} parameterArguments - The arguments to the parameters of the instruction set referenced by this item
+   * @property {InstructionSetItemParameterArgument[]} preParameterArguments - The arguments to the parameters of the instruction set referenced by this item
+   * @property {InstructionSetItemParameterArgument[]} postParameterArguments - The arguments to the parameters of the instruction set referenced by this item
    * 
    * @typedef Driver
    * @type {object}
@@ -85,7 +87,8 @@
    * @type {object}
    * @property {string} _id
    * @property {InstructionSet} instructionSet
-   * @property {CommandParameterArgument[]} parameterArguments
+   * @property {CommandParameterArgument[]} preParameterArguments
+   * @property {CommandParameterArgument[]} postParameterArguments
    * 
   */
 
@@ -102,6 +105,89 @@
     for (const option of target.options) {
       if (option.selected) return option.value;
     }
+  }
+
+  /**
+   * @param {CommandParameter[]} parameters
+   * @param {string} rowClassName
+   * @param {CommandParameterArgument[]} parameterArguments
+   * @param {JQuery} rowContainer - The container
+  */
+  function buildInstructionCommandParametersUI(parameters, rowClassName, parameterArguments, rowContainer) {
+    for (const parameter of parameters) {
+      const parameterRow = $('<div/>', { style: 'padding-top: 5px;' }).addClass(rowClassName).appendTo(rowContainer);
+      const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
+      const newItemCommandParameter = parameterArguments ? parameterArguments.find(p => p.parameter._id === parameter._id) : undefined;
+      switch (parameter.type) {
+        case 'list':
+          if (!parameter.listItems) break;
+          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter._id).appendTo(parameterRow);
+          for (let index = 0; index < parameter.listItems.length; index++) {
+            const listItem = parameter.listItems[index];
+            // Use default property value if it exists
+            parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
+          };
+          if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
+          break;
+        case 'string':
+          const parameterStringElement = $('<input/>').addClass(parameter._id).appendTo(parameterRow);
+          if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
+          if (parameter.default) parameterStringElement.val(parameter.default);
+          break;
+        case 'number':
+          const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter._id).appendTo(parameterRow);
+          if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
+          if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
+          if (parameter.useMinMaxIncrement) parametergNumberElement.prop('step', parameter.minMaxIncrement);
+          if (parameter.default) parametergNumberElement.val(parameter.default);
+          if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
+          break;
+        case 'boolean':
+          const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter._id).appendTo(parameterRow);
+          if (parameter.default) parametergBooleanElement.prop('checked', !!parameter.default);
+          if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
+          break;
+      }
+    };
+  }
+
+  /**
+   * @param {CommandParameter[]} parameters - The CommandParameters to process
+   * @param {string} instructionSetListItemElementChildrenClassName - CSS class name of instruction command parameter list item element children
+   * @param {JQuery} instructionSetListItemElement
+   * @returns {CommandParameterArgument[]}
+  */
+  function handleSaveInstructionParameters(parameters, instructionSetListItemElementChildrenClassName, instructionSetListItemElement, instruction) {
+    /** @type {CommandParameterArgument} */
+    const parameterArguments = [];
+    parameters.forEach(parameter => {
+      const parameterRows = instructionSetListItemElement.children(`.${instructionSetListItemElementChildrenClassName}`);
+      switch (parameter.type) {
+        case 'list':
+          const parameterSelect = parameterRows.children(`.${parameter._id}`);
+          const parameterSelectSelectedOptionElements = parameterSelect.children('option:selected');
+          const selectedValue = parameterSelectSelectedOptionElements ? parameterSelectSelectedOptionElements[0].value : undefined;
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: selectedValue });
+          break;
+        case 'string':
+          const stringParameterElement = parameterRows.children(`.${parameter._id}`);
+          const stringValue = stringParameterElement.val();
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue });
+          break;
+        case 'number':
+          const numnberParameterElement = parameterRows.children(`.${parameter._id}`);
+          const numberValue = Number(numnberParameterElement.val());
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue });
+          break;
+        case 'boolean':
+          const booleanParameterElement = parameterRows.children(`.${parameter._id}`);
+          const isChecked = booleanParameterElement.prop('checked');
+          const booleanValue = isChecked ? parameter.trueValue : parameter.falseValue;
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: booleanValue });
+          break;
+      }
+    });
+    return parameterArguments;
   }
 
   RED.nodes.registerType('indysoft-custom-driver', {
@@ -154,47 +240,18 @@
               instructionSetSelectElement.on('change', eventObject => {
                 /** @type {string} */
                 const selectedInstructionSetId = getSelectedOptionValue(eventObject);
-                rowContainer.children('.parameter-row').remove();
+                rowContainer.children('.pre-parameter-row').remove();
+                rowContainer.children('.post-parameter-row').remove();
                 if (!selectedInstructionSetId) return;
                 /** @type {InstructionSet} */
                 const selectedInstructionSet = driver.instructionSets.find(i => i._id === selectedInstructionSetId);
                 for (const instruction of selectedInstructionSet.instructions) {
-                  if (!instruction.parameters) continue;
-                  for (const parameter of instruction.parameters) {
-                    const parameterRow = $('<div/>', { style: 'padding-top: 5px;' }).addClass('parameter-row').appendTo(rowContainer);
-                    const labelElement = $('<label/>').text(parameter.prompt).appendTo(parameterRow);
-                    const newItemCommandParameter = newItem.parameterArguments ? newItem.parameterArguments.find(p => p.parameter._id === parameter._id) : undefined;
-                    switch (parameter.type) {
-                      case 'list':
-                        if (!parameter.listItems) break;
-                        const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter._id).appendTo(parameterRow);
-                        for (let index = 0; index < parameter.listItems.length; index++) {
-                          const listItem = parameter.listItems[index];
-                          // Use default property value if it exists
-                          parameterSelectElement.append(`<option value="${listItem.value}" ${index === 0 ? 'selected' : ''}>${listItem.text}</option>`);
-                        };
-                        if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
-                        break;
-                      case 'string':
-                        const parameterStringElement = $('<input/>').addClass(parameter._id).appendTo(parameterRow);
-                        if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
-                        if (parameter.default) parameterStringElement.val(parameter.default);
-                        break;
-                      case 'number':
-                        const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter._id).appendTo(parameterRow);
-                        if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
-                        if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
-                        if (parameter.useMinMaxIncrement) parametergNumberElement.prop('step', parameter.minMaxIncrement);
-                        if (parameter.default) parametergNumberElement.val(parameter.default);
-                        if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
-                        break;
-                      case 'boolean':
-                        const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter._id).appendTo(parameterRow);
-                        if (parameter.default) parametergBooleanElement.prop('checked', !!parameter.default);
-                        if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
-                        break;
-                    }
-                  };
+                  if (instruction.preParameters) {
+                    buildInstructionCommandParametersUI(instruction.preParameters, 'pre-parameter-row', newItem.preParameterArguments, rowContainer);
+                  }
+                  if (instruction.postParameters) {
+                    buildInstructionCommandParametersUI(instruction.postParameters, 'post-parameter-row', newItem.postParameterArguments, rowContainer);
+                  }
                 };
               });
             };
@@ -243,37 +300,18 @@
         const instructionSetInfoToRuntime = {
           id: instructionSet._id,
           instructionSet: instructionSet,
-          parameterArguments: []
+          preParameterArguments: [],
+          postParameterArguments: []
         }
         for (const instruction of instructionSet.instructions) {
-        if (!instruction.parameters) continue;
-          instruction.parameters.forEach(parameter => {
-            const parameterRows = instructionSetListItemElement.children('.parameter-row');
-            switch (parameter.type) {
-              case 'list':
-                const parameterSelect = parameterRows.children(`.${parameter._id}`);
-                const parameterSelectSelectedOptionElements = parameterSelect.children('option:selected');
-                const selectedValue = parameterSelectSelectedOptionElements ? parameterSelectSelectedOptionElements[0].value : undefined;
-                instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: selectedValue });
-                break;
-              case 'string':
-                const stringParameterElement = parameterRows.children(`.${parameter._id}`);
-                const stringValue = stringParameterElement.val();
-                instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue });
-                break;
-              case 'number':
-                const numnberParameterElement = parameterRows.children(`.${parameter._id}`);
-                const numberValue = Number(numnberParameterElement.val());
-                instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue });
-                break;
-              case 'boolean':
-                const booleanParameterElement = parameterRows.children(`.${parameter._id}`);
-                const isChecked = booleanParameterElement.prop('checked');
-                const booleanValue = isChecked ? parameter.trueValue : parameter.falseValue;
-                instructionSetInfoToRuntime.parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: booleanValue });
-                break;
-            }
-          });
+          if (instruction.preParameters) {
+            instructionSetInfoToRuntime.preParameterArguments = handleSaveInstructionParameters(instruction.preParameters, 'pre-parameter-row', instructionSetListItemElement, instruction);
+            console.info('preParameterArguments', instructionSetInfoToRuntime.preParameterArguments);
+          }
+          if (instruction.postParameters) {
+            instructionSetInfoToRuntime.postParameterArguments = handleSaveInstructionParameters(instruction.postParameters, 'post-parameter-row', instructionSetListItemElement, instruction);
+            console.info('postParameterArguments', instructionSetInfoToRuntime.preParameterArguments);
+          }
         };
         if (selectedOptionElements && selectedOptionElements.length > 0) usedInstructionSets.push(instructionSetInfoToRuntime);
       });
