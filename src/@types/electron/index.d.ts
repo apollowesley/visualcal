@@ -9,7 +9,7 @@ declare module Electron {
   }
 
   interface IpcMain extends NodeJS.EventEmitter {
-    sendToAll(channelName: string, ...args: any[]);
+    sendToAll(channelName: string, ...args: any[]): void;
   }
 
 }
