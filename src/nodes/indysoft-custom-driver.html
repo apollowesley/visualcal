@@ -229,6 +229,13 @@
           //   overflow: 'hidden',
           //   whiteSpace: 'nowrap'
           // });
+
+          // Migrate newItem.parametersArguments to newItem.postParameterArguments
+          if (newItem.parameterArguments) {
+            newItem.postParameterArguments = newItem.parameterArguments;
+            delete newItem.parameterArguments;
+          }
+
           const row1 = $('<div/>', { style: 'padding-top: 5px;' }).addClass('instruction-set-row').appendTo(rowContainer);
           const instructionSetSelectLabelElement = $('<label/>').text('Instruction Set').appendTo(row1);
           const instructionSetSelectElement = $('<select/>', { style: 'text-align: center;' }).appendTo(row1);
