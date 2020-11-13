@@ -68,7 +68,12 @@ export const VisualCalLogicServerFileSystem: NodeRedStorageModule = {
       if (typeof currentProcedureName === 'boolean') throw new Error('No procedure is currently active');
       const filePath = getProcedureFlowFilePath(currentProcedureName);
       if (!fs.existsSync(filePath)) return [];
-      const contentString = (await fsPromises.readFile(filePath)).toString();
+      let contentString = (await fsPromises.readFile(filePath)).toString();
+      // TODO: Remove once we know all legacy custom drivers that use 'parameterArguments' have switched to 'postParameterArguments'
+      // BEGIN RENAME
+      contentString = contentString.replaceAll('\"parameterArguments\"', '\"postParameterArguments\"');
+      await fsPromises.writeFile(filePath, contentString);
+      // END OF RENAME
       const retVal = JSON.parse(contentString);
       return retVal;
     },
