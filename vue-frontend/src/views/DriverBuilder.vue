@@ -385,23 +385,24 @@ export default class DriverBuilderView extends Vue {
     }
   }
 
-  onCommandParametersBuilderDialogSave(instruction: Instruction, parameters: CommandParameter[], parametersType: CommandParameterType) {
+  onCommandParametersBuilderDialogSave(opts: { parameters: CommandParameter[], parametersType: CommandParameterType }) {
     this.shouldCommandBuilderDialogShow = false;
     const instructionSet = this.$store.direct.state.driverBuilder.currentDriver.instructionSets[this.expandedInstructionSet];
     if (!instructionSet) return;
-    switch (parametersType) {
+    console.info(opts);
+    switch (opts.parametersType) {
       case 'pre':
         this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandPreParameters({
           instructionSetId: instructionSet._id,
-          instruction: instruction,
-          parameters: parameters
+          instruction: this.commandBuilderDialogInstruction,
+          parameters: opts.parameters
         });
         break;
       case 'post':
         this.$store.direct.commit.driverBuilder.setDriverInstructionSetInstructionCommandPostParameters({
           instructionSetId: instructionSet._id,
-          instruction: instruction,
-          parameters: parameters
+          instruction: this.commandBuilderDialogInstruction,
+          parameters: opts.parameters
         });
     }
   }

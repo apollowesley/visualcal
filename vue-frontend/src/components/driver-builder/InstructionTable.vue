@@ -172,7 +172,7 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
     { title: 'Prepend Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', cell.getRow().getData()) },
-    { title: 'Command*', field: 'command', editable: true, validator: 'required', editor: 'input' },
+    { title: 'Command', field: 'command', editable: true, editor: 'input' },
     { title: 'Append Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', cell.getRow().getData()) },
     { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' }
   ]

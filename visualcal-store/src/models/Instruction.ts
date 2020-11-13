@@ -12,7 +12,7 @@ export const InstructionSchema = new mongoose.Schema<InstructionInterface>({
   delayBefore: { type: Number, required: false },
   delayAfter: { type: Number, required: false },
   helpUri: { type: String, required: false },
-  command: { type: String, required: true },
+  command: { type: String, required: false },
   preParameters: [{ type: CommandParameterSchema, required: false }],
   postParameters: [{ type: CommandParameterSchema, required: false }]
 });

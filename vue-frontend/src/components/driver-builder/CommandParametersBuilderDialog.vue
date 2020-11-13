@@ -84,7 +84,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   }
 
   @Watch('shouldShow', { immediate: true })
-  async onInstructionChanged() {
+  async onShouldShowChanged() {
     if (!this.shouldShow) return;
     // If we have an array of InstructionCommandPart, the we use the instruction.command.  Otherwise we create a new array with a main using the existing command text
     while (!this.$refs.commandBuilderTableElement) await this.$nextTick(); // TODO: Find a better way to wait for table $ref to exist
@@ -270,7 +270,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   }
 
   onSaveClicked() {
-    this.$emit('save', this.table.getData() as CommandParameter[], this.parametersType);
+    this.$emit('save', { parameters: this.table.getData() as CommandParameter[], parametersType: this.parametersType });
   }
 
   onCommandParameterListBuilderDialogSave(items: CommandParameterListItem[]) {
