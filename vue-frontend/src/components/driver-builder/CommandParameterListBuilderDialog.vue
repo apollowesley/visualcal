@@ -58,6 +58,7 @@ export default class CommandParameterListBuilderDialog extends Vue {
   private fTable?: Tabulator;
 
   private columns: Tabulator.ColumnDefinition[] = [
+    { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Value', field: 'value', editable: true, editor: 'input' },
     { title: 'Display Text', field: 'text', editable: true, editor: 'input' }
   ]
@@ -92,7 +93,8 @@ export default class CommandParameterListBuilderDialog extends Vue {
       index: '_id',
       layout: 'fitColumns',
       columns: this.columns,
-      rowContextMenu: this.createRowContextMenu
+      rowContextMenu: this.createRowContextMenu,
+      movableRows: true
     });
     this.fTable = table;
     return table;

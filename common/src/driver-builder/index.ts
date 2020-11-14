@@ -67,7 +67,7 @@ export const IpcChannels = {
 
 export type InstructionType = 'Read' | 'Write' | 'Query';
 export type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
-export type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list';
+export type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse';
 export type CommandParameterType = 'pre' | 'post';
 
 export interface Library {

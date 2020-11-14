@@ -80,6 +80,7 @@ export default class DirectControlTesterDialog extends Vue {
   private getCommandParameterEditor(cell: Tabulator.CellComponent, onRendered: Tabulator.EmptyCallback, success: Tabulator.ValueBooleanCallback, cancel: Tabulator.ValueVoidCallback) {
     const argument = cell.getRow().getData() as InstructionParameterArgument;
     let editor: HTMLElement;
+    let availableReadResponseInstructions: Instruction[];
     switch (argument.parameter.type) {
       case 'string':
         editor = stringEditor(cell, onRendered, success, cancel);
@@ -96,7 +97,7 @@ export default class DirectControlTesterDialog extends Vue {
           for (let index = 0; index < argument.parameter.listItems.length; index++) {
             const item = argument.parameter.listItems[index];
             const newOption = document.createElement('option');
-            newOption.selected = item.value === cell.getValue();
+            newOption.selected = index === 0;
             newOption.label = item.text;
             newOption.value = item.value;
             (editor as HTMLSelectElement).options.add(newOption);
@@ -113,6 +114,23 @@ export default class DirectControlTesterDialog extends Vue {
           if (selectedOption) {
             success(selectedOption.value);
           }
+        }
+        break;
+      case 'readResponse':
+        editor = document.createElement('select');
+        availableReadResponseInstructions = [];
+        for (let index = 0; index < this.instructionSet.instructions.length; index++) {
+          const instruction = this.instructionSet.instructions[index];
+          if (instruction._id === argument.instruction._id) continue;
+          availableReadResponseInstructions.push(instruction);
+        }
+        for (let index = 0; index < availableReadResponseInstructions.length; index++) {
+          const instruction = availableReadResponseInstructions[index];
+          const newOption = document.createElement('option');
+          newOption.selected = index === 0;
+          newOption.label = `&{instruction.name} ${instruction.responseName || '<Unknown Response Tag>'}`;
+          newOption.value = instruction._id;
+          (editor as HTMLSelectElement).options.add(newOption);
         }
         break;
     }
@@ -165,7 +183,6 @@ export default class DirectControlTesterDialog extends Vue {
       columns: this.commandArgumentsTableColumns,
       maxHeight: '500px'
     });
-    this.fCommandArgumentsTable = table;
     return table;
   }
 
@@ -176,7 +193,6 @@ export default class DirectControlTesterDialog extends Vue {
       columns: this.responsesTableColumns,
       maxHeight: '500px'
     });
-    this.fResponsesTable = table;
     return table;
   }
 
@@ -267,7 +283,7 @@ export default class DirectControlTesterDialog extends Vue {
         }
       }
     }
-    await this.commandArgumentsTable.setData({ preParameters, postParameters });
+    await this.commandArgumentsTable.setData([...preParameters, ...postParameters]);
   }
 
 }

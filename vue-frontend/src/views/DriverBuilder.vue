@@ -4,6 +4,8 @@
       :should-show="shouldCommandBuilderDialogShow"
       :parameters="commandBuilderDialogInstructionCommandParameters"
       :parameters-type="commandBuilderDialogInstructionCommandParametersType"
+      :instruction="commandBuilderDialogInstruction"
+      :instructions-with-read-response="commandBuilderDialogInstructionsWithReadResponse"
       @save="onCommandParametersBuilderDialogSave"
       @cancel="shouldCommandBuilderDialogShow = false"
     />
@@ -233,6 +235,7 @@ export default class DriverBuilderView extends Vue {
 
   commandBuilderDialogInstructionCommandParameters: CommandParameter[] = [];
   commandBuilderDialogInstructionCommandParametersType: CommandParameterType = 'pre';
+  commandBuilderDialogInstructionsWithReadResponse: Instruction[] = [];
 
   shouldRenameInstructionSetDialogShow = false;
   selectedRenameInstructionSet: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
@@ -407,17 +410,19 @@ export default class DriverBuilderView extends Vue {
     }
   }
 
-  onInstructionTableComponentEditPreParameters(instruction: Instruction) {
-    this.commandBuilderDialogInstruction = instruction;
-    this.commandBuilderDialogInstructionCommandParameters = instruction.preParameters ? instruction.preParameters : [];
+  onInstructionTableComponentEditPreParameters(opts: { instruction: Instruction, instructions: Instruction[]}) {
+    this.commandBuilderDialogInstruction = opts.instruction;
+    this.commandBuilderDialogInstructionCommandParameters = opts.instruction.preParameters ? opts.instruction.preParameters : [];
     this.commandBuilderDialogInstructionCommandParametersType = 'pre';
+    this.commandBuilderDialogInstructionsWithReadResponse = opts.instructions.filter(i => i.responseName !== undefined);
     this.shouldCommandBuilderDialogShow = true;
   }
 
-  onInstructionTableComponentEditPostParameters(instruction: Instruction) {
-    this.commandBuilderDialogInstruction = instruction;
-    this.commandBuilderDialogInstructionCommandParameters = instruction.postParameters ? instruction.postParameters : [];
+  onInstructionTableComponentEditPostParameters(opts: { instruction: Instruction, instructions: Instruction[]}) {
+    this.commandBuilderDialogInstruction = opts.instruction;
+    this.commandBuilderDialogInstructionCommandParameters = opts.instruction.postParameters ? opts.instruction.postParameters : [];
     this.commandBuilderDialogInstructionCommandParametersType = 'post';
+    this.commandBuilderDialogInstructionsWithReadResponse = opts.instructions.filter(i => i.responseName !== undefined);
     this.shouldCommandBuilderDialogShow = true;
   }
 

@@ -51,7 +51,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
-import { CommandParameter, CommandParameterType } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterType, Instruction } from 'visualcal-common/src/driver-builder';
 import CommandParameterListBuilderDialog from '@/components/driver-builder/CommandParameterListBuilderDialog.vue';
 import { generateUuid } from '@/utils/uuid';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
@@ -65,6 +65,8 @@ import { CommandParameterListItem } from 'visualcal-common/src/driver-builder';
 export default class CommandParametersBuilderDialogComponent extends Vue {
 
   @Prop({ type: Boolean, required: true }) shouldShow!: boolean; // Toggle show dialog
+  @Prop({ type: Array, required: false }) instructionsWithReadResponse?: Instruction[];
+  @Prop({ type: Object, required: true }) instruction!: Instruction;
   @Prop({ type: Array, required: false }) parameters?: CommandParameter[];
   @Prop({ type: String, required: true }) parametersType!: CommandParameterType;
 
@@ -97,7 +99,8 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
         boolean: 'Boolean',
         number: 'Number',
         string: 'String',
-        list: 'List'
+        list: 'List',
+        readResponse: 'Read Response'
       }
     };
   }
@@ -120,25 +123,44 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   //   table.redraw(true);
   // }
   
-  private formatEditParameterListCellButton(cell: Tabulator.CellComponent) {
+  private getListOrReadResponseEditCellFormatter(cell: Tabulator.CellComponent) {
     const parameter = cell.getRow().getData() as CommandParameter;
-    const isListType = parameter.type === 'list';
-    if (!isListType) {
-      const div = document.createElement('div') as HTMLDivElement;
-      div.style.backgroundColor = 'silver';
-      div.style.height = '100%';
-      div.style.width = '100%';
-      return div;
+    let availableReadResponseInstructions: Instruction[];
+    if (parameter.type === 'readResponse') {
+      const selectElement = document.createElement('select');
+      if (!this.instructionsWithReadResponse) return selectElement;
+      availableReadResponseInstructions = [];
+      console.info(this.instructionsWithReadResponse);
+      for (let index = 0; index < this.instructionsWithReadResponse.length; index++) {
+        const instruction = this.instructionsWithReadResponse[index];
+        if (instruction._id === this.instruction._id) break;
+        if (instruction.responseName) availableReadResponseInstructions.push(instruction);
+      }
+      for (let index = 0; index < availableReadResponseInstructions.length; index++) {
+        const instruction = availableReadResponseInstructions[index];
+        const newOption = document.createElement('option');
+        newOption.selected = index === 0;
+        newOption.label = `${instruction.responseName || '<Unknown Tag>'}`;
+        newOption.value = instruction._id;
+        selectElement.options.add(newOption);
+      }
+      return selectElement;
+    } else if (parameter.type === 'list') {
+      const buttonElement = document.createElement('button');
+      buttonElement.classList.add('tabulator-cell-button');
+      buttonElement.innerText = 'Edit List';
+      buttonElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.parameterForListBuilderDialog = parameter;
+        this.shouldShowCommandParameterListBuilderDialog = true;
+      });
+      return buttonElement;
     }
-    const button = document.createElement('button');
-    button.classList.add('tabulator-cell-button');
-    button.innerText = 'Edit List';
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.parameterForListBuilderDialog = parameter;
-      this.shouldShowCommandParameterListBuilderDialog = true;
-    });
-    return button;
+    const div = document.createElement('div') as HTMLDivElement;
+    div.style.backgroundColor = 'silver';
+    div.style.height = '100%';
+    div.style.width = '100%';
+    return div;
   }
 
   getCommandParameterFromCell(cell: Tabulator.CellComponent) {
@@ -204,7 +226,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
     { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
-    { title: '', formatter: this.formatEditParameterListCellButton, width: '100' },
+    { title: '', formatter: this.getListOrReadResponseEditCellFormatter, width: '100' },
     { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
     { title: 'Text After', field: 'afterText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
