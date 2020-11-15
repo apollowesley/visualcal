@@ -47,7 +47,8 @@ const employeesModule = defineModule({
         driverNomenclature: '',
         identityQueryCommand: '*IDN?',
         terminator: 'Lf',
-        instructionSets: []
+        instructionSets: [],
+        categories: []
       },
       communicationInterfaceInfos: [],
       selectedCommunicationInterfaceInfo: undefined,
@@ -227,6 +228,9 @@ const employeesModule = defineModule({
     },
     setOnlineStore(state, value: OnlineStore) {
       state.onlineStore = value;
+    },
+    setCurrentDriverCategories(state, value?: string[]) {
+      state.currentDriver.categories = value;
     }
   },
   actions: {

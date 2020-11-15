@@ -18,7 +18,6 @@
     <DirectControlTesterDialog
       :should-show="shouldDirectControlTesterDialogShow"
       :instruction-set="selectedInstructionSetUnderTest"
-      eager
       @cancel="shouldDirectControlTesterDialogShow = false"
     />
     <v-row no-gutters>
@@ -97,7 +96,7 @@
                       { text: 'None', value: 'none' },
                       { text: 'Carriage return', value: 'Cr' },
                       { text: 'Line feed', value: 'Lf' },
-                      { text: 'Carriage return / Line feed', value: 'CrLf' },
+                      { text: 'Carriage return / Line feed', value: 'CrLf' }
                     ]"
                     label="Terminator"
                     persistent-hint
@@ -105,11 +104,23 @@
                   />
                 </v-col>
                 <v-col>
-                  <v-text-field
-                    label="Categories"
-                    persistent-hint
-                    hint="List of categories this driver claims"
-                  />
+                  <fieldset>
+                    <legend>Categories</legend>
+                    <div
+                      v-for="category in availableCategories"
+                      :key="category._id"
+                    >
+                      <input
+                        :id="`driver-category-${category._id}`"
+                        class="driver-category-checkbox"
+                        type="checkbox"
+                        dense
+                        style="margin-right: 4px"
+                        @change="onDriverAvailableCategoryCheckChanged(category, $event)"
+                      >
+                      <label :for="`driver-category-${category._id}`">{{ category.name }}</label>
+                    </div>
+                  </fieldset>
                 </v-col>
               </v-row>
             </v-form>
@@ -195,7 +206,7 @@
 import { Vue, Component } from "vue-property-decorator";
 import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
 import { Item, ItemInstruction } from '@/components/driver-builder/InstructionsAndTemplatesItemInterfaces';
-import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet, CommandParameterType } from 'visualcal-common/src/driver-builder';
+import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet, CommandParameterType, DriverCategory } from 'visualcal-common/src/driver-builder';
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
@@ -297,6 +308,10 @@ export default class DriverBuilderView extends Vue {
     }
   ];
 
+  get availableCategories() {
+    return this.$store.direct.state.driverBuilder.categories;
+  }
+
   get canSaveDriver() {
     return this.manufacturer !== '' && this.model !== '' && this.nomenclature !== '' && this.terminator !== '';
   }
@@ -342,6 +357,10 @@ export default class DriverBuilderView extends Vue {
   set terminator(value: string) {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
   }
+
+  get selectedCategories() { return this.$store.direct.state.driverBuilder.currentDriver.categories ? this.$store.direct.state.driverBuilder.currentDriver.categories : []; }
+  set selectedCategories(value: string[]) { this.$store.direct.commit.driverBuilder.setCurrentDriverCategories(value); }
+
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
@@ -492,8 +511,45 @@ export default class DriverBuilderView extends Vue {
       driverNomenclature: '',
       terminator: 'Lf',
       instructionSets: [],
-      identityQueryCommand: ''
+      identityQueryCommand: '',
+      categories: []
     }
+    const categoryCheckboxes = document.getElementsByClassName('driver-category-checkbox');
+    if (!categoryCheckboxes) return;
+    for (const element of categoryCheckboxes) {
+      const checkboxEl = element as HTMLInputElement;
+      checkboxEl.checked = false;
+    }
+  }
+
+  ensureCurrentDriverHasInstructionSetsMatchingSelectedCategories() {
+    for (const selectedCategoryName of this.selectedCategories) {
+      const category = this.availableCategories.find(c => c.name === selectedCategoryName);
+      if (!category) continue;
+      for (const instructionSetName of category.instructionSets) {
+        const doesDriverHaveMatchingInstructionSet = this.driver.instructionSets.find(i => i.name === instructionSetName) !== undefined;
+        if (doesDriverHaveMatchingInstructionSet) continue;
+        this.$store.direct.commit.driverBuilder.addDriverInstructionSet({
+          _id: generateUuid(),
+          name: instructionSetName,
+          instructions: []
+        });
+      }
+    }
+  }
+
+  onDriverAvailableCategoryCheckChanged(selectedCategory: DriverCategory, event: Event) {
+    const checkboxEl = event.target as HTMLInputElement;
+    const existingCategoryIndex = this.selectedCategories.findIndex(c => c === selectedCategory.name);
+    const selectedCategories: string[] = [];
+    this.selectedCategories.forEach(categoryName => selectedCategories.push(categoryName));
+    if (checkboxEl.checked && existingCategoryIndex <= -1) {
+      selectedCategories.push(selectedCategory.name);
+    } else {
+      selectedCategories.splice(existingCategoryIndex, 1);
+    }
+    this.selectedCategories = selectedCategories;
+    this.ensureCurrentDriverHasInstructionSetsMatchingSelectedCategories();
   }
 
 }

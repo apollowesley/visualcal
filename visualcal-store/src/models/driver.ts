@@ -8,7 +8,8 @@ const DriverSchema = new mongoose.Schema<DriverInterface>({
   driverNomenclature: { type: String, required: true },
   identityQueryCommand: { type: String, required: false },
   terminator: { type: String, required: true },
-  instructionSets: [{ type: InstructionSetSchema, required: true }]
+  instructionSets: [{ type: InstructionSetSchema, required: true }],
+  categories: { type: [String], required: false }
 });
 
 export interface DriverStatic extends mongoose.Model<StoreDriver> {

@@ -67,6 +67,11 @@ export declare type InstructionType = 'Read' | 'Write' | 'Query';
 export declare type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
 export declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse';
 export declare type CommandParameterType = 'pre' | 'post';
+export interface DriverCategory {
+    _id: string;
+    name: string;
+    instructionSets: string[];
+}
 export interface Library {
     drivers: Driver[];
     instructionSets: InstructionSet[];
@@ -179,15 +184,12 @@ export interface Driver {
     identityQueryCommand?: string;
     terminator: string;
     instructionSets: InstructionSet[];
-}
-export interface DriverCategory {
-    _id: string;
-    name: string;
-    instructionSets: string[];
+    categories?: string[];
 }
 export declare type StoreDriver = Driver & mongoose.Document;
 export declare type StoreInstructionSet = InstructionSet & mongoose.Document;
 export declare type StoreInstruction = Instruction & mongoose.Document;
 export declare type StoreCommandParameter = CommandParameter & mongoose.Document;
 export declare type StoreCommandParameterListItem = CommandParameterListItem & mongoose.Document;
+export declare type StoreDriverCategory = DriverCategory & mongoose.Document;
 export declare const STORE_UPDATED = "STORE-UPDATED";

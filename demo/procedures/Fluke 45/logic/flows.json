@@ -111,6 +111,14 @@
 		"name": "Slew"
 	},
 	{
+		"id": "9f6ea55b.d01398",
+		"type": "indysoft-custom-driver-configuration",
+		"unitId": "Measure DC Volts",
+		"manufacturer": "Fluke",
+		"model": "45",
+		"useCategories": true
+	},
+	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
@@ -1747,25 +1755,51 @@
 					"name": "Set mode DC Volts",
 					"instructions": [
 						{
-							"_id": "5fa62123b58a446c0e8a60fd",
-							"name": "Clear Status Command",
-							"type": "Write",
-							"command": "*CLS",
-							"file": "json",
-							"readAttempts": 1,
-							"order": 0
-						},
-						{
 							"_id": "5fa62123b58a446c0e8a60fe",
 							"order": 1,
 							"name": "Set mode DC Volts",
 							"type": "Write",
 							"command": "VDC",
-							"readAttempts": 1
+							"readAttempts": 1,
+							"preParameters": [
+								{
+									"_id": "5faf23a46e5a850000487725",
+									"type": "string",
+									"prompt": "Pre-command?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1
+								}
+							]
 						}
 					]
 				},
-				"preParameterArguments": [],
+				"preParameterArguments": [
+					{
+						"instructionId": "5fa62123b58a446c0e8a60fe",
+						"parameter": {
+							"_id": "5faf23a46e5a850000487725",
+							"type": "string",
+							"prompt": "Pre-command?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1
+						},
+						"value": ""
+					}
+				],
 				"postParameterArguments": []
 			},
 			{
