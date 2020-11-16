@@ -17,6 +17,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'ascii' });
   private fTextEncoder = new TextEncoder();
   private fTextDecoder = new TextDecoder();
+  private fReadTimoutTimerId?: NodeJS.Timeout;
+  private fWriteTimoutTimerId?: NodeJS.Timeout;
 
   async onConnected() {
     await super.onConnected();
@@ -43,55 +45,94 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await Promise.resolve();
   };
 
+  private clearTimeouts() {
+    if (this.fReadTimoutTimerId) clearTimeout(this.fReadTimoutTimerId);
+    if (this.fWriteTimoutTimerId) clearTimeout(this.fWriteTimoutTimerId);
+    this.fReadTimoutTimerId = undefined;
+    this.fWriteTimoutTimerId = undefined;
+  }
+
   write(data: ArrayBufferLike) {
     return new Promise<ArrayBufferLike>((resolve, reject) => {
-      if (this.isDisconnecting) return resolve();
-      if (!this.duplexClient) {
-        const err = new Error('Client is undefined');
-        this.onError(err);
-        return reject(err);
+      const returnResolve = (retVal?: ArrayBufferLike) => {
+        this.clearTimeouts();
+        return resolve(retVal);
       }
-      const dataStringWithoutTerminators = this.fTextDecoder.decode(data);
-      const dataString = dataStringWithoutTerminators + '\n';
-      this.duplexClient.write(dataString, async (writeErr) => {
-        if (writeErr) return reject(writeErr);
+      const returnReject = (error: Error) => {
+        this.clearTimeouts();
+        this.onError(error);
+        return reject(error);
+      }
+      try {
+        if (this.isDisconnecting) return returnResolve();
         if (!this.duplexClient) {
           const err = new Error('Client is undefined');
           this.onError(err);
-          return reject(err);
+          return returnReject(err);
         }
-        await this.onPrologixDataSent();
-        log.info(`Write`, dataStringWithoutTerminators);
-        const actualWroteData = new TextEncoder().encode(dataString);
-        return resolve(actualWroteData);
-      });
+        const dataStringWithoutTerminators = this.fTextDecoder.decode(data);
+        const dataString = dataStringWithoutTerminators + '\n';
+        this.fWriteTimoutTimerId = setTimeout(() => {
+          const err = new Error(`Write timeout after ${this.readTimeout} ms`);
+          return returnReject(err);
+        }, this.readTimeout);
+        this.duplexClient.write(dataString, async (writeErr) => {
+          if (writeErr) return returnReject(writeErr);
+          if (!this.duplexClient) {
+            const err = new Error('Client is undefined');
+            this.onError(err);
+            return returnReject(err);
+          }
+          await this.onPrologixDataSent();
+          log.info(`Write`, dataStringWithoutTerminators);
+          const actualWroteData = new TextEncoder().encode(dataString);
+          return returnResolve(actualWroteData);
+        });
+      } catch (error) {
+        return returnReject(error);
+      }
     });
   }
 
   read(): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
-      if (this.isDisconnecting) return resolve();
-      if (!this.duplexClient || !this.isConnected) {
-        const error = new Error('Not connected or client is undefined');
-        this.onError(error);
-        return reject(error);
-      };
-      this.duplexClient.removeAllListeners('error');
-      const handleError = (err: Error) => {
-        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
-        this.fReadlineParser.off('data', handleData);
-        this.onError(err);
-        return reject(err);
-      }
-      const handleData = (data: string) => {
-        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
-        this.fReadlineParser.off('data', handleData);
-        const retVal = this.fTextEncoder.encode(data);
+      const returnResolve = (retVal?: ArrayBufferLike) => {
+        this.clearTimeouts();
         return resolve(retVal);
       }
-      this.duplexClient.once('error', handleError);
-      this.fReadlineParser.on('data', handleData);
-      await this.writeString('++read eoi');
+      const returnReject = (error: Error) => {
+        this.clearTimeouts();
+        this.onError(error);
+        return reject(error);
+      }
+      try {
+        if (this.isDisconnecting) return returnResolve();
+        if (!this.duplexClient || !this.isConnected) {
+          const error = new Error('Not connected or client is undefined');
+          return returnReject(error);
+        };
+        this.duplexClient.removeAllListeners('error');
+        const handleData = (data: string) => {
+          if (this.duplexClient) this.duplexClient.removeAllListeners('error');
+          this.fReadlineParser.off('data', handleData);
+          const retVal = this.fTextEncoder.encode(data);
+          return returnResolve(retVal);
+        }
+        const handleError = (err: Error) => {
+          if (this.duplexClient) this.duplexClient.removeAllListeners('error');
+          this.fReadlineParser.off('data', handleData);
+          return returnReject(err);
+        }
+        this.duplexClient.once('error', handleError);
+        this.fReadlineParser.on('data', handleData);
+        await this.writeString('++read eoi');
+        this.fReadTimoutTimerId = setTimeout(() => {
+          const err = new Error(`Read timeout after ${this.readTimeout} ms`);
+          return returnReject(err);
+        }, this.readTimeout);
+      } catch (error) {
+        return returnReject(error);
+      }
     });
   }
 

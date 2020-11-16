@@ -114,6 +114,8 @@ export default class BenchConfigComponent extends Vue {
     ] },
     { title: 'Timing (all times are in milliseconds)', columns: [
       { title: 'Connect Timeout', field: 'timing.connectTimeout', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },
+      { title: 'Write Timeout', field: 'timing.writeTimout', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },
+      { title: 'Read Timeout', field: 'timing.readTimeout', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },
       { title: 'Delay before write', field: 'timing.delayBeforeWrite', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },
       { title: 'Delay after write', field: 'timing.delayAfterWrite', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },
       { title: 'Delay before read', field: 'timing.delayBeforeRead', editable: true, editor: 'number', validator: 'min: 0', cellEdited: this.optionalNumberCellEdited },

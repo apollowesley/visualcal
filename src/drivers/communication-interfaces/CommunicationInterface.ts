@@ -25,6 +25,8 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   private fName: string = uuid();
   private fConnectTimeout = 3000;
   private fConnectTimeoutTimerId?: NodeJS.Timeout;
+  private fReadTimeout = 3000;
+  private fWriteTimeout = 3000;
   private fResetOnConnect = true;
   private fDelayBeforeWrite = 0;
   private fDelayAfterWrite = 0;
@@ -70,6 +72,20 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     if (value < 0) throw new Error('connectTimout cannot be less than zero');
     if (value === this.fConnectTimeout) return;
     this.fConnectTimeout = value;
+  }
+
+  get readTimeout() { return this.fReadTimeout; }
+  set readTimeout(value: number) {
+    if (value < 0) throw new Error('readTimeout cannot be less than zero');
+    if (value === this.fConnectTimeout) return;
+    this.fReadTimeout = value;
+  }
+
+  get writeTimeout() { return this.fWriteTimeout; }
+  set writeTimeout(value: number) {
+    if (value < 0) throw new Error('writeTimeout cannot be less than zero');
+    if (value === this.fConnectTimeout) return;
+    this.fWriteTimeout = value;
   }
 
   get resetOnConnect() { return this.fResetOnConnect; }

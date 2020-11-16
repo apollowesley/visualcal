@@ -132,6 +132,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     iface.name = info.name;
     if (info.timing) {
       if (info.timing.connectTimeout >= 0) iface.connectTimeout = info.timing.connectTimeout;
+      if (info.timing.writeTimeout >= 0) iface.writeTimeout = info.timing.writeTimeout;
+      if (info.timing.readTimeout >= 0) iface.readTimeout = info.timing.readTimeout;
       iface.delayBeforeWrite = info.timing.delayBeforeWrite !== undefined ? info.timing.delayBeforeWrite : 0;
       iface.delayAfterWrite = info.timing.delayAfterWrite !== undefined ? info.timing.delayAfterWrite : 0;
       iface.delayBeforeRead = info.timing.delayBeforeRead !== undefined ? info.timing.delayBeforeRead : 0;

@@ -110,7 +110,7 @@ export class ActionManager extends TypedEmitter<Events> {
     this.fCurrentRun = undefined;
   }
 
-  async stop() {
+  async stop(err?: Error) {
     await NodeRedManager.instance.stopCurrentAction();
     if (this.currentRun && this.currentRun.sectionId && this.currentRun.actionId) {
       const section = this.currentRun.sectionId;
@@ -118,6 +118,7 @@ export class ActionManager extends TypedEmitter<Events> {
       setImmediate(() => ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: section, action: action, state: 'stopped' }));
     }
     this.endCurrentRun(true);
+    if (err && WindowManager.instance.mainWindow) WindowManager.instance.showErrorDialog(WindowManager.instance.mainWindow.webContents, err);
   }
 
   async cancel(reason: CancelActionReason, reasonText?: string) {

@@ -111,14 +111,6 @@
 		"name": "Slew"
 	},
 	{
-		"id": "9f6ea55b.d01398",
-		"type": "indysoft-custom-driver-configuration",
-		"unitId": "Measure DC Volts",
-		"manufacturer": "Fluke",
-		"model": "45",
-		"useCategories": true
-	},
-	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
