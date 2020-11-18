@@ -89,6 +89,10 @@ export default class InstructionTableComponent extends Vue {
     };
   }
 
+  private getSettableVariablesEditorParams() {
+    return this.$store.direct.state.driverBuilder.currentDriver.variables ? this.$store.direct.state.driverBuilder.currentDriver.variables.map(variable => variable.name) : [];
+  }
+
   private async updateInstruction(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
     if (!instruction.readAttempts) instruction.readAttempts = 1;
@@ -179,7 +183,7 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Variable', field: 'variable', editable: this.getIsVariableFieldEditable, editor: 'select', editorParams: () => ['Current Function'] },
+    { title: 'Variable', field: 'variable', editable: this.getIsVariableFieldEditable, editor: 'select', editorParams: this.getSettableVariablesEditorParams },
     { title: 'Prepend Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },
     { title: 'Command/Variable Value', field: 'command', editable: true, editor: 'input' },
     { title: 'Append Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) }
@@ -212,7 +216,7 @@ export default class InstructionTableComponent extends Vue {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
       index: '_id',
-      layout: 'fitDataTable',
+      layout: 'fitColumns',
       columns: this.columns,
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),
