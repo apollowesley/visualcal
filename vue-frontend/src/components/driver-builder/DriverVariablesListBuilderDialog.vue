@@ -55,6 +55,7 @@ export default class DriverVariablesListBuilderDialog extends Vue {
 
   @Watch('value')
   async onValueChanged(newValue: boolean) {
+    this.table.clearData();
     if (!newValue || !this.driver.variables) return;
     const driverVariablesCopy: DriverVariable[] = [];
     this.driver.variables.forEach(variable => {
