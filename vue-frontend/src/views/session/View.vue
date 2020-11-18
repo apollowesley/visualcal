@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pl-7 pr-7">
+  <v-container fluid class="pl-7 pr-7 full-height no-scroll">
     <v-row align="start" justify="center" no-gutters>
       <v-col>
         <v-row>
@@ -64,6 +64,3 @@ export default class SessionView extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

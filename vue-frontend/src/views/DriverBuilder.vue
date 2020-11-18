@@ -1,5 +1,5 @@
 <template>
-  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow: hidden">
+  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow-x: auto; overflow-y: hidden">
     <DriverVariablesListBuilderDialogComponent
       v-model="shouldVariableEditorDialogShow"
     />

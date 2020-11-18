@@ -29,7 +29,7 @@
         />
       </v-col>
       <v-col
-        cols="3"
+        cols="5"
       >
         <v-text-field
           v-model="fRunName"
@@ -38,7 +38,9 @@
           persistent-hint
         />
       </v-col>
-      <v-col>
+      <v-col
+        cols="1"
+      >
         <v-btn
           :disabled="canRunAction"
           label="Action"

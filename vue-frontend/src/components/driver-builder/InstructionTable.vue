@@ -212,7 +212,7 @@ export default class InstructionTableComponent extends Vue {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
       index: '_id',
-      layout: 'fitDataStretch',
+      layout: 'fitDataTable',
       columns: this.columns,
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),
