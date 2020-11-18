@@ -63,9 +63,9 @@ export declare const IpcChannels: {
         };
     };
 };
-export declare type InstructionType = 'Read' | 'Write' | 'Query';
+export declare type InstructionType = 'Read' | 'Write' | 'Query' | 'setVariable';
 export declare type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
-export declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse';
+export declare type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse' | 'variable';
 export declare type CommandParameterType = 'pre' | 'post';
 export interface DriverCategory {
     _id: string;
@@ -133,6 +133,10 @@ export interface CommandParameter {
     minMaxIncrement?: number;
     /** The optional default value. */
     default?: string | number | boolean;
+    /** The optional read response tag used as this parameters value */
+    readResponseTag?: string;
+    /** The optional variable used as this parameters value */
+    variableName?: string;
 }
 /** A CommandParameter argument that will be sent along with the command to the device. */
 export interface CommandParameterArgument {
@@ -167,6 +171,8 @@ export interface Instruction {
     preParameters?: CommandParameter[];
     /** The optional post-command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
     postParameters?: CommandParameter[];
+    /** The name of the variable to set if type equals setVariable. */
+    variableName?: string;
 }
 /** Instructions mandated by IEEE 488.2 and SCPI */
 export declare const IEEE4882MandatedCommands: Instruction[];
@@ -177,6 +183,11 @@ export interface InstructionSet {
     name: string;
     instructions: Instruction[];
 }
+export interface DriverVariable {
+    _id: string;
+    name: string;
+    defaultValue: string;
+}
 export interface Driver {
     driverManufacturer: string;
     driverModel: string;
@@ -185,6 +196,7 @@ export interface Driver {
     terminator: string;
     instructionSets: InstructionSet[];
     categories?: string[];
+    variables?: DriverVariable[];
 }
 export declare type StoreDriver = Driver & mongoose.Document;
 export declare type StoreInstructionSet = InstructionSet & mongoose.Document;
@@ -192,4 +204,5 @@ export declare type StoreInstruction = Instruction & mongoose.Document;
 export declare type StoreCommandParameter = CommandParameter & mongoose.Document;
 export declare type StoreCommandParameterListItem = CommandParameterListItem & mongoose.Document;
 export declare type StoreDriverCategory = DriverCategory & mongoose.Document;
+export declare type StoreDriverVariable = DriverVariable & mongoose.Document;
 export declare const STORE_UPDATED = "STORE-UPDATED";

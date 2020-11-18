@@ -1,6 +1,6 @@
 import { defineModule } from 'direct-vuex';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver, STORE_UPDATED, DriverCategory } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, Driver, InstructionSet, Library, StoreDriver, STORE_UPDATED, DriverCategory, DriverVariable } from 'visualcal-common/src/driver-builder';
 import { moduleActionContext, moduleGetterContext } from './';
 import { CommunicationInterfaceActionInfo, IpcChannels, QueryStringInfo, Status, WriteInfo } from 'visualcal-common/src/driver-builder';
 import { generateUuid } from '@/utils/uuid';
@@ -45,10 +45,11 @@ const employeesModule = defineModule({
         driverManufacturer: '',
         driverModel: '',
         driverNomenclature: '',
-        identityQueryCommand: '*IDN?',
         terminator: 'Lf',
         instructionSets: [],
-        categories: []
+        identityQueryCommand: '*IDN?',
+        categories: [],
+        variables: []
       },
       communicationInterfaceInfos: [],
       selectedCommunicationInterfaceInfo: undefined,
@@ -231,6 +232,21 @@ const employeesModule = defineModule({
     },
     setCurrentDriverCategories(state, value?: string[]) {
       state.currentDriver.categories = value;
+    },
+    clearCurrentDriver(state) {
+      state.currentDriver = {
+        driverManufacturer: '',
+        driverModel: '',
+        driverNomenclature: '',
+        terminator: 'Lf',
+        instructionSets: [],
+        identityQueryCommand: '*IDN?',
+        categories: [],
+        variables: []
+      }
+    },
+    setCurrentDriverVariables(state, value?: DriverVariable[]) {
+      state.currentDriver.variables = value;
     }
   },
   actions: {
@@ -343,7 +359,7 @@ const employeesModule = defineModule({
     },
     async write(context, opts: { instruction: Instruction, parameterArguments?: CommandParameterArgument[] }) {
       const { getters, state } = actionContext(context);
-      return new Promise<void>((resolve, reject) => {
+      return new Promise<string>((resolve, reject) => {
         let command = opts.instruction.command;
         if (opts.parameterArguments) {
           for (const argument of opts.parameterArguments) {
@@ -361,7 +377,7 @@ const employeesModule = defineModule({
         });
         window.electron.ipcRenderer.once(IpcChannels.communicationInterface.write.response, () => {
           window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.write.error);
-          return resolve();
+          return resolve(command);
         });
         window.electron.ipcRenderer.send(IpcChannels.communicationInterface.write.request, info);
       });

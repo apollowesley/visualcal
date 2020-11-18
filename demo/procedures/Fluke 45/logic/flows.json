@@ -111,6 +111,19 @@
 		"name": "Slew"
 	},
 	{
+		"id": "9793c5f7.916848",
+		"type": "indysoft-custom-driver-configuration",
+		"unitId": "34401A",
+		"manufacturer": "Keysight",
+		"model": "34401A",
+		"useCategories": false
+	},
+	{
+		"id": "bcc2a0f9.2e116",
+		"type": "indysoft-section-configuration",
+		"name": "Test 34401A"
+	},
+	{
 		"id": "e691dbf7.db68e8",
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
@@ -13591,6 +13604,152 @@
 		"wires": [
 			[
 				"e0dfd279.c2527"
+			]
+		]
+	},
+	{
+		"id": "485aad43.399fa4",
+		"type": "indysoft-custom-driver",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"driverConfigId": "9793c5f7.916848",
+		"instructionSets": [
+			{
+				"id": "5fb4a09399dd5a00002b2a76",
+				"instructionSet": {
+					"_id": "5fb4a09399dd5a00002b2a76",
+					"name": "Set Mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fb4a09799dd5a00002b2a78",
+							"order": 0,
+							"name": "Set variable",
+							"type": "setVariable",
+							"command": "VOLD:DC",
+							"readAttempts": 1,
+							"variable": "Current Function"
+						},
+						{
+							"_id": "5fb4a0ba99dd5a00002b2a79",
+							"order": 1,
+							"name": "Set instrument",
+							"type": "Write",
+							"command": "CONF:VOLT:DC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			},
+			{
+				"id": "5fb4a09499dd5a00002b2a77",
+				"instructionSet": {
+					"_id": "5fb4a09499dd5a00002b2a77",
+					"name": "Set Range Auto",
+					"instructions": [
+						{
+							"_id": "5fb4ac588c68fa0000ad7a07",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": ":RANGE AUTO",
+							"readAttempts": 1,
+							"preParameters": [
+								{
+									"_id": "5fb4ac6d8c68fa0000ad7a08",
+									"type": "variable",
+									"prompt": "",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"beforeText": "",
+									"variableName": "Current Function"
+								}
+							]
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			},
+			{
+				"id": "5fad65cc8136320000dceb7b",
+				"instructionSet": {
+					"_id": "5fad65cc8136320000dceb7b",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fb2bb3bf5c4b600009dd7a7",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Query",
+							"command": "READ?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			}
+		],
+		"x": 270,
+		"y": 820,
+		"wires": [
+			[],
+			[
+				"c7f40707.26a268"
+			]
+		]
+	},
+	{
+		"id": "96ea44fd.961658",
+		"type": "indysoft-action-start",
+		"z": "3b731b51.7981f4",
+		"name": "Variables",
+		"sectionConfigId": "bcc2a0f9.2e116",
+		"x": 180,
+		"y": 720,
+		"wires": [
+			[
+				"485aad43.399fa4"
+			]
+		]
+	},
+	{
+		"id": "bd58f4cb.1f77f8",
+		"type": "indysoft-action-completed",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"x": 470,
+		"y": 1020,
+		"wires": []
+	},
+	{
+		"id": "c7f40707.26a268",
+		"type": "indysoft-scalar-result",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"description": "0  volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "none",
+		"toleranceType": "limit",
+		"min": "-0.006",
+		"max": "0.006",
+		"inputLevel": "0",
+		"x": 360,
+		"y": 920,
+		"wires": [
+			[
+				"bd58f4cb.1f77f8"
 			]
 		]
 	}

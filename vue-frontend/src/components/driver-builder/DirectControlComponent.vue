@@ -42,7 +42,7 @@
 import { VuetifyRule } from '@/utils/vuetify-input-rules';
 import { MouseWheelInputEvent } from 'electron';
 import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/src/bench-configuration';
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 
 @Component
 export default class DirectControlComponent extends Vue {
@@ -67,6 +67,17 @@ export default class DirectControlComponent extends Vue {
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
   get isSelectedInterfaceGpib() { return this.$store.direct.getters.driverBuilder.isSelectedInterfaceGpib; }
+
+  @Watch('deviceGpibAddress')
+  onDeviceGpibAddressChanged() {
+    localStorage.setItem('directControlDeviceGpibAddress', this.deviceGpibAddress.toString());
+  }
+
+  mounted() {
+    const gpibAddress = localStorage.getItem('directControlDeviceGpibAddress');
+    if (gpibAddress === null) return;
+    this.deviceGpibAddress = Number(gpibAddress);
+  }
 
   onDeviceGpibAddressMouseWheel(event: MouseWheelInputEvent) {
     if (!event.wheelTicksY) return;

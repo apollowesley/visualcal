@@ -65,9 +65,9 @@ export const IpcChannels = {
   }
 }
 
-export type InstructionType = 'Read' | 'Write' | 'Query';
+export type InstructionType = 'Read' | 'Write' | 'Query' | 'setVariable';
 export type DataType = 'Boolean' | 'Number' | 'String' | 'Binary';
-export type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse';
+export type InstructionParameterType = 'boolean' | 'number' | 'string' | 'list' | 'readResponse' | 'variable';
 export type CommandParameterType = 'pre' | 'post';
 
 export interface DriverCategory {
@@ -143,6 +143,10 @@ export interface CommandParameter {
   minMaxIncrement?: number;
   /** The optional default value. */
   default?: string | number | boolean;
+  /** The optional read response tag used as this parameters value */
+  readResponseTag?: string;
+  /** The optional variable used as this parameters value */
+  variableName?: string;
 }
 
 /** A CommandParameter argument that will be sent along with the command to the device. */
@@ -179,6 +183,8 @@ export interface Instruction {
   preParameters?: CommandParameter[];
   /** The optional post-command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
   postParameters?: CommandParameter[];
+  /** The name of the variable to set if type equals setVariable. */
+  variableName?: string;
 }
 
 /** Instructions mandated by IEEE 488.2 and SCPI */
@@ -219,6 +225,12 @@ export interface InstructionSet {
   instructions: Instruction[];
 }
 
+export interface DriverVariable {
+  _id: string;
+  name: string;
+  defaultValue: string;
+}
+
 export interface Driver {
   driverManufacturer: string;
   driverModel: string;
@@ -227,6 +239,7 @@ export interface Driver {
   terminator: string;
   instructionSets: InstructionSet[],
   categories?: string[];
+  variables?: DriverVariable[];
 }
 
 export type StoreDriver = Driver & mongoose.Document;
@@ -235,5 +248,6 @@ export type StoreInstruction = Instruction & mongoose.Document;
 export type StoreCommandParameter = CommandParameter & mongoose.Document;
 export type StoreCommandParameterListItem = CommandParameterListItem & mongoose.Document;
 export type StoreDriverCategory = DriverCategory & mongoose.Document;
+export type StoreDriverVariable = DriverVariable & mongoose.Document;
 
 export const STORE_UPDATED = 'STORE-UPDATED';

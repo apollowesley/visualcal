@@ -35,6 +35,8 @@ interface SerialPortConfiguration {
 
 interface Timing {
   connectTimeout: number;
+  readTimeout: number;
+  writeTimeout: number;
   delayBeforeWrite?: number;
   delayAfterWrite?: number;
   delayBeforeRead?: number;
@@ -42,7 +44,9 @@ interface Timing {
 }
 
 export const DefaultTiming: Timing = {
-  connectTimeout: 3000
+  connectTimeout: 3000,
+  readTimeout: 3000,
+  writeTimeout: 3000
 }
 
 export interface CommunicationInterfaceConfigurationInfo {

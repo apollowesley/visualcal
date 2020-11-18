@@ -20,6 +20,8 @@ exports.CommunicationInterfaceTypes = [
     'Emulated'
 ];
 exports.DefaultTiming = {
-    connectTimeout: 3000
+    connectTimeout: 3000,
+    readTimeout: 3000,
+    writeTimeout: 3000
 };
 //# sourceMappingURL=bench-configuration.js.map

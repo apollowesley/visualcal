@@ -73,6 +73,7 @@ export default class InstructionTableComponent extends Vue {
         Write: 'Write',
         Read: 'Read',
         Query: 'Query',
+        setVariable: 'Set Variable'
       }
     };
   }
@@ -157,9 +158,16 @@ export default class InstructionTableComponent extends Vue {
     this.$emit('reordered', instructions);
   }
 
+  private getIsVariableFieldEditable(cell: Tabulator.CellComponent) {
+    const instruction = this.getInstructionFromCell(cell);
+    if (!instruction || instruction.type !== 'setVariable') return false;
+    return true;
+  }
+
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false, field: 'order' },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
+    { title: 'Order', field: 'order' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
@@ -171,10 +179,10 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
       { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
     ]},
-    { title: 'Prepend Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },
-    { title: 'Command', field: 'command', editable: true, editor: 'input' },
-    { title: 'Append Parameters (Click to edit)', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },
-    { title: 'Help URI (i.e. https://www.visualcal.com/help/drivers/mycustomdriver/mycustomcommand)', field: 'helpUri', editable: this.getIsResponseDataTypeEditable, editor: 'input' }
+    { title: 'Variable', field: 'variable', editable: this.getIsVariableFieldEditable, editor: 'select', editorParams: () => ['Current Function'] },
+    { title: 'Prepend Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },
+    { title: 'Command/Variable Value', field: 'command', editable: true, editor: 'input' },
+    { title: 'Append Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) }
   ]
 
   private createRowContextMenu(): (Tabulator.MenuObject<Tabulator.RowComponent> | Tabulator.MenuSeparator)[] {
@@ -193,6 +201,7 @@ export default class InstructionTableComponent extends Vue {
         action: (_, row) => {
           this.table.deleteRow(row);
           this.$emit('instruction-removed', row.getData() as Instruction);
+          this.reorderInstructions(this.table);
         }
       }
     ];

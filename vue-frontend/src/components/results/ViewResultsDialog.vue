@@ -77,7 +77,3 @@ export default class ViewResultsDialogComponent extends Vue {
 
 }
 </script>
-
-<style>
-
-</style>

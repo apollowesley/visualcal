@@ -22,8 +22,8 @@ interface SerialPortConfiguration {
 }
 interface Timing {
     connectTimeout: number;
-    writeTimeout: number;
     readTimeout: number;
+    writeTimeout: number;
     delayBeforeWrite?: number;
     delayAfterWrite?: number;
     delayBeforeRead?: number;

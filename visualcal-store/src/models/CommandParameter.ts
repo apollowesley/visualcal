@@ -17,7 +17,9 @@ export const CommandParameterSchema = new mongoose.Schema<CommandParameterInterf
   useMinMaxIncrement: { type: Boolean, required: false },
   minMaxIncrement: { type: Number, required: false },
   default: { type: mongoose.Schema.Types.Mixed, required: false },
-  listItems: [{ type: CommandParameterListItemSchema, required: false }]
+  listItems: [{ type: CommandParameterListItemSchema, required: false }],
+  readaResponseTag: { type: String, required: false },
+  variableName: { type: String, required: false }
 });
 
 export interface CommandParameterStatic extends mongoose.Model<StoreCommandParameter> {

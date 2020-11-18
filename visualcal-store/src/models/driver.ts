@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Driver as DriverInterface, StoreDriver } from 'visualcal-common/dist/driver-builder';
+import { DriverVariableSchema } from './DriverVariable';
 import { InstructionSetSchema } from './InstructionSet';
 
 const DriverSchema = new mongoose.Schema<DriverInterface>({
@@ -9,7 +10,8 @@ const DriverSchema = new mongoose.Schema<DriverInterface>({
   identityQueryCommand: { type: String, required: false },
   terminator: { type: String, required: true },
   instructionSets: [{ type: InstructionSetSchema, required: true }],
-  categories: { type: [String], required: false }
+  categories: { type: [String], required: false },
+  variables: [{ type: DriverVariableSchema, required: false }]
 });
 
 export interface DriverStatic extends mongoose.Model<StoreDriver> {

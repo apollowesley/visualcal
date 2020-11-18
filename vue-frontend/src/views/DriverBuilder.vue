@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid class="grey" style="height: 100vh">
+  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow: hidden">
+    <DriverVariablesListBuilderDialogComponent
+      v-model="shouldVariableEditorDialogShow"
+    />
     <CommandParametersBuilderDialogComponent
       :should-show="shouldCommandBuilderDialogShow"
       :parameters="commandBuilderDialogInstructionCommandParameters"
@@ -129,72 +132,85 @@
         <DirectControlComponent />
         <v-row class="ml-2">
           <v-col>
-            <v-btn color="primary" @click="addNewInstructionSet">
-              Add Instruction Set
+            <v-btn
+              @click="shouldVariableEditorDialogShow = true"
+            >
+              Edit Variables
             </v-btn>
           </v-col>
         </v-row>
         <v-row class="ml-2">
           <v-col>
-            Instruction Sets
-            <v-expansion-panels
-              v-model="expandedInstructionSet"
-              style="width: 98%"
-              class="ml-5 mt-7 mb-n10"
-              dense
-            >
-              <v-expansion-panel
-                v-for="instructionSet in driver.instructionSets"
-                :key="instructionSet._id"
-                class="grey"
-                dense
-              >
-                <v-expansion-panel-header class="white" style="height: 25px">
-                  {{ instructionSet.name }}
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    :disabled="!isCommunicationInterfaceConnected || instructionSet.instructions.length <= 0"
-                    color="primary"
-                    class="mr-3"
-                    max-width="100"
-                    @click.native.stop="onTestInstructionSetButtonClicked(instructionSet)"
+            <v-card>
+              <v-card-title>
+                <h3>Instruction Sets</h3>
+              </v-card-title>
+              <v-card-actions>
+                <v-btn color="primary" @click="addNewInstructionSet">
+                  Add Instruction Set
+                </v-btn>
+              </v-card-actions>
+              <div id="driver-builder-editor-instruction-sets">
+                <v-expansion-panels
+                  v-model="expandedInstructionSet"
+                  style="width: 98%"
+                  class="ml-5 mt-7 mb-n10"
+                  dense
+                >
+                  <v-expansion-panel
+                    v-for="instructionSet in driver.instructionSets"
+                    :key="instructionSet._id"
+                    class="grey"
+                    dense
                   >
-                    Test
-                  </v-btn>
-                  <v-btn
-                    color="primary"
-                    class="mr-3"
-                    max-width="100"
-                    @click.native.stop="renameInstructionSet(instructionSet)"
-                    >Rename</v-btn
-                  >
-                  <v-btn
-                    color="primary"
-                    class="mr-3"
-                    max-width="100"
-                    @click.native.stop="saveInstructionSetToLibrary(instructionSet)"
-                    >Save</v-btn
-                  >
-                  <v-btn
-                    color="primary"
-                    max-width="100"
-                    @click.native.stop="removeInstructionSet(instructionSet)"
-                    >Remove</v-btn
-                  >
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <InstructionTableComponent
-                    :instructions="instructionSet.instructions"
-                    @edit-instruction-pre-parameters="onInstructionTableComponentEditPreParameters"
-                    @edit-instruction-post-parameters="onInstructionTableComponentEditPostParameters"
-                    @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
-                    @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
-                    @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
-                    @reordered="onInstructionTableComponentReordered(instructionSet, $event)"
-                  />
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
+                    <v-expansion-panel-header class="white" style="height: 25px">
+                      {{ instructionSet.name }}
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        :disabled="!isCommunicationInterfaceConnected || instructionSet.instructions.length <= 0"
+                        color="primary"
+                        class="mr-3"
+                        max-width="100"
+                        @click.native.stop="onTestInstructionSetButtonClicked(instructionSet)"
+                      >
+                        Test
+                      </v-btn>
+                      <v-btn
+                        color="primary"
+                        class="mr-3"
+                        max-width="100"
+                        @click.native.stop="renameInstructionSet(instructionSet)"
+                        >Rename</v-btn
+                      >
+                      <v-btn
+                        color="primary"
+                        class="mr-3"
+                        max-width="100"
+                        @click.native.stop="saveInstructionSetToLibrary(instructionSet)"
+                        >Save</v-btn
+                      >
+                      <v-btn
+                        color="primary"
+                        max-width="100"
+                        @click.native.stop="removeInstructionSet(instructionSet)"
+                        >Remove</v-btn
+                      >
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <InstructionTableComponent
+                        :instructions="instructionSet.instructions"
+                        @edit-instruction-pre-parameters="onInstructionTableComponentEditPreParameters"
+                        @edit-instruction-post-parameters="onInstructionTableComponentEditPostParameters"
+                        @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
+                        @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
+                        @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
+                        @reordered="onInstructionTableComponentReordered(instructionSet, $event)"
+                      />
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </div>
+            </v-card>
           </v-col>
         </v-row>
       </v-col>
@@ -203,7 +219,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import { Vue, Component, Watch } from "vue-property-decorator";
 import InstructionTableComponent from "@/components/driver-builder/InstructionTable.vue";
 import { Item, ItemInstruction } from '@/components/driver-builder/InstructionsAndTemplatesItemInterfaces';
 import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParameter, Instruction, InstructionSet, CommandParameterType, DriverCategory } from 'visualcal-common/src/driver-builder';
@@ -214,6 +230,7 @@ import DirectControlComponent from "@/components/driver-builder/DirectControlCom
 import DirectControlTesterDialog from "@/components/driver-builder/DirectControlTesterDialog.vue";
 import { generateUuid } from '@/utils/uuid';
 import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/InstructionsAndTemplatesPanel.vue';
+import DriverVariablesListBuilderDialogComponent from '@/components/driver-builder/DriverVariablesListBuilderDialog.vue';
 
 // const MockDriver: Driver = {
 //   manufacturer: "Fluke",
@@ -231,10 +248,13 @@ import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/
     RenameInstructionSetDialogComponent,
     DirectControlComponent,
     DirectControlTesterDialog,
-    InstructionsAndTemplatesPanelComponent
+    InstructionsAndTemplatesPanelComponent,
+    DriverVariablesListBuilderDialogComponent
   }
 })
 export default class DriverBuilderView extends Vue {
+
+  shouldVariableEditorDialogShow = false;
 
   shouldCommandBuilderDialogShow = false;
   commandBuilderDialogInstruction: Instruction = {
@@ -257,6 +277,8 @@ export default class DriverBuilderView extends Vue {
   selectedInstructionSetUnderTest: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
 
   rules: VuetifyRule[] = [requiredRule];
+
+  selectedCategories: string[] = [];
 
   items: Item[] = [
     {
@@ -357,10 +379,6 @@ export default class DriverBuilderView extends Vue {
   set terminator(value: string) {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
   }
-
-  get selectedCategories() { return this.$store.direct.state.driverBuilder.currentDriver.categories ? this.$store.direct.state.driverBuilder.currentDriver.categories : []; }
-  set selectedCategories(value: string[]) { this.$store.direct.commit.driverBuilder.setCurrentDriverCategories(value); }
-
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
@@ -500,20 +518,14 @@ export default class DriverBuilderView extends Vue {
   }
 
   async saveDriver() {
+    this.$store.direct.commit.driverBuilder.setCurrentDriverCategories(this.selectedCategories);
     await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
     await this.$store.direct.dispatch.driverBuilder.refreshLibrary();
   }
 
   clearDriver() {
-    this.driver = {
-      driverManufacturer: '',
-      driverModel: '',
-      driverNomenclature: '',
-      terminator: 'Lf',
-      instructionSets: [],
-      identityQueryCommand: '',
-      categories: []
-    }
+    this.$store.direct.commit.driverBuilder.clearCurrentDriver();
+    this.selectedCategories = [];
     const categoryCheckboxes = document.getElementsByClassName('driver-category-checkbox');
     if (!categoryCheckboxes) return;
     for (const element of categoryCheckboxes) {
@@ -538,7 +550,10 @@ export default class DriverBuilderView extends Vue {
     }
   }
 
+  private settingCategoryCheckboxesFromDriver = false;
+
   onDriverAvailableCategoryCheckChanged(selectedCategory: DriverCategory, event: Event) {
+    if (this.settingCategoryCheckboxesFromDriver) return;
     const checkboxEl = event.target as HTMLInputElement;
     const existingCategoryIndex = this.selectedCategories.findIndex(c => c === selectedCategory.name);
     const selectedCategories: string[] = [];
@@ -552,11 +567,50 @@ export default class DriverBuilderView extends Vue {
     this.ensureCurrentDriverHasInstructionSetsMatchingSelectedCategories();
   }
 
+  @Watch('driver')
+  onDriverChanged() {
+    this.setCategoryCheckboxesFromDriver();
+  }
+
+  setCategoryCheckboxesFromDriver() {
+    this.settingCategoryCheckboxesFromDriver = true;
+    const categoryCheckboxes = document.getElementsByClassName('driver-category-checkbox');
+    for (let index = 0; index < categoryCheckboxes.length; index++) {
+      const checkbox = categoryCheckboxes[index] as HTMLInputElement;
+      checkbox.checked = false;
+    }
+    const driverCategoryNames = this.$store.direct.state.driverBuilder.currentDriver.categories;
+    if (!driverCategoryNames || driverCategoryNames.length <= 0) {
+      this.settingCategoryCheckboxesFromDriver = false;
+      return;
+    }
+    for (const driverCategoryName of driverCategoryNames) {
+      const driverCategory = this.availableCategories.find(c => c.name === driverCategoryName);
+      if (!driverCategory) continue;
+      const checkboxEl = document.getElementById(`driver-category-${driverCategory._id}`) as HTMLInputElement | null;
+      if (!checkboxEl) continue;
+      checkboxEl.checked = true;
+    }
+    this.settingCategoryCheckboxesFromDriver = false;
+  }
+
 }
 </script>
 
 <style>
-::-webkit-scrollbar {
-  display: none;
+#driver-builder-editor-instruction-sets {
+  overflow-y: scroll;
+  height: 50vh;
+}
+
+#driver-builder-editor-instruction-sets::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+  height: 8px; /** Does't matter, but required to be visible */
+  background-color: #aaa;
+}
+
+#driver-builder-editor-instruction-sets::-webkit-scrollbar-thumb {
+  background: gray;
 }
 </style>

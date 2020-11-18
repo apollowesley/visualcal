@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="full-height no-scroll">
     <v-app-bar
       v-if="showAppBar"
       app
@@ -62,6 +62,7 @@ export default class App extends Vue {
   }
 
   mounted() {
+    (document.getElementsByTagName('html')[0].style.overflowY = 'hidden');
     if (this.isRunningInVisualCal) return;
     console.error('Not running in VisualCal');
     console.info(window.ipc);
@@ -84,6 +85,16 @@ export default class App extends Vue {
   .v-card.v-sheet.theme--dark {
     background-color: #525252;
     min-width: 250px;
+  }
+
+  .full-height {
+    height: 100vh !important;
+    overflow: hidden;
+    scrollbar-width: none;
+  }
+
+  .no-scroll::-webkit-scrollbar {
+    display: none !important;
   }
 
 </style>

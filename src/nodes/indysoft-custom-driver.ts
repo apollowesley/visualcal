@@ -2,9 +2,10 @@ import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFu
 import { NodeRedManager } from '../main/managers/NodeRedManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { sleep } from '../drivers/utils';
-import { Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
-import { CustomDriverNodeRedRuntimeNode, InstructionResponse, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode } from './indysoft-custom-driver-types';
+import { CommandParameter, CommandParameterArgument, Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
+import { CustomDriverNodeRedRuntimeNode, InstructionResponse, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, UIInstructionSet } from './indysoft-custom-driver-types';
 import electronLog from 'electron-log';
+import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
 
 interface RuntimeNodeInputEventMessagePayload {
   temp: number;
@@ -23,7 +24,16 @@ module.exports = function(RED: NodeRed) {
     if (config.name) this.name = config.name;
     this.driverConfigId = config.driverConfigId;
     this.instructionSets = config.instructionSets;
+    const variables: { _id: string, name: string, defaultValue: string, value: string }[] = [];
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
+      const setCommInterfaceGpibAddress = async (ci: CommunicationInterface, deviceUnitId: string) => {
+        const activeSession = global.visualCal.userManager.activeSession;
+        if (!activeSession || !activeSession.configuration) return;
+        const foundDevice = activeSession.configuration.devices.find(d => d.unitId === deviceUnitId);
+        if (!foundDevice || !foundDevice.gpib) return;
+        await ci.setDeviceAddress(foundDevice.gpibAddress);
+      }
+
       try {
         this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
         const driverConfig = findCustomDriverConfigRuntimeNode(this);
@@ -44,41 +54,58 @@ module.exports = function(RED: NodeRed) {
           this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
           return;
         }
+        await setCommInterfaceGpibAddress(commInterface, driverConfig.unitId);
+
         const responses: InstructionResponse[] = [];
         let lastRawResponse: string | number | ArrayBufferLike | boolean = '';
         let lastResponse: string | number | ArrayBufferLike | boolean = '';
 
+        const buildInstructionParameter = (parameter: CommandParameter, parameterArguments?: CommandParameterArgument[]) => {
+          let retVal = '';
+          if (parameter.beforeText) retVal += parameter.beforeText;
+          if (parameterArguments && Array.isArray(parameterArguments)) {
+            const parameterArgument = parameterArguments.find(a => a.parameter._id === parameter._id);
+            if (parameterArgument) {
+              retVal += parameterArgument.value;
+            }
+          }
+          if (parameter.type === 'variable' && parameter.variableName) {
+            const variable = variables.find(v => v.name === parameter.variableName);
+            if (variable && variable.value) {
+              retVal += variable.value;
+            }
+          }
+          if (parameter.afterText) retVal += parameter.afterText;
+          return retVal;
+        }
+
+        if (driver.variables) driver.variables.forEach(variable => {
+          variables.push({
+            _id: variable._id,
+            name: variable.name,
+            defaultValue: variable.defaultValue,
+            value: variable.defaultValue ? variable.defaultValue : ''
+          })
+        });
+
         const buildCommand = (instructionSet: InstructionSet, instruction: Instruction) => {
           let command = instruction.command;
-          let preCommandParameters = '';
-          let postCommandParameters = '';
-          if (instruction.preParameters) {
-            instruction.preParameters.forEach(parameter => {
-              const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
-              if (editorInstructionSet && editorInstructionSet.preParameterArguments && Array.isArray(editorInstructionSet.preParameterArguments)) {
-                const parameterArgument = editorInstructionSet.preParameterArguments.find(a => a.instructionId === instruction._id);
-                if (parameterArgument) {
-                  if (parameter.beforeText) preCommandParameters += parameter.beforeText;
-                  preCommandParameters += parameterArgument.value;
-                  if (parameter.afterText) preCommandParameters += parameter.afterText;
-                }
-              }
-            });
+          let preCommandParameter = '';
+          let postCommandParameter = '';
+          const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
+          if (editorInstructionSet) {
+            if (instruction.preParameters) {
+              instruction.preParameters.forEach(parameter => {
+                preCommandParameter += buildInstructionParameter(parameter, editorInstructionSet.preParameterArguments);
+              });
+            }
+            if (instruction.postParameters) {
+              instruction.postParameters.forEach(parameter => {
+                postCommandParameter += buildInstructionParameter(parameter, editorInstructionSet.postParameterArguments);
+              });
+            }
           }
-          if (instruction.postParameters) {
-            instruction.postParameters.forEach(parameter => {
-              const editorInstructionSet = this.instructionSets.find(i => i.id === instructionSet._id);
-              if (editorInstructionSet && editorInstructionSet.postParameterArguments && Array.isArray(editorInstructionSet.postParameterArguments)) {
-                const parameterArgument = editorInstructionSet.postParameterArguments.find(a => a.instructionId === instruction._id);
-                if (parameterArgument) {
-                  if (parameter.beforeText) postCommandParameters += parameter.beforeText;
-                  postCommandParameters += parameterArgument.value;
-                  if (parameter.afterText) postCommandParameters += parameter.afterText;
-                }
-              }
-            });
-          }
-          command = `${preCommandParameters}${command}${postCommandParameters}`;
+          command = `${preCommandParameter}${command}${postCommandParameter}`;
           return command;
         };
 
@@ -91,10 +118,9 @@ module.exports = function(RED: NodeRed) {
             for (const instruction of instructionSet.instructions) {
               this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
               if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
-              let command: number | string | boolean | ArrayBufferLike = '';
+              let command: number | string | boolean | ArrayBufferLike = buildCommand(instructionSet, instruction);;
               switch (instruction.type) {
                 case 'Query':
-                  command = buildCommand(instructionSet, instruction);
                   this.status({ fill: 'green', shape: 'dot', text: `Querying: ${command}` });
                   if (this.onBeforeWrite) {
                     const beforeWriteResponse = await this.onBeforeWrite(command);
@@ -110,7 +136,6 @@ module.exports = function(RED: NodeRed) {
                   DriverBuilder.instance.notifyFrontendDriverReadString(commInterface.name, driverConfig.unitId, lastRawResponse);
                   break;
                 case 'Write':
-                  command = buildCommand(instructionSet, instruction);
                   DriverBuilder.instance.notifyFrontendDriverWrite(commInterface.name, driverConfig.unitId, command);
                   this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
                   if (this.onBeforeWrite) {
@@ -120,6 +145,13 @@ module.exports = function(RED: NodeRed) {
                   }
                   await commInterface.writeString(command.toString());
                   break;
+                case 'setVariable':
+                  if (instruction.variableName) {
+                    const variable = variables.find(v => v.name === instruction.variableName);
+                    if (variable) {
+                      variable.value = instruction.command; // Command is used as the variable value when instruction.type === 'setVariable'
+                    }
+                  }
               }
               if (lastRawResponse) {
                 if (instruction.responseDataType) {

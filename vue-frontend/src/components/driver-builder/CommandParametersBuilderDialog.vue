@@ -100,9 +100,36 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
         number: 'Number',
         string: 'String',
         list: 'List',
-        readResponse: 'Read Response'
+        readResponse: 'Read Response',
+        variable: 'Variable'
       }
     };
+  }
+
+  private formatParameterTypeField(cell: Tabulator.CellComponent)  {
+    const value = cell.getValue() as string;
+    const divEl = document.createElement('div');
+    switch (value) {
+      case 'boolean':
+        divEl.innerText = 'Boolean';
+        break;
+      case 'number':
+        divEl.innerText = 'Number';
+        break;
+      case 'string':
+        divEl.innerText = 'String';
+        break;
+      case 'list':
+        divEl.innerText = 'List';
+        break;
+      case 'readResponse':
+        divEl.innerText = 'Read Response';
+        break;
+      case 'variable':
+        divEl.innerText = 'Variable';
+        break;
+    }
+    return divEl;
   }
 
   private getParameterFromCell(cell: Tabulator.CellComponent) { return cell.getRow().getData() as CommandParameter; }
@@ -113,24 +140,13 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     this.table.redraw(true);
   }
 
-  // private reorderInstructions(table: Tabulator) {
-  //   const rows = table.getRows();
-  //   for (let index = 0; index < rows.length; index++) {
-  //     const row = rows[index];
-  //     const instruction = row.getData() as Instruction;
-  //     instruction.order = index;
-  //   }
-  //   table.redraw(true);
-  // }
-  
-  private getListOrReadResponseEditCellFormatter(cell: Tabulator.CellComponent) {
+  private formatListOrReadResponseOrVariableCell(cell: Tabulator.CellComponent) {
     const parameter = cell.getRow().getData() as CommandParameter;
     let availableReadResponseInstructions: Instruction[];
     if (parameter.type === 'readResponse') {
       const selectElement = document.createElement('select');
       if (!this.instructionsWithReadResponse) return selectElement;
       availableReadResponseInstructions = [];
-      console.info(this.instructionsWithReadResponse);
       for (let index = 0; index < this.instructionsWithReadResponse.length; index++) {
         const instruction = this.instructionsWithReadResponse[index];
         if (instruction._id === this.instruction._id) break;
@@ -143,6 +159,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
         newOption.label = `${instruction.responseName || '<Unknown Tag>'}`;
         newOption.value = instruction._id;
         selectElement.options.add(newOption);
+        if (parameter.readResponseTag === undefined && index === 0) parameter.readResponseTag = instruction.responseName;
       }
       return selectElement;
     } else if (parameter.type === 'list') {
@@ -155,6 +172,20 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
         this.shouldShowCommandParameterListBuilderDialog = true;
       });
       return buttonElement;
+    } else if (parameter.type === 'variable') {
+      const selectElement = document.createElement('select');
+      const currentDriver = this.$store.direct.state.driverBuilder.currentDriver;
+      if (!currentDriver.variables) return selectElement;
+      for (let index = 0; index < currentDriver.variables.length; index++) {
+        const variable = currentDriver.variables[index];
+        const newOption = document.createElement('option');
+        newOption.selected = index === 0;
+        newOption.label = variable.name;
+        newOption.value = variable._id;
+        selectElement.options.add(newOption);
+        if (parameter.variableName === undefined && index === 0) parameter.variableName = variable.name;
+      }
+      return selectElement;
     }
     const div = document.createElement('div') as HTMLDivElement;
     div.style.backgroundColor = 'silver';
@@ -216,6 +247,12 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     return div;
   }
 
+  formatPromptCell(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    const div = this.createFormatterDiv(parameter.type !== 'variable' && parameter.type !== 'readResponse');
+    return div;
+  }
+
   getDefaultValueEditor(cell: Tabulator.CellComponent, onRendered: Tabulator.EmptyCallback, success: Tabulator.ValueBooleanCallback, cancel: Tabulator.ValueVoidCallback) {
     const parameter = this.getParameterFromCell(cell);
     if (parameter.type === 'boolean') return checkboxEditor(cell, onRendered, success, cancel);
@@ -223,11 +260,28 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
     return stringEditor(cell, onRendered, success, cancel);
   }
 
+  async onParameterTypeDependantFieldEdited(cell: Tabulator.CellComponent) {
+    const parameter = this.getParameterFromCell(cell);
+    const typeDependantColumn = this.table.getColumns(false).find(c => c.getDefinition().title === 'Type Dependant');
+    if (!typeDependantColumn) return;
+    const typeDependantCell = cell.getRow().getCell(typeDependantColumn);
+    if (parameter.type === 'readResponse') {
+      const readResponseTag = typeDependantCell.getValue() as string;
+      console.info(readResponseTag);
+      parameter.readResponseTag = readResponseTag;
+    } else if (parameter.type === 'variable') {
+      const variableName = typeDependantCell.getValue() as string;
+      console.info(variableName);
+      parameter.variableName = variableName;
+    }
+    await this.table.updateData([parameter]);
+  }
+
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false },
-    { title: 'Parameter Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
-    { title: '', formatter: this.getListOrReadResponseEditCellFormatter, width: '100' },
-    { title: 'Prompt*', field: 'prompt', editable: true, editor: 'input', validator: 'required', minWidth: 400 },
+    { title: 'Parameter Type*', field: 'type', formatter: this.formatParameterTypeField, editable: true, editor: 'select', editorParams: this.getParameterTypeEditorParams, cellEdited: this.updateParameter },
+    { title: 'Type Dependant', formatter: this.formatListOrReadResponseOrVariableCell, cellEdited: this.onParameterTypeDependantFieldEdited },
+    { title: 'Prompt (Not used if type is Variable)', field: 'prompt', formatter: this.formatPromptCell, editable: true, editor: 'input', validator: 'required', minWidth: 400 },
     { title: 'Text Before', field: 'beforeText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
     { title: 'Text After', field: 'afterText', editable: true, editor: 'input', formatter: this.getTextBeforeAfterFormatter },
     { title: 'Default Value', field: 'default', editable: true, editor: this.getDefaultValueEditor },

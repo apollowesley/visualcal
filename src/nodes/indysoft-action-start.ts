@@ -31,8 +31,8 @@ interface NodeRedNodeUIProperties {
 
 module.exports = function(RED: NodeRed) {
   function indySoftActionStartNodeConstructor(this: RuntimeNode, config: NodeRedNodeUIProperties) {
-    const log = electronLog.scope(`${IndySoftNodeTypeNames.ActionStart}|${this.id}`);
     RED.nodes.createNode(this, config as any);
+    const log = electronLog.scope(`${IndySoftNodeTypeNames.ActionStart} | id=${this.id}`);
     if (config.sectionConfigId) this.section = RED.nodes.getNode(config.sectionConfigId) as NodeRedRuntimeNode;
     if (config.name) this.name = config.name;
     this.isRunning = false;

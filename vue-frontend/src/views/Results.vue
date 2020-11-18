@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="grey" style="height: 100vh">
+  <v-container fluid class="grey full-height no-scroll">
     <ViewResultsDialogComponent
       :should-show="fViewResultsDialogShouldShow"
       :run="fSelectedRun"
@@ -161,9 +161,3 @@ export default class ResultsView extends Vue {
 
 }
 </script>
-
-<style>
-::-webkit-scrollbar {
-  display: none;
-}
-</style>

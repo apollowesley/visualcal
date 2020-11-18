@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import { CommandParameter, CommandParameterArgument, Instruction, InstructionSet } from 'visualcal-common/src/driver-builder';
+import { CommandParameter, CommandParameterArgument, Instruction, InstructionSet, Driver } from 'visualcal-common/src/driver-builder';
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
 import Tabulator from 'tabulator-tables';
 import { checkboxEditor, numberEditor, stringEditor } from '@/utils/tabulator-helpers';
@@ -63,6 +63,7 @@ interface InstructionParameterArgument {
 interface InstructionResponse {
   timestamp: string;
   instruction: Instruction;
+  command: string;
   response?: string | ArrayBufferLike;
 }
 
@@ -80,6 +81,7 @@ export default class DirectControlTesterDialog extends Vue {
   private getCommandParameterEditor(cell: Tabulator.CellComponent, onRendered: Tabulator.EmptyCallback, success: Tabulator.ValueBooleanCallback, cancel: Tabulator.ValueVoidCallback) {
     const argument = cell.getRow().getData() as InstructionParameterArgument;
     let editor: HTMLElement;
+    let driver: Driver;
     let availableReadResponseInstructions: Instruction[];
     switch (argument.parameter.type) {
       case 'string':
@@ -133,6 +135,19 @@ export default class DirectControlTesterDialog extends Vue {
           (editor as HTMLSelectElement).options.add(newOption);
         }
         break;
+      case 'variable':
+        editor = document.createElement('select');
+        driver = this.$store.direct.state.driverBuilder.currentDriver;
+        if (!driver.variables) break;
+        for (let index = 0; index < driver.variables.length; index++) {
+          const variable = driver.variables[index];
+          const newOption = document.createElement('option');
+          newOption.selected = index === 0;
+          newOption.label = variable.name;
+          newOption.value = variable._id;
+          (editor as HTMLSelectElement).options.add(newOption);
+        }
+        break;
     }
     if (editor) {
       editor.style.padding = '3px';
@@ -151,7 +166,7 @@ export default class DirectControlTesterDialog extends Vue {
 
   private responsesTableColumns: Tabulator.ColumnDefinition[] = [
     { title: 'Timestamp', field: 'timestamp' },
-    { title: 'Command', field: 'instruction.command' },
+    { title: 'Command', field: 'command' },
     { title: 'Type', field: 'instruction.type' },
     { title: 'Response (string)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : cell.getValue() },
     { title: 'Response (integer from string)', field: 'response', formatter: (cell) => cell.getValue() === undefined ? '<div style="height: 100%; width: 100%; background-color: grey" />' : parseInt(cell.getValue()) },
@@ -207,7 +222,8 @@ export default class DirectControlTesterDialog extends Vue {
           this.responses.push({
             timestamp: new Date().toString(),
             instruction: instruction,
-            response: response
+            command: response.command,
+            response: response.response
           });
         }
       } catch (error) {
@@ -222,10 +238,16 @@ export default class DirectControlTesterDialog extends Vue {
     }
   }
 
-  async onTestInstruction(instruction: Instruction, toggleIsTesting = true) {
+  async onTestInstruction(instruction: Instruction, toggleIsTesting = true): Promise<InstructionResponse> {
     if (toggleIsTesting) this.isTesting = true;
     let response: ArrayBufferLike | undefined = undefined;
     let responseString = '';
+    const retVal: InstructionResponse = {
+      timestamp: new Date().toString(),
+      instruction: instruction,
+      command: '',
+      response: undefined
+    }
     const commandParameterArgumentsTableData = this.commandArgumentsTable.getData() as InstructionParameterArgument[];
     const thisInstructionCommandParameterArguments = commandParameterArgumentsTableData.filter(i => i.instruction._id === instruction._id);
     const commandArguments: CommandParameterArgument[] = thisInstructionCommandParameterArguments.map(i => {
@@ -236,21 +258,23 @@ export default class DirectControlTesterDialog extends Vue {
     });
     switch (instruction.type) {
       case 'Write':
-        await this.$store.direct.dispatch.driverBuilder.write({ instruction: instruction, parameterArguments: commandArguments });
+        retVal.command = await this.$store.direct.dispatch.driverBuilder.write({ instruction: instruction, parameterArguments: commandArguments });
         if (toggleIsTesting) this.isTesting = false;
-        return undefined;
+        break;
       case 'Read':
         response = await this.$store.direct.dispatch.driverBuilder.read();
         responseString = new TextDecoder().decode(response);
         if (toggleIsTesting) this.isTesting = false;
-        return responseString;
+        retVal.response = responseString;
+        break;
       case 'Query':
         responseString = await this.$store.direct.dispatch.driverBuilder.queryString({ instruction: instruction, parameterArguments: commandArguments });
         if (toggleIsTesting) this.isTesting = false;
-        return responseString;
+        retVal.response = responseString;
+        break;
     }
     if (toggleIsTesting) this.isTesting = false;
-    return undefined;
+    return retVal;
   }
 
   onClearResponses() {

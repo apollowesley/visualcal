@@ -6,7 +6,7 @@ import { PrologixGpibUsbInterface } from '../../drivers/communication-interfaces
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { ipcMain } from 'electron';
 import { NationalInstrumentsGpibInterface } from '../../drivers/communication-interfaces/national-instruments/NationalInstrumentsGpibInterface';
-import { CommunicationInterfaceConfigurationInfo } from 'visualcal-common/dist/bench-configuration';
+import { CommunicationInterfaceConfigurationInfo, DefaultTiming } from 'visualcal-common/dist/bench-configuration';
 import { IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/bench-configuration';
 import { getSerialPorts } from '../../drivers/utils';
 import { logToCurrentActionRun } from './current-action-log-handler';
@@ -131,9 +131,9 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     if (!iface) throw new Error(`Unknown communication interface type, ${info.type}`);
     iface.name = info.name;
     if (info.timing) {
-      if (info.timing.connectTimeout >= 0) iface.connectTimeout = info.timing.connectTimeout;
-      if (info.timing.writeTimeout >= 0) iface.writeTimeout = info.timing.writeTimeout;
-      if (info.timing.readTimeout >= 0) iface.readTimeout = info.timing.readTimeout;
+      info.timing.connectTimeout > 0 ? iface.connectTimeout = info.timing.connectTimeout : iface.connectTimeout = DefaultTiming.connectTimeout;
+      info.timing.readTimeout > 0 ? iface.readTimeout = info.timing.readTimeout : iface.readTimeout = DefaultTiming.readTimeout;
+      info.timing.writeTimeout > 0 ? iface.writeTimeout = info.timing.writeTimeout : iface.writeTimeout = DefaultTiming.writeTimeout;
       iface.delayBeforeWrite = info.timing.delayBeforeWrite !== undefined ? info.timing.delayBeforeWrite : 0;
       iface.delayAfterWrite = info.timing.delayAfterWrite !== undefined ? info.timing.delayAfterWrite : 0;
       iface.delayBeforeRead = info.timing.delayBeforeRead !== undefined ? info.timing.delayBeforeRead : 0;
