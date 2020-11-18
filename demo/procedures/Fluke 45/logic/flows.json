@@ -56,6 +56,13 @@
 		"info": ""
 	},
 	{
+		"id": "88556f0b.58285",
+		"type": "tab",
+		"label": "34401A Testing",
+		"disabled": false,
+		"info": ""
+	},
+	{
 		"id": "6b116249.9db85c",
 		"type": "indysoft-custom-driver-configuration",
 		"unitId": "UUT",
@@ -13608,9 +13615,9 @@
 		]
 	},
 	{
-		"id": "485aad43.399fa4",
+		"id": "e9695eb1.98077",
 		"type": "indysoft-custom-driver",
-		"z": "3b731b51.7981f4",
+		"z": "88556f0b.58285",
 		"name": "",
 		"driverConfigId": "9793c5f7.916848",
 		"instructionSets": [
@@ -13813,42 +13820,42 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 270,
-		"y": 820,
+		"x": 950,
+		"y": 180,
 		"wires": [
 			[],
 			[
-				"c7f40707.26a268"
+				"a4b35723.8a4d98"
 			]
 		]
 	},
 	{
-		"id": "96ea44fd.961658",
+		"id": "b5485052.ae28c",
 		"type": "indysoft-action-start",
-		"z": "3b731b51.7981f4",
+		"z": "88556f0b.58285",
 		"name": "Variables",
 		"sectionConfigId": "bcc2a0f9.2e116",
-		"x": 180,
-		"y": 720,
+		"x": 170,
+		"y": 180,
 		"wires": [
 			[
-				"485aad43.399fa4"
+				"9e3dc2f3.1b245"
 			]
 		]
 	},
 	{
-		"id": "bd58f4cb.1f77f8",
+		"id": "806c9db9.1b0e2",
 		"type": "indysoft-action-completed",
-		"z": "3b731b51.7981f4",
+		"z": "88556f0b.58285",
 		"name": "",
-		"x": 470,
-		"y": 1020,
+		"x": 1830,
+		"y": 240,
 		"wires": []
 	},
 	{
-		"id": "c7f40707.26a268",
+		"id": "a4b35723.8a4d98",
 		"type": "indysoft-scalar-result",
-		"z": "3b731b51.7981f4",
+		"z": "88556f0b.58285",
 		"name": "",
 		"description": "0  volt",
 		"baseQuantity": "potential",
@@ -13858,11 +13865,146 @@
 		"min": "-0.006",
 		"max": "0.006",
 		"inputLevel": "0",
-		"x": 360,
-		"y": 920,
+		"x": 1200,
+		"y": 180,
 		"wires": [
 			[
-				"bd58f4cb.1f77f8"
+				"28d97438.bd2cfc"
+			]
+		]
+	},
+	{
+		"id": "65583fb3.eec4e",
+		"type": "switch",
+		"z": "88556f0b.58285",
+		"name": "",
+		"property": "loopCount",
+		"propertyType": "flow",
+		"rules": [
+			{
+				"t": "gte",
+				"v": "500",
+				"vt": "str"
+			},
+			{
+				"t": "else"
+			}
+		],
+		"checkall": "true",
+		"repair": false,
+		"outputs": 2,
+		"x": 1610,
+		"y": 260,
+		"wires": [
+			[
+				"806c9db9.1b0e2"
+			],
+			[
+				"56745be5.cbeab4"
+			]
+		]
+	},
+	{
+		"id": "a5458d0f.3ae2e",
+		"type": "change",
+		"z": "88556f0b.58285",
+		"name": "",
+		"rules": [
+			{
+				"t": "set",
+				"p": "loopCount",
+				"pt": "flow",
+				"to": "1",
+				"tot": "num"
+			}
+		],
+		"action": "",
+		"property": "",
+		"from": "",
+		"to": "",
+		"reg": false,
+		"x": 730,
+		"y": 180,
+		"wires": [
+			[
+				"e9695eb1.98077"
+			]
+		]
+	},
+	{
+		"id": "28d97438.bd2cfc",
+		"type": "function",
+		"z": "88556f0b.58285",
+		"name": "",
+		"func": "const loopCount = Number(flow.get('loopCount'));\nflow.set('loopCount', loopCount);\nreturn msg;\n",
+		"outputs": 1,
+		"noerr": 0,
+		"initialize": "",
+		"finalize": "",
+		"x": 1470,
+		"y": 200,
+		"wires": [
+			[
+				"65583fb3.eec4e"
+			]
+		]
+	},
+	{
+		"id": "56745be5.cbeab4",
+		"type": "delay",
+		"z": "88556f0b.58285",
+		"name": "",
+		"pauseType": "delay",
+		"timeout": "500",
+		"timeoutUnits": "milliseconds",
+		"rate": "1",
+		"nbRateUnits": "1",
+		"rateUnits": "second",
+		"randomFirst": "1",
+		"randomLast": "5",
+		"randomUnits": "seconds",
+		"drop": false,
+		"x": 1250,
+		"y": 320,
+		"wires": [
+			[
+				"e9695eb1.98077"
+			]
+		]
+	},
+	{
+		"id": "9e3dc2f3.1b245",
+		"type": "indysoft-custom-driver",
+		"z": "88556f0b.58285",
+		"name": "",
+		"driverConfigId": "9793c5f7.916848",
+		"instructionSets": [
+			{
+				"id": "5fb560493c20c30000178d48",
+				"instructionSet": {
+					"_id": "5fb560493c20c30000178d48",
+					"name": "Clear",
+					"instructions": [
+						{
+							"_id": "5fb560503c20c30000178d49",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "*CLS",
+							"readAttempts": 1
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			}
+		],
+		"x": 490,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"a5458d0f.3ae2e"
 			]
 		]
 	}

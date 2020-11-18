@@ -36,7 +36,7 @@ export class StatusHandler extends TypedEmitter<Events> {
       case 'started':
         this.fProcedureStatusElement.innerText = 'Running';
         this.fSectionStatusElement.textContent = info.section;
-        this.fActionStatusElement.textContent = info.section;
+        this.fActionStatusElement.textContent = info.action;
         break;
       case 'stopped':
         this.fProcedureStatusElement.textContent = 'Stopped';

@@ -44,6 +44,7 @@ export class PrologixGpibTcpInterface extends PrologixGpibInterface {
 
   protected onDisconnect(): Promise<void> {
     return new Promise((resolve) => {
+      this.clearTimeouts();
       if (this.fClient) {
         this.fClient.removeAllListeners();
         try {

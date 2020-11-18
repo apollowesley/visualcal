@@ -43,6 +43,7 @@ export class PrologixGpibUsbInterface extends PrologixGpibInterface {
   
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve) => {
+      this.clearTimeouts();
       if (this.fClient && this.getIsConnected()) {
         try {
           this.fClient.close();

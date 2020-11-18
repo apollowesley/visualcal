@@ -220,6 +220,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   async writeData(data: ArrayBufferLike) {
+    if (!this.isConnected || this.isDisconnecting) return;
     await this.onBeforeWrite(data);
     const actualWroteData = await this.write(data);
     await this.onAfterWrite(actualWroteData);

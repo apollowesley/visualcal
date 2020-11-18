@@ -45,7 +45,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await Promise.resolve();
   };
 
-  private clearTimeouts() {
+  protected clearTimeouts() {
     if (this.fReadTimoutTimerId) clearTimeout(this.fReadTimoutTimerId);
     if (this.fWriteTimoutTimerId) clearTimeout(this.fWriteTimoutTimerId);
     this.fReadTimoutTimerId = undefined;
