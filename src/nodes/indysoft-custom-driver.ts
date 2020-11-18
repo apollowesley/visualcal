@@ -146,11 +146,9 @@ module.exports = function(RED: NodeRed) {
                   await commInterface.writeString(command.toString());
                   break;
                 case 'setVariable':
-                  if (instruction.variableName) {
-                    const variable = variables.find(v => v.name === instruction.variableName);
-                    if (variable) {
-                      variable.value = instruction.command; // Command is used as the variable value when instruction.type === 'setVariable'
-                    }
+                  const variable = variables.find(v => v.name === instruction.command);
+                  if (variable) {
+                    variable.value = instruction.command; // Command is used as the variable value when instruction.type === 'setVariable'
                   }
               }
               if (lastRawResponse) {

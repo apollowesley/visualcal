@@ -183,8 +183,6 @@ export interface Instruction {
   preParameters?: CommandParameter[];
   /** The optional post-command parameters that are sent along with the command.  Parameters help define how the node UI is generated and presented to the procedure developer. */
   postParameters?: CommandParameter[];
-  /** The name of the variable to set if type equals setVariable. */
-  variableName?: string;
 }
 
 /** Instructions mandated by IEEE 488.2 and SCPI */
