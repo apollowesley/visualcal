@@ -13625,9 +13625,10 @@
 							"order": 0,
 							"name": "Set variable",
 							"type": "setVariable",
-							"command": "VOLD:DC",
+							"command": "VOLT:DC",
 							"readAttempts": 1,
-							"variable": "Current Function"
+							"variable": "Current Function",
+							"description": ""
 						},
 						{
 							"_id": "5fb4a0ba99dd5a00002b2a79",
@@ -13653,7 +13654,7 @@
 							"order": 0,
 							"name": "Instruction",
 							"type": "Write",
-							"command": ":RANGE AUTO",
+							"command": ":RANGE:AUTO ON",
 							"readAttempts": 1,
 							"preParameters": [
 								{
@@ -13678,6 +13679,118 @@
 				},
 				"preParameterArguments": [],
 				"postParameterArguments": []
+			},
+			{
+				"id": "5fb53ae87df1be0000ebe8c8",
+				"instructionSet": {
+					"_id": "5fb53ae87df1be0000ebe8c8",
+					"name": "Set DC Voltage Range",
+					"instructions": [
+						{
+							"_id": "5fb53af37df1be0000ebe8c9",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "VOLT:DC:RANGE",
+							"readAttempts": 1,
+							"postParameters": [
+								{
+									"_id": "5fb53b047df1be0000ebe8ca",
+									"type": "list",
+									"prompt": "Range?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"afterText": "",
+									"listItems": [
+										{
+											"_id": "5fb53bec7df1be0000ebe8cb",
+											"text": "100 mV",
+											"value": "0.1 V"
+										},
+										{
+											"_id": "5fb53bed7df1be0000ebe8cc",
+											"text": "1 V",
+											"value": "1 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8cd",
+											"text": "10 V",
+											"value": "10 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8ce",
+											"text": "100 V",
+											"value": "100 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8cf",
+											"text": "1000 V",
+											"value": "1000 V"
+										}
+									],
+									"beforeText": " "
+								}
+							]
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": [
+					{
+						"instructionId": "5fb53af37df1be0000ebe8c9",
+						"parameter": {
+							"_id": "5fb53b047df1be0000ebe8ca",
+							"type": "list",
+							"prompt": "Range?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"afterText": "",
+							"listItems": [
+								{
+									"_id": "5fb53bec7df1be0000ebe8cb",
+									"text": "100 mV",
+									"value": "0.1 V"
+								},
+								{
+									"_id": "5fb53bed7df1be0000ebe8cc",
+									"text": "1 V",
+									"value": "1 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8cd",
+									"text": "10 V",
+									"value": "10 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8ce",
+									"text": "100 V",
+									"value": "100 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8cf",
+									"text": "1000 V",
+									"value": "1000 V"
+								}
+							],
+							"beforeText": " "
+						},
+						"value": "1000 V"
+					}
+				]
 			},
 			{
 				"id": "5fad65cc8136320000dceb7b",

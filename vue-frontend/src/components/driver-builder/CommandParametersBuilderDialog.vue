@@ -250,6 +250,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
   formatPromptCell(cell: Tabulator.CellComponent) {
     const parameter = this.getParameterFromCell(cell);
     const div = this.createFormatterDiv(parameter.type !== 'variable' && parameter.type !== 'readResponse');
+    div.innerText = parameter.prompt;
     return div;
   }
 
