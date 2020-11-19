@@ -150,17 +150,17 @@ export default class InstructionTableComponent extends Vue {
     return parameters ? parameters.length.toString() : '0';
   }
 
-  private reorderInstructions(table: Tabulator) {
-    const rows = table.getRows();
-    const instructions: Instruction[] = [];
-    for (let index = 0; index < rows.length; index++) {
-      const row = rows[index];
-      const instruction = row.getData() as Instruction;
-      instruction.order = index;
-      instructions.push(instruction);
-    }
-    this.$emit('reordered', instructions);
-  }
+  // private reorderInstructions(table: Tabulator) {
+  //   const rows = table.getRows();
+  //   const instructions: Instruction[] = [];
+  //   for (let index = 0; index < rows.length; index++) {
+  //     const row = rows[index];
+  //     const instruction = row.getData() as Instruction;
+  //     instruction.order = index;
+  //     instructions.push(instruction);
+  //   }
+  //   this.$emit('reordered', instructions);
+  // }
 
   private getIsVariableFieldEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
@@ -173,7 +173,6 @@ export default class InstructionTableComponent extends Vue {
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
     { title: 'Order', field: 'order' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
-    { title: 'Description', field: 'description', editable: true, editor: 'input' },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
       { title: 'Read attempts before failure', field: 'readAttempts', editable: this.getIsReadAttemptsEditable, editor: 'number', validator: 'min: 1', formatter: this.formatReadAttemptsCell },
@@ -205,7 +204,7 @@ export default class InstructionTableComponent extends Vue {
         action: (_, row) => {
           this.table.deleteRow(row);
           this.$emit('instruction-removed', row.getData() as Instruction);
-          this.reorderInstructions(this.table);
+          // this.reorderInstructions(this.table);
         }
       }
     ];
@@ -225,7 +224,7 @@ export default class InstructionTableComponent extends Vue {
         this.$emit('instruction-updated', instruction);
         this.table.redraw();
       },
-      rowMoved: () => { this.reorderInstructions(table); }
+      // rowMoved: () => { this.reorderInstructions(table); }
     });
     this.fTable = table;
     return table;

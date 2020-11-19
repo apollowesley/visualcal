@@ -121,7 +121,11 @@ const employeesModule = defineModule({
       state.currentDriver.terminator = value;
     },
     setInstructionSets(state, value: InstructionSet[]) {
-      state.currentDriver.instructionSets = value;
+      state.currentDriver.instructionSets = value.sort((a, b) => {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      });
     },
     addDriverInstructionSet(state, instructionSet?: InstructionSet) {
       if (instructionSet) {
@@ -428,7 +432,8 @@ const employeesModule = defineModule({
     async saveCurrentDriver(context) {
       const { state, commit } = actionContext(context);
       return new Promise<void>((resolve, reject) => {
-        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.saveDriver.response, () => {
+        window.electron.ipcRenderer.once(IpcChannels.communicationInterface.saveDriver.response, (_, driver: Driver) => {
+          commit.setCurrentDriver(driver);
           window.electron.ipcRenderer.removeAllListeners(IpcChannels.communicationInterface.saveDriver.error);
           commit.addOrReplaceDriverInLibrary(state.currentDriver);
           return resolve();

@@ -132,12 +132,18 @@ export class DriverBuilder extends TypedEmitter<Events> {
   saveDriver(driver: Driver) {
     const drivers = this.drivers;
     const existingDriverIndex = drivers.findIndex(d => d.driverManufacturer === driver.driverManufacturer && d.driverModel === driver.driverModel && d.driverNomenclature === driver.driverNomenclature);
+    driver.instructionSets.sort((a, b) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
     if (existingDriverIndex > -1) {
       drivers[existingDriverIndex] = driver;
     } else {
       drivers.push(driver);
     }
     this.fStore.set('drivers', drivers);
+    return driver;
   }
 
   getDriver(manufacturer: string, model: string) {
@@ -190,8 +196,8 @@ export class DriverBuilder extends TypedEmitter<Events> {
 
     ipcMain.on(IpcChannels.communicationInterface.saveDriver.request, (event, driver: Driver) => {
       if (event.sender.isDestroyed()) return;
-      this.saveDriver(driver);
-      return event.reply(IpcChannels.communicationInterface.saveDriver.response, true);
+      driver = this.saveDriver(driver);
+      return event.reply(IpcChannels.communicationInterface.saveDriver.response, driver);
     });
 
     ipcMain.on(IpcChannels.communicationInterface.getDriver.request, async (event, opts: { manufacturer: string, model: string }) => {

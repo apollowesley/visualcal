@@ -140,8 +140,10 @@
           </v-col>
         </v-row>
         <v-row class="ml-2">
-          <v-col>
-            <v-card>
+          <v-col
+            cols="12"
+          >
+            <v-card class="pa-3">
               <v-card-title>
                 <h3>Instruction Sets</h3>
               </v-card-title>
@@ -158,7 +160,7 @@
                   dense
                 >
                   <v-expansion-panel
-                    v-for="instructionSet in driver.instructionSets"
+                    v-for="instructionSet in instructionSets"
                     :key="instructionSet._id"
                     class="grey"
                     dense
@@ -204,7 +206,6 @@
                         @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
                         @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
                         @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
-                        @reordered="onInstructionTableComponentReordered(instructionSet, $event)"
                       />
                     </v-expansion-panel-content>
                   </v-expansion-panel>
@@ -383,7 +384,7 @@ export default class DriverBuilderView extends Vue {
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }
 
   get drivers() { return this.$store.direct.state.driverBuilder.drivers; }
-  get instructionSets() { return this.$store.direct.state.driverBuilder.instructionSets; }
+  get instructionSets() { return this.$store.direct.state.driverBuilder.currentDriver.instructionSets; }
 
   async mounted() {
     const builtInCategory = this.items.find((i) => i.name === 'Built-in');
@@ -600,7 +601,8 @@ export default class DriverBuilderView extends Vue {
 <style>
 #driver-builder-editor-instruction-sets {
   overflow-y: scroll;
-  height: 50vh;
+  height: 45vh;
+  margin: 10px;
 }
 
 #driver-builder-editor-instruction-sets::-webkit-scrollbar {
