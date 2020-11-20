@@ -1,107 +1,98 @@
 <template>
-  <v-col cols="2">
-    <v-row no-gutters style="height: 2%">
-      <v-col>
-        <h4>Instructions and Templates</h4>
-      </v-col>
-    </v-row>
-    <v-row no-gutters style="height: 98%">
-      <v-col>
-        <v-treeview
-          v-model="tree"
-          :open="open"
-          :items="items"
-          style="height: 92vh; width: 100%; background: white; font-size: 14px; max-height: 92vh; overflow-y: auto;"
-          activatable
-          item-key="_id"
-          open-on-click
-          dense
+  <div>
+    <v-treeview
+      v-model="tree"
+      :open="open"
+      :items="items"
+      style="height: 92vh; width: 100%; background: white; font-size: 14px; max-height: 92vh; overflow-y: auto;"
+      activatable
+      item-key="_id"
+      open-on-click
+      dense
+    >
+      <template v-slot="{ item }">
+        {{ item.name }}
+      </template>
+      <template v-slot:prepend="{ item, open }">
+        <v-icon v-if="!item.file">
+          {{ open ? "mdi-folder-open" : "mdi-folder" }}
+        </v-icon>
+        <v-icon v-else>
+          {{ files[item.file] }}
+        </v-icon>
+      </template>
+      <template v-slot:label="{ item }">
+        <label
+          v-if="item.command"
+          draggable
+          @dragstart="onDragStart($event, item)"
+          class="drag-item"
         >
-          <template v-slot="{ item }">
-            {{ item.name }}
-          </template>
-          <template v-slot:prepend="{ item, open }">
-            <v-icon v-if="!item.file">
-              {{ open ? "mdi-folder-open" : "mdi-folder" }}
-            </v-icon>
-            <v-icon v-else>
-              {{ files[item.file] }}
-            </v-icon>
-          </template>
-          <template v-slot:label="{ item }">
-            <label
-              v-if="item.command"
-              draggable
-              @dragstart="onDragStart($event, item)"
-              class="drag-item"
-            >
-              {{ item.name }}
-            </label>
-            <v-label
-              v-else-if="item.instructionSet"
-              @contextmenu="instructionSetRightClicked($event, item.instructionSet)"
-            >
-              {{ item.name }}
-            </v-label>
-            <v-label
-              v-else-if="item.driver"
-              @contextmenu="driverRightClicked($event, item.driver)"
-            >
-              {{ item.name }}
-            </v-label>
-            <label v-else>
-              {{ item.name }}
-            </label>
-          </template>
-        </v-treeview>
-        <v-menu
-          v-model="shouldInstructionSetContextMenuShow"
-          :position-x="itemMouseX"
-          :position-y="itemMouseY"
-          absolute
-          offset-y
+          {{ item.name }}
+        </label>
+        <v-label
+          v-else-if="item.instructionSet"
+          @contextmenu="instructionSetRightClicked($event, item.instructionSet)"
         >
-          <v-list>
-            <v-list-item
-              @click="addItemInstructionSet"
-            >
-              <v-list-item-title>Add to driver</v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              @click="removeInstructionSetFromLibrary"
-            >
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        <v-menu
-          v-model="shouldDriverContextMenuShow"
-          :position-x="itemMouseX"
-          :position-y="itemMouseY"
-          absolute
-          offset-y
+          {{ item.name }}
+        </v-label>
+        <v-label
+          v-else-if="item.driver"
+          @contextmenu="driverRightClicked($event, item.driver)"
         >
-          <v-list>
-            <v-list-item
-              @click="setDriverAsCurrent"
-            >
-              <v-list-item-title>Edit</v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              @click="saveDriverToStore"
-            >
-              <v-list-item-title>Save to store</v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              @click="removeDriverFromLibrary"
-            >
-              <v-list-item-title>Remove</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-col>
-    </v-row>
-  </v-col>
+          {{ item.name }}
+        </v-label>
+        <label v-else>
+          {{ item.name }}
+        </label>
+      </template>
+    </v-treeview>
+    <v-menu
+      v-model="shouldInstructionSetContextMenuShow"
+      :position-x="itemMouseX"
+      :position-y="itemMouseY"
+      absolute
+      offset-y
+    >
+      <v-list>
+        <v-list-item
+          @click="addItemInstructionSet"
+        >
+          <v-list-item-title>Add to driver</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="removeInstructionSetFromLibrary"
+        >
+          <v-list-item-title>Remove</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <v-menu
+      v-model="shouldDriverContextMenuShow"
+      :position-x="itemMouseX"
+      :position-y="itemMouseY"
+      absolute
+      offset-y
+    >
+      <v-list>
+        <v-list-item
+          @click="setDriverAsCurrent"
+        >
+          <v-list-item-title>Edit</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="saveDriverToStore"
+        >
+          <v-list-item-title>Save to store</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="removeDriverFromLibrary"
+        >
+          <v-list-item-title>Remove</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </div>
 </template>
 
 <script lang="ts">

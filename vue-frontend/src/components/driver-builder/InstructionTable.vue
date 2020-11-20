@@ -1,13 +1,13 @@
 <template>
   <v-container class="grey">
     <v-row no-gutters>
-      <v-btn class="ma-2" color="primary" @click="addNewInstruction">Add Instruction</v-btn>
+      <v-btn class="ma-2 ml-0" color="primary" @click="addNewInstruction">Add Instruction</v-btn>
     </v-row>
     <v-row no-gutters>
       <v-col
         class="text-center"
       >
-        <div ref="tableElement" class="instruction-drag-target" dropzone @dragover="onDragOver" @drop="onDrop" />
+        <div ref="tableElement" class="tabulator instruction-drag-target" dropzone @dragover="onDragOver" @drop="onDrop" />
       </v-col>
     </v-row>
   </v-container>
@@ -150,17 +150,17 @@ export default class InstructionTableComponent extends Vue {
     return parameters ? parameters.length.toString() : '0';
   }
 
-  // private reorderInstructions(table: Tabulator) {
-  //   const rows = table.getRows();
-  //   const instructions: Instruction[] = [];
-  //   for (let index = 0; index < rows.length; index++) {
-  //     const row = rows[index];
-  //     const instruction = row.getData() as Instruction;
-  //     instruction.order = index;
-  //     instructions.push(instruction);
-  //   }
-  //   this.$emit('reordered', instructions);
-  // }
+  private reorderInstructions() {
+    const rows = this.table.getRows();
+    const instructions: Instruction[] = [];
+    for (let index = 0; index < rows.length; index++) {
+      const row = rows[index];
+      const instruction = row.getData() as Instruction;
+      instruction.order = index;
+      instructions.push(instruction);
+    }
+    this.$emit('reordered', { instructions });
+  }
 
   private getIsVariableFieldEditable(cell: Tabulator.CellComponent) {
     const instruction = this.getInstructionFromCell(cell);
@@ -214,10 +214,13 @@ export default class InstructionTableComponent extends Vue {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
       index: '_id',
-      layout: 'fitColumns',
+      layout: 'fitDataFill',
       columns: this.columns,
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),
+      headerSort: false,
+      rowMoved: this.reorderInstructions,
+      initialSort: [ { column: 'order', dir: 'asc' } ],
       cellEdited: (cell) => {
         const instruction = cell.getRow().getData() as Instruction;
         this.$emit('instruction-updated', instruction);
@@ -271,5 +274,7 @@ export default class InstructionTableComponent extends Vue {
 </script>
 
 <style>
-
+.tabulator {
+  width: 100%;
+}
 </style>

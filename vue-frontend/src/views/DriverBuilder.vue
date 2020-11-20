@@ -1,41 +1,15 @@
 <template>
-  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow-x: auto; overflow-y: hidden">
-    <DriverVariablesListBuilderDialogComponent
-      v-model="shouldVariableEditorDialogShow"
+  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow-x: auto; overflow-y: auto">
+    <AppBarComponent
+      v-model="showInstructionsAndTemplatesPanel"
     />
-    <CommandParametersBuilderDialogComponent
-      :should-show="shouldCommandBuilderDialogShow"
-      :parameters="commandBuilderDialogInstructionCommandParameters"
-      :parameters-type="commandBuilderDialogInstructionCommandParametersType"
-      :instruction="commandBuilderDialogInstruction"
-      :instructions-with-read-response="commandBuilderDialogInstructionsWithReadResponse"
-      @save="onCommandParametersBuilderDialogSave"
-      @cancel="shouldCommandBuilderDialogShow = false"
+    <InstructionsAndTemplatesComponent
+      v-model="showInstructionsAndTemplatesPanel"
+      :items="items"
     />
-    <RenameInstructionSetDialogComponent
-      :should-show="shouldRenameInstructionSetDialogShow"
-      :instruction-set="selectedRenameInstructionSet"
-      @renamed="onInstructionSetRenamed"
-      @cancel="shouldRenameInstructionSetDialogShow = false"
-    />
-    <DirectControlTesterDialog
-      :should-show="shouldDirectControlTesterDialogShow"
-      :instruction-set="selectedInstructionSetUnderTest"
-      @cancel="shouldDirectControlTesterDialogShow = false"
-    />
-    <v-row no-gutters>
-      <v-col class="text-center">
-        <v-row no-gutters>
-          <v-col>
-            <h2>Driver Builder</h2>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
     <v-row class="flex-nowrap" style="height: 96vh; max-height: 96vh;" no-gutters>
-      <InstructionsAndTemplatesPanelComponent :items="items" />
       <v-col
-        cols="10"
+        cols="12"
       >
         <v-row class="ma-5">
           <v-col
@@ -151,7 +125,7 @@
               </v-card-title>
               <v-card-actions>
                 <v-btn color="primary" @click="addNewInstructionSet">
-                  Add Instruction Set
+                  Add
                 </v-btn>
               </v-card-actions>
               <div id="driver-builder-editor-instruction-sets">
@@ -203,6 +177,7 @@
                         :instructions="instructionSet.instructions"
                         @edit-instruction-pre-parameters="onInstructionTableComponentEditPreParameters"
                         @edit-instruction-post-parameters="onInstructionTableComponentEditPostParameters"
+                        @reordered="onInstructionTableComponentReordered(instructionSet, $event)"
                         @instruction-added="onInstructionTableComponentInstructionAdded(instructionSet, $event)"
                         @instruction-updated="onInstructionTableComponentInstructionUpdated(instructionSet, $event)"
                         @instruction-removed="onInstructionTableComponentInstructionRemoved(instructionSet, $event)"
@@ -216,6 +191,29 @@
         </v-row>
       </v-col>
     </v-row>
+    <DriverVariablesListBuilderDialogComponent
+      v-model="shouldVariableEditorDialogShow"
+    />
+    <CommandParametersBuilderDialogComponent
+      :should-show="shouldCommandBuilderDialogShow"
+      :parameters="commandBuilderDialogInstructionCommandParameters"
+      :parameters-type="commandBuilderDialogInstructionCommandParametersType"
+      :instruction="commandBuilderDialogInstruction"
+      :instructions-with-read-response="commandBuilderDialogInstructionsWithReadResponse"
+      @save="onCommandParametersBuilderDialogSave"
+      @cancel="shouldCommandBuilderDialogShow = false"
+    />
+    <RenameInstructionSetDialogComponent
+      :should-show="shouldRenameInstructionSetDialogShow"
+      :instruction-set="selectedRenameInstructionSet"
+      @renamed="onInstructionSetRenamed"
+      @cancel="shouldRenameInstructionSetDialogShow = false"
+    />
+    <DirectControlTesterDialog
+      :should-show="shouldDirectControlTesterDialogShow"
+      :instruction-set="selectedInstructionSetUnderTest"
+      @cancel="shouldDirectControlTesterDialogShow = false"
+    />
   </v-container>
 </template>
 
@@ -232,6 +230,8 @@ import DirectControlTesterDialog from "@/components/driver-builder/DirectControl
 import { generateUuid } from '@/utils/uuid';
 import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/InstructionsAndTemplatesPanel.vue';
 import DriverVariablesListBuilderDialogComponent from '@/components/driver-builder/DriverVariablesListBuilderDialog.vue';
+import AppBarComponent from '@/components/driver-builder/AppBar.vue';
+import InstructionsAndTemplatesComponent from '@/components/driver-builder/InstructionsAndTemplates.vue';
 
 // const MockDriver: Driver = {
 //   manufacturer: "Fluke",
@@ -250,10 +250,14 @@ import DriverVariablesListBuilderDialogComponent from '@/components/driver-build
     DirectControlComponent,
     DirectControlTesterDialog,
     InstructionsAndTemplatesPanelComponent,
-    DriverVariablesListBuilderDialogComponent
+    DriverVariablesListBuilderDialogComponent,
+    AppBarComponent,
+    InstructionsAndTemplatesComponent
   }
 })
 export default class DriverBuilderView extends Vue {
+
+  showInstructionsAndTemplatesPanel = false;
 
   shouldVariableEditorDialogShow = false;
 
@@ -504,8 +508,8 @@ export default class DriverBuilderView extends Vue {
     this.$store.direct.commit.driverBuilder.removeDriverInstructionFromInstructionSet({ instructionSetId: instructionSet._id, instructionId: instruction._id });
   }
 
-  async onInstructionTableComponentReordered(instructionSet: InstructionSet, instructions: Instruction[]) {
-    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet._id, instructions: instructions });
+  async onInstructionTableComponentReordered(instructionSet: InstructionSet, args: { instructions: Instruction[] }) {
+    this.$store.direct.commit.driverBuilder.setInstructionSetInstructionsOrder({ instructionSetId: instructionSet._id, instructions: args.instructions });
   }
 
   onTestInstructionSetButtonClicked(instructionSet: InstructionSet) {
@@ -616,8 +620,4 @@ export default class DriverBuilderView extends Vue {
   background: gray;
 }
 
-.fixed-bottom {
-  position: fixed;
-  bottom: 10px;
-}
 </style>
