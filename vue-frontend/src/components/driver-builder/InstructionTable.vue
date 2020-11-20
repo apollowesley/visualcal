@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="grey">
+  <v-container class="grey">
     <v-row no-gutters>
       <v-btn class="ma-2" color="primary" @click="addNewInstruction">Add Instruction</v-btn>
     </v-row>
@@ -171,7 +171,6 @@ export default class InstructionTableComponent extends Vue {
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false, field: 'order' },
     { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
-    { title: 'Order', field: 'order' },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
@@ -233,6 +232,10 @@ export default class InstructionTableComponent extends Vue {
   async mounted() {
     this.createTable();
     if (this.instructions) await this.setData(this.instructions);
+    window.addEventListener('resize', async () => {
+      await this.$nextTick();
+      this.table.redraw();
+    });
   }
 
   onDragOver(event: DragEvent) {

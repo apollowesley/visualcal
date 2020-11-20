@@ -34,7 +34,9 @@
     </v-row>
     <v-row class="flex-nowrap" style="height: 96vh; max-height: 96vh;" no-gutters>
       <InstructionsAndTemplatesPanelComponent :items="items" />
-      <v-col>
+      <v-col
+        cols="10"
+      >
         <v-row class="ma-5">
           <v-col
             cols="1"
@@ -139,7 +141,7 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row class="ml-2">
+        <v-row class="ma-2 fixed-bottom">
           <v-col
             cols="12"
           >
@@ -155,8 +157,6 @@
               <div id="driver-builder-editor-instruction-sets">
                 <v-expansion-panels
                   v-model="expandedInstructionSet"
-                  style="width: 98%"
-                  class="ml-5 mt-7 mb-n10"
                   dense
                 >
                   <v-expansion-panel
@@ -614,5 +614,10 @@ export default class DriverBuilderView extends Vue {
 
 #driver-builder-editor-instruction-sets::-webkit-scrollbar-thumb {
   background: gray;
+}
+
+.fixed-bottom {
+  position: fixed;
+  bottom: 10px;
 }
 </style>
