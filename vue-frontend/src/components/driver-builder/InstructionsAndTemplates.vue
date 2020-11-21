@@ -6,7 +6,10 @@
     temporary
     width="25%"
   >
-    <InstructionsAndTemplatesPanelComponent :items="localItems" />
+    <InstructionsAndTemplatesPanelComponent
+      :items="localItems"
+      @action-completed="shouldShow = false"
+    />
   </v-navigation-drawer>
 </template>
 

@@ -1,6 +1,6 @@
 import { NodeRed, DeviceConfigurationNode } from '../@types/logic-server';
 import { DeviceConfigurationProperties } from '../@types/logic-nodes';
-import { ConfigurationNode, ConfigurationProperties } from './indysoft-custom-driver-configuration-types';
+import { ConfigurationNode, ConfigurationProperties } from './indysoft-instrument-driver-configuration-types';
 
 module.exports = function(RED: NodeRed) {
 
@@ -11,5 +11,5 @@ module.exports = function(RED: NodeRed) {
     this.model = config.model;
   }
 
-  RED.nodes.registerType('indysoft-custom-driver-configuration', nodeConstructor);
+  RED.nodes.registerType('indysoft-instrument-driver-configuration', nodeConstructor);
 };

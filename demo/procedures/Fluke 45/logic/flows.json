@@ -64,7 +64,7 @@
 	},
 	{
 		"id": "6b116249.9db85c",
-		"type": "indysoft-custom-driver-configuration",
+		"type": "indysoft-instrument-driver-configuration",
 		"unitId": "UUT",
 		"manufacturer": "Fluke",
 		"model": "45",
@@ -107,7 +107,7 @@
 	},
 	{
 		"id": "bf460338.9303f",
-		"type": "indysoft-custom-driver-configuration",
+		"type": "indysoft-instrument-driver-configuration",
 		"unitId": "Calibrator",
 		"manufacturer": "Fluke",
 		"model": "5522A"
@@ -119,7 +119,7 @@
 	},
 	{
 		"id": "9793c5f7.916848",
-		"type": "indysoft-custom-driver-configuration",
+		"type": "indysoft-instrument-driver-configuration",
 		"unitId": "34401A",
 		"manufacturer": "Keysight",
 		"model": "34401A",
@@ -559,7 +559,7 @@
 		"z": "3b731b51.7981f4",
 		"name": "DC Volts",
 		"sectionConfigId": "9728462e.dda138",
-		"x": 500,
+		"x": 460,
 		"y": 200,
 		"wires": [
 			[
@@ -1229,23 +1229,24 @@
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"description": "",
-		"title": "Connection",
-		"text": "Connect calibrator output to meter Volt input",
+		"title": "Connect calibrator output to meter Volt input",
+		"text": "Enter calibrator output",
 		"append": "mV",
-		"dataType": "none",
+		"dataType": "float",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 470,
+		"x": 380,
 		"y": 280,
 		"wires": [
 			[
-				"9cccba8a.200a18"
+				"9cccba8a.200a18",
+				"4d2fa6d4.f29a18"
 			]
 		]
 	},
 	{
 		"id": "9b9e8bfa.2791c8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 300V Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -1500,7 +1501,7 @@
 	},
 	{
 		"id": "9e545689.31ce58",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 1000V Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -1755,7 +1756,7 @@
 	},
 	{
 		"id": "b995b989.fd32a8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: Short Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -1955,7 +1956,7 @@
 	},
 	{
 		"id": "7991e954.ef2c78",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 90mV Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -2129,7 +2130,7 @@
 	},
 	{
 		"id": "323959aa.a45ee6",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 900mV Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -2303,7 +2304,7 @@
 	},
 	{
 		"id": "2010d827.93d1b8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: Short Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -2477,7 +2478,7 @@
 	},
 	{
 		"id": "ec8cd5fc.090848",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 300mV Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -2732,7 +2733,7 @@
 	},
 	{
 		"id": "abdcad8b.3d539",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 3V Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -2987,7 +2988,7 @@
 	},
 	{
 		"id": "e071b35b.4f29f",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: -3V Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -3242,7 +3243,7 @@
 	},
 	{
 		"id": "fa4b35b2.c48088",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "UUT: 30V Medium",
 		"driverConfigId": "6b116249.9db85c",
@@ -3497,7 +3498,7 @@
 	},
 	{
 		"id": "742427fe.bd9378",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -3532,7 +3533,7 @@
 	},
 	{
 		"id": "9cccba8a.200a18",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 90mV",
 		"driverConfigId": "bf460338.9303f",
@@ -3591,7 +3592,8 @@
 							"beforeText": " ",
 							"afterText": " V"
 						},
-						"value": 0.09
+						"value": "payload.value",
+						"typedInputType": "msg"
 					}
 				]
 			},
@@ -3646,7 +3648,7 @@
 	},
 	{
 		"id": "70c9915b.fa5aa",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 900mV",
 		"driverConfigId": "bf460338.9303f",
@@ -3721,7 +3723,7 @@
 	},
 	{
 		"id": "f6942410.dcf688",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 300mV",
 		"driverConfigId": "bf460338.9303f",
@@ -3796,7 +3798,7 @@
 	},
 	{
 		"id": "556e33a7.121dbc",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 3V",
 		"driverConfigId": "bf460338.9303f",
@@ -3871,7 +3873,7 @@
 	},
 	{
 		"id": "3c189740.898a28",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: -3V",
 		"driverConfigId": "bf460338.9303f",
@@ -3946,7 +3948,7 @@
 	},
 	{
 		"id": "fe3b9d2e.9bde6",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 30V",
 		"driverConfigId": "bf460338.9303f",
@@ -4021,7 +4023,7 @@
 	},
 	{
 		"id": "52df0b22.a5e124",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 300V",
 		"driverConfigId": "bf460338.9303f",
@@ -4096,7 +4098,7 @@
 	},
 	{
 		"id": "9271567d.98bac8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: 1000V",
 		"driverConfigId": "bf460338.9303f",
@@ -4171,7 +4173,7 @@
 	},
 	{
 		"id": "115acd6a.aed863",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "3b731b51.7981f4",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -4207,7 +4209,7 @@
 	},
 	{
 		"id": "f67c32e0.6f6a4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 15 mV 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -4368,7 +4370,7 @@
 	},
 	{
 		"id": "6f154a75.2665b4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 15 mV 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -4516,7 +4518,7 @@
 	},
 	{
 		"id": "718d4cc9.390ba4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: Short Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -4686,7 +4688,7 @@
 	},
 	{
 		"id": "746abc93.f16c94",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 15 mV 100 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -4814,7 +4816,7 @@
 	},
 	{
 		"id": "c1fc1aee.d2cc28",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 300 mV 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -4942,7 +4944,7 @@
 	},
 	{
 		"id": "436a51ee.b5f08",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 300 mV 100 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -5070,7 +5072,7 @@
 	},
 	{
 		"id": "2fe9f01.ce2c11",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 3 V 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -5198,7 +5200,7 @@
 	},
 	{
 		"id": "47c40c0d.5a0044",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 30 V 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -5326,7 +5328,7 @@
 	},
 	{
 		"id": "e728a744.3d04d8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 300 V 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -5454,7 +5456,7 @@
 	},
 	{
 		"id": "c6a1dacc.d3a1b8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: 750 V 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -5582,7 +5584,7 @@
 	},
 	{
 		"id": "24ba1b64.0b2894",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 15 mV 100 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -5743,7 +5745,7 @@
 	},
 	{
 		"id": "fcce66f7.d05ae8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 300 mV 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -5985,7 +5987,7 @@
 	},
 	{
 		"id": "af1c1705.3fe678",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 300 mV 100 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -6227,7 +6229,7 @@
 	},
 	{
 		"id": "f1554345.1ce1a",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 3 V 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -6473,7 +6475,7 @@
 	},
 	{
 		"id": "fb009f4a.98c78",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 30 V 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -6715,7 +6717,7 @@
 	},
 	{
 		"id": "b6a0737a.34b45",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 300 V 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -6957,7 +6959,7 @@
 	},
 	{
 		"id": "f338797d.3e2ee8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "UUT: 750 V 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -7199,7 +7201,7 @@
 	},
 	{
 		"id": "a0931e65.cc28e",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "ea20ecb1.59a94",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -7234,7 +7236,7 @@
 	},
 	{
 		"id": "336159e5.0e9fe6",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "Calibrator: 30 mA",
 		"driverConfigId": "bf460338.9303f",
@@ -7326,7 +7328,7 @@
 	},
 	{
 		"id": "ccd365bb.d17998",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "UUT: 30 mA",
 		"driverConfigId": "6b116249.9db85c",
@@ -7558,7 +7560,7 @@
 	},
 	{
 		"id": "a4310541.554d98",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "UUT: 100 mA",
 		"driverConfigId": "6b116249.9db85c",
@@ -7790,7 +7792,7 @@
 	},
 	{
 		"id": "ff07ed18.4e3f5",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "UUT: 10 A",
 		"driverConfigId": "6b116249.9db85c",
@@ -8022,7 +8024,7 @@
 	},
 	{
 		"id": "ced0c6f2.81ce68",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -8057,7 +8059,7 @@
 	},
 	{
 		"id": "258d8f03.31d85",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -8092,7 +8094,7 @@
 	},
 	{
 		"id": "a71fafec.ab4b9",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "Calibrator: 100 mA",
 		"driverConfigId": "bf460338.9303f",
@@ -8184,7 +8186,7 @@
 	},
 	{
 		"id": "7074efef.c7079",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "424156ac.d4afe8",
 		"name": "Calibrator: 10 A",
 		"driverConfigId": "bf460338.9303f",
@@ -8376,7 +8378,7 @@
 	},
 	{
 		"id": "52153e15.28e9",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "Calibrator: 30 mA 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -8504,7 +8506,7 @@
 	},
 	{
 		"id": "6c43f6d8.abd638",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "UUT: 30 mA 1kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -8736,7 +8738,7 @@
 	},
 	{
 		"id": "63ce3a2e.4e1ed4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "Calibrator: 100 mA 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -8864,7 +8866,7 @@
 	},
 	{
 		"id": "3b428403.01ad2c",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "UUT: 100 mA 1kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -9096,7 +9098,7 @@
 	},
 	{
 		"id": "63655a78.702ac4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "Calibrator: 10 A 1 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -9224,7 +9226,7 @@
 	},
 	{
 		"id": "fd3e794a.35d7e8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "UUT: 10 A 1 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -9456,7 +9458,7 @@
 	},
 	{
 		"id": "70278161.b6296",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -9491,7 +9493,7 @@
 	},
 	{
 		"id": "12e2e7d2.050098",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "1801adb0.01a932",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -9566,7 +9568,7 @@
 	},
 	{
 		"id": "19b8385c.faf408",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "62bf87fd.c33688",
 		"name": "UUT: Short Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -9727,7 +9729,7 @@
 	},
 	{
 		"id": "173777b0.5c0c28",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "62bf87fd.c33688",
 		"name": "UUT: Open Slow",
 		"driverConfigId": "6b116249.9db85c",
@@ -9908,7 +9910,7 @@
 	},
 	{
 		"id": "19b78412.22533c",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "5021c726.2281b8",
 		"name": "UUT: 5 V 10 kHz",
 		"driverConfigId": "6b116249.9db85c",
@@ -10069,7 +10071,7 @@
 	},
 	{
 		"id": "158c20d0.37fdef",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "5021c726.2281b8",
 		"name": "Calibrator: 5 V 10 kHz",
 		"driverConfigId": "bf460338.9303f",
@@ -10197,7 +10199,7 @@
 	},
 	{
 		"id": "6d2883a2.7addbc",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "5021c726.2281b8",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -10252,7 +10254,7 @@
 	},
 	{
 		"id": "807e1573.114968",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 190 Ohms",
 		"driverConfigId": "6b116249.9db85c",
@@ -10524,7 +10526,7 @@
 	},
 	{
 		"id": "a05bdb1c.413ff8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 190 Ohms",
 		"driverConfigId": "bf460338.9303f",
@@ -10616,7 +10618,7 @@
 	},
 	{
 		"id": "7eb85192.51b99",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: Short Slow Range 1",
 		"driverConfigId": "6b116249.9db85c",
@@ -10897,7 +10899,7 @@
 	},
 	{
 		"id": "f53ea56c.bee3c8",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: Short Slow Range 2",
 		"driverConfigId": "6b116249.9db85c",
@@ -11198,7 +11200,7 @@
 	},
 	{
 		"id": "654dac73.6e9ca4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: Output Off",
 		"driverConfigId": "bf460338.9303f",
@@ -11233,7 +11235,7 @@
 	},
 	{
 		"id": "236af22.073300e",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 1.9 kΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -11505,7 +11507,7 @@
 	},
 	{
 		"id": "44ee406d.aff63",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 1.9 kΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -11597,7 +11599,7 @@
 	},
 	{
 		"id": "3d154ef8.5df032",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 19 kΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -11869,7 +11871,7 @@
 	},
 	{
 		"id": "ead7b126.6e2ee",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 19 kΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -11961,7 +11963,7 @@
 	},
 	{
 		"id": "436c612a.1a7de",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 190 kΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -12233,7 +12235,7 @@
 	},
 	{
 		"id": "afd74e0d.29be4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 190 kΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -12325,7 +12327,7 @@
 	},
 	{
 		"id": "28eadb89.7a1ad4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 1.9 MΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -12597,7 +12599,7 @@
 	},
 	{
 		"id": "285a815f.a6540e",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 1.9 MΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -12689,7 +12691,7 @@
 	},
 	{
 		"id": "17337e2f.ef15d2",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 19 MΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -12961,7 +12963,7 @@
 	},
 	{
 		"id": "51f24cdd.e565e4",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 19 MΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -13053,7 +13055,7 @@
 	},
 	{
 		"id": "cb91711a.d52fc",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "UUT: 100 MΩ",
 		"driverConfigId": "6b116249.9db85c",
@@ -13325,7 +13327,7 @@
 	},
 	{
 		"id": "300b2355.a09bfc",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "12cb1568.bd710b",
 		"name": "Calibrator: 100 MΩ",
 		"driverConfigId": "bf460338.9303f",
@@ -13440,7 +13442,7 @@
 	},
 	{
 		"id": "c617865c.dc9178",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "533e5248.89764c",
 		"name": "UUT Measure",
 		"driverConfigId": "6b116249.9db85c",
@@ -13476,7 +13478,7 @@
 	},
 	{
 		"id": "285180a9.aecef",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "533e5248.89764c",
 		"name": "UUT Set mode AC volts",
 		"driverConfigId": "6b116249.9db85c",
@@ -13616,7 +13618,7 @@
 	},
 	{
 		"id": "e9695eb1.98077",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "88556f0b.58285",
 		"name": "",
 		"driverConfigId": "9793c5f7.916848",
@@ -13974,7 +13976,7 @@
 	},
 	{
 		"id": "9e3dc2f3.1b245",
-		"type": "indysoft-custom-driver",
+		"type": "indysoft-instrument-driver",
 		"z": "88556f0b.58285",
 		"name": "",
 		"driverConfigId": "9793c5f7.916848",
@@ -14007,5 +14009,21 @@
 				"a5458d0f.3ae2e"
 			]
 		]
+	},
+	{
+		"id": "4d2fa6d4.f29a18",
+		"type": "debug",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "false",
+		"statusVal": "",
+		"statusType": "auto",
+		"x": 520,
+		"y": 360,
+		"wires": []
 	}
 ]

@@ -114,20 +114,13 @@ RED.nodes.registerType('indysoft-scalar-result', {
     if (this.derivedQuantity) derivedQuantitySelectInput.val(this.derivedQuantity).val();
   },
   oneditsave: function() {
-    const toleranceTypeValue = $('#node-input-toleranceType').val();
-    const baseQuantityValue = $('#node-input-baseQuantity').val();
-    const derivedQuantityPrefixValue = $('#node-input-derivedQuantityPrefix').val();
-    const derivedQuantityPrefixText = $('#node-input-derivedQuantityPrefix option:selected').text();
-    const derivedQuantityValue = $('#node-input-derivedQuantity').val();
-    const inputLevelValue = $('#node-input-inputLevel').val();
-
-    this.description = `${inputLevelValue}`;
-    if (baseQuantityValue !== 'unitless') this.description = `${this.description} ${derivedQuantityPrefixText === 'N/A' ? '' : derivedQuantityPrefixText} ${derivedQuantityValue}`;
-
-    this.baseQuantity = baseQuantityValue;
-    this.derivedQuantity = derivedQuantityValue;
-    this.derivedQuantityPrefix = derivedQuantityPrefixValue;
-    this.toleranceType = toleranceTypeValue;
+    this.toleranceType = $('#node-input-toleranceType').val();
+    this.baseQuantity = $('#node-input-baseQuantity').val();
+    this.derivedQuantityPrefix = $('#node-input-derivedQuantityPrefix').val();
+    this.derivedQuantity = $('#node-input-derivedQuantity').val();
+    this.inputLevel = $('#node-input-inputLevel').val();
+    this.description = this.inputLevel;
+    if (this.baseQuantity !== 'unitless') this.description = `${this.description} ${this.derivedQuantityPrefix === 'none' ? '' : this.derivedQuantityPrefix} ${this.derivedQuantity}`;
   }
 });
 

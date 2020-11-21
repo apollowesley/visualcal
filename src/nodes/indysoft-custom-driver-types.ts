@@ -1,7 +1,7 @@
 import { CommandParameter, Instruction, InstructionSet } from 'visualcal-common/dist/driver-builder';
 import { NodeRedRuntimeNode } from '../@types/logic-server';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
-import { ConfigurationNode } from './indysoft-custom-driver-configuration-types';
+import { ConfigurationNode } from './indysoft-instrument-driver-configuration-types';
 
 interface NodeRedNodeUIProperties {
   sectionConfigId?: string;
@@ -29,23 +29,26 @@ interface NodeRedNodeUIProperties {
   onpaletteremove?: () => void;
 }
 
-export interface CommandParameterArgument {
+export type TypedInputType = 'msg' | 'flow' | 'global' | 'str' | 'num' | 'bool' | 'json' | 'bin' | 're' | 'date' | 'env';
+
+export interface UIInstructionCommandParameterArgument {
   instructionId: string;
   parameter: CommandParameter;
   value: string | number | boolean;
+  typedInputType?: TypedInputType;
+}
+
+export interface UIInstructionSet {
+  id: string;
+  instructionSet: InstructionSet;
+  preParameterArguments?: UIInstructionCommandParameterArgument[];
+  postParameterArguments?: UIInstructionCommandParameterArgument[];
 }
 
 export interface InstructionResponse {
   instruction: Instruction;
   raw: string | number | ArrayBufferLike | boolean;
   value: string | number | ArrayBufferLike | boolean;
-}
-
-export interface UIInstructionSet {
-  id: string;
-  instructionSet: InstructionSet;
-  preParameterArguments?: CommandParameterArgument[];
-  postParameterArguments?: CommandParameterArgument[];
 }
 
 export type BeforeWriteResponse = { data: string | number | boolean | ArrayBufferLike, cancel?: boolean };

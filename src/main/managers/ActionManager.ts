@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
 import { IpcChannels, VisualCalWindow } from '../../constants';
-import { CustomDriverNodeRedRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-custom-driver-types';
+import { CustomDriverNodeRedRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-instrument-driver-types';
 // import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
 import { CancelActionReason, CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
@@ -60,7 +60,7 @@ export class ActionManager extends TypedEmitter<Events> {
     NodeRedManager.instance.utils.loadDevices(opts.session);
     // TODO: Implmenet interceptDeviceWrites for Custom Drivers
     if (opts.interceptDeviceWrites) {
-      const customDriverNodes = NodeRedManager.instance.findTypedNodesByType<CustomDriverConfigurationNodeEditorDefinition, CustomDriverNodeRedRuntimeNode>('indysoft-custom-driver');
+      const customDriverNodes = NodeRedManager.instance.findTypedNodesByType<CustomDriverConfigurationNodeEditorDefinition, CustomDriverNodeRedRuntimeNode>('indysoft-instrument-driver');
       for (const customDriverNode of customDriverNodes) {
         customDriverNode.runtime.onBeforeWrite = (data) => {
           return new Promise(async (resolve, reject) => {

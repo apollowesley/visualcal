@@ -119,7 +119,7 @@
           <v-col>
             <v-card class="pa-3 instruction-sets-row">
               <v-card-title>
-                <h3>Instruction Sets</h3>
+                <h4>Instruction Sets</h4>
               </v-card-title>
               <v-card-actions>
                 <v-btn color="primary" @click="addNewInstructionSet">
@@ -516,9 +516,14 @@ export default class DriverBuilderView extends Vue {
   }
 
   async saveDriver() {
-    this.$store.direct.commit.driverBuilder.setCurrentDriverCategories(this.selectedCategories);
-    await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
-    await this.$store.direct.dispatch.driverBuilder.refreshLibrary();
+    try {
+      this.$store.direct.commit.driverBuilder.setCurrentDriverCategories(this.selectedCategories);
+      await this.$store.direct.dispatch.driverBuilder.saveCurrentDriver();
+      await this.$store.direct.dispatch.driverBuilder.refreshLibrary();
+    } catch (error) {
+      alert(`Error saving driver: ${error.message}`);
+    }
+    alert('Driver saved');
   }
 
   clearDriver() {

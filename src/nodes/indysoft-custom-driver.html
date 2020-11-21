@@ -1,4 +1,4 @@
-<script type="text/html" data-template-name="indysoft-custom-driver">
+<script type="text/html" data-template-name="indysoft-instrument-driver">
   <div class="form-row">
       <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
       <input type="text" id="node-input-name" placeholder="Name">
@@ -77,20 +77,34 @@
    * @property {string} nomenclature
    * @property {InstructionSet[]} instructionSets
    * 
-   * @typedef CommandParameterArgument
+   * @typedef UIInstructionCommandParameterArgument
    * @type {object}
    * @property {string} instructionId
    * @property {CommandParameter} parameter
    * @property {string} value
+   * @property {string} typedInputType
    * 
    * @typedef UIInstructionSet
    * @type {object}
    * @property {string} _id
    * @property {InstructionSet} instructionSet
-   * @property {CommandParameterArgument[]} preParameterArguments
-   * @property {CommandParameterArgument[]} postParameterArguments
+   * @property {UIInstructionCommandParameterArgument[]} preParameterArguments
+   * @property {UIInstructionCommandParameterArgument[]} postParameterArguments
    * 
   */
+
+  const TYPED_INPUT_TYPES = ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 're', 'date', 'env'];
+
+  /**
+   * @param {JQuery} inputElement
+   * @param {string} defaultType
+   */
+  const createTypedInput = (inputElement, defaultType = 'str') => {
+    return inputElement.typedInput({
+      default: defaultType,
+      types: TYPED_INPUT_TYPES
+    });
+  }
 
   /** @type {Driver} */
   let driver;
@@ -110,7 +124,7 @@
   /**
    * @param {CommandParameter[]} parameters
    * @param {string} rowClassName
-   * @param {CommandParameterArgument[]} parameterArguments
+   * @param {UIInstructionCommandParameterArgument[]} parameterArguments
    * @param {JQuery} rowContainer - The container
   */
   function buildInstructionCommandParametersUI(parameters, rowClassName, parameterArguments, rowContainer) {
@@ -121,7 +135,7 @@
       switch (parameter.type) {
         case 'list':
           if (!parameter.listItems) break;
-          const parameterSelectElement = $('<select/>', { style: 'text-align: center;' }).addClass(parameter._id).appendTo(parameterRow);
+          const parameterSelectElement = $('<select />', { style: 'text-align: center;' }).addClass(parameter._id).appendTo(parameterRow);
           for (let index = 0; index < parameter.listItems.length; index++) {
             const listItem = parameter.listItems[index];
             // Use default property value if it exists
@@ -130,17 +144,26 @@
           if (newItemCommandParameter) parameterSelectElement.val(newItemCommandParameter.value);
           break;
         case 'string':
-          const parameterStringElement = $('<input/>').addClass(parameter._id).appendTo(parameterRow);
-          if (newItemCommandParameter) parameterStringElement.val(newItemCommandParameter.value);
-          if (parameter.default) parameterStringElement.val(parameter.default);
+          const parameterStringElement = $('<input />');
+          parameterSelectElement.addClass(parameter._id).appendTo(parameterRow);
+          if (newItemCommandParameter && newItemCommandParameter.typedInputType) {
+            createTypedInput(parameterStringElement, newItemCommandParameter.typedInputType);
+          } else {
+            createTypedInput(parameterStringElement, 'str');
+          }
+          if (parameter.default) parameterStringElement.typedInput('value', parameter.default);
+          if (newItemCommandParameter) parameterStringElement.typedInput('value', newItemCommandParameter.value);
           break;
         case 'number':
-          const parametergNumberElement = $(`<input type="number"/>`).addClass(parameter._id).appendTo(parameterRow);
-          if (parameter.useMin) parametergNumberElement.prop('min', parameter.min);
-          if (parameter.useMax) parametergNumberElement.prop('max', parameter.max);
-          if (parameter.useMinMaxIncrement) parametergNumberElement.prop('step', parameter.minMaxIncrement);
-          if (parameter.default) parametergNumberElement.val(parameter.default);
-          if (newItemCommandParameter) parametergNumberElement.val(newItemCommandParameter.value);
+          const parametergNumberElement = $(`<input />`);
+          parametergNumberElement.addClass(parameter._id).appendTo(parameterRow);
+          if (newItemCommandParameter && newItemCommandParameter.typedInputType) {
+            createTypedInput(parametergNumberElement, newItemCommandParameter.typedInputType);
+          } else {
+            createTypedInput(parametergNumberElement, 'num');
+          }
+          if (parameter.default) parametergNumberElement.typedInput('value', parameter.default);
+          if (newItemCommandParameter) parametergNumberElement.typedInput('value', newItemCommandParameter.value);
           break;
         case 'boolean':
           const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter._id).appendTo(parameterRow);
@@ -155,10 +178,10 @@
    * @param {CommandParameter[]} parameters - The CommandParameters to process
    * @param {string} instructionSetListItemElementChildrenClassName - CSS class name of instruction command parameter list item element children
    * @param {JQuery} instructionSetListItemElement
-   * @returns {CommandParameterArgument[]}
+   * @returns {UIInstructionCommandParameterArgument[]}
   */
   function handleSaveInstructionParameters(parameters, instructionSetListItemElementChildrenClassName, instructionSetListItemElement, instruction) {
-    /** @type {CommandParameterArgument} */
+    /** @type {UIInstructionCommandParameterArgument} */
     const parameterArguments = [];
     parameters.forEach(parameter => {
       const parameterRows = instructionSetListItemElement.children(`.${instructionSetListItemElementChildrenClassName}`);
@@ -171,13 +194,16 @@
           break;
         case 'string':
           const stringParameterElement = parameterRows.children(`.${parameter._id}`);
-          const stringValue = stringParameterElement.val();
-          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue });
+          const stringValue = stringParameterElement.typedInput('value');
+          const stringParameterTypedInputType = stringParameterElement.typedInput('type');
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue, typedInputType: stringParameterTypedInputType });
           break;
         case 'number':
-          const numnberParameterElement = parameterRows.children(`.${parameter._id}`);
-          const numberValue = Number(numnberParameterElement.val());
-          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue });
+          const numberParameterElement = parameterRows.children(`.${parameter._id}`);
+          const numberValue = numberParameterElement.typedInput('value');
+          const numberParameterTypedInputType = numberParameterElement.typedInput('type');
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue, typedInputType: numberParameterTypedInputType });
+          console.info(numberParameterTypedInputType, numberValue);
           break;
         case 'boolean':
           const booleanParameterElement = parameterRows.children(`.${parameter._id}`);
@@ -190,12 +216,12 @@
     return parameterArguments;
   }
 
-  RED.nodes.registerType('indysoft-custom-driver', {
+  RED.nodes.registerType('indysoft-instrument-driver', {
     category: 'Drivers',
     color: '#4fd9ff',
     defaults: {
       name: { value: '' },
-      driverConfigId: { type: 'indysoft-custom-driver-configuration', required: true },
+      driverConfigId: { type: 'indysoft-instrument-driver-configuration', required: true },
       instructionSets: { value: [] }
     },
     inputs: 1,
@@ -339,7 +365,7 @@
 })();
 </script>
 
-<script type="text/html" data-help-name="indysoft-custom-driver">
+<script type="text/html" data-help-name="indysoft-instrument-driver">
   <p>Some useful help text to introduce the node.</p>
   <h3>Outputs</h3>
       <dl class="message-properties">

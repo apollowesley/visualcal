@@ -178,8 +178,8 @@ export default class InstructionTableComponent extends Vue {
       { title: 'Tag Name', field: 'responseName', editable: this.getisReadResponseNameEditable, editor: 'input', formatter: this.formatResponseNameCell }
     ]},
     { title: 'Timing (in addition to interface timing)', columns: [
-      { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0' },
-      { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0' }
+      { title: 'Delay before (ms)', field: 'delayBefore', editable: true, editor: 'number', validator: 'min: 0', minWidth: 150 },
+      { title: 'Delay after (ms)', field: 'delayAfter', editable: true, editor: 'number', validator: 'min: 0', minWidth: 150 }
     ]},
     { title: 'Variable', field: 'variable', editable: this.getIsVariableFieldEditable, editor: 'select', editorParams: this.getSettableVariablesEditorParams },
     { title: 'Prepend Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },

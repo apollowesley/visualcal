@@ -315,6 +315,7 @@ export default class InstructionsAndTemplatesPanelComponent extends Vue {
     if (!this.itemDriver) return;
     this.$store.direct.commit.driverBuilder.setCurrentDriver(this.itemDriver);
     this.itemDriver = undefined;
+    this.$emit('action-completed');
   }
 
   async saveDriverToStore() {

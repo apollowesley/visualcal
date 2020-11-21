@@ -377,25 +377,25 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-action-start.js"
 				},
-				"indysoft-custom-driver-configuration": {
-					"name": "indysoft-custom-driver-configuration",
+				"indysoft-instrument-driver-configuration": {
+					"name": "indysoft-instrument-driver-configuration",
 					"types": [
-						"indysoft-custom-driver-configuration"
+						"indysoft-instrument-driver-configuration"
 					],
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-custom-driver-configuration.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-instrument-driver-configuration.js"
 				},
-				"indysoft-custom-driver": {
-					"name": "indysoft-custom-driver",
+				"indysoft-instrument-driver": {
+					"name": "indysoft-instrument-driver",
 					"types": [
-						"indysoft-custom-driver"
+						"indysoft-instrument-driver"
 					],
 					"enabled": true,
 					"local": false,
 					"module": "node-red",
-					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-custom-driver.js"
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-instrument-driver.js"
 				},
 				"indysoft-mqtt-dynamic-topic-in": {
 					"name": "indysoft-mqtt-dynamic-topic-in",

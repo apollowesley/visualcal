@@ -121,7 +121,7 @@ export class SessionManager extends TypedEmitter<Events> {
       if (throwOnError) throw new Error(`Procedure, ${activeSession.procedureName}, does not exist`);
     }
     if (!procedure) return undefined;
-    const customDriverConfigNodes = NodeRedManager.instance.nodes.filter(n => n.type === 'indysoft-custom-driver-configuration');
+    const customDriverConfigNodes = NodeRedManager.instance.nodes.filter(n => n.type === 'indysoft-instrument-driver-configuration');
     const sections = NodeRedManager.instance.sections;
     const viewInfo: SessionViewWindowOpenIPCInfo = {
       user: user,

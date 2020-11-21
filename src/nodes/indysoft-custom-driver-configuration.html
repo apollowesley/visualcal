@@ -1,4 +1,4 @@
-<script type="text/html" data-template-name="indysoft-custom-driver-configuration">
+<script type="text/html" data-template-name="indysoft-instrument-driver-configuration">
   <div class="form-row">
     <label for="node-config-input-unitId"><i class="fa fa-tag"></i> Unit Id</label>
     <input type="text" id="node-config-input-unitId">
@@ -7,11 +7,11 @@
     <label for="node-config-input-useCategories"><i class="fa fa-tag"></i> Use Categories?</label>
     <input id="node-config-input-useCategories" type="checkbox">
   </div>
-  <div class="form-row" id="indysoft-custom-driver-config-categories-row">
+  <div class="form-row" id="indysoft-instrument-driver-config-categories-row">
     <label for="node-config-input-categories"><i class="fa fa-tag"></i> Available Categories</label>
     <fieldset id="node-config-input-categories" class="driver-categories-checkbox-group"></fieldset>
   </div>
-  <div id="indysoft-custom-driver-config-specific-driver-group">
+  <div id="indysoft-instrument-driver-config-specific-driver-group">
     <div class="form-row">
       <label for="node-config-input-manufacturer"><i class="fa fa-tag"></i> Manufacturer</label>
       <select id="node-config-input-manufacturer">
@@ -25,7 +25,7 @@
   </div>
 </script>
 
-<script type="text/html" data-help-name="indysoft-custom-driver-configuration">
+<script type="text/html" data-help-name="indysoft-instrument-driver-configuration">
   <p>Provides a UI for defining a custom driver.</p>
 </script>
 
@@ -48,7 +48,7 @@
    * 
    */
 
-    RED.nodes.registerType('indysoft-custom-driver-configuration', {
+    RED.nodes.registerType('indysoft-instrument-driver-configuration', {
       color: '#67F36E',
       category: 'config',
       defaults: {
@@ -72,10 +72,10 @@
         /** @type {HTMLFieldSetElement} */
         const categoriesListElement = document.getElementById('node-config-input-categories');
         /** @type {HTMLDivElement} */
-        const categoriesListRow = document.getElementById('indysoft-custom-driver-config-categories-row');
+        const categoriesListRow = document.getElementById('indysoft-instrument-driver-config-categories-row');
 
         /** @type {HTMLDivElement} */
-        const specificDriverGroupElement = document.getElementById('indysoft-custom-driver-config-specific-driver-group');
+        const specificDriverGroupElement = document.getElementById('indysoft-instrument-driver-config-specific-driver-group');
         /** @type {HTMLSelectElement} */
         const manufacturerSelectElement = document.getElementById('node-config-input-manufacturer');1
         /** @type {HTMLSelectElement} */
