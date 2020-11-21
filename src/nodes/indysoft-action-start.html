@@ -15,7 +15,7 @@
 
 <script>
 const IndySoftActionStartNodeConfig = {
-  color: '#34a1eb',
+  color: '#25c43a',
   category: 'Procedure',
   defaults: {
     name: { value: 'MyAction', required: true },
@@ -29,13 +29,13 @@ const IndySoftActionStartNodeConfig = {
     RED.nodes.eachConfig(node => {
       if (node.id === this.sectionConfigId) sectionConfig = node;
     });
-    if (sectionConfig) return `Section: ${sectionConfig.name}; Action: ${this.name}`;
-    return `Section: <none>; Action: ${this.name}`;
+    if (sectionConfig) return `Start Section: ${sectionConfig.name}; Action: ${this.name}`;
+    return `Start Section: <none>; Action: ${this.name}`;
   },
   labelStyle: function () {
     return 'node_label_italic';
   },
-  paletteLabel: 'Start Action'
+  paletteLabel: 'Begin Action'
 }
 
 RED.nodes.registerType('indysoft-action-start', IndySoftActionStartNodeConfig);

@@ -170,7 +170,7 @@ export default class InstructionTableComponent extends Vue {
 
   private columns: Tabulator.ColumnDefinition[] = [
     { title: '', rowHandle: true, formatter: 'handle', headerSort: false, frozen: true, width: 30, minWidth: 30, resizable: false, field: 'order' },
-    { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required' },
+    { title: 'Name*', field: 'name', editable: true, editor: 'input', validator: 'required', minWidth: 150 },
     { title: 'Type*', field: 'type', editable: true, editor: 'select', editorParams: this.getCommandTypeEditorParams, cellEdited: this.updateInstruction },
     { title: 'Read/Query', columns: [
       { title: 'Data type', field: 'responseDataType', editable: this.getIsResponseDataTypeEditable, editor: 'select', editorParams: this.getResponseDataTypeEditorParams, formatter: this.formatResponseDataTypeCell },
@@ -183,7 +183,7 @@ export default class InstructionTableComponent extends Vue {
     ]},
     { title: 'Variable', field: 'variable', editable: this.getIsVariableFieldEditable, editor: 'select', editorParams: this.getSettableVariablesEditorParams },
     { title: 'Prepend Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'pre'), cellClick: (_, cell) => this.$emit('edit-instruction-pre-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) },
-    { title: 'Command/Variable Value', field: 'command', editable: true, editor: 'input' },
+    { title: 'Command/Variable Value', field: 'command', editable: true, editor: 'input', minWidth: 250 },
     { title: 'Append Parameters', editable: false, formatter: (cell) => this.getParametersFormatter(cell, 'post'), cellClick: (_, cell) => this.$emit('edit-instruction-post-parameters', { instruction: cell.getRow().getData(), instructions: cell.getRow().getTable().getData() }) }
   ]
 
@@ -214,7 +214,7 @@ export default class InstructionTableComponent extends Vue {
     if (this.fTable) return this.fTable;
     const table = new Tabulator(this.tableElement, {
       index: '_id',
-      layout: 'fitDataFill',
+      layout: 'fitDataStretch',
       columns: this.columns,
       movableRows: true,
       rowContextMenu: this.createRowContextMenu(),

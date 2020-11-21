@@ -319,6 +319,7 @@ export default class CommandParametersBuilderDialogComponent extends Vue {
       index: '_id',
       layout: 'fitDataStretch',
       columns: this.columns,
+      headerSort: false,
       movableRows: true,
       cellEdited: () => { table.redraw(true); },
       // rowMoved: () => { this.reorderInstructions(table); },

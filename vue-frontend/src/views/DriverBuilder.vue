@@ -1,5 +1,5 @@
 <template>
-  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow-x: auto; overflow-y: auto">
+  <v-container id="main-container" fluid class="grey" style="height: 100vh; overflow-x: auto; overflow-y: hidden;">
     <AppBarComponent
       v-model="showInstructionsAndTemplatesPanel"
     />
@@ -7,125 +7,129 @@
       v-model="showInstructionsAndTemplatesPanel"
       :items="items"
     />
-    <v-row class="flex-nowrap" style="height: 96vh; max-height: 96vh;" no-gutters>
-      <v-col
-        cols="12"
-      >
-        <v-row class="ma-5">
-          <v-col
-            cols="1"
-          >
+    <v-row class="ma-5 driver-details-row" no-gutters>
+      <v-col>
+        <v-row>
+          <v-col>
             <v-btn
               :disabled="!canSaveDriver"
               class="mr-3"
+              color="green"
               @click.prevent="saveDriver"
             >
               Save Driver
             </v-btn>
-          </v-col>
-          <v-col
-            cols="1"
-          >
             <v-btn
               class="mr-3"
+              color="error"
               @click.prevent="clearDriver"
             >
               Clear
             </v-btn>
           </v-col>
         </v-row>
-        <v-row class="ma-5">
+        <v-row>
           <v-col>
-            <v-form :value="canSaveDriver">
-              <v-row dense>
-                <v-col cols="12" sm="4">
-                  <v-text-field
-                    v-model="manufacturer"
-                    :rules="rules"
-                    label="Manufacturer"
-                  />
-                </v-col>
-                <v-col cols="12" sm="4">
-                  <v-text-field v-model="model" :rules="rules" label="Model" />
-                </v-col>
-                <v-col cols="12" sm="4">
-                  <v-text-field
-                    v-model="nomenclature"
-                    :rules="rules"
-                    label="Nomenclature"
-                    persistent-hint
-                    hint="Instrument class or description"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    v-model="identityQueryCommand"
-                    label="Identity Query Command"
-                    persistent-hint
-                    hint="Command sent to instrument to ask it for it's identity"
-                  />
-                </v-col>
-                <v-col>
-                  <v-select
-                    v-model="terminator"
-                    :rules="rules"
-                    :items="[
-                      { text: 'None', value: 'none' },
-                      { text: 'Carriage return', value: 'Cr' },
-                      { text: 'Line feed', value: 'Lf' },
-                      { text: 'Carriage return / Line feed', value: 'CrLf' }
-                    ]"
-                    label="Terminator"
-                    persistent-hint
-                    hint="Character(s) used to signal the end of a read/write"
-                  />
-                </v-col>
-                <v-col>
-                  <fieldset>
-                    <legend>Categories</legend>
-                    <div
-                      v-for="category in availableCategories"
-                      :key="category._id"
-                    >
-                      <input
-                        :id="`driver-category-${category._id}`"
-                        class="driver-category-checkbox"
-                        type="checkbox"
-                        dense
-                        style="margin-right: 4px"
-                        @change="onDriverAvailableCategoryCheckChanged(category, $event)"
-                      >
-                      <label :for="`driver-category-${category._id}`">{{ category.name }}</label>
-                    </div>
-                  </fieldset>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-col>
-        </v-row>
-        <DirectControlComponent />
-        <v-row class="ml-2">
-          <v-col>
-            <v-btn
-              @click="shouldVariableEditorDialogShow = true"
+            <v-card
+              class="pa-2 pl-5 pr-5"
             >
-              Edit Variables
-            </v-btn>
+              <v-card-title>
+                <h4>Details</h4>
+              </v-card-title>
+              <v-form :value="canSaveDriver">
+                <v-row dense>
+                  <v-col cols="12" sm="4">
+                    <v-text-field
+                      v-model="manufacturer"
+                      :rules="rules"
+                      label="Manufacturer"
+                      dense
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <v-text-field
+                      v-model="model"
+                      :rules="rules"
+                      label="Model"
+                      dense
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <v-text-field
+                      v-model="nomenclature"
+                      :rules="rules"
+                      label="Nomenclature"
+                      persistent-hint
+                      hint="Instrument class or description"
+                      dense
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="identityQueryCommand"
+                      label="Identity Query Command"
+                      persistent-hint
+                      hint="Command sent to instrument to ask it for it's identity"
+                      dense
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-select
+                      v-model="terminator"
+                      :rules="rules"
+                      :items="[
+                        { text: 'None', value: 'none' },
+                        { text: 'Carriage return', value: 'Cr' },
+                        { text: 'Line feed', value: 'Lf' },
+                        { text: 'Carriage return / Line feed', value: 'CrLf' }
+                      ]"
+                      label="Terminator"
+                      persistent-hint
+                      hint="Character(s) used to signal the end of a read/write"
+                      dense
+                    />
+                  </v-col>
+                  <v-col>
+                    <fieldset>
+                      <legend>Categories</legend>
+                      <div
+                        v-for="category in availableCategories"
+                        :key="category._id"
+                      >
+                        <input
+                          :id="`driver-category-${category._id}`"
+                          class="driver-category-checkbox"
+                          type="checkbox"
+                          dense
+                          style="margin-right: 4px"
+                          @change="onDriverAvailableCategoryCheckChanged(category, $event)"
+                        >
+                        <label :for="`driver-category-${category._id}`">{{ category.name }}</label>
+                      </div>
+                    </fieldset>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card>
           </v-col>
         </v-row>
-        <v-row class="ma-2 fixed-bottom">
-          <v-col
-            cols="12"
-          >
-            <v-card class="pa-3">
+        <v-row>
+          <v-col>
+            <v-card class="pa-3 instruction-sets-row">
               <v-card-title>
                 <h3>Instruction Sets</h3>
               </v-card-title>
               <v-card-actions>
                 <v-btn color="primary" @click="addNewInstructionSet">
                   Add
+                </v-btn>
+                <v-btn
+                  color="secondary"
+                  @click="shouldVariableEditorDialogShow = true"
+                >
+                  Edit Variables
                 </v-btn>
               </v-card-actions>
               <div id="driver-builder-editor-instruction-sets">
@@ -225,7 +229,6 @@ import { IEEE4882MandatedCommands, SCPIRequiredCommands, Driver, CommandParamete
 import { requiredRule, VuetifyRule } from "@/utils/vuetify-input-rules";
 import CommandParametersBuilderDialogComponent from "@/components/driver-builder/CommandParametersBuilderDialog.vue";
 import RenameInstructionSetDialogComponent from "@/components/driver-builder/RenameInstructionSetDialog.vue";
-import DirectControlComponent from "@/components/driver-builder/DirectControlComponent.vue";
 import DirectControlTesterDialog from "@/components/driver-builder/DirectControlTesterDialog.vue";
 import { generateUuid } from '@/utils/uuid';
 import InstructionsAndTemplatesPanelComponent from '@/components/driver-builder/InstructionsAndTemplatesPanel.vue';
@@ -233,21 +236,11 @@ import DriverVariablesListBuilderDialogComponent from '@/components/driver-build
 import AppBarComponent from '@/components/driver-builder/AppBar.vue';
 import InstructionsAndTemplatesComponent from '@/components/driver-builder/InstructionsAndTemplates.vue';
 
-// const MockDriver: Driver = {
-//   manufacturer: "Fluke",
-//   model: "45",
-//   nomenclature: "Digital Multimeter",
-//   identityQueryCommand: "*IDN?",
-//   terminator: "Lf",
-//   instructionSets: [],
-// };
-
 @Component({
   components: {
     InstructionTableComponent,
     CommandParametersBuilderDialogComponent,
     RenameInstructionSetDialogComponent,
-    DirectControlComponent,
     DirectControlTesterDialog,
     InstructionsAndTemplatesPanelComponent,
     DriverVariablesListBuilderDialogComponent,
@@ -276,7 +269,7 @@ export default class DriverBuilderView extends Vue {
   shouldRenameInstructionSetDialogShow = false;
   selectedRenameInstructionSet: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
 
-  expandedInstructionSet = 0;
+  expandedInstructionSet = -1;
 
   shouldDirectControlTesterDialogShow = false;
   selectedInstructionSetUnderTest: InstructionSet = { _id: generateUuid(), name: "", instructions: [] };
@@ -605,8 +598,7 @@ export default class DriverBuilderView extends Vue {
 <style>
 #driver-builder-editor-instruction-sets {
   overflow-y: scroll;
-  height: 45vh;
-  margin: 10px;
+  max-height: calc(96vh - 70px - 178px - 60px - 250px);
 }
 
 #driver-builder-editor-instruction-sets::-webkit-scrollbar {
@@ -618,6 +610,16 @@ export default class DriverBuilderView extends Vue {
 
 #driver-builder-editor-instruction-sets::-webkit-scrollbar-thumb {
   background: gray;
+}
+
+.driver-details-row {
+  height: calc(96vh - 70px);
+  max-height: calc(96vh - 70px);
+}
+
+.instruction-sets-row {
+  height: calc(96vh - 70px - 178px - 60px - 100px);
+  max-height: calc(96vh - 70px - 178px - 60px - 100px);
 }
 
 </style>

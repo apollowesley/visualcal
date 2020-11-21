@@ -1,7 +1,7 @@
 <template>
-  <v-row class="ma-5">
+  <v-row>
       <v-col
-        cols="6"
+        cols="8"
       >
         <v-select
           v-model="selectedInterfaceInfo"
@@ -9,6 +9,7 @@
           label="Communication Interface"
           item-text="name"
           return-object
+          dense
         />
       </v-col>
       <v-col
@@ -23,6 +24,7 @@
           type="number"
           min="1"
           max="31"
+          dense
           @mousewheel="onDeviceGpibAddressMouseWheel"
         />
       </v-col>
