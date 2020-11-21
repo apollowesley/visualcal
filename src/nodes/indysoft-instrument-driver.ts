@@ -1,12 +1,12 @@
-import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction } from '../@types/logic-server';
-import { NodeRedManager } from '../main/managers/NodeRedManager';
-import { DriverBuilder } from '../main/managers/DriverBuilder';
-import { sleep } from '../drivers/utils';
-import { CommandParameter, Instruction } from 'visualcal-common/dist/driver-builder';
-import { CustomDriverNodeRedRuntimeNode, InstructionResponse, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, UIInstructionSet, UIInstructionCommandParameterArgument } from './indysoft-instrument-driver-types';
 import electronLog from 'electron-log';
-import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
 import { get as lodashGet } from 'lodash';
+import { CommandParameter, Instruction } from 'visualcal-common/dist/driver-builder';
+import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction } from '../@types/logic-server';
+import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
+import { sleep } from '../drivers/utils';
+import { DriverBuilder } from '../main/managers/DriverBuilder';
+import { NodeRedManager } from '../main/managers/NodeRedManager';
+import { CustomDriverNodeRedRuntimeNode, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, InstructionResponse, UIInstructionCommandParameterArgument, UIInstructionSet } from './indysoft-instrument-driver-types';
 
 interface RuntimeNodeInputEventMessagePayload {
   temp: number;

@@ -135,7 +135,7 @@
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"x": 1330,
+		"x": 1350,
 		"y": 1000,
 		"wires": []
 	},

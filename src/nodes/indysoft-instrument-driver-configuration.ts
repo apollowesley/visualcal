@@ -1,5 +1,4 @@
-import { NodeRed, DeviceConfigurationNode } from '../@types/logic-server';
-import { DeviceConfigurationProperties } from '../@types/logic-nodes';
+import { NodeRed } from '../@types/logic-server';
 import { ConfigurationNode, ConfigurationProperties } from './indysoft-instrument-driver-configuration-types';
 
 module.exports = function(RED: NodeRed) {
