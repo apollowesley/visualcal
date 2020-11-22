@@ -1968,15 +1968,6 @@
 					"name": "Set mode DC Volts",
 					"instructions": [
 						{
-							"_id": "5fa62123b58a446c0e8a60fd",
-							"name": "Clear Status Command",
-							"type": "Write",
-							"command": "*CLS",
-							"file": "json",
-							"readAttempts": 1,
-							"order": 0
-						},
-						{
 							"_id": "5fa62123b58a446c0e8a60fe",
 							"order": 1,
 							"name": "Set mode DC Volts",
@@ -2105,13 +2096,53 @@
 					"name": "Measure",
 					"instructions": [
 						{
-							"_id": "5fa62123b58a446c0e8a6100",
+							"_id": "5fb83c31d8997a0000493d38",
 							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "",
+							"readAttempts": 1
+						},
+						{
+							"_id": "5fa62123b58a446c0e8a6100",
+							"order": 1,
 							"name": "Measure",
 							"type": "Query",
 							"command": "MEAS1?",
 							"readAttempts": 1,
 							"responseDataType": "Number"
+						},
+						{
+							"_id": "5fb83c31d8997a0000493d39",
+							"order": 2,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "",
+							"readAttempts": 1
+						},
+						{
+							"_id": "5fb83c32d8997a0000493d3a",
+							"order": 3,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "",
+							"readAttempts": 1
+						},
+						{
+							"_id": "5fb83c32d8997a0000493d3b",
+							"order": 4,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "",
+							"readAttempts": 1
+						},
+						{
+							"_id": "5fb83c32d8997a0000493d3c",
+							"order": 5,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "",
+							"readAttempts": 1
 						}
 					]
 				},
@@ -14019,10 +14050,11 @@
 		"tosidebar": true,
 		"console": false,
 		"tostatus": false,
-		"complete": "false",
+		"complete": "true",
+		"targetType": "full",
 		"statusVal": "",
 		"statusType": "auto",
-		"x": 520,
+		"x": 500,
 		"y": 360,
 		"wires": []
 	}
