@@ -23,6 +23,7 @@ export class RunHandler extends TypedEmitter<Events> {
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
       layout: 'fitColumns',
+      height: '90%',
       columns: [
         { title: 'Timestamp', field: 'timestamp' },
         { title: 'Description', field: 'description' },

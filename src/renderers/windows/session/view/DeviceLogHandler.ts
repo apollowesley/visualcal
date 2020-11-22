@@ -23,6 +23,7 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
       layout: 'fitColumns',
+      height: '90%',
       columns: [
         { title: 'Interface Name', field: 'interfaceName' },
         { title: 'Device name', field: 'deviceName' },

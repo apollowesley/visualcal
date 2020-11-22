@@ -1,5 +1,9 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { SelectHandler } from '../../../components/SelectHandler';
+
+interface SelectActionValue {
+  section: SectionInfo;
+  action: ActionInfo;
+}
 
 interface Events {
   actionChanged: (action?: ActionInfo) => void;
@@ -9,36 +13,30 @@ interface Events {
 }
 
 interface ConstructorOptions {
-  titleElementId: string;
-  sectionElementId: string;
-  actionElementId: string;
+  selectActionElementId: string;
   runTimeElementId: string;
 }
 
 export class ProcedureHandler extends TypedEmitter<Events> {
 
-  private fTitleElement: HTMLHeadingElement;
-  private fSectionHandler: SelectHandler<SectionInfo>;
-  private fActionHandler: SelectHandler<ActionInfo>;
+  private fActionSelectElement: HTMLSelectElement;
 
   private fRunNameElement: HTMLInputElement;
 
   constructor(opts: ConstructorOptions) {
     super();
-    this.fTitleElement = document.getElementById(opts.titleElementId) as HTMLHeadingElement;
 
-    this.fSectionHandler = new SelectHandler({ elementId: opts.sectionElementId });
-    this.fSectionHandler.on('changed', (section) => this.onSectionChanged(section));
-
-    this.fActionHandler = new SelectHandler({ elementId: opts.actionElementId });
-    this.fActionHandler.on('changed', (action) => this.onActionChanged(action));
+    this.fActionSelectElement = document.getElementById(opts.selectActionElementId) as HTMLSelectElement;
+    this.fActionSelectElement.addEventListener('change', () => {
+      const selectedValue = this.selectedValue;
+      this.onActionChanged(selectedValue);
+    });
 
     this.fRunNameElement = document.getElementById(opts.runTimeElementId) as HTMLInputElement;
     this.fRunNameElement.addEventListener('keyup', () => this.onRunNameElementValueChanged());
   }
 
-  get sectionHandler() { return this.fSectionHandler; }
-  get actionHandler() { return this.fActionHandler; }
+  get actionSelectElement() { return this.fActionSelectElement; }
 
   get runName() { return this.fRunNameElement.value ? this.fRunNameElement.value : null; }
   set runName(value: string | null) {
@@ -48,15 +46,40 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     this.onRunNameChanged(this.fRunNameElement.value);
   }
 
-  get isReady() { return this.sectionHandler.selectedItem && this.actionHandler.selectedItem; }
+  get isReady() { return this.actionSelectElement.selectedOptions.length > 0; }
 
-  setTitle(title: string) {
-    this.fTitleElement.textContent = title;
+  get selectedValue() {
+    const selectedOption = this.fActionSelectElement.selectedOptions[0];
+    if (!selectedOption) return;
+    const selectedValue = JSON.parse(selectedOption.value) as SelectActionValue;
+    return selectedValue;
+  }
+
+  updateSections(sections: SectionInfo[]) {
+    const actionSelectElement = this.actionSelectElement;
+    actionSelectElement.options.length = 0;
+    sections.forEach(section => {
+      const sectionGroupdEl = document.createElement('optgroup');
+      sectionGroupdEl.label = section.name;
+      sectionGroupdEl.nodeValue = section.name;
+      actionSelectElement.add(sectionGroupdEl);
+      section.actions.forEach(action => {
+        const actionEl = document.createElement('option');
+        actionEl.label = action.name;
+        actionEl.value = JSON.stringify({ section: section, action: action });
+        sectionGroupdEl.append(actionEl);
+      });
+    });
+    this.onCheckRunStateAndNotify();
   }
 
   private onCheckRunStateAndNotify() {
-    if (this.sectionHandler.selectedItem && this.actionHandler.selectedItem) this.emit('ready', this.sectionHandler.selectedItem, this.actionHandler.selectedItem, this.runName ? this.runName : undefined);
-    else this.emit('notReady');
+    if (this.isReady && this.selectedValue) {
+      const actionValue = this.selectedValue;
+      this.emit('ready', actionValue.section, actionValue.action, this.runName ? this.runName : undefined);
+    } else {
+      this.emit('notReady');
+    }
   }
 
   private onRunNameElementValueChanged() {
@@ -68,15 +91,7 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     this.onCheckRunStateAndNotify();
   }
 
-  protected onSectionChanged(section?: SectionInfo) {
-    if (!section) {
-      this.onCheckRunStateAndNotify();
-      return;
-    }
-    this.actionHandler.items = section.actions;
-  }
-
-  protected onActionChanged(_?: ActionInfo) {
+  protected onActionChanged(_?: SelectActionValue) {
     this.onCheckRunStateAndNotify();
   }
 

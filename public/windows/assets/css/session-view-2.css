@@ -1,0 +1,17 @@
+html, body {
+  height: 99vh;
+}
+
+body {
+  margin: 3px;
+  background-color: rgb(154,154,154);
+}
+
+.view-block {
+  background-color: rgb(112,112,112);
+}
+
+.top-row-block {
+  width: 33.333333333%;
+}
+

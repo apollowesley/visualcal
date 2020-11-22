@@ -4,7 +4,6 @@ import { StateChangeInfo } from '../../../managers/RendererActionManager';
 import { DeviceConfigHandler } from './DeviceConfigHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
 import { IpcHandler } from './IpcHandler';
-import { MainLogHandler } from './MainLogHandler';
 import { ProcedureHandler } from './ProcedureHandler';
 import { RunHandler } from './RunHandler';
 import { StatusHandler } from './StatusHandler';
@@ -14,10 +13,9 @@ import { IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 import { StartOptions } from '../../../../main/managers/ActionManager';
 
-const startStopActionButtonElement = document.getElementById('vc-start-stop-button') as HTMLButtonElement;
-const resetButton: HTMLButtonElement = document.getElementById('vc-reset-button') as HTMLButtonElement;
+const startStopActionButtonElement = document.getElementById('action-start-stop-button') as HTMLButtonElement;
 let devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
-const interceptDeviceWritesCheckbox = document.getElementById('vc-intercept-device-writes') as HTMLInputElement;
+const interceptDeviceWritesCheckbox = document.getElementById('action-intercept-device-commands') as HTMLInputElement;
 
 let user: User | undefined = undefined;
 let session: Session = { name: '', procedureName: '', username: '', configuration: { devices: [] } };
@@ -41,9 +39,10 @@ const getDevicesTableGetCommInterfaces = (): Tabulator.SelectParams => {
   return retVal;
 };
 
-const devicesTable = new Tabulator('#vc-devices-tabulator', {
+const devicesTable = new Tabulator('#device-config-table', {
   data: devices,
   layout: 'fitColumns',
+  height: '85%',
   columns: [
     { title: 'Unit Id', field: 'unitId' },
     { title: 'Driver', field: 'driverName', editable: false },
@@ -76,35 +75,25 @@ const updateStartStopActionButton = (info?: StateChangeInfo) => {
 //  IPC handler
 // ================================================================================================
 const ipc = new IpcHandler();
-
-ipc.on('mainLogEntry', async (entry) => mainLog.add(entry));
 // ************************************************************************************************
 
 // ================================================================================================
 //  Status handler
 // ================================================================================================
 const status = new StatusHandler({
-  procedureStatusElementId: 'vc-procedure-status',
-  sectionStatusElementId: 'vc-running-section',
-  actionStatusElementId: 'vc-running-action'
+  procedureStatusElementId: 'procedure-status-running-section',
+  sectionStatusElementId: 'procedure-status-running-action',
+  actionStatusElementId: 'procedure-status-current'
 });
 
 status.on('stateChanged', (info) => updateStartStopActionButton(info));
 // ************************************************************************************************
 
 // ================================================================================================
-//  Main log handler
-// ================================================================================================
-const mainLog = new MainLogHandler({
-  tableId: 'vc-session-log'
-});
-// ************************************************************************************************
-
-// ================================================================================================
 //  Device log handler
 // ================================================================================================
 const deviceLog = new DeviceLogHandler({
-  tableId: 'vc-comm-interface-log'
+  tableId: 'tabulator-log-table'
 });
 // ************************************************************************************************
 
@@ -112,7 +101,7 @@ const deviceLog = new DeviceLogHandler({
 //  Results handler
 // ================================================================================================
 const runHandler = new RunHandler({
-  tableId: 'vc-results-tabulator',
+  tableId: 'tabulator-results-table',
   runManager: window.visualCal.runsManager
 });
 // ************************************************************************************************
@@ -121,10 +110,8 @@ const runHandler = new RunHandler({
 //  Procedure handler
 // ================================================================================================
 const procedure = new ProcedureHandler({
-  titleElementId: 'vc-procedure-title',
-  sectionElementId: 'vc-section-select',
-  actionElementId: 'vc-action-select',
-  runTimeElementId: 'vc-run-name-text-input'
+  selectActionElementId: 'action-select',
+  runTimeElementId: 'action-run-name'
 });
 
 procedure.on('ready', () => updateStartStopActionButton());
@@ -136,7 +123,7 @@ procedure.on('runNameChanged', () => updateStartStopActionButton());
 // Bench and device configuration
 // ================================================================================================
 const deviceConfigHandler = new DeviceConfigHandler({
-  configsSelectElementId: 'vc-bench-config-select'
+  configsSelectElementId: 'bench-config-select'
 });
 
 deviceConfigHandler.on('selectedBenchConfigChanged', async (config) => {
@@ -155,24 +142,9 @@ deviceConfigHandler.on('selectedBenchConfigChanged', async (config) => {
 ipc.on('benchConfigsUpdated', async (configs) => {
   if (!user) return;
   user.benchConfigs = configs;
-  deviceConfigHandler.benchConfigHandler.items = configs;
+  deviceConfigHandler.updateConfigs(configs);
 });
 
-// ************************************************************************************************
-
-// ================================================================================================
-// Troubleshooting and reset
-// ================================================================================================
-resetButton.addEventListener('click', () => {
-  const triggerOpts: TriggerOptions = {
-    action: '',
-    section: '',
-    runId: runHandler.currentRunId || ''
-  };
-  session.lastSectionName = undefined;
-  session.lastActionName = undefined;
-  window.visualCal.actionManager.reset(triggerOpts);
-});
 // ************************************************************************************************
 
 // ================================================================================================
@@ -208,12 +180,16 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
 // ================================================================================================
 startStopActionButtonElement.disabled = true;
 
-startStopActionButtonElement.addEventListener('click', (ev) => {
+startStopActionButtonElement.addEventListener('click', async (ev) => {
   ev.preventDefault();
-  const section = procedure.sectionHandler.selectedItem;
-  const action = procedure.actionHandler.selectedItem;
+  const selectedValue = procedure.selectedValue;
+  if (!selectedValue) {
+    alert('Invalid selected section and action.  This is a bug');
+    return;
+  }
+  const section = selectedValue.section;
+  const action = selectedValue.action;
   const runName = procedure.runName ? procedure.runName : new Date().toUTCString();
-  mainLog.clear();
   deviceLog.clear();
   if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
@@ -230,6 +206,12 @@ startStopActionButtonElement.addEventListener('click', (ev) => {
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
+      await ($('#user-instruction-input-modal') as any).modal({
+        backdrop: 'static',
+        keyboard: false,
+        focus: true,
+        show: true
+    });
     const startOpts: StartOptions = {
       actionId: action.name,
       sectionId: section.name,
@@ -249,15 +231,14 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   try {
     devices = [];
     user = viewInfo.user;
-    procedure.setTitle(viewInfo.procedure.name);
     session = viewInfo.session;
-    procedure.sectionHandler.items = viewInfo.sections;
-    deviceConfigHandler.benchConfigHandler.items = viewInfo.user.benchConfigs;
+    procedure.updateSections(viewInfo.sections);
+    deviceConfigHandler.updateConfigs(viewInfo.user.benchConfigs);
     let selectedBenchConfig: BenchConfig | undefined = undefined;
     if (session.configuration && session.configuration.benchConfigName) {
       const selectedBenchConfigName = session.configuration.benchConfigName;
-      selectedBenchConfig = deviceConfigHandler.benchConfigHandler.items.find(b => b.name === selectedBenchConfigName);
-      if (selectedBenchConfig) deviceConfigHandler.benchConfigHandler.selectedItem = selectedBenchConfig;
+      selectedBenchConfig = deviceConfigHandler.selectedValue;
+      if (selectedBenchConfig) deviceConfigHandler.setSelectedValue(selectedBenchConfig);
     }
     deviceConfigurationNodeInfosForCurrentFlow = viewInfo.deviceNodes;
     deviceConfigurationNodeInfosForCurrentFlow.forEach(deviceInfo => {

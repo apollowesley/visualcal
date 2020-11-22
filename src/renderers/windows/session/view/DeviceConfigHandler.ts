@@ -1,5 +1,4 @@
 import { TypedEmitter } from 'tiny-typed-emitter';
-import { SelectHandler } from '../../../components/SelectHandler';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 
 interface ConstructorOptions {
@@ -12,20 +11,47 @@ interface Events {
 
 export class DeviceConfigHandler extends TypedEmitter<Events> {
 
-  private fBenchConfigHandler: SelectHandler<BenchConfig>;
+  private fSelectElement: HTMLSelectElement;
 
   constructor(opts: ConstructorOptions) {
     super();
-    this.fBenchConfigHandler = new SelectHandler({
+    this.fSelectElement = document.createElement('select');
+    ({
       elementId: opts.configsSelectElementId
     });
-    this.fBenchConfigHandler.on('changed', (config) => this.onSelectedBenchConfigChanged(config));
+    this.fSelectElement.addEventListener('change', () => {
+      const selectedValue = this.selectedValue;
+      this.emit('selectedBenchConfigChanged', selectedValue);
+    });
   }
 
-  get benchConfigHandler() { return this.fBenchConfigHandler; }
+  get deviceConfigElement() { return this.fSelectElement; }
 
-  private onSelectedBenchConfigChanged(config?: BenchConfig) {
-    this.emit('selectedBenchConfigChanged', config);
+  get selectedValue() {
+    const selectedOption = this.fSelectElement.selectedOptions[0];
+    if (!selectedOption) return undefined;
+    const selectedValue = JSON.parse(selectedOption.value) as BenchConfig;
+    return selectedValue;
+  }
+
+  setSelectedValue(value: BenchConfig) {
+    for (let index = 0; index < this.fSelectElement.options.length; index++) {
+      const configName = this.fSelectElement.options[index].value;
+      if (configName === value.name) {
+        this.fSelectElement.selectedIndex = index;
+        return;
+      }
+    }
+  }
+
+  updateConfigs(configs: BenchConfig[]) {
+    const deviceConfigSelectElement = this.deviceConfigElement;
+    deviceConfigSelectElement.options.length = 0;
+    configs.forEach(config => {
+      const configEl = document.createElement('option');
+      configEl.label = config.name;
+      configEl.value = config.name;
+    });
   }
 
 }

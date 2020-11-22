@@ -30,18 +30,18 @@ export class StatusHandler extends TypedEmitter<Events> {
     switch (info.state) {
       case 'completed':
         this.fProcedureStatusElement.textContent = 'Ready';
-        this.fSectionStatusElement.textContent = 'None';
-        this.fActionStatusElement.textContent = 'Completed';
+        this.fSectionStatusElement.textContent = 'Section:  None';
+        this.fActionStatusElement.textContent = 'Action:  Completed';
         break;
       case 'started':
         this.fProcedureStatusElement.innerText = 'Running';
-        this.fSectionStatusElement.textContent = info.section;
-        this.fActionStatusElement.textContent = info.action;
+        this.fSectionStatusElement.textContent = `Section:  ${info.section}`;
+        this.fActionStatusElement.textContent = `Action:  ${info.action}`;
         break;
       case 'stopped':
         this.fProcedureStatusElement.textContent = 'Stopped';
-        this.fSectionStatusElement.textContent = 'None';
-        this.fActionStatusElement.textContent = 'None';
+        this.fSectionStatusElement.textContent = 'Section:  None';
+        this.fActionStatusElement.textContent = 'Action:  None';
         break;
     }
     this.emit('stateChanged', info);
