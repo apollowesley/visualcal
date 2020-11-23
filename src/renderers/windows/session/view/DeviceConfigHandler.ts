@@ -12,10 +12,11 @@ interface Events {
 export class DeviceConfigHandler extends TypedEmitter<Events> {
 
   private fSelectElement: HTMLSelectElement;
+  private fConfigs: BenchConfig[] = [];
 
   constructor(opts: ConstructorOptions) {
     super();
-    this.fSelectElement = document.createElement('select');
+    this.fSelectElement = document.getElementById(opts.configsSelectElementId) as HTMLSelectElement;
     ({
       elementId: opts.configsSelectElementId
     });
@@ -30,7 +31,7 @@ export class DeviceConfigHandler extends TypedEmitter<Events> {
   get selectedValue() {
     const selectedOption = this.fSelectElement.selectedOptions[0];
     if (!selectedOption) return undefined;
-    const selectedValue = JSON.parse(selectedOption.value) as BenchConfig;
+    const selectedValue = this.fConfigs.find(c => c.name === selectedOption.value);
     return selectedValue;
   }
 
@@ -47,10 +48,12 @@ export class DeviceConfigHandler extends TypedEmitter<Events> {
   updateConfigs(configs: BenchConfig[]) {
     const deviceConfigSelectElement = this.deviceConfigElement;
     deviceConfigSelectElement.options.length = 0;
+    this.fConfigs = configs;
     configs.forEach(config => {
       const configEl = document.createElement('option');
       configEl.label = config.name;
       configEl.value = config.name;
+      deviceConfigSelectElement.add(configEl);
     });
   }
 
