@@ -233,12 +233,12 @@ startStopActionButtonElement.addEventListener('click', async (ev) => {
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
-      await ($('#user-instruction-input-modal') as any).modal({
-        backdrop: 'static',
-        keyboard: false,
-        focus: true,
-        show: true
-    });
+    //   await ($('#user-instruction-input-modal') as any).modal({
+    //     backdrop: 'static',
+    //     keyboard: false,
+    //     focus: true,
+    //     show: true
+    // });
     const startOpts: StartOptions = {
       actionId: action.name,
       sectionId: section.name,
