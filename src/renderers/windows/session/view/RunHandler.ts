@@ -33,7 +33,7 @@ export class RunHandler extends TypedEmitter<Events> {
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
       layout: 'fitDataFill',
-      height: '90%',
+      height: '95%',
       columns: [
         { title: 'Timestamp', field: 'timestamp' },
         { title: 'Description', field: 'description' },

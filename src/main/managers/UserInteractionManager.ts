@@ -26,7 +26,8 @@ export class UserInteractionManager extends EventEmitter {
         console.error(error.message);
       }
     }
-    await WindowManager.instance.ShowUserInputWindow(request);
+    // await WindowManager.instance.ShowUserInputWindow(request);
+    ipcMain.sendToAll(IpcChannels.user.input.request, request);
   }
 
 }

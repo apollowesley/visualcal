@@ -11,6 +11,7 @@ import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 import { StartOptions } from '../../../../main/managers/ActionManager';
+import { UserInstructionInputHandler } from './UserInstructionInputHandler';
 
 const startStopActionButtonElement = document.getElementById('action-start-stop-button') as HTMLButtonElement;
 let devices: CommunicationInterfaceDeviceNodeConfiguration[] = [];
@@ -68,7 +69,7 @@ const reformatDevicesTable = () => {
 const devicesTable = new Tabulator('#device-config-table', {
   data: devices,
   layout: 'fitDataFill',
-  height: '85%',
+  height: '75%',
   dataChanged: reformatDevicesTable,
   columns: [
     { title: 'Device Id', field: 'unitId' },
@@ -81,7 +82,7 @@ const devicesTable = new Tabulator('#device-config-table', {
 const updateStartStopActionButton = (info?: StateChangeInfo) => {
   let disabled = false;
   // disabled = disabled || !procedure.isReady;
-  // // disabled = disabled || !getSelectedBenchconfig();
+  // disabled = disabled || !getSelectedBenchconfig();
   // disabled = disabled || !procedure.runName || results.getDoesRunExist(procedure.runName);
   startStopActionButtonElement.disabled = disabled;
 
@@ -203,6 +204,22 @@ window.visualCal.actionManager.on('resetError', (error: Error) => {
 // ************************************************************************************************
 
 // ================================================================================================
+// Action errors
+// ================================================================================================
+const userInstructionInputHandler = new UserInstructionInputHandler({
+  modalId: 'user-instruction-input-modal',
+  titleElementId: 'user-instruction-input-modal-title',
+  textElementId: 'user-instruction-input-modal-text',
+  imageElementId: 'user-instruction-input-modal-image',
+  imputFormElementId: 'user-instruction-input-modal-input-form',
+  inputElementId: 'user-instruction-input-modal-input',
+  inputLabelElementId: 'user-instruction-input-modal-input-label',
+  okButtonElementId: 'user-instruction-input-modal-ok-button',
+  stopButtonElementId: 'user-instruction-input-modal-cancel-button'
+});
+// ************************************************************************************************
+
+// ================================================================================================
 // Initialize
 // ================================================================================================
 startStopActionButtonElement.disabled = true;
@@ -233,12 +250,6 @@ startStopActionButtonElement.addEventListener('click', async (ev) => {
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
   } else {
-    //   await ($('#user-instruction-input-modal') as any).modal({
-    //     backdrop: 'static',
-    //     keyboard: false,
-    //     focus: true,
-    //     show: true
-    // });
     const startOpts: StartOptions = {
       actionId: action.name,
       sectionId: section.name,

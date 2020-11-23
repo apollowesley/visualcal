@@ -1,7 +1,7 @@
 {
   "name": "indysoft-visualcal",
   "productName": "VisualCal",
-  "version": "0.1.0-beta.10",
+  "version": "0.1.0-beta.11",
   "description": "VisualCal",
   "private": true,
   "main": "dist/main/index.js",

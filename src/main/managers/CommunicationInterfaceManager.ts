@@ -11,6 +11,7 @@ import { IpcChannels as BenchConfigIpcChannels } from 'visualcal-common/dist/ben
 import { getSerialPorts } from '../../drivers/utils';
 import { logToCurrentActionRun } from './current-action-log-handler';
 import electronLog from 'electron-log';
+import { SerialInterface } from '../../drivers/communication-interfaces/SerialInterface';
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
@@ -127,6 +128,16 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
         });
         niGpib.address = info.nationalInstrumentsGpib.address;
         break;
+       case 'Serial Port':
+         iface = new SerialInterface();
+         const serialInterface = iface as SerialInterface;
+         if (!info.serial) throw new Error('Serial communication interface configuration is missing');
+         serialInterface.configure({
+           id: info.name,
+           portName: info.serial.port,
+           baudRate: info.serial.baudRate
+         });
+         break;
     }
     if (!iface) throw new Error(`Unknown communication interface type, ${info.type}`);
     iface.name = info.name;

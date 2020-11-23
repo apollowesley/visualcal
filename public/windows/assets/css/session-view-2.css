@@ -1,5 +1,6 @@
 html, body {
   height: 99vh;
+  overflow: hidden;
 }
 
 body {
@@ -13,5 +14,20 @@ body {
 
 .top-row-block {
   width: 33.333333333%;
+}
+
+.scrollable-block {
+  overflow-y: auto;
+}
+
+.modal {
+  text-align: center;
+}
+
+.modal-dialog-centered {
+  text-align: left;
+  max-width: 100%;
+  width: auto !important;
+  display: inline-block;
 }
 
