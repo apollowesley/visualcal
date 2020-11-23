@@ -93,9 +93,13 @@ namespace ni_gpib_dotnet_core
       try
       {
         string dataString = BitConverter.ToString(data);
-        Console.Write("Writing data: ");
+        Console.Write("Writing data to device address ");
+        Console.Write(deviceAddress.ToString());
+        Console.Write(":  ");
         Console.WriteLine(dataString);
         device = new Device(board.PrimaryAddress, deviceAddress);
+        Console.Write("Device address:  ");
+        Console.WriteLine(device.PrimaryAddress.ToString());
         device.Write(data);
         return await Task.FromResult(true);
       }
