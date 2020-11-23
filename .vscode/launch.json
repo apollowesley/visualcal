@@ -31,9 +31,8 @@
         "runtimeExecutable": "${workspaceFolder}\\node_modules\\.bin\\electron.cmd"
       },
       "env": {
-        "VUE_SERVER": "http://localhost:8080/vue"
+        "VUE_SERVER": "http://localhost:8081/vue"
       },
-      "preLaunchTask": "tsc: build - tsconfig.json - Windows",
       "args": ["--disable-gpu"],
       "program": "${workspaceFolder}/src/main/index.ts",
       "sourceMaps": true,

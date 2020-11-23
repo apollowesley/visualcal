@@ -172,15 +172,17 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
   protected onDisconnect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       try {
-        if (!this.fHandle) return reject('Not connected');
+        if (!this.fHandle) return resolve();
         const edgeDisconnect = this.getEdgeFunction<DisconnectInput, boolean>('Disconnect');
         edgeDisconnect({
           handle: this.fHandle
         }, (err) => {
+          this.fHandle = undefined;
           if (err) return reject(err);
           return resolve();
         });
       } catch (error) {
+        this.fHandle = undefined;
         return reject(error);
       }
     });

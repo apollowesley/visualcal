@@ -29,6 +29,20 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     this.fActionSelectElement = document.getElementById(opts.selectActionElementId) as HTMLSelectElement;
     this.fActionSelectElement.addEventListener('change', () => {
       const selectedValue = this.selectedValue;
+      let foundSelectedOption = false;
+      for (let index = 0; index < this.fActionSelectElement.options.length; index++) {
+        const option = this.fActionSelectElement.options[index];
+        const actionValue = JSON.parse(option.value) as SelectActionValue;
+        if (option.selected) foundSelectedOption = true;
+        option.label = option.selected ? `${actionValue.section.name} - ${actionValue.action.name}` : actionValue.action.name;
+      }
+      if (!foundSelectedOption) {
+        const firstOption = this.fActionSelectElement.options[0];
+        if (firstOption) {
+          const firstOptionActionValue = JSON.parse(firstOption.value) as SelectActionValue;
+          this.fActionSelectElement.selectedOptions[0].label = `${firstOptionActionValue.section.name} - ${firstOptionActionValue.action.name}`;
+        }
+      }
       this.onActionChanged(selectedValue);
     });
 
@@ -70,6 +84,7 @@ export class ProcedureHandler extends TypedEmitter<Events> {
         sectionGroupdEl.append(actionEl);
       });
     });
+    actionSelectElement.dispatchEvent(new Event('change'));
     this.onCheckRunStateAndNotify();
   }
 
