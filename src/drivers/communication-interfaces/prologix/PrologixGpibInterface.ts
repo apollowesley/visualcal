@@ -19,8 +19,12 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   private fTextDecoder = new TextDecoder();
   private fReadTimoutTimerId?: NodeJS.Timeout;
   private fWriteTimoutTimerId?: NodeJS.Timeout;
+  private fLastSetDeviceAddress?: number;
+  private fLastSetTerminator?: EndOfStringTerminator;
 
   async onConnected() {
+    this.fLastSetDeviceAddress = undefined;
+    this.fLastSetTerminator = undefined;
     await super.onConnected();
     if (this.resetOnConnect) await this.reset();
     // const version = await this.getVersion();
@@ -185,6 +189,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   // }
 
   async setDeviceAddress(address: number): Promise<void> {
+    if (this.fLastSetDeviceAddress && this.fLastSetDeviceAddress === address) return;
+    this.fLastSetDeviceAddress = address;
     await this.writeString(`++addr ${address}`);
   }
 
@@ -209,6 +215,8 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void> {
+    if (this.fLastSetTerminator && this.fLastSetTerminator === eos) return;
+    this.fLastSetTerminator = eos;
     switch (eos) {
       case 'CrLf':
         await this.writeString('++eos 0');
