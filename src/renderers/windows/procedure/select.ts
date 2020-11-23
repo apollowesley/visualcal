@@ -46,6 +46,6 @@ createButton.onclick = (ev) => {
   ipcRenderer.send(IpcChannels.windows.showCreateProcedure);
 }
 
-ipcRenderer.on(IpcChannels.procedures.selectData, (_, items: ProcedureInfo[]) => {
-  existingProceduresTable.setData(items);
+ipcRenderer.on(IpcChannels.procedures.selectData, async (_, items: ProcedureInfo[]) => {
+  await existingProceduresTable.setData(items);
 });

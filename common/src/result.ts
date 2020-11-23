@@ -74,6 +74,7 @@ export interface CommInterfaceLogEntry {
   timestamp?: Date,
   interfaceName: string;
   message: string;
+  type?: string;
   error?: Error | string;
   data?: ArrayBuffer | string | number;
   deviceName?: string;

@@ -47,8 +47,8 @@ createButton.onclick = (ev) => {
   ipcRenderer.send(IpcChannels.windows.showCreateSession, activeProcedureName);
 }
 
-ipcRenderer.on(IpcChannels.session.getAllForActiveUser.response, (_, sessions: Session[]) => {
-  existingSessionsTable.setData(sessions.filter(s => s.procedureName === activeProcedureName));
+ipcRenderer.on(IpcChannels.session.getAllForActiveUser.response, async (_, sessions: Session[]) => {
+  await existingSessionsTable.setData(sessions.filter(s => s.procedureName === activeProcedureName));
 });
 
 ipcRenderer.on(IpcChannels.procedures.getActive.response, (_, procedureName: string) => {

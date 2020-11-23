@@ -57,14 +57,14 @@ createInterfaceButton.addEventListener('click', () => {
   window.visualCal.electron.showCreateCommIfaceWindow();
 });
 
-window.addEventListener('initial-load-data-received', (e) => {
+window.addEventListener('initial-load-data-received', async (e) => {
   const ce = e as CustomEvent;
   const data = ce.detail as VisualCalWindowInitialLoadData | undefined;
   if (!data || !data.user) {
     window.visualCal.electron.showErrorDialog(new Error('Expected initial window load data, but it was undefined'));
     return;
   }
-  commInterfacesTable.setData(data.user.benchConfigs[0].interfaces);
+  await commInterfacesTable.setData(data.user.benchConfigs[0].interfaces);
 });
 
 ipcRenderer.on(IpcChannels.user.benchConfig.removeCommInterface.response, (_, name: string) => {

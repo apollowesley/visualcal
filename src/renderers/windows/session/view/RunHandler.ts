@@ -18,11 +18,21 @@ export class RunHandler extends TypedEmitter<Events> {
   private fTable: Tabulator;
   private fCurrentRun?: LogicRun<string, number>;
 
+  private getPassedCellFormatter(cell: Tabulator.CellComponent) {
+    const passed = cell.getData() as string === 'passed';
+    const divEl = document.createElement('div');
+    divEl.innerText = passed ? 'Pass' : 'Fail';
+    divEl.style.height = '100%';
+    divEl.style.width = '100%';
+    divEl.style.color = passed ? '#2fb553' : '#fc3535';
+    return divEl;
+  }
+
   constructor(opts: ConstructorOptions) {
     super();
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
-      layout: 'fitColumns',
+      layout: 'fitDataFill',
       height: '90%',
       columns: [
         { title: 'Timestamp', field: 'timestamp' },
@@ -34,7 +44,7 @@ export class RunHandler extends TypedEmitter<Events> {
         { title: 'Maximum', field: 'maximum' },
         { title: 'Raw', field: 'rawValue' },
         { title: 'Measured', field: 'measuredValue' },
-        { title: 'Passed', field: 'passed' }
+        { title: 'Result', field: 'passed', formatter: this.getPassedCellFormatter }
       ]
     });
 
@@ -46,7 +56,8 @@ export class RunHandler extends TypedEmitter<Events> {
     this.fRunManager.on('resultAdded', async (result) => {
       if (!this.fCurrentRun) return;
       this.fCurrentRun.results.push(result);
-      await this.fTable.setData(this.fCurrentRun.results);
+      await this.fTable.addRow(result);
+      this.fTable.redraw(true);
     });
   }
 

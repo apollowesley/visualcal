@@ -1,5 +1,4 @@
 import Tabulator from 'tabulator-tables';
-import { TriggerOptions } from '../../../../nodes/indysoft-action-start-types';
 import { StateChangeInfo } from '../../../managers/RendererActionManager';
 import { DeviceConfigHandler } from './DeviceConfigHandler';
 import { DeviceLogHandler } from './DeviceLogHandler';
@@ -39,15 +38,43 @@ const getDevicesTableGetCommInterfaces = (): Tabulator.SelectParams => {
   return retVal;
 };
 
+function getIsDeviceGpibAddressEditable(cell: Tabulator.CellComponent) {
+  const deviceConfig = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
+  const selectedInterface = getBenchConfigurationInterfaces().find(i => i.name === deviceConfig.interfaceName);
+  if (!selectedInterface) return false;
+  return selectedInterface.type === 'National Instruments GPIB' || selectedInterface.type === 'Prologix GPIB TCP' || selectedInterface.type === 'Prologix GPIB USB';
+}
+
+function getDeviceGpibAddressFormatter(cell: Tabulator.CellComponent) {
+  const deviceConfig = cell.getRow().getData() as CommunicationInterfaceDeviceNodeConfiguration;
+  const isGpibInterfaceSelected = getIsDeviceGpibAddressEditable(cell);
+  const divElement = document.createElement('div');
+  divElement.style.height = '100%';
+  divElement.style.width = '100%';
+  if (isGpibInterfaceSelected) {
+    divElement.innerText = deviceConfig.gpibAddress.toString();
+  } else {
+    divElement.innerText = '';
+    divElement.style.backgroundColor = 'silver';
+  }
+  return divElement;
+}
+
+const reformatDevicesTable = () => {
+  devicesTable.getRows().forEach(row => row.reformat());
+  devicesTable.redraw(true);
+};
+
 const devicesTable = new Tabulator('#device-config-table', {
   data: devices,
-  layout: 'fitColumns',
+  layout: 'fitDataFill',
   height: '85%',
+  dataChanged: reformatDevicesTable,
   columns: [
-    { title: 'Unit Id', field: 'unitId' },
-    { title: 'Driver', field: 'driverName', editable: false },
-    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: () => getDevicesTableGetCommInterfaces() },
-    { title: 'GPIB Address', field: 'gpibAddress', editor: 'number' }
+    { title: 'Device Id', field: 'unitId' },
+    { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: getDevicesTableGetCommInterfaces },
+    { title: 'Driver', field: 'driverName', editor: 'select' },
+    { title: 'GPIB Address', field: 'gpibAddress', editable: getIsDeviceGpibAddressEditable, editor: 'number', formatter: getDeviceGpibAddressFormatter }
   ]
 });
 

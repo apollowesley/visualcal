@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { CommInterfaceLogEntry } from 'visualcal-common/dist/result';
+import { data } from 'jquery';
 
 interface ConstructorOptions {
   tableId: string;
@@ -22,34 +23,40 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
     super();
     this.fTable = new Tabulator(`#${opts.tableId}`, {
       data: [],
-      layout: 'fitColumns',
+      layout: 'fitDataStretch',
       height: '90%',
       columns: [
         { title: 'Interface Name', field: 'interfaceName' },
         { title: 'Device name', field: 'deviceName' },
-        { title: 'Message', field: 'message' }
+        { title: 'Type', field: 'type', minWidth: 300 },
+        { title: 'Data / Command / Message', field: 'message' }
       ]
     });
 
-    window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => await this.add({ interfaceName: info.interfaceName, message: 'Connected' }));
-    window.visualCal.communicationInterfaceManager.on('interfaceConnecting', async (info) => await this.add({ interfaceName: info.interfaceName, message: 'Connecting' }));
-    window.visualCal.communicationInterfaceManager.on('interfaceDisconnecting', async (info) => await this.add({ interfaceName: info.interfaceName, message: 'Disconnecting' }));
-    window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await this.add({ interfaceName: info.interfaceName, message: 'Disconnected' }));
-    window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await this.add({ interfaceName: info.interfaceName, message: `Error:  ${info.err.message}` }));
-    window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await this.add({ interfaceName: info.interfaceName, message: `Data received: ${info.data}` }));
+    window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Connected' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceConnecting', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Connecting' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceDisconnecting', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Disconnecting' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Disconnected' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Error', message: info.err.message }));
+    window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Data received', message: info.data }));
     window.visualCal.communicationInterfaceManager.on('interfaceBeforeWrite', async (info) => {
       const dataString = new TextDecoder().decode(info.data);
-      await this.add({ interfaceName: info.interfaceName, message: `Sending data: ${dataString}` });
+      await this.add({ interfaceName: info.interfaceName, type: 'Sending data', message: dataString });
     });
     window.visualCal.communicationInterfaceManager.on('interfaceAfterWrite', async (info) => {
       const dataString = new TextDecoder().decode(info.data);
-      await this.add({ interfaceName: info.interfaceName, message: `Data sent: ${dataString}` });
+      await this.add({ interfaceName: info.interfaceName, type: 'Data sent', message: dataString });
     });
 
-    ipcRenderer.on(IpcChannels.device.onReadString, async (_, info: { interfaceName: string, deviceName: string, data: string }) => await this.add({ interfaceName: info.interfaceName, deviceName: info.deviceName, message: `Data received: ${info.data}` }));
-    ipcRenderer.on(IpcChannels.device.onWrite, async (_, info: { interfaceName: string, deviceName: string, data: ArrayBuffer }) => {
-      const dataString = Array.isArray(info.data) ? new TextDecoder().decode(info.data) : info.data;
-      await this.add({ interfaceName: info.interfaceName, deviceName: info.deviceName, message: `Data sent: ${dataString}` });
+    ipcRenderer.on(IpcChannels.device.onReadString, async (_, info: { interfaceName: string, deviceName: string, data: string }) => await this.add({ interfaceName: info.interfaceName, type: 'Data received', deviceName: info.deviceName, message: info.data }));
+    ipcRenderer.on(IpcChannels.device.onWrite, async (_, info: { interfaceName: string, deviceName: string, data: ArrayBuffer | string }) => {
+      let dataString = '';
+      if (Array.isArray(info.data) && typeof info.data === 'object') {
+        dataString = new TextDecoder().decode(info.data as ArrayBufferLike);
+      } else {
+        dataString = info.data as string;
+      }
+      await this.add({ interfaceName: info.interfaceName, type: 'Data sent', deviceName: info.deviceName, message: dataString });
     });
   }
 
