@@ -70,7 +70,7 @@
     "sanitize-filename": "^1.6.3",
     "serialport": "^9.0.2",
     "source-map-support": "^0.5.19",
-    "tabulator-tables": "^4.8.4",
+    "tabulator-tables": "^4.9.1",
     "tingodb": "^0.6.1",
     "tiny-typed-emitter": "^2.0.3",
     "udp-discovery": "^2.0.1",

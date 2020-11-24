@@ -35,7 +35,7 @@ export class RunHandler extends TypedEmitter<Events> {
       layout: 'fitDataFill',
       height: '95%',
       columns: [
-        { title: 'Timestamp', field: 'timestamp' },
+        { title: 'Timestamp', field: 'timestamp', formatter: 'datetime' },
         { title: 'Description', field: 'description' },
         { title: 'Base EU', field: 'baseQuantity' },
         { title: 'Derived EU', field: 'derivedQuantity' },
