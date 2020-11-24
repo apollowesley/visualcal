@@ -6,147 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>IndySoft VisualCal</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/superhero.min.css">
-    <link rel="stylesheet" href="assets/css/session-view.css">
+    <link rel="stylesheet" href="assets/css/session-view-2.css">
     <link rel="stylesheet" href="assets/css/tabulator.min.css">
 <script src="assets/js/jquery.min.js"></script>
 </head>
 
 <body>
-    <div class="container-fluid session-view-container">
-        <div class="row row-config-status">
-            <div class="col">
-                <div class="card top-card">
-                    <div class="card-body">
-                        <h4 class="card-title">Configuration</h4>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-bench-config-select">Select a bench configuration</label><select id="vc-bench-config-select" style="width: 100%;" required=""></select></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div id="vc-devices-tabulator" class="design-visible tabulator-table" style="min-height: 100px;max-height: 250px;"></div>
-                            </div>
-                        </div>
+    <div class="h-100">
+        <div class="modal fade" role="dialog" tabindex="-1" id="user-instruction-input-modal">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="user-instruction-input-modal-title">Modal Title</h4><button type="button" class="close collapse" data-dismiss="modal" aria-label="Close" id="user-instruction-input-modal-close-button"><span aria-hidden="true">×</span></button></div>
+                    <div class="modal-body">
+                        <p id="user-instruction-input-modal-text">The content of your modal.</p><img id="user-instruction-input-modal-image" class="collapse rounded mx-auto d-block">
+                        <form id="user-instruction-input-modal-input-form" class="collapse">
+                            <div class="form-group"><label id="user-instruction-input-modal-input-label" for="user-instruction-input-modal-input">Enter a value</label><input class="form-control" type="text" id="user-instruction-input-modal-input"></div>
+                        </form>
                     </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card top-card" id="vc-card-sections">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h4>Procedure:&nbsp;</h4>
-                            </div>
-                            <div class="col">
-                                <h4 id="vc-procedure-title">title&nbsp;</h4>
-                            </div>
-                        </div>
-                        <div class="row" style="margin: 10px;">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" required="" style="width: 100%;"></select></div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin: 10px;">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-action-select">Select an action</label><select id="vc-action-select" style="width: 100%;" required=""></select></div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin-right: 10px;margin-left: 10px;">
-                            <div class="col">
-                                <div class="form-group"><label for="vc-run-name-text-input">Optionally give this run a name (Defaults to date/time)</label><input type="text" id="vc-run-name-text-input" style="width: 100%;" required=""></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-check"><input class="form-check-input" type="checkbox" id="vc-intercept-device-writes"><label class="form-check-label" for="vc-intercept-device-writes">Intercept device writes</label></div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin: 10px;">
-                            <div class="col text-center" id="vc-start-button"><button class="btn btn-primary" id="vc-start-stop-button" type="button">Start</button></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card top-card">
-                    <div class="card-body">
-                        <h4 class="card-title">State</h4>
-                        <div class="row">
-                            <div class="col-4">
-                                <h4 class="status-label">Status:</h4>
-                            </div>
-                            <div class="col">
-                                <h4 id="vc-procedure-status" class="status-value">Ready</h4>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <h4 class="status-label">Section:</h4>
-                            </div>
-                            <div class="col">
-                                <h4 id="vc-running-section" class="status-value">None</h4>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <h4 class="status-label">Action:</h4>
-                            </div>
-                            <div class="col">
-                                <h4 id="vc-running-action" class="status-value">None</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card top-card">
-                    <div class="card-body">
-                        <h4 class="text-left card-title">Troubleshooting</h4>
-                        <h6>Action isn't starting?</h6><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
+                    <div class="modal-footer"><button class="btn btn-primary w-25" id="user-instruction-input-modal-ok-button" type="button">Ok</button><button class="btn btn-light w-25" data-toggle="tooltip" data-bs-tooltip="" id="user-instruction-input-modal-cancel-button" type="button"
+                            data-dismiss="modal" data-placement="top" title="Stops the action">Stop</button></div>
                 </div>
             </div>
         </div>
-        <div class="row row-results">
-            <div class="col-12 h-50">
-                <div class="card" id="vc-card-results">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-auto align-self-center">
-                                <h4>Results</h4>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div id="vc-results-tabulator" class="design-visible"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="d-flex h-25 p-1">
+            <div class="d-flex flex-column mr-1 p-1 view-block top-row-block">
+                <form>
+                    <h5>Communication</h5>
+                    <div class="form-group"><label>Bench Configuration</label><select class="form-control" id="bench-config-select"></select></div>
+                </form>
+                <div id="device-config-table"></div>
+            </div>
+            <div class="mr-1 p-1 view-block top-row-block scrollable-block">
+                <h5>Procedure</h5>
+                <form style="margin: 5px;">
+                    <div class="form-group"><label for="action-select">Action</label><select class="form-control" id="action-select"></select></div>
+                    <div class="form-group"><label for="action-run-name">Run name (defaults to current date/time)</label><input class="form-control" type="text" id="action-run-name"></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" id="action-intercept-device-commands" for="formCheck-1">Intercept commands sent to instruments</label></div><button class="btn btn-primary w-25"
+                        id="action-start-stop-button" type="button" style="margin: 10px;">Start</button></form>
+            </div>
+            <div class="p-1 view-block top-row-block">
+                <h5>Status</h5>
+                <!-- Start: Section -->
+                <h6 id="procedure-status-running-section">Stopped</h6>
+                <!-- End: Section -->
+                <!-- Start: Action -->
+                <h6 id="procedure-status-running-action">Section:&nbsp; None</h6>
+                <!-- End: Action -->
+                <!-- Start: Procedure Run State -->
+                <h6 id="procedure-status-current">Action:&nbsp; None</h6>
+                <!-- End: Procedure Run State -->
             </div>
         </div>
-        <div class="row row-logs">
-            <div class="col">
-                <div class="card card-bottom">
-                    <div class="card-body">
-                        <h4 class="card-title">Main Log</h4>
-                        <div id="vc-session-log" class="design-visible"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                    <div class="card-body card-bottom">
-                        <h4 class="card-title">Communication Log</h4>
-                        <div class="row">
-                            <div class="col">
-                                <div id="vc-comm-interface-log" class="design-visible"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex flex-column h-50 w-98 m-1 p-1 view-block">
+            <h5>Results</h5>
+            <div id="tabulator-results-table"></div>
+        </div>
+        <div class="d-flex flex-column h-25 w-98 m-1 p-1 view-block">
+            <h5>Log</h5>
+            <div id="tabulator-log-table" class="mb-2"></div>
         </div>
     </div>
     <script src="assets/js/jquery.min.js"></script>

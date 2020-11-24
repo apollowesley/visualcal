@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>IndySoft VisualCal</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/superhero.min.css">
+    <link rel="stylesheet" href="assets/css/session-view.css">
+    <link rel="stylesheet" href="assets/css/tabulator.min.css">
+<script src="assets/js/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid session-view-container">
+        <div class="row row-config-status">
+            <div class="col">
+                <div class="card top-card">
+                    <div class="card-body">
+                        <h4 class="card-title">Configuration</h4>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group"><label for="vc-bench-config-select">Select a bench configuration</label><select id="vc-bench-config-select" style="width: 100%;" required=""></select></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div id="vc-devices-tabulator" class="design-visible tabulator-table" style="min-height: 100px;max-height: 250px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card top-card" id="vc-card-sections">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4>Procedure:&nbsp;</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-procedure-title">title&nbsp;</h4>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col">
+                                <div class="form-group"><label for="vc-section-select">Select a section</label><select id="vc-section-select" required="" style="width: 100%;"></select></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col">
+                                <div class="form-group"><label for="vc-action-select">Select an action</label><select id="vc-action-select" style="width: 100%;" required=""></select></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-right: 10px;margin-left: 10px;">
+                            <div class="col">
+                                <div class="form-group"><label for="vc-run-name-text-input">Optionally give this run a name (Defaults to date/time)</label><input type="text" id="vc-run-name-text-input" style="width: 100%;" required=""></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="vc-intercept-device-writes"><label class="form-check-label" for="vc-intercept-device-writes">Intercept device writes</label></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col text-center" id="vc-start-button"><button class="btn btn-primary" id="vc-start-stop-button" type="button">Start</button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card top-card">
+                    <div class="card-body">
+                        <h4 class="card-title">State</h4>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Status:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-procedure-status" class="status-value">Ready</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Section:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-running-section" class="status-value">None</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <h4 class="status-label">Action:</h4>
+                            </div>
+                            <div class="col">
+                                <h4 id="vc-running-action" class="status-value">None</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card top-card">
+                    <div class="card-body">
+                        <h4 class="text-left card-title">Troubleshooting</h4>
+                        <h6>Action isn't starting?</h6><button class="btn btn-primary btn-danger" id="vc-reset-button" type="button">Reset</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-results">
+            <div class="col-12 h-50">
+                <div class="card" id="vc-card-results">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto align-self-center">
+                                <h4>Results</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div id="vc-results-tabulator" class="design-visible"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-logs">
+            <div class="col">
+                <div class="card card-bottom">
+                    <div class="card-body">
+                        <h4 class="card-title">Main Log</h4>
+                        <div id="vc-session-log" class="design-visible"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body card-bottom">
+                        <h4 class="card-title">Communication Log</h4>
+                        <div class="row">
+                            <div class="col">
+                                <div id="vc-comm-interface-log" class="design-visible"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/visualcal.js"></script>
+    <script src="assets/js/moment.min.js"></script>
+</body>
+
+</html>
