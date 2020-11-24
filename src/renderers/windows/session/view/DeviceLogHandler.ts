@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid';
 import { ipcRenderer } from 'electron';
 import { IpcChannels } from '../../../../constants';
 import { CommInterfaceLogEntry } from 'visualcal-common/dist/result';
-import { data } from 'jquery';
 
 interface ConstructorOptions {
   tableId: string;
@@ -12,6 +11,8 @@ interface ConstructorOptions {
 
 interface Events {
   entryAdded: (entry: CommInterfaceLogEntry) => void;
+  interfaceConnected: (interfaceName: string) => void;
+  interfaceDisconnected: (interfaceName: string) => void;
 }
 
 export class DeviceLogHandler extends TypedEmitter<Events> {
@@ -33,10 +34,16 @@ export class DeviceLogHandler extends TypedEmitter<Events> {
       ]
     });
 
-    window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Connected' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceConnected', async (info) => {
+      await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Connected' });
+      this.emit('interfaceConnected', info.interfaceName);
+    });
     window.visualCal.communicationInterfaceManager.on('interfaceConnecting', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Connecting' }));
     window.visualCal.communicationInterfaceManager.on('interfaceDisconnecting', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Disconnecting' }));
-    window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Disconnected' }));
+    window.visualCal.communicationInterfaceManager.on('interfaceDisconnected', async (info) => {
+      await this.add({ interfaceName: info.interfaceName, type: 'Connection', message: 'Disconnected' });
+      this.emit('interfaceDisconnected', info.interfaceName);
+    });
     window.visualCal.communicationInterfaceManager.on('interfaceError', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Error', message: info.err.message }));
     window.visualCal.communicationInterfaceManager.on('interfaceStringReceived', async (info) => await this.add({ interfaceName: info.interfaceName, type: 'Data received', message: info.data }));
     window.visualCal.communicationInterfaceManager.on('interfaceBeforeWrite', async (info) => {

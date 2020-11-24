@@ -75,7 +75,8 @@ const devicesTable = new Tabulator('#device-config-table', {
     { title: 'Device Id', field: 'unitId' },
     { title: 'Interface', field: 'interfaceName', editor: 'select', editorParams: getDevicesTableGetCommInterfaces },
     { title: 'Driver', field: 'driverName', editor: 'select' },
-    { title: 'GPIB Address', field: 'gpibAddress', editable: getIsDeviceGpibAddressEditable, editor: 'number', formatter: getDeviceGpibAddressFormatter }
+    { title: 'GPIB Address', field: 'gpibAddress', editable: getIsDeviceGpibAddressEditable, editor: 'number', formatter: getDeviceGpibAddressFormatter },
+    { title: 'State', field: 'state' }
   ]
 });
 
@@ -123,6 +124,26 @@ status.on('stateChanged', (info) => updateStartStopActionButton(info));
 const deviceLog = new DeviceLogHandler({
   tableId: 'tabulator-log-table'
 });
+
+const updateDeviceInterfaceConnectionState = async (interfaceName: string, state: string) => {
+  const deviceConfigs = devicesTable.getData() as CommunicationInterfaceDeviceNodeConfiguration[];
+  deviceConfigs.forEach(config => {
+    if (config.interfaceName === interfaceName) {
+      (config as any).state = state;
+    }
+  });
+  await devicesTable.setData(deviceConfigs);
+  devicesTable.redraw(true);
+}
+
+deviceLog.on('interfaceConnected', async (interfaceName) => {
+  updateDeviceInterfaceConnectionState(interfaceName, 'Connected');
+});
+
+deviceLog.on('interfaceDisconnected', async (interfaceName) => {
+  updateDeviceInterfaceConnectionState(interfaceName, 'Disconnected');
+});
+
 // ************************************************************************************************
 
 // ================================================================================================
@@ -163,7 +184,10 @@ deviceConfigHandler.on('selectedBenchConfigChanged', async (config) => {
     session.configuration.benchConfigName = config.name;
   }
   ipcRenderer.send(IpcChannels.session.update.request, session);
-  devices.forEach(d => d.interfaceName = '');
+  devices.forEach(d => {
+    d.interfaceName = '';
+    (d as any).state = 'Disconnected';
+  });
   await devicesTable.setData(devices);
 });
 
@@ -302,6 +326,7 @@ const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
         if (deviceIndex > -1) devices[deviceIndex] = d;
       });
     }
+    devices.forEach(d => (d as any).state = 'Disconnected');
     await devicesTable.setData(devices);
   } catch (error) {
     window.visualCal.electron.showErrorDialog(error);
