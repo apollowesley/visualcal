@@ -35,6 +35,7 @@ const selectSessionWindow = () => createWindowOptions(VisualCalWindow.SelectSess
 const updateAppWindow = () => createWindowOptions(VisualCalWindow.UpdateApp, 'update-app.html', 'bootstrap', { height: 750, width: 1000, title: 'Update' });
 const benchConfigView = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.BenchConfigView, 'bench-configurations-view.html', 'bootstrap', { height: 850, width: 1200, title: 'Bench Configurations', parent, modal: true });
 const deviceBeforeWrite = (parent: BrowserWindow) => createWindowOptions(VisualCalWindow.DeviceBeforeWrite, 'device-before-write.html', 'bootstrap', { height: 850, width: 1200, title: 'Device - Before write', parent, modal: true });
+const browserViewTest = () => createWindowOptions(VisualCalWindow.BrowserViewTest, 'browser-view-test-main.html', 'bootstrap', { title: 'BrowserView Test' });
 
 export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
   switch (id) {
@@ -71,6 +72,8 @@ export const getConfig = (id: VisualCalWindow, parent?: BrowserWindow) => {
     case VisualCalWindow.DeviceBeforeWrite:
       if (!parent) throw new Error('Parent window is required');
       return deviceBeforeWrite(parent);
+    case VisualCalWindow.BrowserViewTest:
+      return browserViewTest();
     default:
       throw new Error(`Invalid window Id, ${id}`);
   }

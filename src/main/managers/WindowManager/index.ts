@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserWindowConstructorOptions, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
+import { app, BrowserView, BrowserWindow, BrowserWindowConstructorOptions, dialog, ipcMain, OpenDialogOptions, SaveDialogOptions, WebContents } from 'electron';
 import SerialPort from 'serialport';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { IpcChannels, VisualCalWindow } from '../../../constants';
@@ -12,6 +12,7 @@ import VisualCalNodeRedSettings from '../../node-red/settings';
 import { CommunicationInterfaceTypes } from 'visualcal-common/dist/bench-configuration';
 import { DriverBuilder } from '../DriverBuilder';
 import { NodeRedManager } from '../NodeRedManager';
+import path from 'path';
 
 const log = electronLog.scope('WindowManager');
 
@@ -482,6 +483,15 @@ export class WindowManager extends TypedEmitter<Events> {
       subPath: getSubPath(VisualCalWindow.GridstackTest)
     });
     return w;
+  }
+
+  async showBrowserViewTestWindow() {
+    const w = await this.createWindow(VisualCalWindow.BrowserViewTest);
+    const bv1 = new BrowserView();
+    bv1.setBounds({ x: 20, y: 20, width: 50, height: 50});
+    w.addBrowserView(bv1);
+    w.maximize();
+    await bv1.webContents.loadFile(path.join(global.visualCal.dirs.html.bootstrapStudio, 'loading.html'));
   }
 
 }

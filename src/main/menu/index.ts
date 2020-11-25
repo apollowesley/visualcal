@@ -171,6 +171,10 @@ const create: () => Array<MenuItemConstructorOptions> = () => {
       {
         label: 'Gridstack Test',
         click: async () => await WindowManager.instance.showGridstackTestWindow()
+      },
+      {
+        label: 'BrowserView Test',
+        click: async () => await WindowManager.instance.showBrowserViewTestWindow()
       }
     ]
   })

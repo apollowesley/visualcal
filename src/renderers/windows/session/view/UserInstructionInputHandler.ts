@@ -16,6 +16,7 @@ interface ConstructorOptions {
   inputElementId: string;
   okButtonElementId: string;
   stopButtonElementId: string;
+  closeButtonElementId: string;
 }
 
 export class UserInstructionInputHandler extends TypedEmitter<Events> {
@@ -29,6 +30,8 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
   private fInputElement: HTMLInputElement;
   private fOkButtonElement: HTMLButtonElement;
   private fStopButtonElement: HTMLButtonElement;
+  private fCloseButtonElement: HTMLButtonElement; // Unused button, but can't remove it in Bootstrap Studio
+
   private fLastRequest?: UserInputRequest;
 
   constructor(opts: ConstructorOptions) {
@@ -42,8 +45,11 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     this.fInputElement = document.getElementById(opts.inputElementId) as HTMLInputElement;
     this.fOkButtonElement = document.getElementById(opts.okButtonElementId) as HTMLButtonElement;
     this.fStopButtonElement = document.getElementById(opts.stopButtonElementId) as HTMLButtonElement;
+    this.fCloseButtonElement = document.getElementById(opts.closeButtonElementId) as HTMLButtonElement;
 
-    this.fOkButtonElement.addEventListener('click', async () => {
+    this.fCloseButtonElement.classList.remove('close');
+
+    const handleOkButtonClickOrFormSubmit = async (event: Event) => {
       if (!this.fLastRequest) return;
       const response: UserInputResponse = {
         action: this.fLastRequest.action,
@@ -67,6 +73,15 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
       }
       ipcRenderer.send(IpcChannels.user.input.result, response);
       await this.close();
+    }
+
+    this.fInputFormElement.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      await handleOkButtonClickOrFormSubmit(event);
+    });
+
+    this.fOkButtonElement.addEventListener('click', async (event) => {
+      await handleOkButtonClickOrFormSubmit(event);
     });
 
     this.fStopButtonElement.addEventListener('click', () => {

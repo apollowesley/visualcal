@@ -19,7 +19,8 @@ export const enum VisualCalWindow {
   VueTestWindow = 'vue-test-window',
   Results = 'results',
   DriverBuilder = 'driver-builder',
-  GridstackTest = 'gridstack-test'
+  GridstackTest = 'gridstack-test',
+  BrowserViewTest = 'browser-view-test'
 }
 
 export const enum WindowPathType {

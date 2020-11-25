@@ -239,7 +239,8 @@ const userInstructionInputHandler = new UserInstructionInputHandler({
   inputElementId: 'user-instruction-input-modal-input',
   inputLabelElementId: 'user-instruction-input-modal-input-label',
   okButtonElementId: 'user-instruction-input-modal-ok-button',
-  stopButtonElementId: 'user-instruction-input-modal-cancel-button'
+  stopButtonElementId: 'user-instruction-input-modal-stop-button',
+  closeButtonElementId: 'user-instruction-input-modal-close-button'
 });
 // ************************************************************************************************
 

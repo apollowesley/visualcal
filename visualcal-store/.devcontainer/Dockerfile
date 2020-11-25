@@ -13,4 +13,4 @@ FROM mcr.microsoft.com/vscode/devcontainers/typescript-node:0-${VARIANT}
 # RUN su node -c "source /usr/local/share/nvm/nvm.sh && nvm install ${EXTRA_NODE_VERSION}"
 
 # [Optional] Uncomment if you want to install more global node packages
-# RUN sudo -u node npm install -g <your-package-list -here>
+RUN sudo -u node npm install -g tslint typescript && npm cache clean --force > /dev/null 2>&1

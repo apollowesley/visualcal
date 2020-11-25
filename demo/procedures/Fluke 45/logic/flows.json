@@ -135,7 +135,7 @@
 		"type": "indysoft-action-completed",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"x": 1350,
+		"x": 1610,
 		"y": 1000,
 		"wires": []
 	},
@@ -559,7 +559,7 @@
 		"z": "3b731b51.7981f4",
 		"name": "DC Volts",
 		"sectionConfigId": "9728462e.dda138",
-		"x": 460,
+		"x": 720,
 		"y": 200,
 		"wires": [
 			[
@@ -733,7 +733,7 @@
 		"dataType": "none",
 		"showImage": true,
 		"assetFilename": "connection-diagram.png",
-		"x": 790,
+		"x": 1050,
 		"y": 200,
 		"wires": [
 			[
@@ -754,7 +754,7 @@
 		"min": "-0.006",
 		"max": "0.006",
 		"inputLevel": "0",
-		"x": 1360,
+		"x": 1620,
 		"y": 200,
 		"wires": [
 			[
@@ -775,7 +775,7 @@
 		"min": "89.971",
 		"max": "90.029",
 		"inputLevel": "90",
-		"x": 1370,
+		"x": 1630,
 		"y": 280,
 		"wires": [
 			[
@@ -1048,7 +1048,7 @@
 		"min": "0.89971",
 		"max": "0.90029",
 		"inputLevel": "0.9",
-		"x": 1360,
+		"x": 1620,
 		"y": 360,
 		"wires": [
 			[
@@ -1069,7 +1069,7 @@
 		"min": "-0.02",
 		"max": "0.02",
 		"inputLevel": "0",
-		"x": 1360,
+		"x": 1620,
 		"y": 440,
 		"wires": [
 			[
@@ -1090,7 +1090,7 @@
 		"min": "0.2999",
 		"max": "0.3001",
 		"inputLevel": "0.3",
-		"x": 1360,
+		"x": 1620,
 		"y": 520,
 		"wires": [
 			[
@@ -1111,7 +1111,7 @@
 		"min": "2.999",
 		"max": "3.001",
 		"inputLevel": "3",
-		"x": 1360,
+		"x": 1620,
 		"y": 600,
 		"wires": [
 			[
@@ -1132,7 +1132,7 @@
 		"min": "-3.001",
 		"max": "-2.999",
 		"inputLevel": "-3",
-		"x": 1360,
+		"x": 1620,
 		"y": 680,
 		"wires": [
 			[
@@ -1153,7 +1153,7 @@
 		"min": "29.99",
 		"max": "30.01",
 		"inputLevel": "30",
-		"x": 1360,
+		"x": 1620,
 		"y": 760,
 		"wires": [
 			[
@@ -1174,7 +1174,7 @@
 		"min": "299.9",
 		"max": "300.1",
 		"inputLevel": "300",
-		"x": 1360,
+		"x": 1620,
 		"y": 840,
 		"wires": [
 			[
@@ -1195,7 +1195,7 @@
 		"min": "999.5",
 		"max": "1000.5",
 		"inputLevel": "1000",
-		"x": 1370,
+		"x": 1630,
 		"y": 920,
 		"wires": [
 			[
@@ -1215,7 +1215,7 @@
 		"dataType": "none",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 790,
+		"x": 1050,
 		"y": 440,
 		"wires": [
 			[
@@ -1229,18 +1229,17 @@
 		"z": "3b731b51.7981f4",
 		"name": "",
 		"description": "",
-		"title": "Connect calibrator output to meter Volt input",
-		"text": "Enter calibrator output",
-		"append": "mV",
+		"title": "Calibrator output voltage",
+		"text": "Enter the desired calibrator output voltage in mV",
+		"append": "mV calibrator output voltage",
 		"dataType": "float",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 380,
+		"x": 360,
 		"y": 280,
 		"wires": [
 			[
-				"9cccba8a.200a18",
-				"4d2fa6d4.f29a18"
+				"b8f7173c.370748"
 			]
 		]
 	},
@@ -1490,7 +1489,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 840,
 		"wires": [
 			[],
@@ -1745,7 +1744,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1080,
+		"x": 1340,
 		"y": 920,
 		"wires": [
 			[],
@@ -1945,7 +1944,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1060,
+		"x": 1320,
 		"y": 200,
 		"wires": [
 			[],
@@ -2150,7 +2149,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 280,
 		"wires": [
 			[],
@@ -2324,7 +2323,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 360,
 		"wires": [
 			[],
@@ -2498,7 +2497,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 440,
 		"wires": [
 			[],
@@ -2753,7 +2752,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1080,
+		"x": 1340,
 		"y": 520,
 		"wires": [
 			[],
@@ -3008,7 +3007,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 600,
 		"wires": [
 			[],
@@ -3263,7 +3262,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 680,
 		"wires": [
 			[],
@@ -3518,7 +3517,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 1070,
+		"x": 1330,
 		"y": 760,
 		"wires": [
 			[],
@@ -3553,7 +3552,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 460,
+		"x": 720,
 		"y": 440,
 		"wires": [
 			[],
@@ -3648,7 +3647,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 770,
+		"x": 1030,
 		"y": 280,
 		"wires": [
 			[],
@@ -3669,7 +3668,7 @@
 		"dataType": "none",
 		"showImage": true,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 470,
+		"x": 730,
 		"y": 520,
 		"wires": [
 			[
@@ -3743,7 +3742,7 @@
 				]
 			}
 		],
-		"x": 770,
+		"x": 1030,
 		"y": 360,
 		"wires": [
 			[],
@@ -3818,7 +3817,7 @@
 				]
 			}
 		],
-		"x": 770,
+		"x": 1030,
 		"y": 520,
 		"wires": [
 			[],
@@ -3893,7 +3892,7 @@
 				]
 			}
 		],
-		"x": 760,
+		"x": 1020,
 		"y": 600,
 		"wires": [
 			[],
@@ -3968,7 +3967,7 @@
 				]
 			}
 		],
-		"x": 760,
+		"x": 1020,
 		"y": 680,
 		"wires": [
 			[],
@@ -4043,7 +4042,7 @@
 				]
 			}
 		],
-		"x": 760,
+		"x": 1020,
 		"y": 760,
 		"wires": [
 			[],
@@ -4118,7 +4117,7 @@
 				]
 			}
 		],
-		"x": 760,
+		"x": 1020,
 		"y": 840,
 		"wires": [
 			[],
@@ -4193,7 +4192,7 @@
 				]
 			}
 		],
-		"x": 770,
+		"x": 1030,
 		"y": 920,
 		"wires": [
 			[],
@@ -4229,7 +4228,7 @@
 				"postParameterArguments": []
 			}
 		],
-		"x": 780,
+		"x": 1040,
 		"y": 1000,
 		"wires": [
 			[],
@@ -14042,20 +14041,30 @@
 		]
 	},
 	{
-		"id": "4d2fa6d4.f29a18",
-		"type": "debug",
+		"id": "b8f7173c.370748",
+		"type": "change",
 		"z": "3b731b51.7981f4",
 		"name": "",
-		"active": true,
-		"tosidebar": true,
-		"console": false,
-		"tostatus": false,
-		"complete": "true",
-		"targetType": "full",
-		"statusVal": "",
-		"statusType": "auto",
-		"x": 500,
-		"y": 360,
-		"wires": []
+		"rules": [
+			{
+				"t": "set",
+				"p": "payload.value",
+				"pt": "msg",
+				"to": "payload.value / 1000",
+				"tot": "jsonata"
+			}
+		],
+		"action": "",
+		"property": "",
+		"from": "",
+		"to": "",
+		"reg": false,
+		"x": 800,
+		"y": 280,
+		"wires": [
+			[
+				"9cccba8a.200a18"
+			]
+		]
 	}
 ]
