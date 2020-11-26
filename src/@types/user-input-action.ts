@@ -9,6 +9,8 @@ interface UserInputRequest {
   text: string;
   append?: string;
   dataType: 'none' | 'string' | 'float' | 'integer' | 'boolean';
+  inputMin?: number;
+  inputMax?: number;
   showImage: boolean;
   assetFilename?: string;
   fileBase64Contents?: string;

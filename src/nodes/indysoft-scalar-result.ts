@@ -17,8 +17,8 @@ interface RuntimeProperties extends NodeProperties {
   deviceType: string;
   toleranceType: string;
   inputLevel: string;
-  min: string;
-  max: string;
+  min?: string;
+  max?: string;
 }
 
 interface RuntimeNode extends NodeRedRuntimeNode {
@@ -28,8 +28,8 @@ interface RuntimeNode extends NodeRedRuntimeNode {
   derivedQuantityPrefix?: string;
   toleranceType: string;
   inputValue: number;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
 }
 
 interface InputMessagePayload {
@@ -48,8 +48,8 @@ module.exports = function(RED: NodeRed) {
     this.description = config.description;
     this.toleranceType = config.toleranceType;
     this.inputValue = parseFloat(config.inputLevel);
-    this.min = parseFloat(config.min);
-    this.max = parseFloat(config.max);
+    if (config.min) this.min = parseFloat(config.min);
+    if (config.max) this.max = parseFloat(config.max);
     if (config.baseQuantity !== 'unitless' && config.derivedQuantity && config.derivedQuantityPrefix) {
       this.derivedQuantity = config.derivedQuantity;
       this.derivedQuantityPrefix = config.derivedQuantityPrefix;
@@ -89,8 +89,17 @@ module.exports = function(RED: NodeRed) {
         inputLevel: this.inputValue,
         rawValue: rawValue,
         measuredValue: measuredValue,
-        passed: (measuredValue >= this.min) && (this.max >= measuredValue)
+        passed: false
       };
+      if (this.min === undefined && this.max === undefined) {
+        result.passed = true;
+      } else if (this.min !== undefined && this.max === undefined) {
+        result.passed = measuredValue >= this.min;
+      } else if (this.min === undefined && this.max !== undefined) {
+        result.passed = measuredValue <= this.max;
+      } else if (this.min !== undefined && this.max !== undefined) {
+        result.passed = (measuredValue >= this.min) && (measuredValue <= this.max);
+      }
       this.status({
         fill: result.passed ? 'green' : 'red',
         shape: 'dot',

@@ -49,6 +49,8 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
 
     this.fCloseButtonElement.classList.remove('close');
 
+    this.fInputElement.step = 'any';
+
     const handleOkButtonClickOrFormSubmit = async (event: Event) => {
       if (!this.fLastRequest) return;
       const response: UserInputResponse = {
@@ -75,9 +77,39 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
       await this.close();
     }
 
+    const handleInputElementChangeOrKeyUp = () => {
+      if (!this.fLastRequest || (this.fLastRequest.dataType !== 'float' && this.fLastRequest.dataType !== 'integer')) {
+        this.fOkButtonElement.disabled = false;
+        return;
+      }
+      if (this.fLastRequest.inputMin === undefined && this.fLastRequest.inputMax === undefined) {
+        this.fOkButtonElement.disabled = false;
+        return;
+      }
+      if (this.fInputElement.value.length <= 0) {
+        this.fOkButtonElement.disabled = true;
+        return;
+      }
+      const inputValue = this.fInputElement.valueAsNumber;
+      if (this.fLastRequest.inputMin !== undefined && this.fLastRequest.inputMax === undefined) {
+        this.fOkButtonElement.disabled = inputValue < this.fLastRequest.inputMin;
+      } else if (this.fLastRequest.inputMin === undefined && this.fLastRequest.inputMax !== undefined) {
+        this.fOkButtonElement.disabled = inputValue > this.fLastRequest.inputMax;
+      } else if (this.fLastRequest.inputMin !== undefined && this.fLastRequest.inputMax !== undefined) {
+        this.fOkButtonElement.disabled = inputValue < this.fLastRequest.inputMin || inputValue > this.fLastRequest.inputMax;
+      }
+    }
+
+    this.fInputElement.addEventListener('change', () => {
+      handleInputElementChangeOrKeyUp();
+    });
+
+    this.fInputElement.addEventListener('keyup', () => {
+      handleInputElementChangeOrKeyUp();
+    });
+
     this.fInputFormElement.addEventListener('submit', async (event) => {
       event.preventDefault();
-      await handleOkButtonClickOrFormSubmit(event);
     });
 
     this.fOkButtonElement.addEventListener('click', async (event) => {
@@ -105,11 +137,14 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     this.fLastRequest = opts;
     this.fTitleElement.innerText = opts.title;
     this.fTextElement.innerText = opts.text;
+    this.fOkButtonElement.disabled = false;
     if (opts.showImage && opts.fileBase64Contents) {
       this.fImageElement.src = opts.fileBase64Contents;
-      this.fImageElement.classList.remove('collapse');
+      this.fImageElement.style.display = '';
+      this.fImageElement.classList.add('d-block');
     } else {
-      this.fImageElement.classList.add('collapse');
+      this.fImageElement.classList.remove('d-block');
+      this.fImageElement.style.display = 'none!important';
     }
     switch (opts.dataType) {
       case 'none':
@@ -119,24 +154,55 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
         this.fInputFormElement.classList.remove('collapse');
         this.fInputLabelElement.innerText = '';
         this.fInputElement.type = 'checkbox';
+        this.fInputElement.min = '';
+        this.fInputElement.max = '';
         break;
       case 'float':
         this.fInputFormElement.classList.remove('collapse');
-        this.fInputLabelElement.innerText = `Enter a floating point number`;
+        this.fInputLabelElement.innerText = 'Enter a floating point number';
         this.fInputElement.type = 'number';
+        opts.inputMin === undefined ? this.fInputElement.min = '' : this.fInputElement.min = opts.inputMin.toString();
+        opts.inputMax === undefined ? this.fInputElement.max = '' : this.fInputElement.max = opts.inputMax.toString();
+        if (opts.inputMin !== undefined) this.fInputLabelElement.innerText += ` >= ${opts.inputMin.toString()}`;
+        if (opts.inputMax !== undefined) this.fInputLabelElement.innerText += ` and <= ${opts.inputMax.toString()}`;
+        if (opts.inputMin !== undefined && opts.inputMax === undefined) {
+          this.fInputElement.value = opts.inputMin.toString();
+        } else if (opts.inputMin === undefined && opts.inputMax !== undefined) {
+          this.fInputElement.value = opts.inputMax.toString();
+        } else if (opts.inputMin !== undefined && opts.inputMax !== undefined) {
+          this.fInputElement.value = opts.inputMin.toString();
+        } else {
+          this.fInputElement.value = '0';
+        }
         break;
       case 'integer':
         this.fInputFormElement.classList.remove('collapse');
-        this.fInputLabelElement.innerText = `Enter a integer number`;
+        this.fInputLabelElement.innerText = 'Enter a integer number';
         this.fInputElement.type = 'number';
+        opts.inputMin === undefined ? this.fInputElement.min = '' : this.fInputElement.min = opts.inputMin.toString();
+        opts.inputMax === undefined ? this.fInputElement.max = '' : this.fInputElement.max = opts.inputMax.toString();
+        if (opts.inputMin !== undefined) this.fInputLabelElement.innerText += ` >= ${opts.inputMin.toString()}`;
+        if (opts.inputMax !== undefined) this.fInputLabelElement.innerText += ` and <= ${opts.inputMax.toString()}`;
+        if (opts.inputMin !== undefined && opts.inputMax === undefined) {
+          this.fInputElement.value = opts.inputMin.toString();
+        } else if (opts.inputMin === undefined && opts.inputMax !== undefined) {
+          this.fInputElement.value = opts.inputMax.toString();
+        } else if (opts.inputMin !== undefined && opts.inputMax !== undefined) {
+          this.fInputElement.value = opts.inputMin.toString();
+        } else {
+          this.fInputElement.value = '0';
+        }
         break;
       case 'string':
         this.fInputFormElement.classList.remove('collapse');
-        this.fInputLabelElement.innerText = `Enter a string value`;
+        this.fInputLabelElement.innerText = 'Enter a string value';
         this.fInputElement.type = 'text';
+        this.fInputElement.min = '';
+        this.fInputElement.max = '';
         break;
     }
     if (opts.append) this.fInputLabelElement.innerText = `${this.fInputLabelElement.innerText} (${opts.append})`;
+
     await ($(`#${this.fModalId}`) as any).modal({
       backdrop: 'static',
       keyboard: false,
@@ -146,6 +212,7 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
   }
 
   async close() {
+    this.fLastRequest = undefined;
     await ($(`#${this.fModalId}`) as any).modal('hide');
   }
 

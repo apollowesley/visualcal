@@ -43,8 +43,8 @@ export interface LogicResult<TRaw, TValue> {
   baseQuantity?: string;
   derivedQuantity?: string;
   derivedQuantityPrefix?: string;
-  minimum: number;
-  maximum: number;
+  minimum?: number;
+  maximum?: number;
   inputLevel: TValue;
   rawValue: TRaw;
   measuredValue: TValue;

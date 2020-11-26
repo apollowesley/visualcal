@@ -11,6 +11,8 @@ interface RuntimeProperties extends NodeProperties {
   dataType: 'string' | 'float' | 'integer' | 'boolean';
   showImage: string;
   assetFilename?: string;
+  min?: string;
+  max?: string;
 }
 
 interface RuntimeNode extends NodeRedRuntimeNode {
@@ -21,6 +23,8 @@ interface RuntimeNode extends NodeRedRuntimeNode {
   showImage: boolean;
   assetFilename?: string;
   currentMessage?: VisualCalNodeRedNodeInputMessage;
+  min?: number;
+  max?: number;
 }
 
 module.exports = function(RED: NodeRed) {
@@ -32,6 +36,8 @@ module.exports = function(RED: NodeRed) {
     this.dataType = config.dataType;
     this.showImage = !!config.showImage;
     this.assetFilename = config.assetFilename;
+    if (config.min) this.min = parseFloat(config.min);
+    if (config.max) this.max = parseFloat(config.max);
     const resetStatus = () => {
       this.status({});
     };
@@ -48,6 +54,8 @@ module.exports = function(RED: NodeRed) {
         text: this.text,
         append: this.append,
         dataType: this.dataType,
+        inputMin: this.min,
+        inputMax: this.max,
         ok: true,
         cancel: true,
         showImage: this.showImage,

@@ -12,36 +12,49 @@
     <input type="text" id="node-input-text">
   </div>
   <div class="form-row">
-    <label for="node-input-showImage"><i class="fa fa-tag"></i> Image?</label>
+    <label for="node-input-showImage"><i class="fa fa-tag"></i> Show an Image?</label>
     <input type="checkbox" id="node-input-showImage" style="display: inline-block; width: auto; vertical-align: top;">
   </div>
-  <div class="form-row" id="asset-row">
-    <label for="image-input-button"><i class="fa fa-tag"></i> Image to show to user</label>
-    <input id="image-input" type="file" style="display: none" />
-    <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select file</button>
-  </div>
-  <div class="form-row">
-    <label for="node-input-assetFilename"><i class="fa fa-tag"></i> Selected filename</label>
-    <input type="text" id="node-input-assetFilename" disabled />
+  <div id="image-details-row">
+    <div class="form-row" id="asset-row">
+      <label for="image-input-button"><i class="fa fa-tag"></i> Image to show to user</label>
+      <input id="image-input" type="file" style="display: none" />
+      <button id="image-input-button" type="button" onclick="document.getElementById('image-input').click()">Select a file</button>
+    </div>
+    <div class="form-row">
+      <label for="node-input-assetFilename"><i class="fa fa-tag"></i> Selected filename</label>
+      <input type="text" id="node-input-assetFilename" disabled />
+    </div>
   </div>
   <div class="form-row" id="input-row">
     <label for="node-input-dataType"><i class="fa fa-tag"></i> Input Data Type</label>
-    <select id="node-input-dataType" style="width:125px !important">
-      <option value="none" selected>None</option>
+    <select id="node-input-dataType">
+      <option value="none" selected>None (No input)</option>
       <option value="string">String</option>
-      <option value="float">Floating Point</option>
-      <option value="integer">Integer</option>
-      <option value="boolean">Boolean</option>
+      <option value="float">Floating Point (i.e. -3.004)</option>
+      <option value="integer">Integer (i.e. 1)</option>7)</option>
+      <option value="boolean">Boolean (Checkbox)</option>
     </select>
   </div>
-  <div class="form-row" id="input-append-row">
-    <label for="node-input-append"><i class="fa fa-tag"></i> Append to Input</label>
-    <input type="text" id="node-input-append">
+  <div id="input-details-row">
+    <div class="form-row" id="input-min-row">
+      <label for="node-input-min"><i class="fa fa-tag"></i> Input Minimum (Optional)</label>
+      <input type="text" id="node-input-min">
+    </div>
+    <div class="form-row" id="input-max-row">
+      <label for="node-input-max"><i class="fa fa-tag"></i> Input Maximum (Optional)</label>
+      <input type="text" id="node-input-max">
+    </div>
+    <div class="form-row" id="input-append-row">
+      <label for="node-input-append"><i class="fa fa-tag"></i> Engineering Unit or Input Text</label>
+      <input type="text" id="node-input-append">
+    </div>
   </div>
+  <div class="form-tips"><b>Tip:</b> The images/references are saved in a directory named &quotassets&quot inside of the procedure directory (i.e. Documents\IndySoft\VisualCal\procedures\&ltprocedure_dir&gt\assets)</div>
 </script>
 
 <script type="text/html" data-help-name="indysoft-user-input">
-  <p>Shows an input to the user on the frontend.</p>
+  <p>Shows an instruction to the user with optional image and optional input.</p>
 </script>
 
 <script type="text/javascript">
@@ -56,6 +69,8 @@
       text: { value: '', required: true },
       append: { value: '', required: false },
       dataType: { value: 'string', required: true },
+      min: { value: undefined, required: false },
+      max: { value: undefined, required: false },
       showImage: { value: false, required: true },
       assetFilename: { value: '', required: false }
     },
@@ -73,19 +88,64 @@
     },
     paletteLabel: 'Instruction and Manual Input',
     oneditprepare: function() {
-      const inputDataType = document.getElementById('node-input-dataType');
-      const inputAppendInputRow = document.getElementById('input-append-row');
-      let inputAppendInputRowDisplay = inputAppendInputRow.style.display;
+      /** @type {HTMLInputElement} */
+      const showImageCheckboxEl = document.getElementById('node-input-showImage');
+      const imageDetailsRowDivEl = document.getElementById('image-details-row');
       const assetFilenameInput = document.getElementById('node-input-assetFilename');
       const imageInput = document.getElementById('image-input');
-      inputDataType.onchange = () => {
-        if (inputDataType.value === 'none') {
-          inputAppendInputRow.style.display = 'none';
+      let imageDetailsRowDivElDisplay = imageDetailsRowDivEl.style.display;
+
+      const inputDataTypeEl = document.getElementById('node-input-dataType');
+      const inputDetailsRowDivEl = document.getElementById('input-details-row');
+      /** @type {HTMLInputElement} */
+      const inputMinValueEl = document.getElementById('input-min-row');
+      /** @type {HTMLInputElement} */
+      const inputMaxValueEl = document.getElementById('input-max-row');
+      const inputMinValueElDisplay = inputMinValueEl.style.display;
+      const inputMaxValueElDisplay = inputMaxValueEl.style.display;
+      let inputDetailsRowDivElDisplay = inputDetailsRowDivEl.style.display;
+
+      showImageCheckboxEl.addEventListener('change', () => {
+        if (showImageCheckboxEl.checked === false) {
+          imageDetailsRowDivEl.style.display = 'none';
         } else {
-          inputAppendInputRow.style.display = inputAppendInputRowDisplay;
+          imageDetailsRowDivEl.style.display = imageDetailsRowDivElDisplay;
         }
-      };
-      inputDataType.dispatchEvent(new Event('change'));
+      });
+      showImageCheckboxEl.dispatchEvent(new Event('change'));
+
+      inputMinValueEl.type = 'number';
+      inputMaxValueEl.type = 'number';
+
+      inputDataTypeEl.addEventListener('change', () => {
+        switch (inputDataTypeEl.value) {
+          case 'none':
+            inputDetailsRowDivEl.style.display = 'none';
+            break;
+          case 'string':
+            inputMinValueEl.style.display = 'none';
+            inputMaxValueEl.style.display = 'none';
+            inputDetailsRowDivEl.style.display = inputDetailsRowDivElDisplay;
+            break;
+          case 'float':
+            inputMinValueEl.style.display = inputMinValueElDisplay;
+            inputMaxValueEl.style.display = inputMaxValueElDisplay;
+            inputDetailsRowDivEl.style.display = inputDetailsRowDivElDisplay;
+            break;
+          case 'integer':
+            inputMinValueEl.style.display = inputMinValueElDisplay;
+            inputMaxValueEl.style.display = inputMaxValueElDisplay;
+            inputDetailsRowDivEl.style.display = inputDetailsRowDivElDisplay;
+            break;
+          case 'boolean':
+            inputMinValueEl.style.display = 'none';
+            inputMaxValueEl.style.display = 'none';
+            inputDetailsRowDivEl.style.display = inputDetailsRowDivElDisplay;
+            break;
+        }
+      });
+      inputDataTypeEl.dispatchEvent(new Event('change'));
+
       imageInput.addEventListener('input', async (ev) => {
         const file = imageInput.files[0];
         if (!file) return;
