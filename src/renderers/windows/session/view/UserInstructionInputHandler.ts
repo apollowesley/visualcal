@@ -11,7 +11,8 @@ interface ConstructorOptions {
   titleElementId: string;
   textElementId: string;
   imageElementId: string;
-  imputFormElementId: string;
+  formElementId: string;
+  inputWrapperElementId: string;
   inputLabelElementId: string;
   inputElementId: string;
   okButtonElementId: string;
@@ -25,12 +26,12 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
   private fTitleElement: HTMLHeadingElement;
   private fTextElement: HTMLParagraphElement;
   private fImageElement: HTMLImageElement;
-  private fInputFormElement: HTMLFormElement;
+  private fFormElement: HTMLFormElement;
+  private fInputWrapperElement: HTMLDivElement;
   private fInputLabelElement: HTMLLabelElement;
   private fInputElement: HTMLInputElement;
   private fOkButtonElement: HTMLButtonElement;
   private fStopButtonElement: HTMLButtonElement;
-  private fCloseButtonElement: HTMLButtonElement; // Unused button, but can't remove it in Bootstrap Studio
 
   private fLastRequest?: UserInputRequest;
 
@@ -40,14 +41,16 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     this.fTitleElement = document.getElementById(opts.titleElementId) as HTMLHeadingElement;
     this.fTextElement = document.getElementById(opts.textElementId) as HTMLHeadingElement;
     this.fImageElement = document.getElementById(opts.imageElementId) as HTMLImageElement;
-    this.fInputFormElement = document.getElementById(opts.imputFormElementId) as HTMLFormElement;
+    this.fFormElement = document.getElementById(opts.formElementId) as HTMLFormElement;
+    this.fInputWrapperElement = document.getElementById(opts.inputWrapperElementId) as HTMLDivElement;
     this.fInputLabelElement = document.getElementById(opts.inputLabelElementId) as HTMLLabelElement;
     this.fInputElement = document.getElementById(opts.inputElementId) as HTMLInputElement;
     this.fOkButtonElement = document.getElementById(opts.okButtonElementId) as HTMLButtonElement;
     this.fStopButtonElement = document.getElementById(opts.stopButtonElementId) as HTMLButtonElement;
-    this.fCloseButtonElement = document.getElementById(opts.closeButtonElementId) as HTMLButtonElement;
-
-    this.fCloseButtonElement.classList.remove('close');
+    
+    // Remove unused close button
+    const closeButtonElement = document.getElementById(opts.closeButtonElementId) as HTMLButtonElement | null;
+    if (closeButtonElement) closeButtonElement.remove();
 
     this.fInputElement.step = 'any';
 
@@ -108,7 +111,7 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
       handleInputElementChangeOrKeyUp();
     });
 
-    this.fInputFormElement.addEventListener('submit', async (event) => {
+    this.fFormElement.addEventListener('submit', async (event) => {
       event.preventDefault();
     });
 
@@ -126,6 +129,10 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
         result: false
       };
       ipcRenderer.send(IpcChannels.user.input.result, response);
+    });
+
+    $(`#${this.fModalId}`).on('shown.bs.modal', function() {
+      $(this).find('.btn-primary').trigger('focus');
     });
 
     ipcRenderer.on(IpcChannels.user.input.request, async (_, opts: UserInputRequest) => {
@@ -148,17 +155,17 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     }
     switch (opts.dataType) {
       case 'none':
-        this.fInputFormElement.classList.add('collapse');
+        this.fInputWrapperElement.classList.add('collapse');
         break;
       case 'boolean':
-        this.fInputFormElement.classList.remove('collapse');
+        this.fInputWrapperElement.classList.remove('collapse');
         this.fInputLabelElement.innerText = '';
         this.fInputElement.type = 'checkbox';
         this.fInputElement.min = '';
         this.fInputElement.max = '';
         break;
       case 'float':
-        this.fInputFormElement.classList.remove('collapse');
+        this.fInputWrapperElement.classList.remove('collapse');
         this.fInputLabelElement.innerText = 'Enter a floating point number';
         this.fInputElement.type = 'number';
         opts.inputMin === undefined ? this.fInputElement.min = '' : this.fInputElement.min = opts.inputMin.toString();
@@ -176,7 +183,7 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
         }
         break;
       case 'integer':
-        this.fInputFormElement.classList.remove('collapse');
+        this.fInputWrapperElement.classList.remove('collapse');
         this.fInputLabelElement.innerText = 'Enter a integer number';
         this.fInputElement.type = 'number';
         opts.inputMin === undefined ? this.fInputElement.min = '' : this.fInputElement.min = opts.inputMin.toString();
@@ -194,7 +201,7 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
         }
         break;
       case 'string':
-        this.fInputFormElement.classList.remove('collapse');
+        this.fInputWrapperElement.classList.remove('collapse');
         this.fInputLabelElement.innerText = 'Enter a string value';
         this.fInputElement.type = 'text';
         this.fInputElement.min = '';
