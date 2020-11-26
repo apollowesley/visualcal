@@ -1237,11 +1237,11 @@
 		"max": "100",
 		"showImage": false,
 		"assetFilename": "IndySoftLogo.png",
-		"x": 370,
+		"x": 690,
 		"y": 280,
 		"wires": [
 			[
-				"b8f7173c.370748"
+				"9cccba8a.200a18"
 			]
 		]
 	},
@@ -3624,8 +3624,8 @@
 							"beforeText": " ",
 							"afterText": " V"
 						},
-						"value": "payload.value",
-						"typedInputType": "msg"
+						"value": "payload.value / 1000",
+						"typedInputType": "jsonata"
 					}
 				]
 			},
@@ -14039,33 +14039,6 @@
 			[],
 			[
 				"a5458d0f.3ae2e"
-			]
-		]
-	},
-	{
-		"id": "b8f7173c.370748",
-		"type": "change",
-		"z": "3b731b51.7981f4",
-		"name": "",
-		"rules": [
-			{
-				"t": "set",
-				"p": "payload.value",
-				"pt": "msg",
-				"to": "payload.value / 1000",
-				"tot": "jsonata"
-			}
-		],
-		"action": "",
-		"property": "",
-		"from": "",
-		"to": "",
-		"reg": false,
-		"x": 800,
-		"y": 280,
-		"wires": [
-			[
-				"9cccba8a.200a18"
 			]
 		]
 	}

@@ -93,7 +93,7 @@
    * 
   */
 
-  const TYPED_INPUT_TYPES = ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 're', 'date', 'env'];
+  const TYPED_INPUT_TYPES = ['msg', 'flow', 'global', 'str', 'num', 'bool', 'json', 'bin', 're', 'date', 'env', 'jsonata'];
 
   /**
    * @param {JQuery} inputElement
@@ -145,7 +145,7 @@
           break;
         case 'string':
           const parameterStringElement = $('<input />');
-          parameterSelectElement.addClass(parameter._id).appendTo(parameterRow);
+          parameterStringElement.addClass(parameter._id).appendTo(parameterRow);
           if (newItemCommandParameter && newItemCommandParameter.typedInputType) {
             createTypedInput(parameterStringElement, newItemCommandParameter.typedInputType);
           } else {
@@ -169,6 +169,17 @@
           const parametergBooleanElement = $('<input type="checkbox" />').addClass(parameter._id).appendTo(parameterRow);
           if (parameter.default) parametergBooleanElement.prop('checked', !!parameter.default);
           if (newItemCommandParameter) parametergBooleanElement.prop('checked', newItemCommandParameter.value);
+          break;
+        case 'jsonata':
+          const parameterJsonataElement = $('<input />');
+          parameterJsonataElement.addClass(parameter._id).appendTo(parameterRow);
+          if (newItemCommandParameter && newItemCommandParameter.typedInputType) {
+            createTypedInput(parameterJsonataElement, newItemCommandParameter.typedInputType);
+          } else {
+            createTypedInput(parameterJsonataElement, 'str');
+          }
+          if (parameter.default) parameterJsonataElement.typedInput('value', parameter.default);
+          if (newItemCommandParameter) parameterJsonataElement.typedInput('value', newItemCommandParameter.value);
           break;
       }
     };
@@ -203,7 +214,6 @@
           const numberValue = numberParameterElement.typedInput('value');
           const numberParameterTypedInputType = numberParameterElement.typedInput('type');
           parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: numberValue, typedInputType: numberParameterTypedInputType });
-          console.info(numberParameterTypedInputType, numberValue);
           break;
         case 'boolean':
           const booleanParameterElement = parameterRows.children(`.${parameter._id}`);
@@ -211,6 +221,11 @@
           const booleanValue = isChecked ? parameter.trueValue : parameter.falseValue;
           parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: booleanValue });
           break;
+        case 'jsonata':
+          const jsonataParameterElement = parameterRows.children(`.${parameter._id}`);
+          const jsonataValue = jsonataParameterElement.typedInput('value');
+          const jsonataParameterTypedInputType = jsonataParameterElement.typedInput('type');
+          parameterArguments.push({ instructionId: instruction._id, parameter: parameter, value: stringValue, typedInputType: jsonataParameterTypedInputType });
       }
     });
     return parameterArguments;
@@ -339,11 +354,9 @@
         for (const instruction of instructionSet.instructions) {
           if (instruction.preParameters) {
             instructionSetInfoToRuntime.preParameterArguments = handleSaveInstructionParameters(instruction.preParameters, 'pre-parameter-row', instructionSetListItemElement, instruction);
-            console.info('preParameterArguments', instructionSetInfoToRuntime.preParameterArguments);
           }
           if (instruction.postParameters) {
             instructionSetInfoToRuntime.postParameterArguments = handleSaveInstructionParameters(instruction.postParameters, 'post-parameter-row', instructionSetListItemElement, instruction);
-            console.info('postParameterArguments', instructionSetInfoToRuntime.preParameterArguments);
           }
         };
         if (selectedOptionElements && selectedOptionElements.length > 0) usedInstructionSets.push(instructionSetInfoToRuntime);

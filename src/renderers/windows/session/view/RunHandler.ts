@@ -19,7 +19,7 @@ export class RunHandler extends TypedEmitter<Events> {
   private fCurrentRun?: LogicRun<string, number>;
 
   private getPassedCellFormatter(cell: Tabulator.CellComponent) {
-    const passed = cell.getData() as string === 'passed';
+    const passed =  cell.getValue() as boolean;
     const divEl = document.createElement('div');
     divEl.innerText = passed ? 'Pass' : 'Fail';
     divEl.style.height = '100%';

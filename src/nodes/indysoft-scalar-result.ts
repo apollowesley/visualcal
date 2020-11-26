@@ -105,7 +105,7 @@ module.exports = function(RED: NodeRed) {
         shape: 'dot',
         text: `Last: ${result.passed ? 'Passed' : 'Failed'} | ${result.measuredValue}`
       });
-      RunManager.instance.addResult(msg.payload.runId ,result);
+      RunManager.instance.addResult(msg.payload.runId, result);
       // Delay sending to the next node, in case it's a completed node, so that our result gets to the frontend first.
       // 100ms for now, but we don't know how long it should be delayed, yet.
       setTimeout(() => {
