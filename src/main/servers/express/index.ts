@@ -2,6 +2,7 @@ import { TypedEmitter } from 'tiny-typed-emitter';
 import express from 'express';
 import http from 'http';
 import { hook as frontendVueRequestHook } from './frontend-vue-request-hook';
+import path from 'path';
 
 interface Events {
   starting: (expressInstance: express.Express, httpInstancde: http.Server) => void;
@@ -33,6 +34,7 @@ export class ExpressServer extends TypedEmitter<Events> {
         this.fExpress = express();
         this.fServer = http.createServer(this.fExpress);
         this.emit('starting', this.fExpress, this.fServer);
+        this.fExpress.use('/nodemodules', express.static(path.join(global.visualCal.dirs.base, 'node_modules')));
         frontendVueRequestHook(this.fExpress);
         this.fServer.listen(port, '127.0.0.1', () => {
           this.emit('started', port);

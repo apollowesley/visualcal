@@ -65,7 +65,7 @@
     "mathjs": "^8.0.0",
     "moment": "^2.29.1",
     "mongoose": "^5.10.13",
-    "node-red": "^1.2.5",
+    "node-red": "^1.2.6",
     "node-red-node-serialport": "^0.11.1",
     "sanitize-filename": "^1.6.3",
     "serialport": "^9.0.2",
