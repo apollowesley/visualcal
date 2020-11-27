@@ -55,6 +55,7 @@ export class DeviceConfigHandler extends TypedEmitter<Events> {
       configEl.value = config.name;
       deviceConfigSelectElement.add(configEl);
     });
+    this.fSelectElement.dispatchEvent(new Event('change'));
   }
 
 }

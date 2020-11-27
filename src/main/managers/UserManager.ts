@@ -25,9 +25,9 @@ interface Store {
 export class UserManager extends TypedEmitter<Events> {
 
   private fStore: electronStore<Store> = electronStore.create<Store>('users.json', log);
-  private fActiveUser: User | null = null;
-  private fActiveSession: Session | null = null;
-  private fActiveBenchConfig: BenchConfig | null = null;
+  private fActiveUserName?: string;
+  private fActiveSessionName?: string;
+  private fActiveBenchConfigName?: string;
 
   constructor() {
     super();
@@ -40,56 +40,72 @@ export class UserManager extends TypedEmitter<Events> {
   get all() { return this.fStore.get('users', []); }
 
   get activeUser() {
-    return this.fActiveUser;
+    if (!this.fActiveUserName) return null;
+    const user = this.getOne(this.fActiveUserName);
+    if (user) return user;
+    return null;
   }
   set activeUser(user: User | null) {
+    let existing: User | undefined = undefined;
     if (user) {
-      const existing = this.getOne(user.email.toLocaleUpperCase());
+      existing = this.getOne(user.email.toLocaleUpperCase());
       if (!existing) throw new Error(`User, ${user.email}, does not exist`);
-      this.fActiveUser = existing;
+      this.fActiveUserName = existing.email;
     } else {
-      this.fActiveUser = null;
+      this.fActiveUserName = undefined;
     }
-    const userToSend = user ? user : undefined;
+    const userToSend = existing ? existing : undefined;
     ipcMain.sendToAll(IpcChannels.user.active.changed, userToSend);
     this.emit('activeUserChanged', userToSend);
   }
 
   get activeSession() {
-    return this.fActiveSession;
+    const user = this.activeUser;
+    if (!user || !this.fActiveSessionName) return null;
+    const activeSessionName = this.fActiveSessionName.toLocaleLowerCase();
+    const session = user.sessions.find(s => s.name.toLocaleLowerCase() === activeSessionName);
+    if (session) return session;
+    return null;
   }
   set activeSession(session: Session | null) {
+    let existing: Session | undefined = undefined;
     if (session) {
-      const existing = this.getSession(session.username, session.name);
+      existing = this.getSession(session.username, session.name);
       if (!existing) throw new Error(`Session, ${session.name}, for user, ${session.username}, does not exist`);
-      this.fActiveSession = session;
+      this.fActiveSessionName = existing.name;
     } else {
-      this.fActiveSession = null;
+      this.fActiveSessionName = undefined;
     }
-    const sessionToSend = session ? session : undefined;
+    const sessionToSend = existing ? existing : undefined;
     ipcMain.sendToAll(IpcChannels.user.active.changed, sessionToSend);
     this.emit('activeSessionChanged', sessionToSend);
   }
 
   get activeBenchConfig() {
-    return this.fActiveBenchConfig;
+    const user = this.activeUser;
+    if (!user || !this.fActiveBenchConfigName) return null;
+    const activeBenchConfigName = this.fActiveBenchConfigName.toLocaleLowerCase();
+    const benchConfig = user.benchConfigs.find(b => b.name.toLocaleLowerCase() === activeBenchConfigName);
+    if (benchConfig) return benchConfig;
+    return null;
   }
   set activeBenchConfig(config: BenchConfig | null) {
+    let existing: BenchConfig | undefined = undefined;
     if (config) {
-      const existing = this.getBenchConfig(config.username, config.name);
+      existing = this.getBenchConfig(config.username, config.name);
       if (!existing) throw new Error(`Bench configuration, ${config.name}, for user, ${config.username}, does not exist`);
-      this.fActiveBenchConfig = config;
+      this.fActiveBenchConfigName = existing.name;
     } else {
-      this.fActiveBenchConfig = null;
+      this.fActiveBenchConfigName = undefined;
     }
-    const configToSend = config ? config : undefined;
+    const configToSend = existing ? existing : undefined;
     ipcMain.sendToAll(IpcChannels.user.active.changed, configToSend);
     this.emit('activeBenchConfigChanged', configToSend);
   }
 
   private setOne(user: User) {
     const users = this.all;
-    const existingIndex = users.findIndex(u => u.email.toLocaleUpperCase() === u.email.toLocaleUpperCase());
+    const existingIndex = users.findIndex(u => u.email.toLocaleUpperCase() === user.email.toLocaleUpperCase());
     if (existingIndex < 0) {
       users.push(user);
     } else {
@@ -99,8 +115,8 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   getIsActiveUser(email: string) {
-    if (!this.fActiveUser) return undefined;
-    return this.fActiveUser.email.toLocaleUpperCase() === email.toLocaleUpperCase();
+    if (!this.fActiveUserName) return undefined;
+    return this.fActiveUserName.toLocaleUpperCase() === email.toLocaleUpperCase();
   }
 
   getOne(email: string) {
@@ -154,12 +170,13 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   addBenchConfig(config: BenchConfig) {
+    config.username = config.username.toLocaleLowerCase();
     const user = this.getOne(config.username);
     if (!user) throw new Error(`Unable to add bench configuration since user, ${config.username}, does not exist`);
     const existingBenchConfig = this.getBenchConfig(config.username, config.name);
     if (existingBenchConfig) throw new Error(`A bench configuration named, ${config.name}, already exists for user, ${config.username}`);
     if (!user.benchConfigs) user.benchConfigs = [];
-    user.benchConfigs.push({ ...config, username: config.username.toLocaleLowerCase() });
+    user.benchConfigs.push(config);
     this.setOne(user);
   }
 
@@ -308,7 +325,7 @@ export class UserManager extends TypedEmitter<Events> {
           if (shouldCreateUser) {
             user = { email: credentials.username, nameFirst: nameFirst, nameLast: nameLast, benchConfigs: [], sessions: [] };
             this.add(user);
-            this.emit('loggedIn', user);
+            this.login(credentials);
           }
         } else {
           ApplicationManager.instance.showErrorAndQuit('Critical error, the application cannot remain open', 'Expected login window to be created and shown, but it was not.');

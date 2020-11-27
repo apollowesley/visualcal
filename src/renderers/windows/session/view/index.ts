@@ -26,8 +26,8 @@ const getBenchConfigurationInterfaces = () => {
   const sessionConfiguration = session.configuration;
   if (!sessionConfiguration) return [];
   const config = user.benchConfigs.find(b => b.name === sessionConfiguration.benchConfigName);
-  if (!config) return [];
-  return config.interfaces;
+  if (config && config.interfaces) return config.interfaces;
+  return [];
 }
 
 const getDevicesTableGetCommInterfaces = (): Tabulator.SelectParams => {

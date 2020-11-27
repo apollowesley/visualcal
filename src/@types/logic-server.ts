@@ -207,7 +207,7 @@ interface NodeRedUtilModule {
   ensureBuffer(o: unknown): string;
   ensureString(o: unknown): string;
   evaluateEnvProperty(value: string, node: NodeRedNode): string;
-  evaluateJSONataExpression(expr: any, msg: any, callback?: any): unknown;
+  evaluateJSONataExpression<TReturn>(expr: any, msg: any, callback?: any): TReturn;
   evaluateNodeProperty(value: string, type: string, node: NodeRedNode, msg: any, callback?: any): unknown;
   generateId(): string;
   getMessageProperty(msg: any, expr: string): unknown;

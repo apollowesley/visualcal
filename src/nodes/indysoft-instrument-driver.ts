@@ -74,6 +74,7 @@ module.exports = function(RED: NodeRed) {
             if (parameterArgument && !parameterArgument.typedInputType) {
               retVal += parameterArgument.value;
             } else if (parameterArgument && parameterArgument.typedInputType) {
+              let JSONataPreparedExpression: any;
               switch (parameterArgument.typedInputType) {
                 case 'bin':
                   break;
@@ -107,6 +108,10 @@ module.exports = function(RED: NodeRed) {
                   break;
                 case 'str':
                   retVal += parameterArgument.value as string;
+                  break;
+                case 'jsonata':
+                  JSONataPreparedExpression = RED.util.prepareJSONataExpression(parameterArgument.value as string, this);
+                  retVal += RED.util.evaluateJSONataExpression(JSONataPreparedExpression, msg);
                   break;
               }
             }

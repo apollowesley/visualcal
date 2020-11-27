@@ -29,7 +29,7 @@ interface NodeRedNodeUIProperties {
   onpaletteremove?: () => void;
 }
 
-export type TypedInputType = 'msg' | 'flow' | 'global' | 'str' | 'num' | 'bool' | 'json' | 'bin' | 're' | 'date' | 'env';
+export type TypedInputType = 'msg' | 'flow' | 'global' | 'str' | 'num' | 'bool' | 'json' | 'bin' | 're' | 'date' | 'env' | 'jsonata';
 
 export interface UIInstructionCommandParameterArgument {
   instructionId: string;
