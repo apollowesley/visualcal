@@ -205,7 +205,7 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
   }
 
   abstract write(data: ArrayBufferLike): Promise<ArrayBufferLike>;
-  abstract read(): Promise<ArrayBufferLike>;
+  abstract read(opts?: {}): Promise<ArrayBufferLike>;
 
   protected async onBeforeWrite(data: ArrayBufferLike) {
     if (this.delayBeforeWrite) await sleep(this.delayBeforeWrite);
@@ -238,16 +238,16 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await Promise.resolve();
   }
 
-  async readData(): Promise<ArrayBufferLike> {
+  async readData(opts?: {}): Promise<ArrayBufferLike> {
     await this.onBeforeRead();
-    const data = await this.read();
+    const data = await this.read(opts);
     await this.onAfterRead(data);
     setImmediate(() => this.emit('dataReceived', this, data));
     return data;
   }
 
-  async readString(): Promise<string> {
-    const data = await this.readData();
+  async readString(opts?: {}): Promise<string> {
+    const data = await this.readData(opts);
     const dataString = new TextDecoder().decode(data);
     setImmediate(() => this.emit('stringReceived', this, dataString));
     return dataString;
@@ -328,9 +328,9 @@ export abstract class CommunicationInterface extends TypedEmitter<Events> implem
     await this.writeData(buffer);
   }
 
-  async queryString(data: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
+  async queryString(data: string, encoding: BufferEncoding = 'utf-8', opts?: {}): Promise<string> {
     await this.writeString(data, encoding);
-    return await this.readString();
+    return await this.readString(opts);
   }
 
 }

@@ -13,7 +13,8 @@
       "indysoft-mqtt-dynamic-topic-in": "indysoft-mqtt-dynamic-topic-in.js",
       "indysoft-user-input": "indysoft-user-input.js",
       "indysoft-testpoint": "indysoft-testpoint.js",
-      "indysoft-instrument-driver": "indysoft-instrument-driver.js"
+      "indysoft-instrument-driver": "indysoft-instrument-driver.js",
+      "indysoft-instrument-error-check": "indysoft-instrument-error-check.js"
     }
   }
 }

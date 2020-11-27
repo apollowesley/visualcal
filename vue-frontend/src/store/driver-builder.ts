@@ -251,6 +251,15 @@ const employeesModule = defineModule({
     },
     setCurrentDriverVariables(state, value?: DriverVariable[]) {
       state.currentDriver.variables = value;
+    },
+    setIsGPIB(state, value: boolean) {
+      if (value) state.currentDriver.isGPIB = value;
+    },
+    setIsIEEE4882(state, value: boolean) {
+      if (value) state.currentDriver.isIEEE4882 = value;
+    },
+    setIsSCPI(state, value: boolean) {
+      if (value) state.currentDriver.isSCPI = value;
     }
   },
   actions: {

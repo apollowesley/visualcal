@@ -67,6 +67,27 @@
                 </v-row>
                 <v-row>
                   <v-col>
+                    <v-checkbox
+                      v-model="isGPIB"
+                      label="GPIB?"
+                      dense
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-checkbox
+                      v-model="isIEEE4882"
+                      label="IEEE-488.2 (GPIB)?"
+                      dense
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-checkbox
+                      v-model="isSCPI"
+                      label="SCPI?"
+                      dense
+                    />
+                  </v-col>
+                  <v-col>
                     <v-text-field
                       v-model="identityQueryCommand"
                       label="Identity Query Command"
@@ -376,6 +397,27 @@ export default class DriverBuilderView extends Vue {
   }
   set terminator(value: string) {
     this.$store.direct.commit.driverBuilder.setTerminator(value);
+  }
+
+  get isGPIB() {
+    return this.driver.isGPIB !== undefined && this.driver.isGPIB;
+  }
+  set isGPIB(value: boolean) {
+    this.$store.direct.commit.driverBuilder.setIsGPIB(value);
+  }
+
+  get isIEEE4882() {
+    return this.driver.isIEEE4882 !== undefined && this.driver.isIEEE4882;
+  }
+  set isIEEE4882(value: boolean) {
+    this.$store.direct.commit.driverBuilder.setIsIEEE4882(value);
+  }
+
+  get isSCPI() {
+    return this.driver.isSCPI !== undefined && this.driver.isSCPI;
+  }
+  set isSCPI(value: boolean) {
+    this.$store.direct.commit.driverBuilder.setIsSCPI(value);
   }
 
   get isCommunicationInterfaceConnected() { return this.$store.direct.state.driverBuilder.isSelectedCommunicationInterfaceConnected; }

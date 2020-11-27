@@ -235,6 +235,9 @@ export interface Driver {
   driverNomenclature: string;
   identityQueryCommand?: string;
   terminator: string;
+  isGPIB?: boolean;
+  isIEEE4882?: boolean;
+  isSCPI?: boolean;
   instructionSets: InstructionSet[],
   categories?: string[];
   variables?: DriverVariable[];

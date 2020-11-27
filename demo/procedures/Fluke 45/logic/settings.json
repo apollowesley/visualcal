@@ -397,6 +397,16 @@
 					"module": "node-red",
 					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-instrument-driver.js"
 				},
+				"indysoft-instrument-error-check": {
+					"name": "indysoft-instrument-error-check",
+					"types": [
+						"indysoft-instrument-error-check"
+					],
+					"enabled": true,
+					"local": false,
+					"module": "node-red",
+					"file": "/Users/scottpage/Documents/projects/visualcal/dist/nodes/indysoft-instrument-error-check.js"
+				},
 				"indysoft-mqtt-dynamic-topic-in": {
 					"name": "indysoft-mqtt-dynamic-topic-in",
 					"types": [

@@ -26,10 +26,10 @@ interface ICommunicationInterface {
   writeFloat32(data: number): Promise<void>;
   writeFloat64(data: number): Promise<void>;
   writeString(data: string, encoding?: BufferEncoding): Promise<void>;
-  queryString(data: string, encoding?: BufferEncoding): Promise<string>;
+  queryString(data: string, encoding?: BufferEncoding, opts?: {}): Promise<string>;
   write(data: ArrayBufferLike): Promise<ArrayBufferLike>;
-  read(): Promise<ArrayBufferLike>;
-  readString(): Promise<string>;
+  read(opts?: {}): Promise<ArrayBufferLike>;
+  readString(opts?: {}): Promise<string>;
 }
 
 interface ReadQueueItem {

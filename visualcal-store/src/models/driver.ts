@@ -9,6 +9,9 @@ const DriverSchema = new mongoose.Schema<DriverInterface>({
   driverNomenclature: { type: String, required: true },
   identityQueryCommand: { type: String, required: false },
   terminator: { type: String, required: true },
+  isGPIB: { type: Boolean, required: false },
+  isIEEE4882: { type: Boolean, required: false },
+  isSCPI: { type: Boolean, required: false },
   instructionSets: [{ type: InstructionSetSchema, required: true }],
   categories: { type: [String], required: false },
   variables: [{ type: DriverVariableSchema, required: false }]

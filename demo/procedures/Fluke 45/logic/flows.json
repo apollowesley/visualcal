@@ -779,7 +779,7 @@
 		"y": 280,
 		"wires": [
 			[
-				"70c9915b.fa5aa"
+				"a7efce04.3a0ec"
 			]
 		]
 	},
@@ -14041,5 +14041,38 @@
 				"a5458d0f.3ae2e"
 			]
 		]
+	},
+	{
+		"id": "a7efce04.3a0ec",
+		"type": "indysoft-instrument-error-check",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"driverConfigId": "6b116249.9db85c",
+		"checkType": "gpib4882",
+		"x": 610,
+		"y": 360,
+		"wires": [
+			[],
+			[
+				"70c9915b.fa5aa",
+				"e1319fe7.3be01"
+			]
+		]
+	},
+	{
+		"id": "e1319fe7.3be01",
+		"type": "debug",
+		"z": "3b731b51.7981f4",
+		"name": "",
+		"active": true,
+		"tosidebar": true,
+		"console": false,
+		"tostatus": false,
+		"complete": "false",
+		"statusVal": "",
+		"statusType": "auto",
+		"x": 830,
+		"y": 380,
+		"wires": []
 	}
 ]

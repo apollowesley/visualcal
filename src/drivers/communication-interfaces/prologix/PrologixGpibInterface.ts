@@ -12,8 +12,20 @@ const enum Mode {
   Controller
 }
 
+type ControllerType = 'GPIB-USB' | 'GBIB-TCP';
+
+interface ControllerVersion {
+  major: string;
+  minor: string;
+}
+
+interface ControllerInfo {
+  type: ControllerType;
+  version: ControllerVersion;
+}
+
 export abstract class PrologixGpibInterface extends CommunicationInterface implements GpibInterface {
-  
+
   private fReadlineParser = new ReadlineParser({ delimiter: '\n', encoding: 'ascii' });
   private fTextEncoder = new TextEncoder();
   private fTextDecoder = new TextDecoder();
@@ -27,7 +39,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     this.fLastSetTerminator = undefined;
     await super.onConnected();
     if (this.resetOnConnect) await this.reset();
-    // const version = await this.getVersion();
+    const controllerInfo = await this.getControllerInfo();
     await this.setAutoReadAfterWrite(false);
     await this.writeString('++savecfg 0');
     await this.setMode(Mode.Controller);
@@ -35,7 +47,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.setEndOfInstruction(true);
     await this.writeString('++read_tmo_ms 3000');
     await this.interfaceClear();
-    // log.info(`Connected to Prologix controller, version ${version}`);
+    log.info(`Connected to Prologix controller, ${controllerInfo.type}, version ${controllerInfo.version.major}.${controllerInfo.version.minor}`);
   }
 
   protected get readLineParser() { return this.fReadlineParser; }
@@ -98,7 +110,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     });
   }
 
-  read(): Promise<ArrayBufferLike> {
+  read(opts?: { readFromController?: boolean }): Promise<ArrayBufferLike> {
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
       const returnResolve = (retVal?: ArrayBufferLike) => {
         this.clearTimeouts();
@@ -129,7 +141,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
         }
         this.duplexClient.once('error', handleError);
         this.fReadlineParser.on('data', handleData);
-        await this.writeString('++read eoi');
+        if (!opts || !opts.readFromController) await this.writeString('++read eoi');
         this.fReadTimoutTimerId = setTimeout(() => {
           const err = new Error(`Read timeout after ${this.readTimeout} ms`);
           return returnReject(err);
@@ -140,34 +152,9 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     });
   }
 
-  protected readFromController() {
-    return new Promise<string>(async (resolve, reject) => {
-      if (!this.duplexClient || !this.isConnected) {
-        const error = new Error('Not connected or client is undefined');
-        this.onError(error);
-        return reject(error);
-      };
-      this.duplexClient.removeAllListeners('error');
-      const handleError = (err: Error) => {
-        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
-        this.fReadlineParser.off('data', handleData);
-        this.onError(err);
-        return reject(err);
-      }
-      const handleData = (data: string) => {
-        if (this.duplexClient) this.duplexClient.removeAllListeners('error');
-        this.fReadlineParser.off('data', handleData);
-        return resolve(data);
-      }
-      this.duplexClient.once('error', handleError);
-      this.fReadlineParser.on('data', handleData);
-      await this.writeString('++read');
-    });
-  }
-
   protected async queryController(query: string) {
     await this.writeString(query);
-    return await this.readFromController();
+    return await this.readString({ readFromController: true });
   }
 
   // private fPreviousWriteData?: ArrayBufferLike;
@@ -194,8 +181,20 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     await this.writeString(`++addr ${address}`);
   }
 
-  async getVersion() {
-    return await this.queryController('++ver');
+  async getControllerInfo(): Promise<ControllerInfo> {
+    const infoString = await this.queryController('++ver');
+    const infoStringParts = infoString.split(' ');
+    const type = infoStringParts[1] as ControllerType;
+    const versionString = infoStringParts[4];
+    const versionStringParts = versionString.split('.');
+    const version: ControllerVersion = {
+      major: versionStringParts[0],
+      minor: versionStringParts[1]
+    };
+    return {
+      type: type,
+      version: version
+    };
   }
 
   async getEndOfStringTerminator(): Promise<EndOfStringTerminator> {
@@ -276,23 +275,26 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
   }
 
   async becomeControllerInCharge(): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    await this.interfaceClear();
   }
 
-  async gotToRemote(address: number): Promise<void> {
-    return Promise.reject('Method not implemented.');
+  async gotToRemote(_: number): Promise<void> {
+    await Promise.resolve();
   }
 
   async goToLocal(address: number): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    await this.setDeviceAddress(address);
+    this.writeString('++loc');
   }
 
   async getListenOnly(): Promise<boolean> {
-    return Promise.reject('Method not implemented.');
+    const data = await this.queryController('++lon');
+    const value = parseInt(data);
+    return value === 1;
   }
   
   async setListenOnly(enable: boolean): Promise<void> {
-    return Promise.reject('Method not implemented.');
+    this.writeString(`++lon ${enable ? '1' : '0'}`);
   }
 
   async reset(): Promise<void> {
