@@ -1,0 +1,244 @@
+[
+	{
+		"id": "8e17426.14576c",
+		"type": "tab",
+		"label": "Flow 1",
+		"disabled": false,
+		"info": ""
+	},
+	{
+		"id": "6d0717e2.beb978",
+		"type": "indysoft-instrument-driver-configuration",
+		"unitId": "34401A",
+		"manufacturer": "Keysight",
+		"model": "34401A",
+		"useCategories": false
+	},
+	{
+		"id": "f8f4653f.bf4378",
+		"type": "indysoft-section-configuration",
+		"name": "DC Volts"
+	},
+	{
+		"id": "9c7728fd.738e18",
+		"type": "indysoft-action-start",
+		"z": "8e17426.14576c",
+		"name": "All",
+		"sectionConfigId": "f8f4653f.bf4378",
+		"x": 410,
+		"y": 180,
+		"wires": [
+			[
+				"12fcc61a.3ed94a"
+			]
+		]
+	},
+	{
+		"id": "880163fd.48bcf",
+		"type": "indysoft-action-completed",
+		"z": "8e17426.14576c",
+		"name": "",
+		"x": 1430,
+		"y": 180,
+		"wires": []
+	},
+	{
+		"id": "12fcc61a.3ed94a",
+		"type": "indysoft-instrument-driver",
+		"z": "8e17426.14576c",
+		"name": "",
+		"driverConfigId": "6d0717e2.beb978",
+		"instructionSets": [
+			{
+				"id": "5fb4a09399dd5a00002b2a76",
+				"instructionSet": {
+					"_id": "5fb4a09399dd5a00002b2a76",
+					"name": "Set Mode DC Volts",
+					"instructions": [
+						{
+							"_id": "5fb4a09799dd5a00002b2a78",
+							"order": 0,
+							"name": "Set variable",
+							"type": "setVariable",
+							"command": "VOLT:DC",
+							"readAttempts": 1,
+							"variable": "Current Function",
+							"description": ""
+						},
+						{
+							"_id": "5fb4a0ba99dd5a00002b2a79",
+							"order": 1,
+							"name": "Set instrument",
+							"type": "Write",
+							"command": "CONF:VOLT:DC",
+							"readAttempts": 1
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			},
+			{
+				"id": "5fb53ae87df1be0000ebe8c8",
+				"instructionSet": {
+					"_id": "5fb53ae87df1be0000ebe8c8",
+					"name": "Set DC Voltage Range",
+					"instructions": [
+						{
+							"_id": "5fb53af37df1be0000ebe8c9",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Write",
+							"command": "VOLT:DC:RANGE",
+							"readAttempts": 1,
+							"postParameters": [
+								{
+									"_id": "5fb53b047df1be0000ebe8ca",
+									"type": "list",
+									"prompt": "Range?",
+									"default": false,
+									"trueValue": "1",
+									"falseValue": "0",
+									"useMin": false,
+									"min": -9007199254740991,
+									"useMax": false,
+									"max": 9007199254740991,
+									"useMinMaxIncrement": false,
+									"minMaxIncrement": 1,
+									"afterText": "",
+									"listItems": [
+										{
+											"_id": "5fb53bec7df1be0000ebe8cb",
+											"text": "100 mV",
+											"value": "0.1 V"
+										},
+										{
+											"_id": "5fb53bed7df1be0000ebe8cc",
+											"text": "1 V",
+											"value": "1 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8cd",
+											"text": "10 V",
+											"value": "10 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8ce",
+											"text": "100 V",
+											"value": "100 V"
+										},
+										{
+											"_id": "5fb53bee7df1be0000ebe8cf",
+											"text": "1000 V",
+											"value": "1000 V"
+										}
+									],
+									"beforeText": " "
+								}
+							]
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": [
+					{
+						"instructionId": "5fb53af37df1be0000ebe8c9",
+						"parameter": {
+							"_id": "5fb53b047df1be0000ebe8ca",
+							"type": "list",
+							"prompt": "Range?",
+							"default": false,
+							"trueValue": "1",
+							"falseValue": "0",
+							"useMin": false,
+							"min": -9007199254740991,
+							"useMax": false,
+							"max": 9007199254740991,
+							"useMinMaxIncrement": false,
+							"minMaxIncrement": 1,
+							"afterText": "",
+							"listItems": [
+								{
+									"_id": "5fb53bec7df1be0000ebe8cb",
+									"text": "100 mV",
+									"value": "0.1 V"
+								},
+								{
+									"_id": "5fb53bed7df1be0000ebe8cc",
+									"text": "1 V",
+									"value": "1 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8cd",
+									"text": "10 V",
+									"value": "10 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8ce",
+									"text": "100 V",
+									"value": "100 V"
+								},
+								{
+									"_id": "5fb53bee7df1be0000ebe8cf",
+									"text": "1000 V",
+									"value": "1000 V"
+								}
+							],
+							"beforeText": " "
+						},
+						"value": "0.1 V"
+					}
+				]
+			},
+			{
+				"id": "5fad65cc8136320000dceb7b",
+				"instructionSet": {
+					"_id": "5fad65cc8136320000dceb7b",
+					"name": "Measure",
+					"instructions": [
+						{
+							"_id": "5fb2bb3bf5c4b600009dd7a7",
+							"order": 0,
+							"name": "Instruction",
+							"type": "Query",
+							"command": "READ?",
+							"readAttempts": 1,
+							"responseDataType": "Number"
+						}
+					]
+				},
+				"preParameterArguments": [],
+				"postParameterArguments": []
+			}
+		],
+		"x": 840,
+		"y": 180,
+		"wires": [
+			[],
+			[
+				"6b472081.4e1e1"
+			]
+		]
+	},
+	{
+		"id": "6b472081.4e1e1",
+		"type": "indysoft-scalar-result",
+		"z": "8e17426.14576c",
+		"name": "",
+		"description": "0.05 milli volt",
+		"baseQuantity": "potential",
+		"derivedQuantity": "volt",
+		"derivedQuantityPrefix": "milli",
+		"toleranceType": "plusMinus",
+		"min": "0.025",
+		"max": "0.075",
+		"inputLevel": "0.05",
+		"x": 1150,
+		"y": 180,
+		"wires": [
+			[
+				"880163fd.48bcf"
+			]
+		]
+	}
+]

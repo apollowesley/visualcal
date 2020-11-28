@@ -92,7 +92,7 @@ export default class SessionCreateView extends Vue {
   }
 
   async checkSessionExists(sessionName: string) {
-    return await window.ipc.getSessionExists(this.userEmail, sessionName);
+    return await window.ipc.getSessionExists(this.userEmail, sessionName, this.procedureName);
   }
 
   async onSessionNameChanged() {

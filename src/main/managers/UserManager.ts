@@ -70,7 +70,7 @@ export class UserManager extends TypedEmitter<Events> {
   set activeSession(session: Session | null) {
     let existing: Session | undefined = undefined;
     if (session) {
-      existing = this.getSession(session.username, session.name);
+      existing = this.getSession(session.username, session.name, session.procedureName);
       if (!existing) throw new Error(`Session, ${session.name}, for user, ${session.username}, does not exist`);
       this.fActiveSessionName = existing.name;
     } else {
@@ -123,10 +123,10 @@ export class UserManager extends TypedEmitter<Events> {
     return this.all.find(u => u.email.toLocaleUpperCase() === email.toLocaleUpperCase());
   }
 
-  getSession(email: string, sessionName: string) {
+  getSession(email: string, sessionName: string, procedureName: string) {
     const user = this.getOne(email);
     if (!user || !user.sessions) return undefined;
-    return user.sessions.find(s => s.name.toLocaleUpperCase() === sessionName.toLocaleUpperCase());
+    return user.sessions.find(s => s.name.toLocaleUpperCase() === sessionName.toLocaleUpperCase() && s.procedureName.toLocaleLowerCase() === procedureName.toLocaleLowerCase());
   }
 
   getBenchConfig(email: string, configName: string) {
@@ -142,15 +142,15 @@ export class UserManager extends TypedEmitter<Events> {
     return config;
   }
 
-  getDeviceConfigs(email: string, sessionName: string) {
-    const session = this.getSession(email, sessionName);
+  getDeviceConfigs(email: string, sessionName: string, procedureName: string) {
+    const session = this.getSession(email, sessionName, procedureName);
     if (!session) throw new Error(`Session, ${sessionName}, does not exist for user email, ${email}`);
     if (!session.configuration) return [];
     return session.configuration.devices;
   }
 
   getDeviceConfigsFromSession(session: Session) {
-    return this.getDeviceConfigs(session.username, session.name);
+    return this.getDeviceConfigs(session.username, session.name, session.procedureName);
   }
 
   add(user: User) {
@@ -162,7 +162,7 @@ export class UserManager extends TypedEmitter<Events> {
   addSession(session: Session) {
     const user = this.getOne(session.username);
     if (!user) throw new Error(`Unable to add session since user, ${session.username}, does not exist`);
-    const existingSession = this.getSession(session.username, session.name);
+    const existingSession = this.getSession(session.username, session.name, session.procedureName);
     if (existingSession) throw new Error(`A session named, ${session.name}, already exists for user, ${session.username}`);
     if (!user.sessions) user.sessions = [];
     user.sessions.push({ ...session, username: session.username.toLocaleLowerCase() });
@@ -208,8 +208,8 @@ export class UserManager extends TypedEmitter<Events> {
     if (this.getIsActiveUser(email)) this.activeUser = null;
   }
 
-  removeSession(email: string, sessionName: string) {
-    const session = this.getSession(email, sessionName);
+  removeSession(email: string, sessionName: string, procedureName: string) {
+    const session = this.getSession(email, sessionName, procedureName);
     if (!session) return;
     const user = this.getOne(email);
     if (!user) throw new Error(`User, ${email}, does not exist`);
@@ -253,7 +253,7 @@ export class UserManager extends TypedEmitter<Events> {
   }
 
   updateSession(session: Session) {
-    const existingSession = this.getSession(session.username, session.name);
+    const existingSession = this.getSession(session.username, session.name, session.procedureName);
     if (!existingSession) throw new Error(`A session named, ${session.name}, does not exist for user, ${session.username}`);
     const user = this.getOne(session.username);
     if (!user) throw new Error(`User, ${session.username}, does not exist`);
@@ -352,20 +352,20 @@ export class UserManager extends TypedEmitter<Events> {
       event.reply(IpcChannels.session.getAllForActiveUser.response, activeUser.sessions || []);
     });
 
-    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string; }) => {
+    ipcMain.on(IpcChannels.session.getExists.request, async (event, args: { email: string, sessionName: string, procedureName: string; }) => {
       try {
-        const exists = this.getSession(args.email, args.sessionName) !== undefined;
+        const exists = this.getSession(args.email, args.sessionName, args.procedureName) !== undefined;
         event.reply(IpcChannels.session.getExists.response, exists);
       } catch (error) {
         return event.reply(IpcChannels.session.getExists.error, error);
       }
     });
 
-    ipcMain.on(IpcChannels.session.setActive.request, (event, name: string) => {
+    ipcMain.on(IpcChannels.session.setActive.request, (event, args: { email: string, sessionName: string, procedureName: string }) => {
       try {
         const activeUser = this.activeUser;
         if (!activeUser) return event.reply(IpcChannels.session.setActive.error, `Unable to set active session, ${name}, because no active user is set`);
-        const session = this.getSession(activeUser.email, name);
+        const session = this.getSession(args.email, args.sessionName, args.procedureName);
         if (!session) return event.reply(IpcChannels.session.setActive.error, `Unable to set active session, ${name}, because is does not exist`);
         this.activeSession = session;
         event.reply(IpcChannels.session.setActive.response, this.activeSession);

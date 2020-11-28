@@ -42,8 +42,8 @@ export class SessionManager extends TypedEmitter<Events> {
     return active.name.toLocaleUpperCase() === name.toLocaleUpperCase();
   }
 
-  setActive(email: string, name: string) {
-    const session = this.fUserManager.getSession(email, name);
+  setActive(email: string, name: string, procedureName: string) {
+    const session = this.fUserManager.getSession(email, name, procedureName);
     if (!session) throw new Error(`Session, ${name}, does not exist for user, ${email}`);
     this.fUserManager.activeSession = session;
   }
@@ -74,17 +74,6 @@ export class SessionManager extends TypedEmitter<Events> {
       }
     });
 
-    ipcMain.on(IpcChannels.session.getAllForActiveUser.request, (event) => {
-      try {
-        const activeUser = this.fUserManager.activeUser;
-        if (!activeUser) return event.reply(IpcChannels.session.getAllForActiveUser.error, new Error('No active user'));
-        const retVal = this.getAllForUser(activeUser.email);
-        event.reply(IpcChannels.session.getAllForActiveUser.response, retVal);
-      } catch (error) {
-        event.reply(IpcChannels.session.getAllForActiveUser.error, error);
-      }
-    })
-
     ipcMain.on(IpcChannels.session.viewInfo.request, async (event) => {
       try {
         const viewInfo = await this.getSessionViewInfo();
@@ -97,7 +86,7 @@ export class SessionManager extends TypedEmitter<Events> {
     ipcMain.on(IpcChannels.session.create.request, async (event, session: SessionForCreate) => {
       try {
         const newSession = this.fUserManager.addSession(session);
-        this.setActive(session.username, session.name);
+        this.setActive(session.username, session.name, session.procedureName);
         return event.reply(IpcChannels.session.create.response, newSession);
       } catch (error) {
         return event.reply(IpcChannels.session.create.error, error);

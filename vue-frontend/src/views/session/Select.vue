@@ -61,7 +61,7 @@ export default class SessionSelectView extends Vue {
 
   private async onSelectSessionButtonClicked(sessionName: string) {
     this.setSelectSessionButtonsDisabled(true);
-    await window.ipc.setActiveSession(sessionName);
+    await window.ipc.setActiveSession(this.userEmail, sessionName, this.procedureName);
     this.setSelectSessionButtonsDisabled(false);
   }
 
@@ -90,7 +90,7 @@ export default class SessionSelectView extends Vue {
     const user = await window.ipc.getCurrentUser();
     this.user = user ? user : undefined;
     this.procedureName = await window.ipc.getActiveProcedureName();
-    this.fSessions = (await window.ipc.getSessions()).filter(s => s.procedureName === this.procedureName);
+    this.fSessions = (await window.ipc.getAllSessionsForActiveUser()).filter(s => s.procedureName === this.procedureName);
   }
 
 }

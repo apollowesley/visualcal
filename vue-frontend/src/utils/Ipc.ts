@@ -81,16 +81,16 @@ export class Ipc extends TypedEmitter<Events> {
     return await this.request<Procedure, string>('create-procedure-request', 'create-procedure-response', 'create-procedure-error', procedure);
   }
 
-  async getSessions() {
+  async getAllSessionsForActiveUser() {
     return await this.request<Session[], string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
   }
 
-  async getSessionExists(email: string, sessionName: string) {
-    return await this.request<boolean, string>('get-exists-session-request', 'get-exists-session-response', 'get-exists-session-error', { email: email, sessionName: sessionName });
+  async getSessionExists(email: string, sessionName: string, procedureName: string) {
+    return await this.request<boolean, string>('get-exists-session-request', 'get-exists-session-response', 'get-exists-session-error', { email, sessionName, procedureName });
   }
 
-  async setActiveSession(sessionName: string) {
-    return await this.request<Session, string>('session-set-active-request', 'session-set-active-response', 'session-set-active-error', sessionName);
+  async setActiveSession(email: string, sessionName: string, procedureName: string) {
+    return await this.request<Session, string>('session-set-active-request', 'session-set-active-response', 'session-set-active-error', { email, sessionName, procedureName });
   }
 
   async createSession(session: SessionForCreate) {
