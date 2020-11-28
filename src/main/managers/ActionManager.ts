@@ -56,6 +56,7 @@ export class ActionManager extends TypedEmitter<Events> {
   get currentRun() { return this.fCurrentRun; }
 
   async identifyAllIdentifiableDevices() {
+    console.info('Identifying all instruments');
     const driverNodes = NodeRedManager.instance.allDriversNodes;
     if (!driverNodes || driverNodes.length <= 0) return;
     for (const node of driverNodes) {
@@ -64,6 +65,7 @@ export class ActionManager extends TypedEmitter<Events> {
         if (!driver) continue;
         const iface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(node.runtime.unitId);
         if (!iface) continue;
+        await CommunicationInterfaceManager.instance.setCurrentDeviceAddress(iface, node.runtime.unitId);
         let identityString = '';
         if (driver.identityQueryCommand) {
           // Let the optional custom identity query command take precedence

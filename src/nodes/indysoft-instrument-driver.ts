@@ -4,6 +4,7 @@ import { CommandParameter, Instruction } from 'visualcal-common/dist/driver-buil
 import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction } from '../@types/logic-server';
 import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../drivers/utils';
+import { CommunicationInterfaceManager } from '../main/managers/CommunicationInterfaceManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
 import { CustomDriverNodeRedRuntimeNode, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, InstructionResponse, UIInstructionCommandParameterArgument, UIInstructionSet } from './indysoft-instrument-driver-types';
@@ -31,14 +32,6 @@ module.exports = function(RED: NodeRed) {
     this.instructionSets = config.instructionSets;
     const variables: { _id: string, name: string, defaultValue: string, value: string }[] = [];
     this.on('input', async (msg: RuntimeNodeInputEventMessage, send: NodeRedNodeSendFunction, done?: NodeRedNodeDoneFunction) => {
-      const setCommInterfaceGpibAddress = async (ci: CommunicationInterface, deviceUnitId: string) => {
-        const activeSession = global.visualCal.userManager.activeSession;
-        if (!activeSession || !activeSession.configuration) return;
-        const foundDevice = activeSession.configuration.devices.find(d => d.unitId === deviceUnitId);
-        if (!foundDevice || !foundDevice.gpib) return;
-        await ci.setDeviceAddress(foundDevice.gpibAddress);
-      }
-
       try {
         this.status({ fill: 'green', shape: 'dot', text: 'Triggered' });
         const driverConfig = findCustomDriverConfigRuntimeNode(this);
@@ -59,7 +52,7 @@ module.exports = function(RED: NodeRed) {
           this.status({ fill: 'red', shape: 'dot', text: 'Missing communication interface' });
           return;
         }
-        await setCommInterfaceGpibAddress(commInterface, driverConfig.unitId);
+        await CommunicationInterfaceManager.instance.setCurrentDeviceAddress(commInterface, driverConfig.unitId);
         if (driver.terminator) await commInterface.setEndOfStringTerminator(driver.terminator as EndOfStringTerminator);
 
         const responses: InstructionResponse[] = [];

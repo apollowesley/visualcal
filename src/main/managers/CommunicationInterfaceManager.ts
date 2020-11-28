@@ -189,6 +189,14 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     }
   }
 
+  async setCurrentDeviceAddress(ci: CommunicationInterface, deviceUnitId: string) {
+    const activeSession = global.visualCal.userManager.activeSession;
+    if (!activeSession || !activeSession.configuration) return;
+    const foundDevice = activeSession.configuration.devices.find(d => d.unitId === deviceUnitId);
+    if (!foundDevice || !foundDevice.gpib) return;
+    await ci.setDeviceAddress(foundDevice.gpibAddress);
+  }
+  
   private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
     this.emit('interfaceConnected', communicationInterface, err);
     setImmediate(() => {
