@@ -745,7 +745,7 @@
 		"id": "461430ff.ae1cf",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "Short slow",
 		"description": "0  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -754,7 +754,7 @@
 		"min": "-0.006",
 		"max": "0.006",
 		"inputLevel": "0",
-		"x": 1620,
+		"x": 1590,
 		"y": 200,
 		"wires": [
 			[
@@ -766,7 +766,7 @@
 		"id": "5126dcaf.ba7fa4",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "90 mV slow",
 		"description": "90 milli volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -775,7 +775,7 @@
 		"min": "89.971",
 		"max": "90.029",
 		"inputLevel": "90",
-		"x": 1630,
+		"x": 1590,
 		"y": 280,
 		"wires": [
 			[
@@ -1039,7 +1039,7 @@
 		"id": "5edb87d3.b97eb8",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "900 mV slow",
 		"description": "0.9  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1048,7 +1048,7 @@
 		"min": "0.89971",
 		"max": "0.90029",
 		"inputLevel": "0.9",
-		"x": 1620,
+		"x": 1590,
 		"y": 360,
 		"wires": [
 			[
@@ -1060,7 +1060,7 @@
 		"id": "3f67b25a.9f73ee",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "Short",
 		"description": "0  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1069,7 +1069,7 @@
 		"min": "-0.02",
 		"max": "0.02",
 		"inputLevel": "0",
-		"x": 1620,
+		"x": 1570,
 		"y": 440,
 		"wires": [
 			[
@@ -1081,7 +1081,7 @@
 		"id": "6147a3da.8209bc",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "300 mV",
 		"description": "0.3  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1090,7 +1090,7 @@
 		"min": "0.2999",
 		"max": "0.3001",
 		"inputLevel": "0.3",
-		"x": 1620,
+		"x": 1580,
 		"y": 520,
 		"wires": [
 			[
@@ -1102,7 +1102,7 @@
 		"id": "7dd2b513.b7d09c",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "3 volt",
 		"description": "3  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1111,7 +1111,7 @@
 		"min": "2.999",
 		"max": "3.001",
 		"inputLevel": "3",
-		"x": 1620,
+		"x": 1570,
 		"y": 600,
 		"wires": [
 			[
@@ -1123,7 +1123,7 @@
 		"id": "1a9682bf.9cb08d",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "-3 volt range",
 		"description": "-3  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1132,7 +1132,7 @@
 		"min": "-3.001",
 		"max": "-2.999",
 		"inputLevel": "-3",
-		"x": 1620,
+		"x": 1590,
 		"y": 680,
 		"wires": [
 			[
@@ -1144,7 +1144,7 @@
 		"id": "26b600d5.6fc36",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "30 volt range",
 		"description": "30  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1153,7 +1153,7 @@
 		"min": "29.99",
 		"max": "30.01",
 		"inputLevel": "30",
-		"x": 1620,
+		"x": 1590,
 		"y": 760,
 		"wires": [
 			[
@@ -1165,7 +1165,7 @@
 		"id": "ee7c3d13.04d0b",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "300 volt range",
 		"description": "300  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1174,7 +1174,7 @@
 		"min": "299.9",
 		"max": "300.1",
 		"inputLevel": "300",
-		"x": 1620,
+		"x": 1600,
 		"y": 840,
 		"wires": [
 			[
@@ -1186,7 +1186,7 @@
 		"id": "99c8cbf2.1cdaf8",
 		"type": "indysoft-scalar-result",
 		"z": "3b731b51.7981f4",
-		"name": "",
+		"name": "1000 volt range",
 		"description": "1000  volt",
 		"baseQuantity": "potential",
 		"derivedQuantity": "volt",
@@ -1195,7 +1195,7 @@
 		"min": "999.5",
 		"max": "1000.5",
 		"inputLevel": "1000",
-		"x": 1630,
+		"x": 1600,
 		"y": 920,
 		"wires": [
 			[

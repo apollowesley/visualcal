@@ -167,6 +167,10 @@ export class NodeRedManager extends TypedEmitter<Events> {
     return typedNodes;
   }
 
+  findNodeById(id: string) {
+    return this.nodes.find(n => n.id.toLowerCase() === id.toLowerCase());
+  };
+
   get procedureSidebarNode() {
     const procedureNodes = this.findTypedNodesByType<IndySoftProcedureSideBarEditorNode, IndySoftProcedureSidebarRuntimeNode>(IndySoftNodeTypeNames.Procedure);
     if (procedureNodes && procedureNodes.length > 0) return procedureNodes[0];

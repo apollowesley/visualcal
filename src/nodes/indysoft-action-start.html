@@ -29,13 +29,13 @@ const IndySoftActionStartNodeConfig = {
     RED.nodes.eachConfig(node => {
       if (node.id === this.sectionConfigId) sectionConfig = node;
     });
-    if (sectionConfig) return `Section Begin: ${sectionConfig.name}; Action: ${this.name}`;
-    return `Section Begin: <none>; Action: ${this.name}`;
+    if (sectionConfig) return `Action Begin: ${sectionConfig.name}; Action: ${this.name}`;
+    return `Action Begin: <none>; Action: ${this.name}`;
   },
   labelStyle: function () {
     return 'node_label_italic';
   },
-  paletteLabel: 'Section Begin'
+  paletteLabel: 'Action Begin'
 }
 
 RED.nodes.registerType('indysoft-action-start', IndySoftActionStartNodeConfig);

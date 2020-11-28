@@ -9,12 +9,12 @@ export class UserInteractionManager extends EventEmitter {
   constructor() {
     super();
     ipcMain.on(IpcChannels.user.input.result, (_, result: UserInputResponse) => {
-      const node = NodeRedManager.instance.utils.findNodeById(result.nodeId);
+      const node = NodeRedManager.instance.findNodeById(result.nodeId);
       if (!node) {
         dialog.showErrorBox('User Input Error', 'Unable to locate node that requested a response.');
         return;
       }
-      node.emit('response', result);
+      node.runtime.emit('response', result);
     });
   }
 

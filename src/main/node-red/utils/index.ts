@@ -1,5 +1,3 @@
-import { NodeRedRuntimeNode, NodeRedCommunicationInterfaceRuntimeNode, DeviceConfigurationNode } from '../../../@types/logic-server';
-import { NodeRedManager } from '../../managers/NodeRedManager';
 import { CommunicationInterfaceManager } from '../../managers/CommunicationInterfaceManager';
 
 interface DeviceCommunicationInterfaceNamePair {
@@ -26,19 +24,6 @@ const getDeviceConfig = (unitId: string) => {
   return deviceCommunicationInterfaces.find(d => d.deviceName === unitId);
 }
 
-const getAllNodes = (): NodeRedRuntimeNode[] => {
-  const retVal: NodeRedRuntimeNode[] = [];
-  NodeRedManager.instance.nodeRed.nodes.eachNode(np => {
-    const n = NodeRedManager.instance.nodeRed.nodes.getNode(np.id) as NodeRedRuntimeNode;
-    if (n && n.type !== 'tab') retVal.push(n);
-  });
-  return retVal;
-};
-
-const findNodeById = (id: string): NodeRedRuntimeNode | undefined => {
-  return getAllNodes().find(n => n.id.toLowerCase() === id.toLowerCase());
-};
-
 const loadDevices = (session: Session) => {
   clearDeviceCommunicationInterfaces();
   if (!session.configuration) throw new Error(`Session, ${session.name} does not have a configuration`);
@@ -58,6 +43,5 @@ const loadDevices = (session: Session) => {
 export default {
   getCommunicationInterfaceForDevice,
   getDeviceConfig,
-  findNodeById,
   loadDevices
 }

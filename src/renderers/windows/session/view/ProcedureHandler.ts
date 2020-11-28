@@ -27,6 +27,7 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     super();
 
     this.fActionSelectElement = document.getElementById(opts.selectActionElementId) as HTMLSelectElement;
+
     this.fActionSelectElement.addEventListener('change', () => {
       const selectedValue = this.selectedValue;
       let foundSelectedOption = false;
@@ -71,13 +72,23 @@ export class ProcedureHandler extends TypedEmitter<Events> {
 
   updateSections(sections: SectionInfo[]) {
     const actionSelectElement = this.actionSelectElement;
-    actionSelectElement.options.length = 0;
-    sections.forEach(section => {
+    const sortedSections = sections.sort((a, b) => {
+      if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) return 1;
+      if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) return -1;
+      return 0;
+    });
+    $(actionSelectElement).children().remove();
+    sortedSections.forEach(section => {
       const sectionGroupdEl = document.createElement('optgroup');
       sectionGroupdEl.label = section.name;
       sectionGroupdEl.nodeValue = section.name;
       actionSelectElement.add(sectionGroupdEl);
-      section.actions.forEach(action => {
+      const sortedSections = section.actions.sort((a, b) => {
+        if (a.name.toLocaleLowerCase() > b.name.toLocaleLowerCase()) return 1;
+        if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) return -1;
+        return 0;
+      });
+      sortedSections.forEach(action => {
         const actionEl = document.createElement('option');
         actionEl.label = action.name;
         actionEl.value = JSON.stringify({ section: section, action: action });
