@@ -5,6 +5,7 @@ import { IpcChannels, VisualCalWindow } from '../../constants';
 import { CustomDriverNodeRedRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-instrument-driver-types';
 // import { BeforeWriteStringResult } from '../../drivers/devices/Device';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
+import { DriverBuilder } from './DriverBuilder';
 import { CancelActionReason, CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
@@ -54,6 +55,30 @@ export class ActionManager extends TypedEmitter<Events> {
   get isRunning() { return this.fCurrentRun !== undefined; }
   get currentRun() { return this.fCurrentRun; }
 
+  async identifyAllIdentifiableDevices() {
+    const driverNodes = NodeRedManager.instance.allDriversNodes;
+    if (!driverNodes || driverNodes.length <= 0) return;
+    for (const node of driverNodes) {
+      try {
+        const driver = DriverBuilder.instance.getDriver(node.runtime.manufacturer, node.runtime.model);
+        if (!driver) continue;
+        const iface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(node.runtime.unitId);
+        if (!iface) continue;
+        let identityString = '';
+        if (driver.identityQueryCommand) {
+          // Let the optional custom identity query command take precedence
+          identityString = await iface.queryString(driver.identityQueryCommand);
+        } else if (driver.isGPIB || driver.isIEEE4882) {
+          identityString = await iface.queryString('*IDN?');
+        }
+        const identityParts = identityString.split(',');
+        console.info(identityParts);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+  }
+
   async start(opts: StartOptions) {
     this.fCurrentRun = RunManager.instance.startRun(opts.session.name, opts.sectionId, opts.actionId, opts.runDescription);
     await CommunicationInterfaceManager.instance.loadFromSession(opts.session);
@@ -97,6 +122,7 @@ export class ActionManager extends TypedEmitter<Events> {
     } else {
       await CommunicationInterfaceManager.instance.connectAll();
     }
+    await this.identifyAllIdentifiableDevices();
     await NodeRedManager.instance.startAction(opts.sectionId, opts.actionId, this.fCurrentRun.id);
     this.emit('actionStarted', opts);
     ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: opts.sectionId, action: opts.actionId, state: 'started' });

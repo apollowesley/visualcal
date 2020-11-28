@@ -1,6 +1,8 @@
 import { DeviceConfigurationProperties } from '../@types/logic-nodes';
 import { DeviceConfigurationNode } from '../@types/logic-server';
 
+export const TypeName = 'indysoft-instrument-driver-configuration';
+
 export interface ConfigurationNode extends DeviceConfigurationNode {
   manufacturer: string;
   model: string;

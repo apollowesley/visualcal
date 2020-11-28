@@ -6,12 +6,15 @@ import { NodeRedFlow, NodeRedFlowNode } from '../../../@types/node-red-info';
 import { IndySoftNodeTypeNames } from '../../../constants';
 import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../../nodes/indysoft-action-start-types';
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../../nodes/procedure-sidebar-types';
+import { TypeName as IndySoftInstrumentDriverConfigurationNodeTypeName, ConfigurationProperties as IndySoftInstrumentDriverConfigurationEditorNode, ConfigurationNode as IndySoftInstrumentDriverConfigurationRuntimeNode } from '../../../nodes/indysoft-instrument-driver-configuration-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../../servers/express';
 import NodeRedVisualCalUtils from '../../node-red/utils';
 import electronLog from 'electron-log';
 import { CommunicationInterfaceManager } from '../CommunicationInterfaceManager';
+import { DriverBuilder } from '../DriverBuilder';
+import { Driver } from 'visualcal-common/dist/driver-builder';
 
 export const enum CancelActionReason {
   user
@@ -130,6 +133,19 @@ export class NodeRedManager extends TypedEmitter<Events> {
       }
     });
     return nodes;
+  }
+
+  get allDriversNodes() {
+    return this.findTypedNodesByType<IndySoftInstrumentDriverConfigurationEditorNode, IndySoftInstrumentDriverConfigurationRuntimeNode>(IndySoftInstrumentDriverConfigurationNodeTypeName);
+  }
+
+  get allDrivers() {
+    const retVal: Driver[] = [];
+    this.allDriversNodes.forEach(node => {
+      const driver = DriverBuilder.instance.getDriver(node.runtime.manufacturer, node.runtime.model);
+      if (driver) retVal.push(driver);
+    });
+    return retVal;
   }
 
   findNodesByType(type: string) {
