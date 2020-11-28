@@ -77,7 +77,8 @@ export class ProcedureHandler extends TypedEmitter<Events> {
       if (a.name.toLocaleLowerCase() < b.name.toLocaleLowerCase()) return -1;
       return 0;
     });
-    $(actionSelectElement).children().remove();
+    const optGroups = actionSelectElement.querySelectorAll('optgroup');
+    optGroups.forEach(optGroup => actionSelectElement.removeChild(optGroup));
     sortedSections.forEach(section => {
       const sectionGroupdEl = document.createElement('optgroup');
       sectionGroupdEl.label = section.name;
