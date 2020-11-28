@@ -280,7 +280,7 @@ export class WindowManager extends TypedEmitter<Events> {
       const existingWindow = this.get(id);
       if (existingWindow) {
         existingWindow.focus();
-        return resolve();
+        return resolve(existingWindow);
       }
       if (opts && !opts.windowOpts) {
         opts.windowOpts = defaultWindowConstructorOptions;

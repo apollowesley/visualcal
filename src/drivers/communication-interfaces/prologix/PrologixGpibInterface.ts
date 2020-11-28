@@ -72,7 +72,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return new Promise<ArrayBufferLike>((resolve, reject) => {
       const returnResolve = (retVal?: ArrayBufferLike) => {
         this.clearTimeouts();
-        return resolve(retVal);
+        return resolve(retVal || data);
       }
       const returnReject = (error: Error) => {
         this.clearTimeouts();
@@ -114,7 +114,7 @@ export abstract class PrologixGpibInterface extends CommunicationInterface imple
     return new Promise<ArrayBufferLike>(async (resolve, reject) => {
       const returnResolve = (retVal?: ArrayBufferLike) => {
         this.clearTimeouts();
-        return resolve(retVal);
+        return resolve(retVal || new Uint8Array([]));
       }
       const returnReject = (error: Error) => {
         this.clearTimeouts();
