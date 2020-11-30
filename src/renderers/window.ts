@@ -9,7 +9,6 @@ import { RendererRunManager } from './managers/RendererRunManager';
 import { RendererActionManager } from './managers/RendererActionManager';
 import { RendererAssetManager } from './managers/RendererAssetManager';
 import { RendererUserManager } from './managers/RendererUserManager';
-import { CommunicationInterfaceManager } from './managers/CommunicationInterfaceManager';
 import electronIpcLog from 'electron-ipc-log';
 import { removeDesignTimeFromAllElements } from './utils/runtime';
 import electronLog from 'electron-log';
@@ -62,7 +61,6 @@ window.visualCal = {
   actionManager: new RendererActionManager(),
   assetManager: new RendererAssetManager(),
   userManager: new RendererUserManager(),
-  communicationInterfaceManager: new CommunicationInterfaceManager(),
   getCustomDriver: (manufacturer, model) => {
     return new Promise((resolve, reject) => {
       ipcRenderer.once(DriverBuilderIpcChannels.communicationInterface.getDriver.response, (_, driver?: Driver) => {

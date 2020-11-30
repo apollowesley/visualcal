@@ -1,4 +1,4 @@
-import { IpcChannels } from '../../constants';
+import { IpcChannels, CommunicationInterfaceIpcChannels } from '../../constants';
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { EmulatedCommunicationInterface } from '../../drivers/communication-interfaces/EmulatedCommunicationInterface';
 import { PrologixGpibTcpInterface } from '../../drivers/communication-interfaces/prologix/PrologixGpibTcpInterface';
@@ -15,16 +15,15 @@ import { SerialInterface } from '../../drivers/communication-interfaces/SerialIn
 
 interface Events {
   interfaceConnecting: (iface: ICommunicationInterface) => void;
-  interfaceConnected: (iface: ICommunicationInterface, err?: Error) => void;
-  interfaceDisconnecting: (iface: ICommunicationInterface, err?: Error) => void; 
-  interfaceDisconnected: (iface: ICommunicationInterface, err?: Error) => void;
-  interfaceDataReceived: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
-  interfaceStringReceived: (iface: ICommunicationInterface, data: string) => void;
-  interfaceError: (iface: ICommunicationInterface, err: Error) => void;
+  interfaceConnected: (iface: ICommunicationInterface) => void;
+  interfaceDisconnecting: (iface: ICommunicationInterface) => void; 
+  interfaceDisconnected: (iface: ICommunicationInterface) => void;
+  interfaceDataReceived: (iface: ICommunicationInterface, data: ArrayBufferLike) => void;
+  interfaceError: (iface: ICommunicationInterface, error: Error) => void;
   interfaceAdded: (iface: ICommunicationInterface) => void;
   interfaceRemoved: (name: string) => void;
-  interfaceBeforeWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
-  interfaceAfterWrite: (iface: ICommunicationInterface, data: ArrayBuffer) => void;
+  interfaceBeforeWrite: (iface: ICommunicationInterface, data: ArrayBufferLike) => void;
+  interfaceAfterWrite: (iface: ICommunicationInterface, data: ArrayBufferLike) => void;
 }
 
 const log = electronLog.scope('CommunicationInterfaceManager');
@@ -50,14 +49,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.on('connected', this.onInterfaceConnected);
     communicationInterface.on('connecting', this.onInterfaceConnecting);
     communicationInterface.on('dataReceived', this.onInterfaceDataReceived);
-    communicationInterface.on('stringReceived', this.onInterfaceStringReceived);
     communicationInterface.on('disconnecting', this.onInterfaceDisconnecting);
     communicationInterface.on('disconnected', this.onInterfaceDisconnected);
     communicationInterface.on('beforeWrite', this.onInterfaceBeforeWrite);
     communicationInterface.on('afterWrite', this.onInterfaceAfterWrite);
     communicationInterface.on('error', this.onInterfaceError);
     this.emit('interfaceAdded', communicationInterface);
-    ipcMain.sendToAll(IpcChannels.communicationInterface.added, { name: communicationInterface.name });
+    if (CommunicationInterfaceIpcChannels.added) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.added, { name: communicationInterface.name });
   }
 
   remove(name: string) {
@@ -66,14 +64,13 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     communicationInterface.removeAllListeners('connected');
     communicationInterface.removeAllListeners('connecting');
     communicationInterface.removeAllListeners('dataReceived');
-    communicationInterface.removeAllListeners('stringReceived');
     communicationInterface.removeAllListeners('disconnecting');
     communicationInterface.removeAllListeners('disconnected');
     communicationInterface.removeAllListeners('beforeWrite');
     communicationInterface.removeAllListeners('afterWrite');
     communicationInterface.removeAllListeners('error');
     this.emit('interfaceRemoved', communicationInterface.name);
-    ipcMain.sendToAll(IpcChannels.communicationInterface.removed, { name: communicationInterface.name });
+    if (CommunicationInterfaceIpcChannels.removed) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.removed, { name: communicationInterface.name });
   }
 
   exists(name: string) {
@@ -197,51 +194,43 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     await ci.setDeviceAddress(foundDevice.gpibAddress);
   }
   
-  private onInterfaceConnected(communicationInterface: ICommunicationInterface, err?: Error) {
-    this.emit('interfaceConnected', communicationInterface, err);
+  private onInterfaceConnected(communicationInterface: ICommunicationInterface) {
+    this.emit('interfaceConnected', communicationInterface);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Connected' });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.connected, { interfaceName: communicationInterface.name, err: err });
+      logToCurrentActionRun({ name: communicationInterface.name, message: 'Connected' });
+      if (CommunicationInterfaceIpcChannels.connected) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.connected, { name: communicationInterface.name });
     });
   }
 
   private onInterfaceConnecting(communicationInterface: ICommunicationInterface) {
     this.emit('interfaceConnecting', communicationInterface);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Connecting' });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.connecting, { interfaceName: communicationInterface.name });
+      logToCurrentActionRun({ name: communicationInterface.name, message: 'Connecting' });
+      if (CommunicationInterfaceIpcChannels.connecting) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.connecting, { name: communicationInterface.name });
     });
   }
 
   private onInterfaceDataReceived(communicationInterface: ICommunicationInterface, data: ArrayBuffer) {
     this.emit('interfaceDataReceived', communicationInterface, data);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Data received', data: data });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.dataReceived, { interfaceName: communicationInterface.name, data: data });
+      logToCurrentActionRun({ name: communicationInterface.name, message: 'Data received', data: data });
+      ipcMain.sendToAll(CommunicationInterfaceIpcChannels.dataReceived, { name: communicationInterface.name, data: data });
     });
   }
 
-  private onInterfaceStringReceived(communicationInterface: ICommunicationInterface, data: string) {
-    this.emit('interfaceStringReceived', communicationInterface, data);
+  private onInterfaceDisconnecting(communicationInterface: ICommunicationInterface) {
+    this.emit('interfaceDisconnecting', communicationInterface);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `String data received: ${data}`, data: data });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.stringReceived, { interfaceName: communicationInterface.name, data: data });
+      logToCurrentActionRun({ name: communicationInterface.name, message: 'Disconnecting' });
+      if (CommunicationInterfaceIpcChannels.disconnecting) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.disconnecting, { name: communicationInterface.name });
     });
   }
 
-  private onInterfaceDisconnecting(communicationInterface: ICommunicationInterface, err?: Error) {
-    this.emit('interfaceDisconnecting', communicationInterface, err);
+  private onInterfaceDisconnected(communicationInterface: ICommunicationInterface) {
+    this.emit('interfaceDisconnected', communicationInterface);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Disconnecting', error: err });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnecting, { interfaceName: communicationInterface.name, err: err });
-    });
-  }
-
-  private onInterfaceDisconnected(communicationInterface: ICommunicationInterface, err?: Error) {
-    this.emit('interfaceDisconnected', communicationInterface, err);
-    setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: 'Disconnected', error: err });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.disconnected, { interfaceName: communicationInterface.name, err: err });
+      logToCurrentActionRun({ name: communicationInterface.name, message: 'Disconnected' });
+      if (CommunicationInterfaceIpcChannels.disconnected) ipcMain.sendToAll(CommunicationInterfaceIpcChannels.disconnected, { name: communicationInterface.name });
     });
   }
 
@@ -249,8 +238,8 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     this.emit('interfaceBeforeWrite', communicationInterface, data);
     setImmediate(() => {
       const dataString = new TextDecoder().decode(data);
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Sending data: ${dataString}`, data: data });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.beforeWrite, { interfaceName: communicationInterface.name, data: data });
+      logToCurrentActionRun({ name: communicationInterface.name, message: `Sending data: ${dataString}`, data: data });
+      ipcMain.sendToAll(CommunicationInterfaceIpcChannels.beforeWrite, { name: communicationInterface.name, data: data });
     });
   }
 
@@ -258,16 +247,16 @@ export class CommunicationInterfaceManager extends TypedEmitter<Events> {
     this.emit('interfaceAfterWrite', communicationInterface, data);
     setImmediate(() => {
       const dataString = new TextDecoder().decode(data);
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Data sent: ${dataString}`, data: data });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.afterWrite, { interfaceName: communicationInterface.name, data: data });
+      logToCurrentActionRun({ name: communicationInterface.name, message: `Data sent: ${dataString}`, data: data });
+      ipcMain.sendToAll(CommunicationInterfaceIpcChannels.afterWrite, { name: communicationInterface.name, data: data });
     });
   }
 
-  private onInterfaceError(communicationInterface: ICommunicationInterface, err: Error) {
-    this.emit('interfaceError', communicationInterface, err);
+  private onInterfaceError(communicationInterface: ICommunicationInterface, error: Error) {
+    this.emit('interfaceError', communicationInterface, error);
     setImmediate(() => {
-      logToCurrentActionRun({ interfaceName: communicationInterface.name, message: `Error: ${err.message}`, error: err });
-      ipcMain.sendToAll(IpcChannels.communicationInterface.error, { interfaceName: communicationInterface.name, err: err});
+      logToCurrentActionRun({ name: communicationInterface.name, message: `Error: ${error.message}`, error: error });
+      ipcMain.sendToAll(CommunicationInterfaceIpcChannels.error, { name: communicationInterface.name, error: error});
     });
   }
 

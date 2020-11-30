@@ -54,16 +54,49 @@ export interface IpcChannelCRUD {
   setActive: IpcChannelRequestResponseErrorNames;
 }
 
+export interface HardwareIpcChannels {
+  added?: string;
+  removed?: string;
+  connecting?: string;
+  connected?: string;
+  disconnecting?: string;
+  disconnected?: string;
+  identifying?: string;
+  identified?: string;
+  error: string;
+  dataReceived: string;
+  beforeWrite: string;
+  afterWrite: string;
+}
+
+export const DeviceIpcChannels: HardwareIpcChannels = {
+  identifying: 'device-identifying',
+  identified: 'device-identified',
+  error: 'device-error',
+  dataReceived: 'device-data-received',
+  beforeWrite: 'device-before-write',
+  afterWrite: 'device-after-write'
+}
+
+export const CommunicationInterfaceIpcChannels: HardwareIpcChannels = {
+  added: 'interface-added',
+  removed: 'interface-removed',
+  connecting: 'interface-connecting',
+  connected: 'interface-connected',
+  disconnecting: 'interface-disconnecting',
+  disconnected: 'interface-disconnected',
+  error: 'interface-error',
+  dataReceived: 'interface-data-received',
+  beforeWrite: 'interface-before-write',
+  afterWrite: 'interface-after-write'
+}
+
 export const IpcChannels = {
-  device: {
-    onWrite: 'device-on-write',
-    onReadString: 'device-on-read-string',
-    beforeWriteString: {
-      request: 'device-before-write-string-request',
-      response: 'device-before-write-string-response',
-      cancel: 'device-before-write-string-cancel',
-      error: 'device-before-write-string-error'
-    }
+  interceptWrite: {
+    request: 'intercept-write-string-request',
+    response: 'intercept-write-string-response',
+    cancel: 'intercept-write-string-cancel',
+    error: 'intercept-write-string-error'
   },
   ipc: {
     addRendererEventNames: 'ipc-add-renderer-event-names'
@@ -125,19 +158,6 @@ export const IpcChannels = {
     updateDownloaded: 'auto-update-downloaded',
     downloadAndInstallRequest: 'auto-update-download-and-install-request',
     cancelRequest: 'auto-update-download-and-install-cancel-request'
-  },
-  communicationInterface: {
-    connected: 'communication-interface-connected',
-    connecting: 'communication-interface-connecting',
-    disconnecting: 'communication-interface-disconnecting',
-    disconnected: 'communication-interface-disconnected',
-    error: 'communication-interface-error',
-    dataReceived: 'communication-interface-data-received',
-    stringReceived: 'communication-interface-string-received',
-    added: 'communication-interface-added',
-    removed: 'communication-interface-removed',
-    beforeWrite: 'communication-interface-before-write',
-    afterWrite: 'communication-interface-after-write'
   },
   procedures: {
     selectData: 'procedure-select-data',

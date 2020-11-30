@@ -16,6 +16,10 @@ body {
   width: 33.333333333%;
 }
 
+.bottom-row-block {
+  width: 50%;
+}
+
 .scrollable-block {
   overflow-y: auto;
 }

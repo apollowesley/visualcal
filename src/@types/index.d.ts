@@ -119,7 +119,6 @@ interface VisualCalWindowAugment extends VisualCalAugment {
   procedureManager: import('../renderers/managers/RendererProcedureManager').RendererProcedureManager;
   assetManager: import('../renderers/managers/RendererAssetManager').RendererAssetManager;
   userManager: import('../renderers/managers/RendererUserManager').RendererUserManager;
-  communicationInterfaceManager: import('../renderers/managers/CommunicationInterfaceManager').CommunicationInterfaceManager;
 }
 
 interface NamedType {

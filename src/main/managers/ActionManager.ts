@@ -92,15 +92,15 @@ export class ActionManager extends TypedEmitter<Events> {
         customDriverNode.runtime.onBeforeWrite = (data) => {
           return new Promise(async (resolve, reject) => {
             if (typeof data !== 'string') return resolve({ data });
-            ipcMain.once(IpcChannels.device.beforeWriteString.response, (_, args: { data: string }) => {
+            ipcMain.once(IpcChannels.interceptWrite.response, (_, args: { data: string }) => {
               if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return resolve(args);
             });
-            ipcMain.once(IpcChannels.device.beforeWriteString.error, (_, error: Error) => {
+            ipcMain.once(IpcChannels.interceptWrite.error, (_, error: Error) => {
               if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return reject(error);
             });
-            ipcMain.once(IpcChannels.device.beforeWriteString.cancel, async (_, args: { data: string, cancel: boolean }) => {
+            ipcMain.once(IpcChannels.interceptWrite.cancel, async (_, args: { data: string, cancel: boolean }) => {
               if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               await this.stop();
               return resolve(args);
@@ -110,7 +110,7 @@ export class ActionManager extends TypedEmitter<Events> {
             if (driverConfig) {
               const commInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(driverConfig.unitId);
               if (commInterface) {
-                deviceBeforeWriteWindow.webContents.send(IpcChannels.device.beforeWriteString.request, { deviceName: driverConfig?.unitId, ifaceName: commInterface.name, data });
+                deviceBeforeWriteWindow.webContents.send(IpcChannels.interceptWrite.request, { deviceName: driverConfig?.unitId, ifaceName: commInterface.name, data });
               }
             }
           });

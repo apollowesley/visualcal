@@ -45,7 +45,7 @@ interface InputMessage extends NodeRedNodeMessage {
 module.exports = function(RED: NodeRed) {
   function nodeConstructor(this: RuntimeNode, config: RuntimeProperties) {
     RED.nodes.createNode(this, config);
-    this.description = config.description;
+    this.description = config.name && config.name.length > 0 ? config.name : config.description;
     this.toleranceType = config.toleranceType;
     this.inputValue = parseFloat(config.inputLevel);
     if (config.min) this.min = parseFloat(config.min);

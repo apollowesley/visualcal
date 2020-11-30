@@ -69,19 +69,18 @@ export interface LogicRunBasicInfo {
   notes?: Note[];
 }
 
-export interface CommInterfaceLogEntry {
+export interface LogEntry {
   id?: string;
   timestamp?: Date,
-  interfaceName: string;
-  message: string;
-  source?: string;
+  name?: string;
   type?: string;
-  error?: Error | string;
-  data?: ArrayBuffer | string | number;
-  deviceName?: string;
+  message?: string;
+  data?: ArrayBufferLike;
+  error?: Error;
 }
 
 export interface LogicRun<TRaw, TValue> extends LogicRunBasicInfo {
   results: LogicResult<TRaw, TValue>[];
-  communicationLogEntries?: CommInterfaceLogEntry[];
+  communicationLogEntries?: LogEntry[];
+  deviceLogEntries?: LogEntry[];
 }

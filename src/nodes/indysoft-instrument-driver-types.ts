@@ -51,12 +51,12 @@ export interface InstructionResponse {
   value: string | number | ArrayBufferLike | boolean;
 }
 
-export type BeforeWriteResponse = { data: string | number | boolean | ArrayBufferLike, cancel?: boolean };
+export type BeforeWriteResponse = { data: string, cancel?: boolean };
 
 export interface CustomDriverNodeRedRuntimeNode extends NodeRedRuntimeNode {
   driverConfigId: string;
   instructionSets: UIInstructionSet[];
-  onBeforeWrite?: (data: string | number | boolean | ArrayBufferLike) => Promise<BeforeWriteResponse>;
+  onBeforeWrite?: (data: string) => Promise<BeforeWriteResponse>;
 }
 
 export interface CustomDriverNodeUIProperties extends NodeRedNodeUIProperties {

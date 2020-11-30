@@ -1,14 +1,14 @@
 import Tabulator from 'tabulator-tables';
 import { StateChangeInfo } from '../../../managers/RendererActionManager';
 import { DeviceConfigHandler } from './DeviceConfigHandler';
-import { DeviceLogHandler } from './DeviceLogHandler';
+import { LogHandler } from './LogHandler';
 import { IpcHandler } from './IpcHandler';
 import { ProcedureHandler } from './ProcedureHandler';
 import { RunHandler } from './RunHandler';
 import { StatusHandler } from './StatusHandler';
 import { SessionViewWindowOpenIPCInfo } from '../../../../@types/session-view';
 import { ipcRenderer } from 'electron';
-import { IpcChannels } from '../../../../constants';
+import { CommunicationInterfaceIpcChannels, DeviceIpcChannels, IpcChannels } from '../../../../constants';
 import { BenchConfig } from 'visualcal-common/dist/bench-configuration';
 import { StartOptions } from '../../../../main/managers/ActionManager';
 import { UserInstructionInputHandler } from './UserInstructionInputHandler';
@@ -92,7 +92,7 @@ const updateStartStopActionButton = (info?: StateChangeInfo) => {
     startStopActionButtonElement.textContent = 'Start';
     session.lastSectionName = undefined;
     session.lastActionName = undefined;
-    if (info.state === 'completed') alert('Action completed');
+    if (info.state === 'completed') setImmediate(() => alert('Action completed'));
   } else if (info.state === 'started') {
     startStopActionButtonElement.textContent = 'Stop';
     session.lastSectionName = info.section;
@@ -119,10 +119,11 @@ status.on('stateChanged', (info) => updateStartStopActionButton(info));
 // ************************************************************************************************
 
 // ================================================================================================
-//  Device log handler
+//  CommunicationInterface log handler
 // ================================================================================================
-const deviceLog = new DeviceLogHandler({
-  tableId: 'tabulator-log-table'
+const communicationInterfaceLog = new LogHandler({
+  tableElemenetId: 'tabulator-interface-log-table',
+  ipcChannels: CommunicationInterfaceIpcChannels
 });
 
 const updateDeviceInterfaceConnectionState = async (interfaceName: string, state: string) => {
@@ -136,12 +137,22 @@ const updateDeviceInterfaceConnectionState = async (interfaceName: string, state
   devicesTable.redraw(true);
 }
 
-deviceLog.on('interfaceConnected', async (interfaceName) => {
-  updateDeviceInterfaceConnectionState(interfaceName, 'Connected');
+communicationInterfaceLog.on('connected', async (name) => {
+  updateDeviceInterfaceConnectionState(name, 'Connected');
 });
 
-deviceLog.on('interfaceDisconnected', async (interfaceName) => {
-  updateDeviceInterfaceConnectionState(interfaceName, 'Disconnected');
+communicationInterfaceLog.on('disconnected', async (name) => {
+  updateDeviceInterfaceConnectionState(name, 'Disconnected');
+});
+
+// ************************************************************************************************
+
+// ================================================================================================
+//  Device log handler
+// ================================================================================================
+const deviceLog = new LogHandler({
+  tableElemenetId: 'tabulator-device-log-table',
+  ipcChannels: DeviceIpcChannels
 });
 
 // ************************************************************************************************
@@ -260,7 +271,7 @@ startStopActionButtonElement.addEventListener('click', async (ev) => {
   const section = selectedValue.section;
   const action = selectedValue.action;
   const runName = procedure.runName ? procedure.runName : new Date().toUTCString();
-  deviceLog.clear();
+  await deviceLog.clear();
   if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;

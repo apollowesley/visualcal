@@ -7,7 +7,6 @@ import { CommunicationInterfaceActionInfo, Library, IpcChannels, QueryStringInfo
 import { CommunicationInterface } from '../../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../../drivers/utils';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
-import { IpcChannels as OldIpcChannels } from './../../constants';
 
 interface OldInstructionWithParameters {
   parameters: CommandParameter[];
@@ -158,14 +157,6 @@ export class DriverBuilder extends TypedEmitter<Events> {
         nomenclature: d.driverNomenclature
       }
     });
-  }
-
-  notifyFrontendDriverReadString(interfaceName: string, deviceName: string, data: unknown) {
-    ipcMain.sendToAll(OldIpcChannels.device.onReadString, { interfaceName, deviceName, data });
-  }
-
-  notifyFrontendDriverWrite(interfaceName: string, deviceName: string, data: unknown) {
-    ipcMain.sendToAll(OldIpcChannels.device.onWrite, { interfaceName, deviceName, data });
   }
 
   public init() {

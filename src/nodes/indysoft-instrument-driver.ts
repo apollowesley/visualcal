@@ -2,12 +2,13 @@ import electronLog from 'electron-log';
 import { get as lodashGet } from 'lodash';
 import { CommandParameter, Instruction } from 'visualcal-common/dist/driver-builder';
 import { NodeRed, NodeRedNodeDoneFunction, NodeRedNodeMessage, NodeRedNodeSendFunction } from '../@types/logic-server';
-import { CommunicationInterface } from '../drivers/communication-interfaces/CommunicationInterface';
 import { sleep } from '../drivers/utils';
 import { CommunicationInterfaceManager } from '../main/managers/CommunicationInterfaceManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
 import { CustomDriverNodeRedRuntimeNode, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, InstructionResponse, UIInstructionCommandParameterArgument, UIInstructionSet } from './indysoft-instrument-driver-types';
+import { IpcChannels as OldIpcChannels, DeviceIpcChannels } from '../constants';
+import { ipcMain } from 'electron';
 
 interface RuntimeNodeInputEventMessagePayload {
   temp: number;
@@ -146,45 +147,44 @@ module.exports = function(RED: NodeRed) {
           return command;
         };
 
+        const textEncoder = new TextEncoder();
+        const onWrite = async (data: string) => {
+          let actualData = data;
+          this.status({ fill: 'green', shape: 'dot', text: `Writing: ${actualData}` });
+          if (this.onBeforeWrite) {
+            const beforeWriteResponse = await this.onBeforeWrite(actualData);
+            actualData = beforeWriteResponse.data;
+            if (beforeWriteResponse.cancel) return;
+          }
+          const dataToSend = textEncoder.encode(actualData);
+          ipcMain.sendToAll(DeviceIpcChannels.beforeWrite, { name: driverConfig.unitId, data: dataToSend });
+          await commInterface.writeData(dataToSend);
+          ipcMain.sendToAll(DeviceIpcChannels.afterWrite, { name: driverConfig.unitId, data: dataToSend });
+        }
+
         for (const uiInstructionSet of this.instructionSets) {
           const instructionSet = driver.instructionSets.find(i => i._id === uiInstructionSet.id);
           if (instructionSet) {
             for (const instruction of instructionSet.instructions) {
               this.status({ fill: 'green', shape: 'dot', text: `Processing instruction: ${instruction.name}` });
               if (instruction.delayBefore && instruction.delayBefore > 0) await sleep(instruction.delayBefore);
-              let command: number | string | boolean | ArrayBufferLike = buildCommand(instruction, uiInstructionSet);
-              switch (instruction.type) {
-                case 'Query':
-                  this.status({ fill: 'green', shape: 'dot', text: `Querying: ${command}` });
-                  if (this.onBeforeWrite) {
-                    const beforeWriteResponse = await this.onBeforeWrite(command);
-                    command = beforeWriteResponse.data;
-                    if (beforeWriteResponse.cancel) return;
-                  }
-                  lastRawResponse = await commInterface.queryString(command.toString());
-                  DriverBuilder.instance.notifyFrontendDriverReadString(commInterface.name, driverConfig.unitId, lastRawResponse);
-                  break;
-                case 'Read':
-                  this.status({ fill: 'green', shape: 'dot', text: 'Waiting for read response...' });
-                  lastRawResponse = await commInterface.read();
-                  DriverBuilder.instance.notifyFrontendDriverReadString(commInterface.name, driverConfig.unitId, lastRawResponse);
-                  break;
-                case 'Write':
-                  DriverBuilder.instance.notifyFrontendDriverWrite(commInterface.name, driverConfig.unitId, command);
-                  this.status({ fill: 'green', shape: 'dot', text: `Writing: ${command}` });
-                  if (this.onBeforeWrite) {
-                    const beforeWriteResponse = await this.onBeforeWrite(command);
-                    command = beforeWriteResponse.data;
-                    if (beforeWriteResponse.cancel) return;
-                  }
-                  await commInterface.writeString(command.toString());
-                  break;
-                case 'setVariable':
-                  const variable = variables.find(v => v.name === instruction.command);
-                  if (variable) {
-                    variable.value = instruction.command; // Command is used as the variable value when instruction.type === 'setVariable'
-                  }
+              let command: string = buildCommand(instruction, uiInstructionSet);
+              if (instruction.type === 'Write' || instruction.type === 'Query') {
+                await onWrite(command);
               }
+              if (instruction.type === 'Read' || instruction.type === 'Query') {
+                this.status({ fill: 'green', shape: 'dot', text: 'Reading' });
+                lastRawResponse = await commInterface.read();
+                ipcMain.sendToAll(DeviceIpcChannels.dataReceived, { name: driverConfig.unitId, data: lastRawResponse });
+              }
+              if (instruction.type === 'setVariable') {
+                this.status({ fill: 'green', shape: 'dot', text: 'Setting variable' });
+                const variable = variables.find(v => v.name === instruction.command);
+                if (variable) {
+                  variable.value = instruction.command; // Command is used as the variable value when instruction.type === 'setVariable'
+                }
+              }
+              this.status({});
               if (lastRawResponse) {
                 if (instruction.responseDataType) {
                   switch (instruction.responseDataType) {
