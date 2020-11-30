@@ -14,7 +14,7 @@ interface ICommunicationInterface {
   configure(options: CommunicationInterfaceConfigurationOptions): void;
   getEndOfStringTerminator(): Promise<EndOfStringTerminator>;
   setEndOfStringTerminator(eos: EndOfStringTerminator): Promise<void>;
-  writeData(data: ArrayBuffer): Promise<void>;
+  writeData(data: ArrayBufferLike): Promise<void>;
   writeInt8(data: number): Promise<void>;
   writeUInt8(data: number): Promise<void>;
   writeInt16(data: number): Promise<void>;
