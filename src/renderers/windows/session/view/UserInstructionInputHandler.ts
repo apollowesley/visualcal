@@ -34,6 +34,8 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
   private fStopButtonElement: HTMLButtonElement;
 
   private fLastRequest?: UserInputRequest;
+  private fMode: 'UserInstructionOrInput' | 'InterceptWrite' = 'UserInstructionOrInput';
+  private fInterceptData: string = '';
 
   constructor(opts: ConstructorOptions) {
     super();
@@ -55,32 +57,37 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     this.fInputElement.step = 'any';
 
     const handleOkButtonClickOrFormSubmit = async (event: Event) => {
-      if (!this.fLastRequest) return;
-      const response: UserInputResponse = {
-        action: this.fLastRequest.action,
-        nodeId: this.fLastRequest.nodeId,
-        section: this.fLastRequest.section,
-        cancel: false
-      };
-      switch (this.fLastRequest.dataType) {
-        case 'boolean':
-          response.result = !!this.fInputElement.value;
-          break;
-        case 'float':
-          response.result = parseFloat(this.fInputElement.value);
-          break;
-        case 'integer':
-          response.result = parseInt(this.fInputElement.value);
-          break;
-        case 'string':
-          response.result = this.fInputElement.value;
-          break;
+      if (this.fMode === 'UserInstructionOrInput') {
+        if (!this.fLastRequest) return;
+        const response: UserInputResponse = {
+          action: this.fLastRequest.action,
+          nodeId: this.fLastRequest.nodeId,
+          section: this.fLastRequest.section,
+          cancel: false
+        };
+        switch (this.fLastRequest.dataType) {
+          case 'boolean':
+            response.result = !!this.fInputElement.value;
+            break;
+          case 'float':
+            response.result = parseFloat(this.fInputElement.value);
+            break;
+          case 'integer':
+            response.result = parseInt(this.fInputElement.value);
+            break;
+          case 'string':
+            response.result = this.fInputElement.value;
+            break;
+        }
+        ipcRenderer.send(IpcChannels.user.input.result, response);
+      } else if (this.fMode === 'InterceptWrite') {
+        ipcRenderer.send(IpcChannels.interceptWrite.response, { data: this.fInterceptData });
       }
-      ipcRenderer.send(IpcChannels.user.input.result, response);
       await this.close();
     }
 
     const handleInputElementChangeOrKeyUp = () => {
+      if (this.fMode === 'InterceptWrite') return;
       if (!this.fLastRequest || (this.fLastRequest.dataType !== 'float' && this.fLastRequest.dataType !== 'integer')) {
         this.fOkButtonElement.disabled = false;
         return;
@@ -119,16 +126,21 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
       await handleOkButtonClickOrFormSubmit(event);
     });
 
-    this.fStopButtonElement.addEventListener('click', () => {
-      if (!this.fLastRequest) return;
-      const response: UserInputResponse = {
-        action: this.fLastRequest.action,
-        nodeId: this.fLastRequest.nodeId,
-        section: this.fLastRequest.section,
-        cancel: true,
-        result: false
-      };
-      ipcRenderer.send(IpcChannels.user.input.result, response);
+    this.fStopButtonElement.addEventListener('click', async () => {
+      if (this.fMode === 'UserInstructionOrInput') {
+        if (!this.fLastRequest) return;
+        const response: UserInputResponse = {
+          action: this.fLastRequest.action,
+          nodeId: this.fLastRequest.nodeId,
+          section: this.fLastRequest.section,
+          cancel: true,
+          result: false
+        };
+        ipcRenderer.send(IpcChannels.user.input.result, response);
+      } else if (this.fMode === 'InterceptWrite') {
+        ipcRenderer.send(IpcChannels.interceptWrite.cancel, { data: this.fInterceptData, cancel: true });
+        await this.close();
+      }
     });
 
     $(`#${this.fModalId}`).on('shown.bs.modal', function() {
@@ -136,11 +148,17 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     });
 
     ipcRenderer.on(IpcChannels.user.input.request, async (_, opts: UserInputRequest) => {
-      await this.show(opts);
+      this.fMode = 'UserInstructionOrInput';
+      await this.showInstructionOrInput(opts);
+    });
+
+    ipcRenderer.on(IpcChannels.interceptWrite.request, async (_, opts: { ifaceName: string, deviceName: string, data: string }) => {
+      this.fMode = 'InterceptWrite';
+      await this.showInterceptWrite(opts);
     });
   }
 
-  async show(opts: UserInputRequest) {
+  async showInstructionOrInput(opts: UserInputRequest) {
     this.fLastRequest = opts;
     this.fTitleElement.innerText = opts.title;
     this.fTextElement.innerText = opts.text;
@@ -210,6 +228,27 @@ export class UserInstructionInputHandler extends TypedEmitter<Events> {
     }
     if (opts.append) this.fInputLabelElement.innerText = `${this.fInputLabelElement.innerText} (${opts.append})`;
 
+    await ($(`#${this.fModalId}`) as any).modal({
+      backdrop: 'static',
+      keyboard: false,
+      focus: true,
+      show: true
+    });
+  }
+
+  async showInterceptWrite(opts: { ifaceName: string, deviceName: string, data: string }) {
+    this.fInterceptData = opts.data;
+    this.fTitleElement.innerText = 'Intercept Device Write';
+    this.fTextElement.innerText = `Sending command to device Id, ${opts.deviceName}, over intrface, ${opts.ifaceName}`;
+    this.fInputWrapperElement.classList.remove('collapse');
+    this.fInputLabelElement.innerText = 'Command being sent to device';
+    this.fInputElement.type = 'text';
+    this.fInputElement.min = '';
+    this.fInputElement.max = '';
+    this.fInputElement.value = opts.data;
+    this.fImageElement.classList.remove('d-block');
+    this.fImageElement.style.display = 'none!important';
+    this.fOkButtonElement.disabled = false;
     await ($(`#${this.fModalId}`) as any).modal({
       backdrop: 'static',
       keyboard: false,

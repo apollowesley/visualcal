@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
 import { ipcMain, dialog } from 'electron';
 import { IpcChannels } from '../../constants';
-import { WindowManager } from './WindowManager';
 import { NodeRedManager } from './NodeRedManager';
+import electronLog from 'electron-log';
+
+const log = electronLog.scope('UserInteractionManager');
 
 export class UserInteractionManager extends EventEmitter {
 
@@ -23,7 +25,7 @@ export class UserInteractionManager extends EventEmitter {
       try {
         request.fileBase64Contents = await global.visualCal.assetManager.loadFromCurrentProcedure(request.assetFilename);
       } catch (error) {
-        console.error(error.message);
+        log.error(error.message);
       }
     }
     // await WindowManager.instance.ShowUserInputWindow(request);

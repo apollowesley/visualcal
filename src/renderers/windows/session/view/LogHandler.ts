@@ -19,7 +19,6 @@ interface Events {
   disconnected: (name: string) => void;
   error: (name: string, error: Error) => void;
   dataReceived: (name: string, data: ArrayBufferLike) => void;
-  stringReceived: (name: string, data: string) => void;
   beforeWrite: (name: string, data: ArrayBufferLike) => void;
   afterWrite: (name: string, data: ArrayBufferLike) => void;
   entryAdded: (entry: LogEntry) => void;

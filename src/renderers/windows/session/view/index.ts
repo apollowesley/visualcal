@@ -271,7 +271,8 @@ startStopActionButtonElement.addEventListener('click', async (ev) => {
   const section = selectedValue.section;
   const action = selectedValue.action;
   const runName = procedure.runName ? procedure.runName : new Date().toUTCString();
-  await deviceLog.clear();
+  deviceLog.clear();
+  communicationInterfaceLog.clear();
   if (!section || !action) {
     alert('The start/stop button was supposed to be disabled.  This is a bug.');
     return;

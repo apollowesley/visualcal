@@ -3,6 +3,7 @@ import express from 'express';
 import http from 'http';
 import { hook as frontendVueRequestHook } from './frontend-vue-request-hook';
 import path from 'path';
+import electronLog from 'electron-log';
 
 interface Events {
   starting: (expressInstance: express.Express, httpInstancde: http.Server) => void;
@@ -10,6 +11,8 @@ interface Events {
   stopping: () => void;
   stopped: () => void;
 }
+
+const log = electronLog.scope('ExpressServer');
 
 export class ExpressServer extends TypedEmitter<Events> {
 
@@ -21,7 +24,7 @@ export class ExpressServer extends TypedEmitter<Events> {
 
   constructor() {
     super();
-    console.info('Loaded');
+    log.info('Loaded');
   }
 
   get expressInstance() { return this.fExpress; }

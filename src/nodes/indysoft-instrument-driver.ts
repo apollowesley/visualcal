@@ -57,7 +57,7 @@ module.exports = function(RED: NodeRed) {
         if (driver.terminator) await commInterface.setEndOfStringTerminator(driver.terminator as EndOfStringTerminator);
 
         const responses: InstructionResponse[] = [];
-        let lastRawResponse: string | number | ArrayBufferLike | boolean = '';
+        let lastRawResponse: ArrayBufferLike | undefined = undefined;
         let lastResponse: string | number | ArrayBufferLike | boolean = '';
 
         const buildInstructionParameter = (parameter: CommandParameter, parameterArguments?: UIInstructionCommandParameterArgument[]) => {
@@ -98,7 +98,7 @@ module.exports = function(RED: NodeRed) {
                   break;
                 case 're':
                   retVal += parameterArgument.value as string;
-                  console.warn('Regular express TypedInput type was selected, but is not currently implemented in indysoft-instrument-driver');
+                  log.warn('Regular express TypedInput type was selected, but is not currently implemented in indysoft-instrument-driver');
                   break;
                 case 'str':
                   retVal += parameterArgument.value as string;
@@ -148,13 +148,17 @@ module.exports = function(RED: NodeRed) {
         };
 
         const textEncoder = new TextEncoder();
+        let cancelled = false;
         const onWrite = async (data: string) => {
           let actualData = data;
           this.status({ fill: 'green', shape: 'dot', text: `Writing: ${actualData}` });
           if (this.onBeforeWrite) {
             const beforeWriteResponse = await this.onBeforeWrite(actualData);
+            if (beforeWriteResponse.cancel) {
+              cancelled = true;
+              return;
+            }
             actualData = beforeWriteResponse.data;
-            if (beforeWriteResponse.cancel) return;
           }
           const dataToSend = textEncoder.encode(actualData);
           ipcMain.sendToAll(DeviceIpcChannels.beforeWrite, { name: driverConfig.unitId, data: dataToSend });
@@ -171,10 +175,11 @@ module.exports = function(RED: NodeRed) {
               let command: string = buildCommand(instruction, uiInstructionSet);
               if (instruction.type === 'Write' || instruction.type === 'Query') {
                 await onWrite(command);
+                if (cancelled) return;
               }
               if (instruction.type === 'Read' || instruction.type === 'Query') {
                 this.status({ fill: 'green', shape: 'dot', text: 'Reading' });
-                lastRawResponse = await commInterface.read();
+                lastRawResponse = await commInterface.readData();
                 ipcMain.sendToAll(DeviceIpcChannels.dataReceived, { name: driverConfig.unitId, data: lastRawResponse });
               }
               if (instruction.type === 'setVariable') {
@@ -213,7 +218,8 @@ module.exports = function(RED: NodeRed) {
             };
           }
         };
-        send([null, { ...msg, payload: { ...msg.payload, responses: responses, value: { raw: lastRawResponse, value: lastResponse } } }]);
+        const stringResponse = lastRawResponse ? new TextDecoder().decode(lastRawResponse) : '';
+        send([null, { ...msg, payload: { ...msg.payload, responses: responses, value: { rawData: lastRawResponse, raw: stringResponse, value: lastResponse } } }]);
         if (done) done();
       } catch (error) {
         this.status({

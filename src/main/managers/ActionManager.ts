@@ -10,6 +10,7 @@ import { CancelActionReason, CustomDriverConfigurationNodeEditorDefinition, Node
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
 import { WindowManager } from './WindowManager';
+import electronLog from 'electron-log';
 
 export interface StartOptions {
   sectionId: string;
@@ -24,6 +25,8 @@ interface Events {
   actionStarted: (opts: StartOptions) => void;
   actionStopped: (runId: string) => void;
 }
+
+const log = electronLog.scope('ActionManager');
 
 export class ActionManager extends TypedEmitter<Events> {
 
@@ -56,7 +59,7 @@ export class ActionManager extends TypedEmitter<Events> {
   get currentRun() { return this.fCurrentRun; }
 
   async identifyAllIdentifiableDevices() {
-    console.info('Identifying all instruments');
+    log.info('Identifying all instruments');
     const driverNodes = NodeRedManager.instance.allDriversNodes;
     if (!driverNodes || driverNodes.length <= 0) return;
     for (const node of driverNodes) {
@@ -74,9 +77,9 @@ export class ActionManager extends TypedEmitter<Events> {
           identityString = await iface.queryString('*IDN?');
         }
         const identityParts = identityString.split(',');
-        console.info(identityParts);
+        log.info(identityParts);
       } catch (error) {
-        console.error(error.message);
+        log.error(error.message);
       }
     }
   }
@@ -93,24 +96,20 @@ export class ActionManager extends TypedEmitter<Events> {
           return new Promise(async (resolve, reject) => {
             if (typeof data !== 'string') return resolve({ data });
             ipcMain.once(IpcChannels.interceptWrite.response, (_, args: { data: string }) => {
-              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return resolve(args);
             });
             ipcMain.once(IpcChannels.interceptWrite.error, (_, error: Error) => {
-              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               return reject(error);
             });
             ipcMain.once(IpcChannels.interceptWrite.cancel, async (_, args: { data: string, cancel: boolean }) => {
-              if (WindowManager.instance.isWindowLoaded(VisualCalWindow.DeviceBeforeWrite)) WindowManager.instance.close(VisualCalWindow.DeviceBeforeWrite);
               await this.stop();
               return resolve(args);
             });
-            const deviceBeforeWriteWindow = await WindowManager.instance.showDeviceBeforeWriteWindow();
             const driverConfig = findCustomDriverConfigRuntimeNode(customDriverNode.runtime);
             if (driverConfig) {
               const commInterface = NodeRedManager.instance.utils.getCommunicationInterfaceForDevice(driverConfig.unitId);
               if (commInterface) {
-                deviceBeforeWriteWindow.webContents.send(IpcChannels.interceptWrite.request, { deviceName: driverConfig?.unitId, ifaceName: commInterface.name, data });
+                ipcMain.sendToAll(IpcChannels.interceptWrite.request, { deviceName: driverConfig?.unitId, ifaceName: commInterface.name, data });
               }
             }
           });

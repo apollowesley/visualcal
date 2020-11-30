@@ -78,7 +78,7 @@ export class DriverBuilder extends TypedEmitter<Events> {
     try {
       await this.fCommunicationInterface.disconnect();
     } catch (error) {
-      console.error(error);
+      log.error(error);
     } finally {
       this.fCommunicationInterface = undefined;
     }
