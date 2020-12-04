@@ -1,5 +1,10 @@
 <template>
   <v-container class="grey" fluid fill-height>
+    <RenameProcedureDialog
+      v-model="fShouldShowRenameProcedureDialog"
+      :old-name="fOldProcedureName"
+      @renamed="onProcedureRenamed"
+    />
     <v-row no-gutters>
       <v-col>
         <h2>Select a procedure</h2>
@@ -37,51 +42,77 @@ import { Vue, Component } from 'vue-property-decorator';
 import TabulatorComponent from '@/components/Tabulator.vue';
 import Tabulator from 'tabulator-tables';
 import { Procedure } from 'visualcal-common/dist/session-view-info';
+import RenameProcedureDialog from '@/components/procedure/RenameDialog.vue';
 
 @Component({
   components: {
-    TabulatorComponent
+    TabulatorComponent,
+    RenameProcedureDialog
   }
 })
 export default class ProcedureSelectView extends Vue {
 
   fProcedures: Procedure[] = [];
-  fSelectProcedureButtons: HTMLButtonElement[] = [];
+  fButtons: HTMLButtonElement[] = [];
+  fShouldShowRenameProcedureDialog = false;
+  fOldProcedureName = '';
 
-  private setSelectProcedureButtonsDisabled(disabled: boolean) {
-    for (const button of this.fSelectProcedureButtons) {
-      button.disabled = disabled;
+  private setAllButtonsDisableProp(disable: boolean) {
+    for (const button of this.fButtons) {
+      button.disabled = disable;
     }
   }
 
   private async onSelectProcedureButtonClicked(procedureName: string) {
-    this.setSelectProcedureButtonsDisabled(true);
+    this.setAllButtonsDisableProp(true);
     await window.ipc.setActiveProcedure(procedureName);
     this.$router.push({ name: 'ProcedureLoadingServices' });
   }
 
-  private createSelectProcedureColumnButton(cell: Tabulator.CellComponent) {
+  private async onRenameProcedureButtonClicked(procedureName: string) {
+    this.setAllButtonsDisableProp(true);
+    this.fOldProcedureName = procedureName;
+    this.fShouldShowRenameProcedureDialog = true;
+  }
+
+  private async onRemoveProcedureButtonClicked(procedureName: string) {
+    this.setAllButtonsDisableProp(true);
+    await window.ipc.removeProcedure(procedureName);
+    this.setAllButtonsDisableProp(false);
+    this.fProcedures = await window.ipc.getProcedures();
+  }
+
+  private createSelectProcedureColumnButton(cell: Tabulator.CellComponent, label: string, onClick: (procedureName: string) => void) {
+    const procedure = cell.getRow().getData() as Procedure;
     const button = document.createElement('button') as HTMLButtonElement;
-    button.textContent = 'Select';
+    button.textContent = label;
     button.style.backgroundColor = '#b5b5b5';
-    button.style.marginLeft = '7px';
-    button.style.marginRight = '7px';
-    button.style.padding = '7px';
+    button.style.marginLeft = '3px';
+    button.style.marginRight = '3px';
+    button.style.paddingTop = '3px';
+    button.style.paddingBottom = '3px';
     button.style.width = '90%';
     button.style.boxShadow = '2px 2px #888888';
-    button.id = (cell.getRow().getData() as Procedure).name;
-    button.onclick = async () => await this.onSelectProcedureButtonClicked(button.id);
-    this.fSelectProcedureButtons.push(button);
+    button.id = `procedure.name-${label}`;
+    button.onclick = async () => await onClick(procedure.name);
+    this.fButtons.push(button);
     return button;
   }
 
   columns: Tabulator.ColumnDefinition[] = [
-      { title: 'Name', field: 'name', width: '40%' },
-      { title: 'Organization', field: 'authorOrganization', width: '40%' },
-      { title: '', formatter: this.createSelectProcedureColumnButton }
+      { title: 'Name', field: 'name', width: '70%' },
+      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Select', this.onSelectProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Rename', this.onRenameProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Remove', this.onRemoveProcedureButtonClicked) },
   ];
 
   async mounted() {
+    this.fProcedures = await window.ipc.getProcedures();
+  }
+
+  async onProcedureRenamed() {
+    this.fShouldShowRenameProcedureDialog = false;
+    this.setAllButtonsDisableProp(false);
     this.fProcedures = await window.ipc.getProcedures();
   }
 

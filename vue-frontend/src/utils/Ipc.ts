@@ -81,6 +81,14 @@ export class Ipc extends TypedEmitter<Events> {
     return await this.request<Procedure, string>('create-procedure-request', 'create-procedure-response', 'create-procedure-error', procedure);
   }
 
+  async renameProcedure(oldName: string, newName: string) {
+    return await this.request<Procedure, string>('rename-procedure-request', 'rename-procedure-response', 'rename-procedure-error', oldName, newName);
+  }
+
+  async removeProcedure(procedureName: string) {
+    return await this.request<Procedure, string>('remove-procedure-request', 'remove-procedure-response', 'remove-procedure-error', procedureName);
+  }
+
   async getAllSessionsForActiveUser() {
     return await this.request<Session[], string>('session-get-all-for-active-user-request', 'session-get-all-for-active-user-response', 'session-get-all-for-active-user-error');
   }

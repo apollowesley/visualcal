@@ -3,6 +3,7 @@ import electronIpcLog from 'electron-ipc-log';
 import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
+import { string } from 'mathjs';
 import path from 'path';
 import { VisualCalWindow } from '../constants';
 import { installVueDevTools } from './dev';
@@ -85,6 +86,18 @@ async function load() {
   } catch (error) {
     log.error('Error removing old command parameters from driver instructions', error);
   }
+  global.visualCal.procedureManager.on('renamed', (value) => {
+    if (!global.visualCal.userManager.activeUser) return;
+    const allActiveUSerSessions = global.visualCal.sessionManager.all;
+    if (!allActiveUSerSessions) return;
+    const sessionsWithOldProcedureName = allActiveUSerSessions.filter(s => s.procedureName.toLocaleLowerCase() === value.oldName.toLocaleLowerCase());
+    if (!sessionsWithOldProcedureName || sessionsWithOldProcedureName.length <= 0) return;
+    sessionsWithOldProcedureName.forEach(session => {
+      global.visualCal.userManager.removeSession(session.username, session.name, session.procedureName);
+      session.procedureName = value.newName;
+      global.visualCal.userManager.addSession(session);
+    });
+  });
 }
 
 // TODO: TESTING ONLY!!!

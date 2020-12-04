@@ -66,9 +66,9 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
       }
     });
 
-    ipcMain.on(this.fChannelNames.getExists.request, async (event, name: string) => {
+    ipcMain.on(this.fChannelNames.getExists.request, (event, name: string) => {
       try {
-        const retVal = await this.exists(name);
+        const retVal = this.exists(name);
         this.replyToWindow(event, this.fChannelNames.getExists.response, retVal);
       } catch (error) {
         this.replyToWindow(event, this.fChannelNames.getExists.error, error);
@@ -165,18 +165,30 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
     await fsPromises.writeFile(procFilePath, procContent);
   };
 
-  exists(name: string, shouldExist: boolean = true) {
-    const procedureDirPath = this.getItemDirPath(name);
-    const doesExist = fs.existsSync(procedureDirPath);
-    return doesExist && shouldExist;
+  //** Checks if a directory exists using case-insensitive matching. */
+  exists(name: string) {
+    const dirEntries = fs.readdirSync(this.fBasePath, { withFileTypes: true });
+    const nameLowerCase = name.toLocaleLowerCase();
+    for (const entry of dirEntries) {
+      if (!entry.isDirectory()) continue;
+      const curDirName = entry.name.toLocaleLowerCase();
+      if (curDirName === nameLowerCase) {
+        return true;
+      }
+    };
+    return false;
   }
-  
+
+  //** Checks if a directory does exist, and throws an Error if it doesn't. */
   checkExists(name: string) {
-    if (!this.exists(name, true)) throw new Error(`Directory, ${name}, does not exist`);
+    const doesExist = this.exists(name);
+    if (!doesExist) throw new Error(`Directory, ${name}, already exists`);
   }
   
+  //** Checks if a directory does not exist, and throws an Error if it does. */
   checkNotExists(name: string) {
-    if (this.exists(name, false)) throw new Error(`Directory, ${name}, already exists`);
+    const doesExist = this.exists(name);
+    if (doesExist) throw new Error(`Directory, ${name}, already exists`);
   }
   
   async getOne(name: string) {
@@ -231,8 +243,8 @@ export abstract class CrudManager<TCreate extends NamedType, TCreated extends Na
   }
   
   async rename(oldName: string, newName: string): Promise<TItem> {
-    const oldNameSanitized = sanitizeFilename(oldName);
-    const newNameSanitized = sanitizeFilename(newName);
+    const oldNameSanitized = sanitizeFilename(oldName.trim());
+    const newNameSanitized = sanitizeFilename(newName.trim());
     this.checkExists(oldNameSanitized);
     this.checkNotExists(newNameSanitized);
     const oldDirPath = this.getItemDirPath(oldNameSanitized);

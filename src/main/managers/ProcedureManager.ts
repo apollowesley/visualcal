@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron';
+import electronLog from 'electron-log';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { IpcChannels } from '../../constants';
 import { CrudManager } from './CrudManager';
-import electronLog from 'electron-log';
 
 const log = electronLog.scope('ProcedureManager');
 
