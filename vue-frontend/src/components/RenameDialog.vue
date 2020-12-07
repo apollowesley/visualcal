@@ -4,7 +4,7 @@
   >
     <v-card>
       <v-card-title class="headline grey lighten-2">
-        Renaming Procedure - {{ oldName }}
+        Renaming {{ type }} - {{ oldName }}
       </v-card-title>
       <v-container>
         <v-row>
@@ -13,7 +13,7 @@
               v-model="fNewName"
               :rules="fNewNameRules"
               aria-required
-              label="New Procedure Name"
+              :label="`New ${type} Name`"
             />
           </v-col>
         </v-row>
@@ -38,26 +38,27 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { requiredRule, VuetifyRule } from '@/utils/vuetify-input-rules';
 
 @Component
 export default class RenameDialog extends Vue {
 
   @Prop({ type: Boolean, required: true }) value!: boolean;
+  @Prop({ type: String, required: true }) type!: string;
   @Prop({ type: String, required: true }) oldName!: string;
 
   fNewNameRules: VuetifyRule[] = [requiredRule];
   fNewName = '';
 
+  @Watch('oldName')
+  onOldNameChanged() {
+    this.fNewName = this.oldName;
+  }
+
   async onOkButtonClicked() {
-    try {
-      await window.ipc.renameProcedure(this.oldName, this.fNewName);
-      this.$emit('renamed', this.fNewName);
-      this.close();
-    } catch (error) {
-      alert(error.message);
-    }
+    this.$emit('rename', this.fNewName);
+    this.close();
   }
 
   onCancelButtonClicked() {

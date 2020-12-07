@@ -105,6 +105,14 @@ export class Ipc extends TypedEmitter<Events> {
     return await this.request<Session, string>('create-session-request', 'create-session-response', 'create-session-error', session);
   }
 
+  async renameSession(email: string, procedureName: string, oldName: string, newName: string) {
+    return await this.request<void, string>('rename-session-request', 'rename-session-response', 'rename-session-error', { email, procedureName, oldName, newName });
+  }
+
+  async removeSession(email: string, procedureName: string, sessionName: string) {
+    return await this.request<void, string>('remove-session-request', 'remove-session-response', 'remove-session-error', { email, procedureName, sessionName });
+  }
+
   async getSessionViewInfo() {
     return await this.request<SessionViewRequestResponseInfo | null, string>(SessionViewIpcChannels.Request, SessionViewIpcChannels.Response, SessionViewIpcChannels.Error);
   }

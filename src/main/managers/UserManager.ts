@@ -208,6 +208,17 @@ export class UserManager extends TypedEmitter<Events> {
     if (this.getIsActiveUser(email)) this.activeUser = null;
   }
 
+  renameSession(email: string, procedureName: string, oldName: string, newName: string) {
+    const user = this.getOne(email);
+    if (!user) throw new Error(`User with email, ${email}, does not exist.`);
+    const existingOldSession = user.sessions.find(s => s.procedureName.toLocaleLowerCase() === procedureName.toLocaleLowerCase() && s.name.toLocaleLowerCase() === oldName.toLocaleLowerCase());
+    if (!existingOldSession) throw new Error(`Session named, ${oldName}, was not found.`);
+    const existingNewSession = user.sessions.find(s => s.procedureName.toLocaleLowerCase() === procedureName.toLocaleLowerCase() && s.name.toLocaleLowerCase() === newName.toLocaleLowerCase());
+    if (existingNewSession) throw new Error(`Session named, ${newName}, already exists.`);
+    existingOldSession.name = newName;
+    this.setOne(user);
+  }
+
   removeSession(email: string, sessionName: string, procedureName: string) {
     const session = this.getSession(email, sessionName, procedureName);
     if (!session) return;

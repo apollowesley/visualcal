@@ -2,8 +2,9 @@
   <v-container class="grey" fluid fill-height>
     <RenameProcedureDialog
       v-model="fShouldShowRenameProcedureDialog"
+      type="Procedure"
       :old-name="fOldProcedureName"
-      @renamed="onProcedureRenamed"
+      @rename="onRename"
     />
     <v-row no-gutters>
       <v-col>
@@ -38,11 +39,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import TabulatorComponent from '@/components/Tabulator.vue';
 import Tabulator from 'tabulator-tables';
 import { Procedure } from 'visualcal-common/dist/session-view-info';
-import RenameProcedureDialog from '@/components/procedure/RenameDialog.vue';
+import RenameProcedureDialog from '@/components/RenameDialog.vue';
 
 @Component({
   components: {
@@ -56,6 +57,11 @@ export default class ProcedureSelectView extends Vue {
   fButtons: HTMLButtonElement[] = [];
   fShouldShowRenameProcedureDialog = false;
   fOldProcedureName = '';
+
+  @Watch('fShouldShowRenameProcedureDialog')
+  onfShouldShowRenameProcedureDialogChanged() {
+    this.setAllButtonsDisableProp(false);
+  }
 
   private setAllButtonsDisableProp(disable: boolean) {
     for (const button of this.fButtons) {
@@ -77,12 +83,16 @@ export default class ProcedureSelectView extends Vue {
 
   private async onRemoveProcedureButtonClicked(procedureName: string) {
     this.setAllButtonsDisableProp(true);
-    await window.ipc.removeProcedure(procedureName);
+    try {
+      await window.ipc.removeProcedure(procedureName);
+    } catch (error) {
+      alert(error.message);
+    }
     this.setAllButtonsDisableProp(false);
     this.fProcedures = await window.ipc.getProcedures();
   }
 
-  private createSelectProcedureColumnButton(cell: Tabulator.CellComponent, label: string, onClick: (procedureName: string) => void) {
+  private createColumnButton(cell: Tabulator.CellComponent, label: string, onClick: (procedureName: string) => void) {
     const procedure = cell.getRow().getData() as Procedure;
     const button = document.createElement('button') as HTMLButtonElement;
     button.textContent = label;
@@ -101,18 +111,23 @@ export default class ProcedureSelectView extends Vue {
 
   columns: Tabulator.ColumnDefinition[] = [
       { title: 'Name', field: 'name', width: '70%' },
-      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Select', this.onSelectProcedureButtonClicked) },
-      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Rename', this.onRenameProcedureButtonClicked) },
-      { title: '', width: '10%', formatter: (cell) => this.createSelectProcedureColumnButton(cell, 'Remove', this.onRemoveProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Select', this.onSelectProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Rename', this.onRenameProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Remove', this.onRemoveProcedureButtonClicked) }
   ];
 
   async mounted() {
     this.fProcedures = await window.ipc.getProcedures();
   }
 
-  async onProcedureRenamed() {
+  async onRename(newName: string) {
     this.fShouldShowRenameProcedureDialog = false;
     this.setAllButtonsDisableProp(false);
+    try {
+      await window.ipc.renameProcedure(this.fOldProcedureName, newName);
+    } catch (error) {
+      alert(error.message);
+    }
     this.fProcedures = await window.ipc.getProcedures();
   }
 

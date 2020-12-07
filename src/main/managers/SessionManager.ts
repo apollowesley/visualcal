@@ -6,6 +6,7 @@ import { IpcChannels } from '../../constants';
 import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
+import ipc from '../ipc';
 
 const log = electronLog.scope('SessionManager');
 
@@ -83,13 +84,31 @@ export class SessionManager extends TypedEmitter<Events> {
       }
     });
 
-    ipcMain.on(IpcChannels.session.create.request, async (event, session: SessionForCreate) => {
+    ipcMain.on(IpcChannels.session.create.request, (event, session: SessionForCreate) => {
       try {
         const newSession = this.fUserManager.addSession(session);
         this.setActive(session.username, session.name, session.procedureName);
         return event.reply(IpcChannels.session.create.response, newSession);
       } catch (error) {
         return event.reply(IpcChannels.session.create.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.session.rename.request, (event, args: { email: string, procedureName: string, oldName: string, newName: string }) => {
+      try {
+        this.fUserManager.renameSession(args.email, args.procedureName, args.oldName, args.newName);
+        return event.reply(IpcChannels.session.rename.response);
+      } catch (error) {
+        return event.reply(IpcChannels.session.rename.error, error);
+      }
+    });
+
+    ipcMain.on(IpcChannels.session.remove.request, (event, args: { email: string, procedureName: string, sessionName: string }) => {
+      try {
+        this.fUserManager.removeSession(args.email, args.sessionName, args.procedureName);
+        return event.reply(IpcChannels.session.remove.response);
+      } catch (error) {
+        return event.reply(IpcChannels.session.remove.error, error);
       }
     });
   }

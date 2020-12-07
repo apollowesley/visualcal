@@ -3,7 +3,6 @@ import electronIpcLog from 'electron-ipc-log';
 import electronLog from 'electron-log';
 import fs, { promises as fsPromises } from 'fs';
 import fsExtra from 'fs-extra';
-import { string } from 'mathjs';
 import path from 'path';
 import { VisualCalWindow } from '../constants';
 import { installVueDevTools } from './dev';
