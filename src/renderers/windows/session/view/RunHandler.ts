@@ -39,12 +39,12 @@ export class RunHandler extends TypedEmitter<Events> {
         { title: 'Description', field: 'description' },
         { title: 'Base EU', field: 'baseQuantity' },
         { title: 'Derived EU', field: 'derivedQuantity' },
-        { title: 'Nominal', field: 'inputLevel' },
         { title: 'Minimum', field: 'minimum' },
-        { title: 'Maximum', field: 'maximum' },
-        { title: 'Raw', field: 'rawValue' },
+        { title: 'Nominal', field: 'inputLevel' },
         { title: 'Measured', field: 'measuredValue' },
-        { title: 'Result', field: 'passed', formatter: this.getPassedCellFormatter }
+        { title: 'Maximum', field: 'maximum' },
+        { title: 'Result', field: 'passed', formatter: this.getPassedCellFormatter },
+        { title: 'Raw', field: 'rawValue' },
       ]
     });
 
