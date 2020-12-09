@@ -6,8 +6,8 @@ import { sleep } from '../drivers/utils';
 import { CommunicationInterfaceManager } from '../main/managers/CommunicationInterfaceManager';
 import { DriverBuilder } from '../main/managers/DriverBuilder';
 import { NodeRedManager } from '../main/managers/NodeRedManager';
-import { CustomDriverNodeRedRuntimeNode, CustomDriverNodeUIProperties, findCustomDriverConfigRuntimeNode, InstructionResponse, UIInstructionCommandParameterArgument, UIInstructionSet } from './indysoft-instrument-driver-types';
-import { IpcChannels as OldIpcChannels, DeviceIpcChannels } from '../constants';
+import { RuntimeNode, ConfigurationProperties, findCustomDriverConfigRuntimeNode, InstructionResponse, UIInstructionCommandParameterArgument, UIInstructionSet } from './indysoft-instrument-driver-types';
+import { DeviceIpcChannels } from '../constants';
 import { ipcMain } from 'electron';
 
 interface RuntimeNodeInputEventMessagePayload {
@@ -25,7 +25,7 @@ interface MsgPropertyAccessor {
 };
 
 module.exports = function(RED: NodeRed) {
-  function indySoftCustomDriver(this: CustomDriverNodeRedRuntimeNode, config: CustomDriverNodeUIProperties) {
+  function indySoftCustomDriver(this: RuntimeNode, config: ConfigurationProperties) {
     log  = electronLog.scope('indysoft-instrument-driver');
     RED.nodes.createNode(this, config as any);
     if (config.name) this.name = config.name;

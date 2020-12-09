@@ -7,6 +7,7 @@ import { IndySoftNodeTypeNames } from '../../../constants';
 import { EditorNode as IndySoftActionStartEditorNode, RuntimeNode as IndySoftActionStartRuntimeNode } from '../../../nodes/indysoft-action-start-types';
 import { EditorNode as IndySoftProcedureSideBarEditorNode, RuntimeNode as IndySoftProcedureSidebarRuntimeNode } from '../../../nodes/procedure-sidebar-types';
 import { TypeName as IndySoftInstrumentDriverConfigurationNodeTypeName, ConfigurationProperties as IndySoftInstrumentDriverConfigurationEditorNode, ConfigurationNode as IndySoftInstrumentDriverConfigurationRuntimeNode } from '../../../nodes/indysoft-instrument-driver-configuration-types';
+import { TypeName as IndySoftInstrumentDriverNodeTypeName, RuntimeNode as IndySoftInstrumentDriverRuntimeNode, ConfigurationProperties as IndySoftInstrumentDriverEditorNode } from '../../../nodes/indysoft-instrument-driver-types';
 import { DeployType, NodeRedNode, NodeRedTypedNode } from './types';
 import nodeRedRequestHook from './request-hook';
 import { ExpressServer } from '../../servers/express';
@@ -148,6 +149,21 @@ export class NodeRedManager extends TypedEmitter<Events> {
     return retVal;
   }
 
+  getConnectedNodes(node: NodeRedNode, previousNodes: NodeRedNode[] = []) {
+    const retVal: NodeRedNode[] = previousNodes;
+    if (node.editorDefinition.wires) node.editorDefinition.wires.forEach(wires => {
+      wires.forEach(nodeID => {
+        const existingNode = retVal.find(n => n.id === nodeID);
+        if (existingNode) return;
+        const node = this.findNodeById(nodeID);
+        if (!node) return;
+        retVal.push(node);
+        return this.getConnectedNodes(node, retVal);
+      });
+    });
+    return retVal;
+  }
+
   findNodesByType(type: string) {
     return this.nodes.filter(n => n.type.toLocaleUpperCase() === type.toLocaleUpperCase());
   }
@@ -198,6 +214,34 @@ export class NodeRedManager extends TypedEmitter<Events> {
   getActionStartNode(sectionName: string, actionName: string) {
     const nodes = this.getActionStartNodesForSection(sectionName);
     return nodes.find(n => n.runtime.name.toLocaleUpperCase() === actionName.toLocaleUpperCase());
+  }
+
+  getAllNodesInAction(sectionName: string, actionName: string) {
+    const actionStartNode = this.getActionStartNode(sectionName, actionName);
+    if (!actionStartNode) return [];
+    const nodesConnectedToActionStartNode = this.getConnectedNodes(actionStartNode);
+    return nodesConnectedToActionStartNode;
+  }
+
+  getAllDeviceUnitIdsInAction(sectionName: string, actionName: string) {
+    const nodesConnectedToActionStartNode = this.getAllNodesInAction(sectionName, actionName);
+    const driverNodes = nodesConnectedToActionStartNode.filter(n => n.type === IndySoftInstrumentDriverNodeTypeName);
+    const typedDriverNodes = driverNodes.map(n => {
+      const typedNode: NodeRedTypedNode<IndySoftInstrumentDriverEditorNode, IndySoftInstrumentDriverRuntimeNode> = {
+        id: n.id,
+        type: n.type,
+        editorDefinition: n.editorDefinition as IndySoftInstrumentDriverEditorNode,
+        runtime: n.runtime as IndySoftInstrumentDriverRuntimeNode
+      };
+      return typedNode;
+    });
+    const driverConfigs: IndySoftInstrumentDriverConfigurationEditorNode[] = [];
+    for (const driverNode of typedDriverNodes) {
+      const driverConfigNode = this.findNodeById(driverNode.editorDefinition.driverConfigId);
+      if (!driverConfigNode) continue;
+      if (!driverConfigs.includes(driverConfigNode.editorDefinition as IndySoftInstrumentDriverConfigurationEditorNode)) driverConfigs.push(driverConfigNode.editorDefinition as IndySoftInstrumentDriverConfigurationEditorNode);
+    }
+    return driverConfigs.map(n => n.unitId);
   }
 
   /**

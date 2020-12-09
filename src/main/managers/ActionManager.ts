@@ -1,12 +1,11 @@
 import { ipcMain } from 'electron';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { LogicRun } from 'visualcal-common/dist/result';
-import { IpcChannels, VisualCalWindow } from '../../constants';
-import { CustomDriverNodeRedRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-instrument-driver-types';
-// import { BeforeWriteStringResult } from '../../drivers/devices/Device';
+import { IpcChannels } from '../../constants';
+import { ConfigurationProperties as IndySoftInstrumentDriverEditorNode, RuntimeNode as IndySoftInstrumentDriverRuntimeNode, findCustomDriverConfigRuntimeNode } from '../../nodes/indysoft-instrument-driver-types';
 import { CommunicationInterfaceManager } from './CommunicationInterfaceManager';
 import { DriverBuilder } from './DriverBuilder';
-import { CancelActionReason, CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
+import { CancelActionReason, NodeRedManager } from './NodeRedManager';
 import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
 import { WindowManager } from './WindowManager';
@@ -90,7 +89,7 @@ export class ActionManager extends TypedEmitter<Events> {
     NodeRedManager.instance.utils.loadDevices(opts.session);
     // TODO: Implmenet interceptDeviceWrites for Custom Drivers
     if (opts.interceptDeviceWrites) {
-      const customDriverNodes = NodeRedManager.instance.findTypedNodesByType<CustomDriverConfigurationNodeEditorDefinition, CustomDriverNodeRedRuntimeNode>('indysoft-instrument-driver');
+      const customDriverNodes = NodeRedManager.instance.findTypedNodesByType<IndySoftInstrumentDriverEditorNode, IndySoftInstrumentDriverRuntimeNode>('indysoft-instrument-driver');
       for (const customDriverNode of customDriverNodes) {
         customDriverNode.runtime.onBeforeWrite = (data) => {
           return new Promise(async (resolve, reject) => {
@@ -117,7 +116,13 @@ export class ActionManager extends TypedEmitter<Events> {
       };
     }
     if (opts.deviceConfig) {
-      const interfaceNames = opts.deviceConfig.map(c => c.interfaceName);
+      const interfaceNames: string[] = [];
+      const deviceUnitIdsForAction = NodeRedManager.instance.getAllDeviceUnitIdsInAction(opts.sectionId, opts.actionId);
+      for (const deviceUnitId of deviceUnitIdsForAction) {
+        const deviceConfig = opts.deviceConfig.find(c => c.unitId.toLocaleLowerCase() === deviceUnitId.toLocaleLowerCase());
+        if (!deviceConfig) continue;
+        interfaceNames.push(deviceConfig.interfaceName);
+      }
       this.fUserManager.setDeviceConfigs(opts.session.username, opts.session.name, opts.deviceConfig);
       await CommunicationInterfaceManager.instance.connectAll(interfaceNames);
     } else {

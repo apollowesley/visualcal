@@ -6,7 +6,6 @@ import { IpcChannels } from '../../constants';
 import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
-import ipc from '../ipc';
 
 const log = electronLog.scope('SessionManager');
 

@@ -18,20 +18,20 @@
                 <div class="modal-content">
                     <form id="user-instruction-input-modal-form">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="user-instruction-input-modal-title">Modal Title</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close" id="user-instruction-input-modal-close-button"><span aria-hidden="true">×</span></button></div>
+                            <h4 class="modal-title" id="user-instruction-input-modal-title">Modal Title</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close" id="user-instruction-input-modal-close-button"><span aria-hidden="true">×</span></button>
+                        </div>
                         <div class="modal-body">
                             <p id="user-instruction-input-modal-text">The content of your modal.</p><img id="user-instruction-input-modal-image" class="collapse rounded mx-auto d-block">
                             <div id="user-instruction-input-modal-input-wrapper">
                                 <div class="form-group"><label id="user-instruction-input-modal-input-label" for="user-instruction-input-modal-input">Enter a value</label><input class="form-control" type="text" id="user-instruction-input-modal-input"></div>
                             </div>
                         </div>
-                        <div class="modal-footer"><button class="btn btn-primary w-25" id="user-instruction-input-modal-ok-button" type="button" data-dismiss="modal">Ok</button><button class="btn btn-light w-25" data-toggle="tooltip" data-bs-tooltip="" id="user-instruction-input-modal-stop-button"
-                                type="button" data-dismiss="modal" data-placement="top" title="Stops the action">Stop</button></div>
+                        <div class="modal-footer"><button class="btn btn-primary w-25" id="user-instruction-input-modal-ok-button" type="button" data-dismiss="modal">Ok</button><button class="btn btn-light w-25" data-toggle="tooltip" data-bs-tooltip="" id="user-instruction-input-modal-stop-button" type="button" data-dismiss="modal" data-placement="top" title="Stops the action">Stop</button></div>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="d-flex h-25 p-1">
+        <div class="d-flex p-1" style="height: 35%;">
             <div class="d-flex flex-column mr-1 p-1 view-block top-row-block">
                 <form>
                     <h5>Communication</h5>
@@ -44,25 +44,19 @@
                 <form style="margin: 5px;">
                     <div class="form-group"><label for="action-select">Section - Action</label><select class="form-control" id="action-select"></select></div>
                     <div class="form-group"><label for="action-run-name">Run name (defaults to current date/time)</label><input class="form-control" type="text" id="action-run-name"></div>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" id="action-intercept-device-commands"><label class="form-check-label" id="action-intercept-device-commands-label" for="formCheck-1">Intercept commands sent to instruments</label></div>
-                    <button
-                        class="btn btn-primary w-25" id="action-start-stop-button" type="button" style="margin: 10px;">Start</button>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="action-intercept-device-commands"><label class="form-check-label" id="action-intercept-device-commands-label" for="formCheck-1">Intercept commands sent to instruments</label></div><button class="btn btn-primary w-25" id="action-start-stop-button" type="button" style="margin: 10px;">Start</button>
                 </form>
             </div>
             <div class="p-1 view-block top-row-block">
-                <h5>Status</h5>
-                <!-- Start: Section -->
-                <h6 id="procedure-status-running-section">Stopped</h6>
-                <!-- End: Section -->
+                <h5>Status</h5><!-- Start: Section -->
+                <h6 id="procedure-status-running-section">Stopped</h6><!-- End: Section -->
                 <!-- Start: Action -->
-                <h6 id="procedure-status-running-action">Section:&nbsp; None</h6>
-                <!-- End: Action -->
+                <h6 id="procedure-status-running-action">Section:&nbsp; None</h6><!-- End: Action -->
                 <!-- Start: Procedure Run State -->
-                <h6 id="procedure-status-current">Action:&nbsp; None</h6>
-                <!-- End: Procedure Run State -->
+                <h6 id="procedure-status-current">Action:&nbsp; None</h6><!-- End: Procedure Run State -->
             </div>
         </div>
-        <div class="d-flex flex-column h-50 w-98 m-1 p-1 view-block">
+        <div class="d-flex flex-column w-98 m-1 p-1 view-block" style="height: 40%;">
             <h5>Results</h5>
             <div id="tabulator-results-table"></div>
         </div>
