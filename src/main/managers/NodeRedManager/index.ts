@@ -21,12 +21,6 @@ export const enum CancelActionReason {
   user
 }
 
-export interface CustomDriverConfigurationNodeEditorDefinition extends NodeRedFlowNode {
-  unitId: string;
-  manufacturer: string;
-  model: string;
-}
-
 interface Events {
   starting: () => void;
   started: () => void;
@@ -223,7 +217,7 @@ export class NodeRedManager extends TypedEmitter<Events> {
     return nodesConnectedToActionStartNode;
   }
 
-  getAllDeviceUnitIdsInAction(sectionName: string, actionName: string) {
+  getAllDeviceConfigInfoInAction(sectionName: string, actionName: string) {
     const nodesConnectedToActionStartNode = this.getAllNodesInAction(sectionName, actionName);
     const driverNodes = nodesConnectedToActionStartNode.filter(n => n.type === IndySoftInstrumentDriverNodeTypeName);
     const typedDriverNodes = driverNodes.map(n => {
@@ -241,7 +235,13 @@ export class NodeRedManager extends TypedEmitter<Events> {
       if (!driverConfigNode) continue;
       if (!driverConfigs.includes(driverConfigNode.editorDefinition as IndySoftInstrumentDriverConfigurationEditorNode)) driverConfigs.push(driverConfigNode.editorDefinition as IndySoftInstrumentDriverConfigurationEditorNode);
     }
-    return driverConfigs.map(n => n.unitId);
+    return driverConfigs.map(n => {
+      return {
+        unitId: n.unitId,
+        manufacturer: n.manufacturer,
+        model: n.model
+      }
+    });
   }
 
   /**

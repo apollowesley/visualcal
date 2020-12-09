@@ -10,6 +10,7 @@ import { RunManager } from './RunManager';
 import { UserManager } from './UserManager';
 import { WindowManager } from './WindowManager';
 import electronLog from 'electron-log';
+import { string } from 'mathjs';
 
 export interface StartOptions {
   sectionId: string;
@@ -35,23 +36,8 @@ export class ActionManager extends TypedEmitter<Events> {
   constructor(userManager: UserManager) {
     super();
     this.fUserManager = userManager;
-    ipcMain.on(IpcChannels.actions.start.request, async (event, opts: StartOptions) => {
-      try {
-        const run = await this.start(opts);
-        event.reply(IpcChannels.actions.start.response, run.id);
-      } catch (error) {
-        event.reply(IpcChannels.actions.start.error, { opts: opts, err: error });
-      }
-    });
-
-    ipcMain.on(IpcChannels.actions.stop.request, async (event) => {
-      try {
-        await this.cancel(CancelActionReason.user, 'User clicked stop button');
-        event.reply(IpcChannels.actions.stop.response);
-      } catch (error) {
-        event.reply(IpcChannels.actions.stop.error, { err: error });
-      }
-    });
+    this.initIpcHandlers();
+    log.info('Loaded');
   }
 
   get isRunning() { return this.fCurrentRun !== undefined; }
@@ -117,9 +103,9 @@ export class ActionManager extends TypedEmitter<Events> {
     }
     if (opts.deviceConfig) {
       const interfaceNames: string[] = [];
-      const deviceUnitIdsForAction = NodeRedManager.instance.getAllDeviceUnitIdsInAction(opts.sectionId, opts.actionId);
-      for (const deviceUnitId of deviceUnitIdsForAction) {
-        const deviceConfig = opts.deviceConfig.find(c => c.unitId.toLocaleLowerCase() === deviceUnitId.toLocaleLowerCase());
+      const deviceConfigNodesInAction = NodeRedManager.instance.getAllDeviceConfigInfoInAction(opts.sectionId, opts.actionId);
+      for (const deviceConfigNode of deviceConfigNodesInAction) {
+        const deviceConfig = opts.deviceConfig.find(c => c.unitId.toLocaleLowerCase() === deviceConfigNode.unitId.toLocaleLowerCase());
         if (!deviceConfig) continue;
         interfaceNames.push(deviceConfig.interfaceName);
       }
@@ -168,6 +154,35 @@ export class ActionManager extends TypedEmitter<Events> {
       ipcMain.sendToAll(IpcChannels.actions.stateChanged, { section: this.currentRun.sectionId, action: this.currentRun.actionId, state: 'completed' });
     }
     await this.stop();
+  }
+
+  private initIpcHandlers() {
+    ipcMain.on(IpcChannels.actions.start.request, async (event, opts: StartOptions) => {
+      try {
+        const run = await this.start(opts);
+        event.reply(IpcChannels.actions.start.response, run.id);
+      } catch (error) {
+        event.reply(IpcChannels.actions.start.error, { opts: opts, err: error });
+      }
+    });
+
+    ipcMain.on(IpcChannels.actions.stop.request, async (event) => {
+      try {
+        await this.cancel(CancelActionReason.user, 'User clicked stop button');
+        event.reply(IpcChannels.actions.stop.response);
+      } catch (error) {
+        event.reply(IpcChannels.actions.stop.error, { err: error });
+      }
+    });
+
+    ipcMain.on(IpcChannels.actions.getRequiredDeviceInfo.request, (event, args: { sectionId: string, actionId: string }) => {
+      try {
+        const deviceConfigNodesInAction = NodeRedManager.instance.getAllDeviceConfigInfoInAction(args.sectionId, args.actionId);
+        event.reply(IpcChannels.actions.getRequiredDeviceInfo.response, deviceConfigNodesInAction);
+      } catch (error) {
+        event.reply(IpcChannels.actions.getRequiredDeviceInfo.error, error);
+      }
+    }); 
   }
 
 }

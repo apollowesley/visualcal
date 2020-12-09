@@ -3,9 +3,10 @@ import electronLog from 'electron-log';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import { SessionViewWindowOpenIPCInfo } from '../../@types/session-view';
 import { IpcChannels } from '../../constants';
-import { CustomDriverConfigurationNodeEditorDefinition, NodeRedManager } from './NodeRedManager';
+import { NodeRedManager } from './NodeRedManager';
 import { UserManager } from './UserManager';
 import { SessionForCreate } from 'visualcal-common/dist/session';
+import { ConfigurationProperties as IndySoftInstrumentDriverConfigurationEditorNode } from '../../nodes/indysoft-instrument-driver-configuration-types';
 
 const log = electronLog.scope('SessionManager');
 
@@ -137,7 +138,7 @@ export class SessionManager extends TypedEmitter<Events> {
       sections: sections,
       benchConfig: this.fUserManager.activeBenchConfig ? this.fUserManager.activeBenchConfig : undefined,
       deviceNodes: customDriverConfigNodes.map(n => {
-        const editorDef = n.editorDefinition as CustomDriverConfigurationNodeEditorDefinition;
+        const editorDef = n.editorDefinition as IndySoftInstrumentDriverConfigurationEditorNode;
         return {
           configNodeId: editorDef.id,
           unitId: editorDef.unitId,

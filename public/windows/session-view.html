@@ -44,7 +44,13 @@
                 <form style="margin: 5px;">
                     <div class="form-group"><label for="action-select">Section - Action</label><select class="form-control" id="action-select"></select></div>
                     <div class="form-group"><label for="action-run-name">Run name (defaults to current date/time)</label><input class="form-control" type="text" id="action-run-name"></div>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" id="action-intercept-device-commands"><label class="form-check-label" id="action-intercept-device-commands-label" for="formCheck-1">Intercept commands sent to instruments</label></div><button class="btn btn-primary w-25" id="action-start-stop-button" type="button" style="margin: 10px;">Start</button>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="action-intercept-device-commands"><label class="form-check-label" id="action-intercept-device-commands-label" for="formCheck-1">Intercept commands sent to instruments</label></div>
+                    <div class="d-flex">
+                        <div style="min-width: 75%;">
+                            <h6>Required Devices</h6>
+                            <div id="selected-action-required-devices-table"></div>
+                        </div><button class="btn btn-primary w-25" id="action-start-stop-button" type="button" style="margin: 10px;height: 38px;">Start</button>
+                    </div>
                 </form>
             </div>
             <div class="p-1 view-block top-row-block">

@@ -324,7 +324,12 @@ export const IpcChannels = {
       response: 'reset-action-response',
       error: 'reset-action-error'
     },
-    stateChanged: 'start-action-state-changed'
+    stateChanged: 'start-action-state-changed',
+    getRequiredDeviceInfo: {
+      request: 'get-required-device-info-action-request',
+      response: 'get-required-device-info-action-response',
+      error: 'get-required-device-info-action-error'
+    }
   },
   user: {
     active: {

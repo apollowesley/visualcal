@@ -80,6 +80,15 @@ const devicesTable = new Tabulator('#device-config-table', {
   ]
 });
 
+const requiredDevicesTable = new Tabulator('#selected-action-required-devices-table', {
+  layout: 'fitDataFill',
+  columns: [
+    { title: 'Device Id', field: 'unitId' },
+    { title: 'Manufacturer', field: 'manufacturer' },
+    { title: 'Model', field: 'model' }
+  ]
+});
+
 const updateStartStopActionButton = (info?: StateChangeInfo) => {
   let disabled = false;
   // disabled = disabled || !procedure.isReady;
@@ -174,7 +183,17 @@ const procedure = new ProcedureHandler({
   runTimeElementId: 'action-run-name'
 });
 
-procedure.on('ready', () => updateStartStopActionButton());
+procedure.on('ready', (section, action) => {
+  updateStartStopActionButton();
+  // Update list of required device unit ID's
+  ipcRenderer.once(IpcChannels.actions.getRequiredDeviceInfo.response, async (_, deviceInfos: { unitId: string, manufacturer: string, model: string}[]) => {
+    await requiredDevicesTable.setData(deviceInfos);
+  });
+  ipcRenderer.once(IpcChannels.actions.getRequiredDeviceInfo.error, () => {
+    requiredDevicesTable.clearData();
+  });
+  ipcRenderer.send(IpcChannels.actions.getRequiredDeviceInfo.request, { sectionId: section.name, actionId: action.name });
+});
 procedure.on('notReady', () => updateStartStopActionButton());
 procedure.on('runNameChanged', () => updateStartStopActionButton());
 // ************************************************************************************************
