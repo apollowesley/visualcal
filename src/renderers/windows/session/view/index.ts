@@ -180,7 +180,8 @@ const runHandler = new RunHandler({
 // ================================================================================================
 const procedure = new ProcedureHandler({
   selectActionElementId: 'action-select',
-  runTimeElementId: 'action-run-name'
+  runTimeElementId: 'action-run-name',
+  infoHeaderElementId: 'procedure-info-heading'
 });
 
 procedure.on('ready', (section, action) => {
@@ -324,6 +325,7 @@ startStopActionButtonElement.addEventListener('click', async (ev) => {
 
 const updateViewInfo = async (viewInfo: SessionViewWindowOpenIPCInfo) => {
   try {
+    procedure.updateInfo(viewInfo.procedure.name, viewInfo.session.name);
     devices = [];
     user = viewInfo.user;
     session = viewInfo.session;

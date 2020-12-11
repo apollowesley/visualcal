@@ -3,7 +3,6 @@
     :value="shouldShow"
     max-width="75%"
     persistent
-    eager
   >
     <v-container fluid class="grey text-center" style="height: 65vh">
       <v-row>

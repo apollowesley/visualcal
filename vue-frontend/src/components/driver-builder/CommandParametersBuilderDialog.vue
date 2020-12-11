@@ -2,13 +2,11 @@
   <v-dialog
     :value="shouldShow"
     persistent
-    eager
     max-width="95%"
   >
     <CommandParameterListBuilderDialog
       :should-show="shouldShowCommandParameterListBuilderDialog"
       :command-parameter="parameterForListBuilderDialog"
-      eager
       @save="onCommandParameterListBuilderDialogSave"
       @cancel="shouldShowCommandParameterListBuilderDialog = false"
     />

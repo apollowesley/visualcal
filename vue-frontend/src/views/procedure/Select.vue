@@ -1,10 +1,17 @@
 <template>
   <v-container class="grey" fluid fill-height>
-    <RenameProcedureDialog
+    <RenameDialog
       v-model="fShouldShowRenameProcedureDialog"
-      type="Procedure"
+      type="procedure"
       :old-name="fOldProcedureName"
       @rename="onRename"
+    />
+    <RemoveDialog
+      v-model="fShouldShowRemoveProcedureDialog"
+      :text="fRemoveProcedureText"
+      :item-name="fRemoveProcedureName"
+      type="procedure"
+      @remove="onRemoveProcedureButtonClicked"
     />
     <v-row no-gutters>
       <v-col>
@@ -43,12 +50,14 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import TabulatorComponent from '@/components/Tabulator.vue';
 import Tabulator from 'tabulator-tables';
 import { Procedure } from 'visualcal-common/dist/session-view-info';
-import RenameProcedureDialog from '@/components/RenameDialog.vue';
+import RenameDialog from '@/components/RenameDialog.vue';
+import RemoveDialog from '@/components/RemoveDialog.vue';
 
 @Component({
   components: {
     TabulatorComponent,
-    RenameProcedureDialog
+    RenameDialog,
+    RemoveDialog
   }
 })
 export default class ProcedureSelectView extends Vue {
@@ -57,10 +66,19 @@ export default class ProcedureSelectView extends Vue {
   fButtons: HTMLButtonElement[] = [];
   fShouldShowRenameProcedureDialog = false;
   fOldProcedureName = '';
+  fShouldShowRemoveProcedureDialog = false;
+  fRemoveProcedureText = '';
+  fRemoveProcedureName = '';
 
   @Watch('fShouldShowRenameProcedureDialog')
   onfShouldShowRenameProcedureDialogChanged() {
     this.setAllButtonsDisableProp(false);
+  }
+
+  showRemoveDialog(procedureName: string) {
+    this.fRemoveProcedureText = `Are you sure you want to delete procedure named "${ procedureName }"?`;
+    this.fRemoveProcedureName = procedureName;
+    this.fShouldShowRemoveProcedureDialog = true;
   }
 
   private setAllButtonsDisableProp(disable: boolean) {
@@ -82,6 +100,7 @@ export default class ProcedureSelectView extends Vue {
   }
 
   private async onRemoveProcedureButtonClicked(procedureName: string) {
+    this.fShouldShowRemoveProcedureDialog = false;
     this.setAllButtonsDisableProp(true);
     try {
       await window.ipc.removeProcedure(procedureName);
@@ -113,7 +132,7 @@ export default class ProcedureSelectView extends Vue {
       { title: 'Name', field: 'name', width: '70%' },
       { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Select', this.onSelectProcedureButtonClicked) },
       { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Rename', this.onRenameProcedureButtonClicked) },
-      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Remove', this.onRemoveProcedureButtonClicked) }
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Remove', this.showRemoveDialog) }
   ];
 
   async mounted() {

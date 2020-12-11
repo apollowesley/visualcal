@@ -3,7 +3,6 @@
     :value="value"
     max-width="85%"
     persistent
-    eager
   >
     <v-container fluid class="grey" style="minHeight: 35vh">
       <v-row>

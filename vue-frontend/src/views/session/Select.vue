@@ -1,10 +1,17 @@
 <template>
   <v-container class="grey" fluid fill-height>
-    <RenameSessionDialog
+    <RenameDialog
       v-model="fShouldShowRenameSessionDialog"
       type="Session"
       :old-name="fOldSessionName"
       @rename="onRename"
+    />
+    <RemoveDialog
+      v-model="fShouldShowRemoveSessionDialog"
+      :text="fRemoveSessionText"
+      :item-name="fRemoveSessionName"
+      type="session"
+      @remove="onRemoveButtonClicked"
     />
     <v-row no-gutters>
       <v-col>
@@ -44,12 +51,14 @@ import TabulatorComponent from '@/components/Tabulator.vue';
 import Tabulator from 'tabulator-tables';
 import { Session } from 'visualcal-common/dist/session-view-info';
 import { User } from '@/types/session';
-import RenameSessionDialog from '@/components/RenameDialog.vue';
+import RenameDialog from '@/components/RenameDialog.vue';
+import RemoveDialog from '@/components/RemoveDialog.vue';
 
 @Component({
   components: {
     TabulatorComponent,
-    RenameSessionDialog
+    RenameDialog,
+    RemoveDialog
   }
 })
 export default class SessionSelectView extends Vue {
@@ -61,8 +70,17 @@ export default class SessionSelectView extends Vue {
   fSelectSessionButtons: HTMLButtonElement[] = [];
   fShouldShowRenameSessionDialog = false;
   fOldSessionName = '';
+  fShouldShowRemoveSessionDialog = false;
+  fRemoveSessionText = '';
+  fRemoveSessionName = '';
 
   get userEmail() { return this.user ? this.user.email : ''; }
+
+  showRemoveDialog(sessionName: string) {
+    this.fRemoveSessionText = `Are you sure you want to delete session named "${ sessionName }"?`;
+    this.fRemoveSessionName = sessionName;
+    this.fShouldShowRemoveSessionDialog = true;
+  }
 
   private setSelectSessionButtonsDisabled(disabled: boolean) {
     for (const button of this.fSelectSessionButtons) {
@@ -95,10 +113,9 @@ export default class SessionSelectView extends Vue {
     this.fSelectSessionButtons.push(button);
     return button;
   }
-  private async onSelectProcedureButtonClicked(sessionName: string) {
+  private async onSelectButtonClicked(sessionName: string) {
     this.setSelectSessionButtonsDisabled(true);
     await window.ipc.setActiveSession(this.userEmail, sessionName, this.procedureName);
-    this.$router.push({ name: 'ProcedureLoadingServices' });
   }
 
   private async onRenameButtonClicked(sessionName: string) {
@@ -107,7 +124,8 @@ export default class SessionSelectView extends Vue {
     this.fShouldShowRenameSessionDialog = true;
   }
 
-  private async onRemoveProcedureButtonClicked(sessionName: string) {
+  private async onRemoveButtonClicked(sessionName: string) {
+    this.fShouldShowRemoveSessionDialog = false;
     this.setSelectSessionButtonsDisabled(true);
     try {
       await window.ipc.removeSession(this.userEmail, this.procedureName, sessionName);
@@ -139,9 +157,9 @@ export default class SessionSelectView extends Vue {
   columns: Tabulator.ColumnDefinition[] = [
       { title: 'Name', field: 'name', width: '35%' },
       { title: 'Procedure', field: 'procedureName', width: '35%' },
-      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Select', this.onSelectProcedureButtonClicked) },
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Select', this.onSelectButtonClicked) },
       { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Rename', this.onRenameButtonClicked) },
-      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Remove', this.onRemoveProcedureButtonClicked) }
+      { title: '', width: '10%', formatter: (cell) => this.createColumnButton(cell, 'Remove', this.showRemoveDialog) }
   ];
 
   async mounted() {

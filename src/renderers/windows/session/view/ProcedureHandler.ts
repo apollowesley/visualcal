@@ -15,18 +15,20 @@ interface Events {
 interface ConstructorOptions {
   selectActionElementId: string;
   runTimeElementId: string;
+  infoHeaderElementId: string;
 }
 
 export class ProcedureHandler extends TypedEmitter<Events> {
 
   private fActionSelectElement: HTMLSelectElement;
-
+  private fInfoHeadingElement: HTMLHeadingElement;
   private fRunNameElement: HTMLInputElement;
 
   constructor(opts: ConstructorOptions) {
     super();
 
     this.fActionSelectElement = document.getElementById(opts.selectActionElementId) as HTMLSelectElement;
+    this.fInfoHeadingElement = document.getElementById(opts.infoHeaderElementId) as HTMLHeadingElement;
 
     this.fActionSelectElement.addEventListener('change', () => {
       const selectedValue = this.selectedValue;
@@ -98,6 +100,10 @@ export class ProcedureHandler extends TypedEmitter<Events> {
     });
     actionSelectElement.dispatchEvent(new Event('change'));
     this.onCheckRunStateAndNotify();
+  }
+
+  updateInfo(procedureName: string, sessionName: string) {
+    this.fInfoHeadingElement.innerText = `Procedure:  ${procedureName} - Session:  ${sessionName}`;
   }
 
   private onCheckRunStateAndNotify() {
