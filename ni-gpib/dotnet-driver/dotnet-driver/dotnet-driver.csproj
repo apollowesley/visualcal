@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GpibInterfaceBase.cs" />
+    <Compile Include="KeysightGpibInterface.cs" />
+    <Compile Include="kt488.cs" />
     <Compile Include="NationalInstrumentsGpibInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
