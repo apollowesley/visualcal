@@ -5,7 +5,7 @@ import { EventStatusRegister, EventStatusRegisterValues, GpibInterface, StatusBy
 import electronLog from 'electron-log';
 
 interface ConnectInput {
-  board: number;
+  boardNumber: number;
   ifc: boolean;
   cic: boolean;
   cicImmediate: boolean;
@@ -16,23 +16,23 @@ interface ConnectOutput {
 }
 
 interface DisconnectInput {
-  handle: string;
+  boardHandle: string;
 }
 
 interface WriteToDeviceInput {
-  handle: string;
-  deviceAddress: number;
+  boardHandle: string;
+  devicePrimaryAddress: number;
   data: ArrayBufferLike;
 }
 
 interface ReadFromDeviceInput {
-  handle: string;
-  deviceAddress: number;
+  boardHandle: string;
+  devicePrimaryAddress: number;
 }
 
 interface SelectedDeviceClearInput {
-  handle: string;
-  deviceAddress: number;
+  boardHandle: string;
+  devicePrimaryAddress: number;
 }
 
 const log = electronLog.scope('NationalInstrumentsGpibInterface');
@@ -74,8 +74,8 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
       try {
         if (!this.fHandle) return reject('Not connected');
         const input: SelectedDeviceClearInput = {
-          handle: this.fHandle,
-          deviceAddress: address ? address : this.fDeviceAddress
+          boardHandle: this.fHandle,
+          devicePrimaryAddress: address ? address : this.fDeviceAddress
         }
         if (address) await this.setDeviceAddress(address);
         const edgeSelectedDeviceClear = this.getEdgeFunction<SelectedDeviceClearInput, boolean>('SelectedDeviceClear');
@@ -175,7 +175,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
         if (!this.fHandle) return resolve();
         const edgeDisconnect = this.getEdgeFunction<DisconnectInput, boolean>('Disconnect');
         edgeDisconnect({
-          handle: this.fHandle
+          boardHandle: this.fHandle
         }, (err) => {
           this.fHandle = undefined;
           if (err) return reject(err);
@@ -193,7 +193,7 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
       try {
         const edgeConnect = this.getEdgeFunction<ConnectInput, ConnectOutput>('Connect');
         edgeConnect({
-          board: this.address,
+          boardNumber: this.address,
           cic: true,
           ifc: true,
           cicImmediate: true
@@ -219,8 +219,8 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
         if (terminators.length > 0) dataWithTerminators.set(terminators, dataUint8Arr.length);
         const edgeWriteToDevice = this.getEdgeFunction<WriteToDeviceInput, boolean>('WriteToDevice');
         edgeWriteToDevice({
-          handle: this.fHandle,
-          deviceAddress: this.fDeviceAddress,
+          boardHandle: this.fHandle,
+          devicePrimaryAddress: this.fDeviceAddress,
           data: dataWithTerminators
         }, (err) => {
           if (err) return reject(err);
@@ -239,8 +239,8 @@ export class NationalInstrumentsGpibInterface extends CommunicationInterface imp
         if (!this.fHandle) return reject('Not connected');
         const edigeReadFromDevice = this.getEdgeFunction<ReadFromDeviceInput, ArrayBufferLike>('ReadFromDevice');
         edigeReadFromDevice({
-          handle: this.fHandle,
-          deviceAddress: this.fDeviceAddress
+          boardHandle: this.fHandle,
+          devicePrimaryAddress: this.fDeviceAddress
         }, (err, result) => {
           if (err) return reject(err);
           return resolve(result);
